@@ -16,8 +16,8 @@ export const LandingPage = () => {
       <FeatureSection />
       <InklusivitasSection />
       <TestimonialSection />
-      <CtaSection />
       <PriceSection />
+      <CtaSection />
     </div>
   );
 };
