@@ -73,7 +73,7 @@ export const MetodologiSection = () => {
               02
             </div>
 
-            <div className="mb-6 mt-6 w-16 h-16 rounded-full bg-amber-900/10 border border-white/10flex items-center justify-center group-hover:bg-amber-900/30 transition-colors duration-500 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+            <div className="mb-6 mt-6 w-16 h-16 rounded-full bg-amber-900/10 border border-white/10 flex items-center justify-center group-hover:bg-amber-900/30 transition-colors duration-500 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
               <BarChart2 className="w-8 h-8 text-amber-500 drop-shadow-[0_0_12px_rgba(245,158,11,0.8)] transition-transform duration-500 group-hover:scale-110" />
             </div>
 
