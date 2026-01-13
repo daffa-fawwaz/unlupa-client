@@ -6,8 +6,8 @@ import { InklusivitasSection } from "@/features/landing/sections/Inklusivitas/In
 import { CtaSection } from "@/features/landing/sections/CTA/CtaSection";
 import { TestimonialSection } from "@/features/landing/sections/Testimonial/TestimonialSection";
 import { PriceSection } from "@/features/landing/sections/Price/PriceSection";
-
 import { AboutSection } from "@/features/landing/sections/About/AboutSection";
+import { AkadSection } from "@/features/landing/sections/Akad/AkadSection";
 
 export const LandingPage = () => {
   return (
@@ -21,6 +21,7 @@ export const LandingPage = () => {
       <TestimonialSection />
       <PriceSection />
       <AboutSection />
+      <AkadSection />
       <CtaSection />
     </div>
   );

@@ -931,11 +931,11 @@
 /* Background Environment */
 .bg-deep-universe {
   background: radial-gradient(
-      circle at 10% 20%,
+      circle at 50% 0%,
       rgba(245, 158, 11, 0.05) 0%,
-      transparent 40%
+      transparent 60%
     ),
-    radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 1) 0%, transparent 60%),
+    radial-gradient(circle at 10% 90%, rgba(15, 23, 42, 1) 0%, transparent 50%),
     linear-gradient(180deg, #020617 0%, #000000 100%);
   min-height: 100vh;
 }
@@ -985,6 +985,69 @@
   top: 20px;
   right: 20px;
   font-weight: 700;
+}
+
+/* --- AKAD SECTION --- */
+
+.glass-doc {
+  background: rgba(15, 20, 30, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-number {
+  font-family: "Cinzel", serif;
+  color: rgba(255, 255, 255, 0.1);
+  font-size: 4rem;
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.highlight-box {
+  background: rgba(245, 158, 11, 0.05);
+  border-left: 3px solid #fbbf24;
+  padding: 20px;
+  border-radius: 0 12px 12px 0;
+  margin: 20px 0;
+}
+
+.danger-box {
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 3px solid #ef4444;
+  padding: 20px;
+  border-radius: 0 12px 12px 0;
+  margin: 20px 0;
+}
+
+.list-check li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 8px;
+}
+.list-check li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #fbbf24;
+}
+
+.list-dot li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+.list-dot li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #9ca3af;
 }
 
 .text-highlight {
