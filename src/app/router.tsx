@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router";
 import App from "./App";
 import { LandingLayout } from "../layouts/LandingLayout";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
+import { RegisterPage } from "@/pages/auth/RegisterPage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
+      },
+      {
+        path: "/register",
+        element: <RegisterPage />,
       },
     ],
   },
