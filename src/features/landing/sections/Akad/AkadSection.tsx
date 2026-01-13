@@ -171,7 +171,7 @@ export const AkadSection = () => {
                 <p className="text-xs text-gray-400 mb-3">
                   Melebihkan penilaian atau meremehkan kesulitan.
                 </p>
-                <ul class="text-xs text-red-200/80 space-y-2 list-disc pl-4">
+                <ul className="text-xs text-red-200/80 space-y-2 list-disc pl-4">
                   <li>Sistem gagal menentukan waktu ulang.</li>
                   <li>Validitas perhitungan hilang.</li>
                   <li>Hafalan melemah tanpa disadari.</li>
@@ -187,7 +187,7 @@ export const AkadSection = () => {
                 <p className="text-xs text-gray-400 mb-3">
                   Apa adanya sesuai kondisi ingatan saat ini.
                 </p>
-                <ul class="text-xs text-amber-200/80 space-y-2 list-disc pl-4">
+                <ul className="text-xs text-amber-200/80 space-y-2 list-disc pl-4">
                   <li>Jadwal ulang menjadi presisi.</li>
                   <li>BAQEN melindungi sebelum lupa total.</li>
                   <li>Proses belajar menjadi aman & tenang.</li>
