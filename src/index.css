@@ -1050,6 +1050,103 @@
   color: #9ca3af;
 }
 
-.text-highlight {
-  color: #fbbf24;
+/* --- FAQ SECTION --- */
+
+.faq-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.faq-header {
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.faq-content {
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1), opacity 0.5s ease;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.faq-content-inner {
+  padding: 0 24px 32px 24px;
+  color: #9ca3af;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+/* Active State */
+.faq-item.active {
+  border-color: var(--accent-color);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 100%
+  );
+}
+
+.faq-item.active .faq-header h3 {
+  color: var(--accent-color);
+}
+
+.faq-item.active .icon-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-color);
+}
+
+/* Accent Variables */
+.accent-gold {
+  --accent-color: #fbbf24;
+}
+.accent-blue {
+  --accent-color: #60a5fa;
+}
+.accent-emerald {
+  --accent-color: #34d399;
+}
+.accent-purple {
+  --accent-color: #c084fc;
+}
+
+/* Blockquote in FAQ */
+.faq-quote {
+  border-left: 2px solid var(--accent-color);
+  padding-left: 16px;
+  margin: 16px 0;
+  font-style: italic;
+  color: white;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Lists in FAQ */
+.faq-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.faq-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+.faq-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
 }

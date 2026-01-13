@@ -8,6 +8,7 @@ import { TestimonialSection } from "@/features/landing/sections/Testimonial/Test
 import { PriceSection } from "@/features/landing/sections/Price/PriceSection";
 import { AboutSection } from "@/features/landing/sections/About/AboutSection";
 import { AkadSection } from "@/features/landing/sections/Akad/AkadSection";
+import { FAQSection } from "@/features/landing/sections/FAQ/FAQSection";
 
 export const LandingPage = () => {
   return (
@@ -22,6 +23,7 @@ export const LandingPage = () => {
       <PriceSection />
       <AboutSection />
       <AkadSection />
+      <FAQSection />
       <CtaSection />
     </div>
   );
