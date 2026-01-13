@@ -7,9 +7,12 @@ import { CtaSection } from "@/features/landing/sections/CTA/CtaSection";
 import { TestimonialSection } from "@/features/landing/sections/Testimonial/TestimonialSection";
 import { PriceSection } from "@/features/landing/sections/Price/PriceSection";
 
+import { AboutSection } from "@/features/landing/sections/About/AboutSection";
+
 export const LandingPage = () => {
   return (
-    <div className="bg-[#0f0720] min-h-screen text-white">
+    <div className="bg-deep-universe min-h-screen text-white relative">
+      <div className="stars-overlay"></div>
       <HeroSection />
       <SolutionSection />
       <MetodologiSection />
@@ -17,6 +20,7 @@ export const LandingPage = () => {
       <InklusivitasSection />
       <TestimonialSection />
       <PriceSection />
+      <AboutSection />
       <CtaSection />
     </div>
   );

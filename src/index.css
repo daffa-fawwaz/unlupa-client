@@ -925,3 +925,68 @@
   color: #fbbf24;
   border-color: transparent;
 }
+
+/* --- ABOUT SECTION --- */
+
+/* Background Environment */
+.bg-deep-universe {
+  background: radial-gradient(
+      circle at 10% 20%,
+      rgba(245, 158, 11, 0.05) 0%,
+      transparent 40%
+    ),
+    radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 1) 0%, transparent 60%),
+    linear-gradient(180deg, #020617 0%, #000000 100%);
+  min-height: 100vh;
+}
+
+.stars-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(
+      white,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 2px
+    ),
+    radial-gradient(white, rgba(255, 255, 255, 0.05) 1.5px, transparent 2.5px);
+  background-size: 550px 550px, 350px 350px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Connector Line */
+.connector-vertical {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+/* Number Badge */
+.num-badge {
+  font-family: "Cinzel", serif;
+  font-size: 3rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-weight: 700;
+}
+
+.text-highlight {
+  color: #fbbf24;
+}
