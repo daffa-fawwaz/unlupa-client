@@ -4,6 +4,7 @@ import App from "./App";
 import { LandingLayout } from "../layouts/LandingLayout";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
 import { RegisterPage } from "@/pages/auth/RegisterPage";
+import { ForgotPasswordPage } from "@/pages/auth/ForgotPassword";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: "/register",
         element: <RegisterPage />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPasswordPage />,
       },
     ],
   },
