@@ -8,20 +8,6 @@ export const LandingFooter = () => {
           </div>
           <span className="font-bold text-white">BAQEN</span>
         </div>
-        <div className="flex justify-center gap-8 mb-8 text-sm font-medium text-purple-200/60">
-          <a href="#" className="hover:text-purple-400 transition-colors">
-            Tentang Kami
-          </a>
-          <a href="#" className="hover:text-purple-400 transition-colors">
-            Kebijakan Privasi
-          </a>
-          <a href="#" className="hover:text-purple-400 transition-colors">
-            Syarat & Ketentuan
-          </a>
-          <a href="#" className="hover:text-purple-400 transition-colors">
-            Kontak
-          </a>
-        </div>
         <p className="text-purple-200/40 text-sm">
           &copy; {new Date().getFullYear()} BAQEN. Dibuat untuk penuntut ilmu.
         </p>
