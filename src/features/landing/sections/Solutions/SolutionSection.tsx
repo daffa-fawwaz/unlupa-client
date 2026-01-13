@@ -75,7 +75,11 @@ export const SolutionSection = () => {
               Pelajari Metodenya
             </span>
             <div className="w-10 h-10 rounded-full border border-gray-700 group-hover:border-amber-500/50 flex items-center justify-center transition-all shadow-[0_0_15px_rgba(0,0,0,0)] group-hover:shadow-[0_0_20px_rgba(245,158,11,0.2)]">
-              <ArrowDown className="w-5 h-5 animate-bounce group-hover:text-amber-500" />
+              <button>
+                <a href="#metode">
+                  <ArrowDown className="w-5 h-5 animate-bounce group-hover:text-amber-500" />
+                </a>
+              </button>
             </div>
           </button>
         </div>
