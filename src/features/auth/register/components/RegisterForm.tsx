@@ -1,14 +1,38 @@
 import { Shield } from "lucide-react";
+import { useRegister } from "../hooks/useRegister";
+import { useNavigate } from "react-router";
+import type { RegisterPayload } from "../types/register.types";
 
 export const RegisterForm = () => {
+  const { register, loading } = useRegister();
+  const navigate = useNavigate();
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    const payload: RegisterPayload = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    };
+
+    const success = await register(payload);
+
+    if (success) {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="w-full flex items-center justify-center p-6">
-      {/* GLASS CONTAINER */}
+      {/* Glass Container */}
       <div className="w-full max-w-lg bg-[#0f141e]/60 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl relative overflow-hidden transition-all duration-500 mx-auto">
-        {/* TOP ACCENT LINE */}
+        {/* Top Accent Line */}
         <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-amber-500/50 to-transparent"></div>
 
-        {/* REGISTRATION FORM */}
+        {/* Registration Form */}
         <div id="state-register" className="animate-fade-in">
           <div className="text-center mb-10">
             <Shield className="w-10 h-10 text-amber-500 mx-auto mb-4 opacity-80" />
@@ -23,12 +47,13 @@ export const RegisterForm = () => {
             </p>
           </div>
 
-          <form id="registrationForm" onSubmit={(e) => e.preventDefault()}>
+          <form id="registrationForm" onSubmit={onSubmit}>
             <div className="mb-5 relative">
               <label className="block font-mono text-[0.7rem] uppercase tracking-widest text-gray-400 mb-2">
                 Nama Lengkap
               </label>
               <input
+                name="name"
                 type="text"
                 className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 focus:shadow-[0_0_15px_rgba(245,158,11,0.1)] transition-all placeholder:text-white/20"
                 placeholder="Nama Panggilan Anda"
@@ -41,6 +66,7 @@ export const RegisterForm = () => {
                 Email
               </label>
               <input
+                name="email"
                 type="email"
                 className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 focus:shadow-[0_0_15px_rgba(245,158,11,0.1)] transition-all placeholder:text-white/20"
                 placeholder="alamat@email.com"
@@ -53,6 +79,7 @@ export const RegisterForm = () => {
                 Kata Sandi
               </label>
               <input
+                name="password"
                 type="password"
                 className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 focus:shadow-[0_0_15px_rgba(245,158,11,0.1)] transition-all placeholder:text-white/20"
                 placeholder="••••••••"
@@ -85,11 +112,14 @@ export const RegisterForm = () => {
               </p>
             </div>
 
+            {/* {error && <p className="text-red-500 text-center">{error}</p>} */}
+
             <button
               type="submit"
+              disabled={loading}
               className="w-full py-4 bg-linear-to-br from-amber-400 to-amber-600 rounded-xl text-black font-mono font-bold uppercase tracking-wider hover:-translate-y-0.5 hover:shadow-[0_10px_20px_-5px_rgba(245,158,11,0.4)] transition-all mt-2 cursor-pointer border-none"
             >
-              Daftarkan Akun
+              {loading ? "Loading..." : "Daftarkan Akun"}
             </button>
 
             <p className="text-center mt-4 text-[10px] text-gray-600">

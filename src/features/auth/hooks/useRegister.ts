@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { RegisterPayload } from "../types/auth.types";
-import { authService } from "../services/auth.service";
+import type { RegisterPayload } from "@/features/auth/register/types/register.types";
+import { RegisterService } from "@/features/auth/register/services/register.service";
 
 export const useRegister = () => {
   const [loading, setLoading] = useState(false);
@@ -11,15 +11,19 @@ export const useRegister = () => {
     setError(null);
 
     try {
-      await authService.register(payload);
+      await RegisterService.register(payload);
       return true;
-    } catch (error) {
-      setError(error as string);
-      return false;
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Terjadi kesalahan, silakan coba lagi.";
+
+      setError(message);
     } finally {
       setLoading(false);
     }
 
     return { register, loading, error };
   };
-};
+} ;
