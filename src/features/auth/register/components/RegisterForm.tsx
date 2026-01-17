@@ -13,7 +13,7 @@ export const RegisterForm = () => {
     const formData = new FormData(e.currentTarget);
 
     const payload: RegisterPayload = {
-      name: formData.get("name") as string,
+      full_name: formData.get("full_name") as string,
       email: formData.get("email") as string,
       password: formData.get("password") as string,
     };
@@ -53,7 +53,7 @@ export const RegisterForm = () => {
                 Nama Lengkap
               </label>
               <input
-                name="name"
+                name="full_name"
                 type="text"
                 className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 focus:shadow-[0_0_15px_rgba(245,158,11,0.1)] transition-all placeholder:text-white/20"
                 placeholder="Nama Panggilan Anda"
@@ -87,7 +87,7 @@ export const RegisterForm = () => {
               />
             </div>
 
-            <div className="mb-5 relative">
+            {/* <div className="mb-5 relative">
               <label className="block font-mono text-[0.7rem] uppercase tracking-widest text-gray-400 mb-2">
                 Konfirmasi Kata Sandi
               </label>
@@ -97,7 +97,7 @@ export const RegisterForm = () => {
                 placeholder="••••••••"
                 required
               />
-            </div>
+            </div> */}
 
             <div className="mb-8 text-center">
               <p className="text-[10px] text-gray-500 leading-relaxed">

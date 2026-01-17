@@ -4,7 +4,7 @@ import type {
   RegisterResponse,
 } from "../types/register.types";
 
-export const RegisterService = {
+export const registerService = {
   register(payload: RegisterPayload) {
     return api.post<RegisterResponse>("/api/v1/auth/register", payload);
   },

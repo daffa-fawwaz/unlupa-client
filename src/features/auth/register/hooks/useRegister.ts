@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { RegisterPayload } from "../types/register.types";
-import { RegisterService } from "../services/register.service";
+import { registerService } from "../services/register.service";
 
 export const useRegister = () => {
   const [loading, setLoading] = useState(false);
@@ -11,7 +11,7 @@ export const useRegister = () => {
     setError(null);
 
     try {
-      await RegisterService.register(payload);
+      await registerService.register(payload);
       return true;
     } catch (error) {
       setError(error as string);

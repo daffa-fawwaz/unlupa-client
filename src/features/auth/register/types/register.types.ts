@@ -1,7 +1,7 @@
 import type { User } from "@/features/auth/domain/user.types";
 
 export interface RegisterPayload {
-  name: string;
+  full_name: string;
   email: string;
   password: string;
 }
