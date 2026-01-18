@@ -11,3 +11,5 @@ export interface RegisterResponse {
   message: string;
   data: User;
 } 
+
+export type RegisterView = "form" | "loading" | "success";
