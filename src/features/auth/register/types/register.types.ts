@@ -15,6 +15,7 @@ export interface RegisterResponse {
 export type RegisterFormProps = {
   onSubmit: (payload: RegisterPayload) => void;
   error?: string | null;
+  loading?: boolean;
 };
 
 export type RegisterView = "form" | "loading" | "success";

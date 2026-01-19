@@ -1,11 +1,12 @@
 import { Shield } from "lucide-react";
-import { useRegister } from "../hooks/useRegister";
 import type { RegisterPayload } from "../types/register.types";
 import type { RegisterFormProps } from "../types/register.types";
 
-export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
-  const { loading } = useRegister();
-
+export const RegisterForm = ({
+  onSubmit,
+  error,
+  loading,
+}: RegisterFormProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -107,7 +108,7 @@ export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               </p>
             </div>
 
-            {/* {error && <p className="text-red-500 text-center">{error}</p>} */}
+            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
             <button
               type="submit"

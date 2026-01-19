@@ -2,7 +2,7 @@ import { api } from "@/lib/axios";
 import type {
   RegisterPayload,
   RegisterResponse,
-} from "../types/register.types";
+} from "@/features/auth/register/types/register.types";
 
 export const registerService = {
   register(payload: RegisterPayload) {
