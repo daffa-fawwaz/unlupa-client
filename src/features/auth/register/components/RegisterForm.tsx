@@ -1,12 +1,15 @@
 import { Shield } from "lucide-react";
 import type { RegisterPayload } from "../types/register.types";
 import type { RegisterFormProps } from "../types/register.types";
+import { useState } from "react";
 
 export const RegisterForm = ({
   onSubmit,
   error,
   loading,
 }: RegisterFormProps) => {
+  const [localError, setLocalError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -17,6 +20,13 @@ export const RegisterForm = ({
       email: formData.get("email") as string,
       password: formData.get("password") as string,
     };
+
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    if (payload.password !== confirmPassword) {
+      setLocalError("Password tidak sesuai");
+      return;
+    }
 
     onSubmit(payload);
   };
@@ -83,17 +93,30 @@ export const RegisterForm = ({
               />
             </div>
 
-            {/* <div className="mb-5 relative">
+            <div className="mb-5 relative">
               <label className="block font-mono text-[0.7rem] uppercase tracking-widest text-gray-400 mb-2">
                 Konfirmasi Kata Sandi
               </label>
               <input
+                name="confirmPassword"
                 type="password"
                 className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 focus:shadow-[0_0_15px_rgba(245,158,11,0.1)] transition-all placeholder:text-white/20"
                 placeholder="••••••••"
                 required
               />
-            </div> */}
+            </div>
+
+            {error && (
+              <div className="w-1/2 bg-[#0f141e]/60 backdrop-blur-xl border border-white/10 rounded-xl py-4 mb-4 shadow-2xl flex justify-center items-center mx-auto">
+                <p className="text-red-500 text-center">{error}</p>
+              </div>
+            )}
+
+            {localError && (
+              <div className="w-1/2 bg-[#0f141e]/60 backdrop-blur-xl border border-white/10 rounded-xl py-4 mb-4 shadow-2xl flex justify-center items-center mx-auto">
+                <p className="text-red-500 text-center">{localError}</p>
+              </div>
+            )}
 
             <div className="mb-8 text-center">
               <p className="text-[10px] text-gray-500 leading-relaxed">
@@ -107,8 +130,6 @@ export const RegisterForm = ({
                 </a>
               </p>
             </div>
-
-            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
             <button
               type="submit"

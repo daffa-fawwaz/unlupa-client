@@ -20,8 +20,6 @@ export const useRegister = () => {
       await registerService.register(payload);
       setView("success");
     } catch (err) {
-      console.log("ERROR FULL:", err as Error);
-
       const message =
         (err as AxiosError<{ message: string }>).response?.data?.message ||
         "Terjadi kesalahan";
