@@ -1,13 +1,12 @@
 import { Shield } from "lucide-react";
 import { useRegister } from "../hooks/useRegister";
-import { useNavigate } from "react-router";
 import type { RegisterPayload } from "../types/register.types";
+import type { RegisterFormProps } from "../types/register.types";
 
-export const RegisterForm = () => {
-  const { register, loading } = useRegister();
-  const navigate = useNavigate();
+export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
+  const { loading } = useRegister();
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -18,11 +17,7 @@ export const RegisterForm = () => {
       password: formData.get("password") as string,
     };
 
-    const success = await register(payload);
-
-    if (success) {
-      navigate("/login");
-    }
+    onSubmit(payload);
   };
 
   return (
@@ -47,7 +42,7 @@ export const RegisterForm = () => {
             </p>
           </div>
 
-          <form id="registrationForm" onSubmit={onSubmit}>
+          <form id="registrationForm" onSubmit={handleSubmit}>
             <div className="mb-5 relative">
               <label className="block font-mono text-[0.7rem] uppercase tracking-widest text-gray-400 mb-2">
                 Nama Lengkap
