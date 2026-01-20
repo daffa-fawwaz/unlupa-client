@@ -1,4 +1,4 @@
-import { Shield } from "lucide-react";
+import { Shield, AlertCircle } from "lucide-react";
 import type { RegisterPayload } from "../types/register.types";
 import type { RegisterFormProps } from "../types/register.types";
 import { useState } from "react";
@@ -106,15 +106,17 @@ export const RegisterForm = ({
               />
             </div>
 
-            {error && (
-              <div className="w-1/2 bg-[#0f141e]/60 backdrop-blur-xl border border-white/10 rounded-xl py-4 mb-4 shadow-2xl flex justify-center items-center mx-auto">
-                <p className="text-red-500 text-center">{error}</p>
-              </div>
-            )}
-
-            {localError && (
-              <div className="w-1/2 bg-[#0f141e]/60 backdrop-blur-xl border border-white/10 rounded-xl py-4 mb-4 shadow-2xl flex justify-center items-center mx-auto">
-                <p className="text-red-500 text-center">{localError}</p>
+            {(error || localError) && (
+              <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 mb-6 flex items-start gap-4 animate-pulse backdrop-blur-sm shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+                <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                <div className="flex-1 text-left">
+                  <h4 className="text-rose-500 font-medium text-xs uppercase tracking-widest mb-1 font-mono">
+                    Kendala Terdeteksi
+                  </h4>
+                  <p className="text-rose-200/90 text-xs leading-relaxed font-light">
+                    {error || localError}
+                  </p>
+                </div>
               </div>
             )}
 
