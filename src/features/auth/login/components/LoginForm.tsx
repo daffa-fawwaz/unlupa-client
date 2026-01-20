@@ -1,7 +1,23 @@
 import { Moon } from "lucide-react";
 import { Link } from "react-router";
+import type {
+  LoginFormProps,
+  LoginPayload,
+} from "@/features/auth/login/types/login.types";
 
-export const LoginForm = () => {
+export const LoginForm = ({ onSubmit, error, loading }: LoginFormProps) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    const payload: LoginPayload = {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    };
+
+    onSubmit(payload);
+  };
   return (
     <div className="w-full flex items-center justify-center p-6">
       {/* GLASS CONTAINER */}
@@ -24,12 +40,13 @@ export const LoginForm = () => {
             </p>
           </div>
 
-          <form id="loginForm" onSubmit={(e) => e.preventDefault()}>
+          <form id="loginForm" onSubmit={handleSubmit}>
             <div className="mb-5 relative">
               <label className="block font-mono text-[0.7rem] uppercase tracking-widest text-gray-500 mb-2">
                 Email
               </label>
               <input
+                name="email"
                 type="email"
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/40 focus:bg-amber-500/2 transition-all placeholder:text-white/15"
                 placeholder="alamat@email.com"
@@ -44,6 +61,7 @@ export const LoginForm = () => {
                 </label>
               </div>
               <input
+                name="password"
                 type="password"
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/40 focus:bg-amber-500/2 transition-all placeholder:text-white/15"
                 placeholder="••••••••"
@@ -51,11 +69,18 @@ export const LoginForm = () => {
               />
             </div>
 
+            {error && (
+              <div className="w-1/2 bg-[#0f141e]/60 backdrop-blur-xl border border-white/10 rounded-xl py-4 mb-4 shadow-2xl flex justify-center items-center mx-auto">
+                <p className="text-red-500 text-center">{error}</p>
+              </div>
+            )}
+
             <button
+              disabled={loading}
               type="submit"
               className="w-full py-4 bg-linear-to-br from-amber-400 to-amber-700 rounded-xl text-black font-mono font-bold uppercase tracking-wider text-[0.85rem] hover:-translate-y-0.5 hover:shadow-[0_10px_20px_-5px_rgba(245,158,11,0.3)] transition-all mt-2 cursor-pointer border-none"
             >
-              Masuk ke Ruang Belajar
+              {loading ? "Loading..." : "Masuk ke Ruang Belajar"}
             </button>
 
             <div className="flex justify-between items-center mt-6 px-1">

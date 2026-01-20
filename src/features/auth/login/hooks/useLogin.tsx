@@ -17,7 +17,7 @@ export const useLogin = () => {
     setError(null);
 
     try {
-      loginService.login(payload);
+      await loginService.login(payload);
       return setView("success");
     } catch (error: any) {
       const message =

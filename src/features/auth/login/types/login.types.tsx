@@ -11,7 +11,7 @@ export interface LoginResponse {
   data: LoginUser;
 }
 
-export interface LoginProps {
+export interface LoginFormProps {
   onSubmit: (payload: LoginPayload) => void;
   error?: string | null;
   loading?: boolean;
