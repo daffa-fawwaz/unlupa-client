@@ -10,3 +10,11 @@ export interface LoginResponse {
   message: string;
   data: LoginUser;
 }
+
+export interface LoginProps {
+  onSubmit: (payload: LoginPayload) => void;
+  error?: string | null;
+  loading?: boolean;
+}
+
+export type LoginView = "form" | "loading" | "success";
