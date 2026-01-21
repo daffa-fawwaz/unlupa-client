@@ -16,8 +16,8 @@
 ====================================================== */
 @theme inline {
   /* ---------- FONT SYSTEM ---------- */
-  --font-primary: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-    sans-serif;
+  --font-primary:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: "Playfair Display", serif;
   --font-mono: "JetBrains Mono", monospace;
   --font-display: "Cinzel", serif;
@@ -182,7 +182,8 @@
 ====================================================== */
 
 .bg-deep-universe {
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at 50% 0%,
       rgba(88, 28, 135, 0.15) 0%,
       transparent 50%
@@ -203,15 +204,18 @@
 .stars-overlay {
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(
-      white,
-      rgba(255, 255, 255, 0.2) 2px,
-      transparent 3px
-    ),
+  background-image:
+    radial-gradient(white, rgba(255, 255, 255, 0.2) 2px, transparent 3px),
     radial-gradient(white, rgba(255, 255, 255, 0.15) 1px, transparent 2px),
     radial-gradient(white, rgba(255, 255, 255, 0.1) 2px, transparent 3px);
-  background-size: 550px 550px, 350px 350px, 250px 250px;
-  background-position: 0 0, 40px 60px, 130px 270px;
+  background-size:
+    550px 550px,
+    350px 350px,
+    250px 250px;
+  background-position:
+    0 0,
+    40px 60px,
+    130px 270px;
   opacity: 0.1;
   pointer-events: none;
   z-index: 0;
@@ -572,10 +576,8 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px
-    ),
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 20px 20px;
   opacity: 0.3;
@@ -930,7 +932,8 @@
 
 /* Background Environment */
 .bg-deep-universe {
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at 50% 0%,
       rgba(245, 158, 11, 0.05) 0%,
       transparent 60%
@@ -946,13 +949,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(
-      white,
-      rgba(255, 255, 255, 0.1) 1px,
-      transparent 2px
-    ),
+  background-image:
+    radial-gradient(white, rgba(255, 255, 255, 0.1) 1px, transparent 2px),
     radial-gradient(white, rgba(255, 255, 255, 0.05) 1.5px, transparent 2.5px);
-  background-size: 550px 550px, 350px 350px;
+  background-size:
+    550px 550px,
+    350px 350px;
   opacity: 0.15;
   pointer-events: none;
   z-index: 0;
@@ -1077,7 +1079,9 @@
 
 .faq-content {
   overflow: hidden;
-  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1), opacity 0.5s ease;
+  transition:
+    max-height 0.5s cubic-bezier(0, 1, 0, 1),
+    opacity 0.5s ease;
   background: rgba(0, 0, 0, 0.3);
 }
 
@@ -1247,4 +1251,276 @@
 
 .btn-submit:hover::before {
   opacity: 1;
+}
+
+/* ======================================================
+   DASHBOARD SPECIFIC STYLES
+====================================================== */
+
+/* --- SIDEBAR DRAWER --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 320px;
+  background: rgba(5, 5, 10, 0.98);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 10px 0 50px rgba(0, 0, 0, 0.8);
+  padding: 24px;
+}
+.sidebar.active {
+  transform: translateX(0);
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- SIDEBAR ROOM CARDS --- */
+.nav-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-quran {
+  background: linear-gradient(
+    145deg,
+    rgba(16, 185, 129, 0.1),
+    rgba(16, 185, 129, 0.02)
+  );
+}
+.nav-quran:hover {
+  border-color: #10b981;
+  background: linear-gradient(
+    145deg,
+    rgba(16, 185, 129, 0.2),
+    rgba(16, 185, 129, 0.05)
+  );
+  transform: translateX(5px);
+}
+
+.nav-class {
+  background: linear-gradient(
+    145deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(59, 130, 246, 0.02)
+  );
+}
+.nav-class:hover {
+  border-color: #3b82f6;
+  background: linear-gradient(
+    145deg,
+    rgba(59, 130, 246, 0.2),
+    rgba(59, 130, 246, 0.05)
+  );
+  transform: translateX(5px);
+}
+
+.nav-private {
+  background: linear-gradient(
+    145deg,
+    rgba(168, 85, 247, 0.1),
+    rgba(168, 85, 247, 0.02)
+  );
+}
+.nav-private:hover {
+  border-color: #a855f7;
+  background: linear-gradient(
+    145deg,
+    rgba(168, 85, 247, 0.2),
+    rgba(168, 85, 247, 0.05)
+  );
+  transform: translateX(5px);
+}
+
+/* Role Switcher */
+.role-switch-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+}
+.role-switch-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fbbf24;
+}
+
+/* --- STATS GRID --- */
+.glass-stat {
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s;
+}
+.glass-stat:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.05);
+}
+.heatmap-cell.active {
+  background: #fbbf24;
+  box-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+}
+
+/* --- TASK ITEMS --- */
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+.item-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Completed State */
+.item-row.completed {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+  opacity: 0.6;
+}
+.item-row.completed h4 {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+/* Phase Label */
+.phase-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+.bg-phase-red {
+  background: rgba(248, 113, 113, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+}
+.bg-phase-amber {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+.bg-phase-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Buttons & Animations */
+.btn-play {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.btn-play-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.btn-play-emerald:hover {
+  background: #10b981;
+  color: black;
+}
+.btn-play-blue {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.btn-play-blue:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+.spin-loader {
+  animation: spin 1s linear infinite;
+  pointer-events: none;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shimmer Effect */
+.shimmer-text {
+  background: linear-gradient(
+    to right,
+    rgba(245, 158, 11, 0.5),
+    #fff,
+    rgba(245, 158, 11, 0.5)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shimmer 5s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
 }

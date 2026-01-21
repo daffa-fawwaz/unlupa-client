@@ -1,5 +1,6 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 export const LandingNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,13 +54,19 @@ export const LandingNavbar = () => {
 
         {/* Right: Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          <button className="text-sm font-medium text-white/70 hover:text-white transition-colors px-4 py-2">
+          <Link
+            to="/login"
+            className="text-sm font-medium text-white/70 hover:text-white transition-colors px-4 py-2"
+          >
             Masuk
-          </button>
-          <button className="relative px-6 py-2 rounded-lg border text-sm font-medium text-white overflow-hidden group transition-all duration-300 bg-white/10 border-primary/30 shadow-[0_0_20px_rgba(124,58,237,0.15)]">
+          </Link>
+          <Link
+            to="/register"
+            className="relative px-6 py-2 rounded-lg border text-sm font-medium text-white overflow-hidden group transition-all duration-300 bg-white/10 border-primary/30 shadow-[0_0_20px_rgba(124,58,237,0.15)]"
+          >
             <span className="relative z-10">Pendaftaran</span>
             <div className="absolute inset-0 bg-linear-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
