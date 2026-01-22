@@ -359,7 +359,7 @@ export const DashboardPage = () => {
               </div>
               <div>
                 <h4 className="text-sm font-bold text-white group-hover:text-blue-300 transition">
-                  Materi: JavaScript Dasar
+                  Materi: JavaScript Asyncronus
                 </h4>
                 <p className="text-[10px] text-gray-500">
                   Functions & Loops • 20 Item • ± 15 menit
