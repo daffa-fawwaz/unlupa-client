@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/features/auth/stores/auth.store";
 import {
   ChevronRight,
   GraduationCap,
@@ -18,6 +19,7 @@ export const DashboardSidebar = ({
   isOpen,
   onClose,
 }: DashboardSidebarProps) => {
+  const logout = useAuthStore((state) => state.logout);
   return (
     <>
       {/* SIDEBAR DRAWER */}
@@ -110,7 +112,10 @@ export const DashboardSidebar = ({
             <Settings className="w-4 h-4" />
             <span className="text-sm">Pengaturan</span>
           </button>
-          <button className="flex items-center gap-3 px-2 py-2 w-full rounded-lg text-red-400 hover:bg-red-900/20 transition cursor-pointer">
+          <button
+            onClick={logout}
+            className="flex items-center gap-3 px-2 py-2 w-full rounded-lg text-red-400 hover:bg-red-900/20 transition cursor-pointer"
+          >
             <LogOut className="w-4 h-4" />
             <span className="text-sm">Keluar</span>
           </button>
