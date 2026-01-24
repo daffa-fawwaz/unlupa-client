@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import type { User } from "../domain/user.types";
+import type { LoginUser } from "@/features/auth/domain/user.types";
 import { persist } from "zustand/middleware";
 
 interface AuthState {
-  user: User | null;
+  user: LoginUser | null;
   token: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
+  setAuth: (user: LoginUser, token: string) => void;
   logout: () => void;
 }
 
@@ -17,7 +17,9 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
 
-      setAuth: (user, token) => {
+      setAuth: (user: LoginUser, token: string) => {
+        console.log("SET AUTH DIPANGGIL:", user, token);
+        
         set({
           user,
           token,
@@ -35,6 +37,6 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "baqen-auth",
-    }
-  )
+    },
+  ),
 );

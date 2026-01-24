@@ -4,11 +4,11 @@ import { TeacherDashboardPage } from "./teacher/pages/TeacherDashboardPage";
 import { StudentDashboardPage } from "./student/pages/StudentDashboardPage";
 
 export const DashboardShell = () => {
-  const role = useAuthStore.getState().user?.role;
+  const role = useAuthStore((state) => state.user?.role);
 
-  {
-    if (role === "admin") return <AdminDashboardPage />;
-    if (role === "teacher") return <TeacherDashboardPage />;
-    if (role === "student") return <StudentDashboardPage />;
-  }
+  if (role === "admin") return <AdminDashboardPage />;
+  if (role === "teacher") return <TeacherDashboardPage />;
+  if (role === "student") return <StudentDashboardPage />;
+
+  return null;
 };

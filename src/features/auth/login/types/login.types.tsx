@@ -11,6 +11,10 @@ export interface LoginResponse {
   data: LoginUser;
 }
 
+export interface LoginSuccessResponse {
+  
+}
+  
 export interface LoginFormProps {
   onSubmit: (payload: LoginPayload) => void;
   error?: string | null;

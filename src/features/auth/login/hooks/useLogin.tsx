@@ -5,11 +5,14 @@ import type {
 } from "@/features/auth/login/types/login.types";
 import { loginService } from "@/features/auth/login/services/login.services";
 import type { AxiosError } from "axios";
+import { useAuthStore } from "@/features/auth/stores/auth.store";
 
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState<LoginView>("form");
   const [error, setError] = useState<string | null>(null);
+
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   const login = async (payload: LoginPayload) => {
     setLoading(true);
@@ -17,7 +20,10 @@ export const useLogin = () => {
     setError(null);
 
     try {
-      await loginService.login(payload);
+      const response = await loginService.login(payload);
+      const user = response.data.data;
+      const token = response.data.data.token;
+      setAuth(user, token);
       return setView("success");
     } catch (error: any) {
       const message =
@@ -27,6 +33,7 @@ export const useLogin = () => {
       setError(message);
       setLoading(false);
       setView("form");
+      return false;
     }
   };
 
