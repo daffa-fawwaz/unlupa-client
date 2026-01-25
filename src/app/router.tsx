@@ -26,7 +26,9 @@ export const router = createBrowserRouter([
 
       // DASHBOARD
       {
-        element: <ProtectedRoute />,
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "teacher", "student"]} />
+        ),
         children: [
           {
             element: <DashboardLayout />,
