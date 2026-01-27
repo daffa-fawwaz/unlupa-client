@@ -8,6 +8,7 @@ import { ForgotPasswordPage } from "@/pages/auth/ForgotPasswordPage";
 import { ProtectedRoute } from "@/shared/guard/ProtectedRoute";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { DashboardShell } from "@/features/dashboard/DashboardShell";
+import { NotFoundPage } from "@/pages/404/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
@@ -32,12 +33,15 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <DashboardLayout />,
-            children: [
-              { path: "/dashboard", element: <DashboardShell /> },
-            ],
+            children: [{ path: "/dashboard", element: <DashboardShell /> }],
           },
         ],
       },
-    ],
+
+      {
+        path: "*",
+        element: <NotFoundPage />,
+      },
+    ], 
   },
 ]);
