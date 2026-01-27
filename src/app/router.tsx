@@ -5,9 +5,9 @@ import { LandingLayout } from "../layouts/LandingLayout";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
 import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "@/pages/auth/ForgotPasswordPage";
-import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { ProtectedRoute } from "@/shared/guard/ProtectedRoute";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
+import { DashboardShell } from "@/features/dashboard/DashboardShell";
 
 export const router = createBrowserRouter([
   {
@@ -32,7 +32,9 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <DashboardLayout />,
-            children: [{ path: "/dashboard", element: <DashboardPage /> }],
+            children: [
+              { path: "/dashboard", element: <DashboardShell /> },
+            ],
           },
         ],
       },

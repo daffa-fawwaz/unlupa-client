@@ -53,7 +53,7 @@ export const StudentDashboardPage = () => {
   const isCompleted = (taskId: string) => taskStatus[taskId] === "completed";
 
   return (
-    <div className="max-w-6xl mx-auto p-6 md:p-10 transition-all duration-300">
+    <div className="max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
       {/* HEADER (PROFILE FOCUS - CLEANED) */}
       <nav className="flex justify-between items-center mb-10">
         {/* Left: Menu Trigger */}
