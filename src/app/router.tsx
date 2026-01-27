@@ -5,7 +5,7 @@ import { LandingLayout } from "../layouts/LandingLayout";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
 import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "@/pages/auth/ForgotPasswordPage";
-import { ProtectedRoute } from "@/shared/guard/ProtectedRoute";
+import { ProtectedRoute } from "@/components/guard/ProtectedRoute";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { DashboardShell } from "@/features/dashboard/DashboardShell";
 import { NotFoundPage } from "@/pages/404/NotFoundPage";

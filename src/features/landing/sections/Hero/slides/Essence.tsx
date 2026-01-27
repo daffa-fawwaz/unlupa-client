@@ -1,4 +1,4 @@
-import { SlideContainer } from "@/shared/utils/SlideContainer";
+import { SlideContainer } from "@/components/utils/SlideContainer";
 import { Search, Database, FileSearch, ScanSearch } from "lucide-react";
 
 export const Essence = ({ index }: { index: number }) => {

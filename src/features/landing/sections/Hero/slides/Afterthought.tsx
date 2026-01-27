@@ -1,4 +1,4 @@
-import { SlideContainer } from "@/shared/utils/SlideContainer";
+import { SlideContainer } from "@/components/utils/SlideContainer";
 import { HeartCrack, TrendingDown, AlertCircle, XCircle } from "lucide-react";
 
 export const Afterthought = ({ index }: { index: number }) => {

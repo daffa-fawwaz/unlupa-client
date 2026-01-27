@@ -1,4 +1,4 @@
-import { SlideContainer } from "@/shared/utils/SlideContainer";
+import { SlideContainer } from "@/components/utils/SlideContainer";
 import { Target, Zap, Award, Crosshair } from "lucide-react";
 
 export const TimePurpose = ({ index }: { index: number }) => {
@@ -17,18 +17,18 @@ export const TimePurpose = ({ index }: { index: number }) => {
       <div className="flex-1 flex flex-col items-center justify-center text-center relative z-10 mt-2">
         {/* Background Neon Elements - Gold/Amber Theme */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-100 h-100 bg-accent/5 rounded-full blur-[100px] animate-pulse pointer-events-none" />
-        
+
         {/* Dynamic Crosshairs Background */}
         <div className="absolute inset-0 pointer-events-none opacity-10">
-            <div className="absolute top-10 left-10 w-20 h-20 border-l-2 border-t-2 border-accent"></div>
-            <div className="absolute bottom-10 right-10 w-20 h-20 border-r-2 border-b-2 border-accent"></div>
+          <div className="absolute top-10 left-10 w-20 h-20 border-l-2 border-t-2 border-accent"></div>
+          <div className="absolute bottom-10 right-10 w-20 h-20 border-r-2 border-b-2 border-accent"></div>
         </div>
 
         <div className="relative space-y-6 md:space-y-8 max-w-5xl mx-auto">
           <h3 className="font-serif text-2xl md:text-4xl text-white/90 font-light tracking-wide">
             Belajar seharusnya untuk
           </h3>
-          
+
           <div className="relative inline-block group">
             {/* Glitch Effect Layers */}
             <h1 className="relative z-10 font-display font-black text-6xl sm:text-7xl md:text-9xl text-transparent bg-clip-text bg-linear-to-b from-white via-white to-white/50 drop-shadow-[0_0_35px_rgba(251,191,36,0.6)] tracking-tighter transition-transform duration-500 group-hover:scale-105">
@@ -50,10 +50,10 @@ export const TimePurpose = ({ index }: { index: number }) => {
 
         {/* Floating Icons */}
         <div className="absolute left-4 md:left-16 bottom-20 hidden md:block opacity-40 animate-float delay-700">
-           <Zap className="w-8 h-8 text-yellow-200 drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]" />
+          <Zap className="w-8 h-8 text-yellow-200 drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]" />
         </div>
         <div className="absolute right-4 md:right-16 top-20 hidden md:block opacity-40 animate-float delay-300">
-           <Award className="w-8 h-8 text-yellow-200 drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]" />
+          <Award className="w-8 h-8 text-yellow-200 drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]" />
         </div>
 
         {/* Bottom Badge */}
