@@ -2,13 +2,26 @@ import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { AdminDashboardPage } from "./admin/pages/AdminDashboardPage";
 import { TeacherDashboardPage } from "./teacher/pages/TeacherDashboardPage";
 import { StudentDashboardPage } from "./student/pages/StudentDashboardPage";
+import { useDashboardModeStore } from "./stores/dashboard-mode.store";
+import { Navigate } from "react-router";
 
 export const DashboardShell = () => {
-  const role = useAuthStore((state) => state.user?.role);
+  const userRole = useAuthStore((state) => state.user?.role);
+  const activeRole = useDashboardModeStore((state) => state.activeRole);
 
-  if (role === "admin") return <AdminDashboardPage />;
-  if (role === "teacher") return <TeacherDashboardPage />;
-  if (role === "student") return <StudentDashboardPage />;
+  if (!userRole) return <Navigate to="/login" replace />;
 
-  return null;
+  let finalRole = activeRole;
+
+  if (userRole === "student") {
+    finalRole = "student";
+  }
+
+  if (userRole === "teacher" && activeRole === "admin") {
+    finalRole = "teacher";
+  }
+
+  if (finalRole === "admin") return <AdminDashboardPage />;
+  if (finalRole === "teacher") return <TeacherDashboardPage />;
+  return <StudentDashboardPage />;
 };

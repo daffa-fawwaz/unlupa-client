@@ -5,11 +5,11 @@ import {
   GraduationCap,
   LogOut,
   Moon,
-  RefreshCw,
   Settings,
   User,
   X,
 } from "lucide-react";
+import { DashboardRoleSwitcher } from "./DashboardRoleSwitcher";
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -51,17 +51,8 @@ export const DashboardSidebar = ({
             <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2 px-1">
               Mode Akun
             </p>
-            <button className="role-switch-btn group cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 text-xs font-bold">
-                  P
-                </div>
-                <span className="text-sm font-medium text-white group-hover:text-amber-400 transition">
-                  Pelajar
-                </span>
-              </div>
-              <RefreshCw className="w-4 h-4 text-gray-500 group-hover:text-white transition group-hover:rotate-180" />
-            </button>
+            <DashboardRoleSwitcher />
+            
           </div>
         )}
 

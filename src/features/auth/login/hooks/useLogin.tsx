@@ -6,6 +6,7 @@ import type {
 import { loginService } from "@/features/auth/login/services/login.services";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
+import { useDashboardModeStore } from "@/features/dashboard/stores/dashboard-mode.store";
 
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -21,9 +22,13 @@ export const useLogin = () => {
 
     try {
       const response = await loginService.login(payload);
+
       const user = response.data.data;
       const token = response.data.data.token;
       setAuth(user, token);
+      
+      useDashboardModeStore.getState().setActiveRole(user.role)
+      
       return setView("success");
     } catch (error: any) {
       const message =
