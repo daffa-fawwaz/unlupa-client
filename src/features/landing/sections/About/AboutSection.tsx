@@ -34,9 +34,9 @@ export const AboutSection = () => {
 
         <div className="max-w-2xl mx-auto space-y-8 text-lg font-light leading-relaxed text-gray-300">
           <p>
-            <strong className="text-white font-normal">BAQEN</strong> tidak
+            <strong className="text-white font-normal">UNLUPA</strong> tidak
             dibangun hanya sebagai teknologi. <br />
-            BAQEN dibangun sebagai amanah.
+            UNLUPA dibangun sebagai amanah.
           </p>
           <div className="p-6 border-l-2 border-amber-500/30 bg-white/5 rounded-r-xl text-left">
             <p className="text-amber-100/90 italic font-serif">
@@ -46,7 +46,7 @@ export const AboutSection = () => {
           </div>
           <p className="text-sm text-gray-500 font-mono pt-4">
             Nilai dan prinsip berikut adalah komitmen terbuka kami kepada
-            seluruh pengguna BAQEN.
+            seluruh pengguna UNLUPA.
           </p>
         </div>
       </div>
@@ -75,7 +75,7 @@ export const AboutSection = () => {
                   masa depan.
                 </p>
                 <p>
-                  Karena itu, BAQEN tidak mendorong belajar berlebihan,
+                  Karena itu, UNLUPA tidak mendorong belajar berlebihan,
                   melainkan belajar tepat, terarah, dan berkelanjutan.
                 </p>
               </div>
@@ -107,7 +107,7 @@ export const AboutSection = () => {
                   yang membantu menjaga ingatan.
                 </p>
                 <p>
-                  BAQEN hadir untuk mengambil peran sistem tersebut, agar
+                  UNLUPA hadir untuk mengambil peran sistem tersebut, agar
                   manusia bisa belajar dengan lebih tenang.
                 </p>
               </div>
@@ -136,7 +136,7 @@ export const AboutSection = () => {
                   ketenangan, konsistensi, dan rasa aman.
                 </p>
                 <p>
-                  Karena itu, BAQEN menghindari tekanan, target agresif, dan
+                  Karena itu, UNLUPA menghindari tekanan, target agresif, dan
                   rasa bersalah, baik dalam belajar maupun dalam berkontribusi.
                 </p>
               </div>
@@ -168,7 +168,7 @@ export const AboutSection = () => {
                   disamakan dengan materi biasa.
                 </p>
                 <p>
-                  BAQEN memperlakukan hafalan Al-Qur’an sebagai amanah jangka
+                  UNLUPA memperlakukan hafalan Al-Qur’an sebagai amanah jangka
                   panjang, yang dijaga dengan kehati-hatian, kesabaran, dan
                   penghormatan penuh.
                 </p>
@@ -194,7 +194,7 @@ export const AboutSection = () => {
               </h3>
               <div className="space-y-4 text-gray-400 font-light leading-relaxed">
                 <p>
-                  Kami ingin BAQEN dapat dimanfaatkan oleh siapa pun yang ingin
+                  Kami ingin UNLUPA dapat dimanfaatkan oleh siapa pun yang ingin
                   menjaga ilmunya, tanpa terhalang kondisi ekonomi.
                 </p>
                 <p>
@@ -202,7 +202,7 @@ export const AboutSection = () => {
                   keberlanjutan yang adil.
                 </p>
                 <p className="text-white/90 border-l-2 border-amber-500/50 pl-3">
-                  Karena itu, BAQEN mengajak pengguna berkontribusi sesuai
+                  Karena itu, UNLUPA mengajak pengguna berkontribusi sesuai
                   kemampuan, tanpa paksaan angka, tanpa menutup pintu bagi siapa
                   pun.
                 </p>
@@ -290,7 +290,7 @@ export const AboutSection = () => {
               </h3>
               <div className="space-y-4 text-gray-400 font-light leading-relaxed">
                 <p>
-                  BAQEN tidak menjanjikan hasil instan. BAQEN menemani
+                  UNLUPA tidak menjanjikan hasil instan. UNLUPA menemani
                   perjalanan panjang, langkah demi langkah, dengan kesabaran dan
                   konsistensi.
                 </p>
@@ -314,14 +314,14 @@ export const AboutSection = () => {
           </h3>
 
           <p className="text-white font-serif text-xl italic mb-8 leading-relaxed">
-            "Selama BAQEN digunakan, kami berkomitmen untuk menjaga amanah ilmu,
-            menjaga ketenangan belajar, menjaga kejujuran sistem, dan menjaga
-            manusia di balik teknologi ini."
+            "Selama UNLUPA digunakan, kami berkomitmen untuk menjaga amanah
+            ilmu, menjaga ketenangan belajar, menjaga kejujuran sistem, dan
+            menjaga manusia di balik teknologi ini."
           </p>
 
           <p className="text-gray-500 text-sm font-light">
-            Jika suatu saat BAQEN tidak lagi menjaga nilai-nilai ini, <br />
-            maka BAQEN layak untuk dikritik, diingatkan, dan diperbaiki.
+            Jika suatu saat UNLUPA tidak lagi menjaga nilai-nilai ini, <br />
+            maka UNLUPA layak untuk dikritik, diingatkan, dan diperbaiki.
           </p>
         </div>
       </div>

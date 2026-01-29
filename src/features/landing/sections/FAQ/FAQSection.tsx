@@ -10,11 +10,11 @@ type FAQItem = {
 const faqs: FAQItem[] = [
   // GROUP 1: ESENSI & FILOSOFI (Gold Accent)
   {
-    question: "Apa sebenarnya BAQEN itu?",
+    question: "Apa sebenarnya UNLUPA itu?",
     answer: (
       <>
         <p className="mb-4">
-          BAQEN adalah platform pembelajaran yang dirancang untuk menjaga ilmu
+          UNLUPA adalah platform pembelajaran yang dirancang untuk menjaga ilmu
           agar tidak hilang setelah dipelajari.
         </p>
         <p>
@@ -26,14 +26,14 @@ const faqs: FAQItem[] = [
     group: "gold",
   },
   {
-    question: "Masalah apa yang ingin diselesaikan oleh BAQEN?",
+    question: "Masalah apa yang ingin diselesaikan oleh UNLUPA?",
     answer: (
       <>
         <p className="mb-4">
           Banyak orang belajar, menghafal, dan mengikuti kelas — tetapi setelah
           beberapa waktu, ilmu itu hilang, kabur, atau tinggal kenangan.
         </p>
-        <p className="mb-4">BAQEN hadir untuk menjawab satu masalah inti:</p>
+        <p className="mb-4">UNLUPA hadir untuk menjawab satu masalah inti:</p>
         <div className="faq-quote">
           "Bagaimana ilmu yang sudah dipelajari bisa bertahan, bukan hanya
           lewat?"
@@ -43,19 +43,21 @@ const faqs: FAQItem[] = [
     group: "gold",
   },
   {
-    question: "Apa yang membedakan BAQEN dari aplikasi belajar lain?",
+    question: "Apa yang membedakan UNLUPA dari aplikasi belajar lain?",
     answer: (
       <>
         <p className="mb-4">
           Sebagian besar aplikasi fokus pada: menyelesaikan materi, mengejar
           target, atau lulus ujian.
         </p>
-        <p className="mb-4">BAQEN fokus pada satu hal yang sering dilupakan:</p>
+        <p className="mb-4">
+          UNLUPA fokus pada satu hal yang sering dilupakan:
+        </p>
         <div className="faq-quote">
           "Apakah ilmu itu masih hidup setelah dipelajari?"
         </div>
         <p className="mt-4">
-          BAQEN menggunakan sistem peninjauan ilmiah agar ilmu tidak tenggelam
+          UNLUPA menggunakan sistem peninjauan ilmiah agar ilmu tidak tenggelam
           oleh waktu.
         </p>
       </>
@@ -63,15 +65,15 @@ const faqs: FAQItem[] = [
     group: "gold",
   },
   {
-    question: "Mengapa BAQEN terasa berbeda dari aplikasi belajar lain?",
+    question: "Mengapa UNLUPA terasa berbeda dari aplikasi belajar lain?",
     answer: (
       <>
         <p className="mb-4">
-          Karena BAQEN tidak dibangun untuk: kejar angka, kejar streak, atau
+          Karena UNLUPA tidak dibangun untuk: kejar angka, kejar streak, atau
           kejar badge.
         </p>
         <div className="faq-quote">
-          BAQEN dibangun untuk satu niat: Ilmu tidak menjadi kenangan.
+          UNLUPA dibangun untuk satu niat: Ilmu tidak menjadi kenangan.
         </div>
       </>
     ),
@@ -80,11 +82,11 @@ const faqs: FAQItem[] = [
 
   // GROUP 2: METODOLOGI & CARA KERJA (Emerald Accent)
   {
-    question: "Bagaimana cara BAQEN menjaga ilmu agar tidak lupa?",
+    question: "Bagaimana cara UNLUPA menjaga ilmu agar tidak lupa?",
     answer: (
       <>
         <p>
-          BAQEN menggunakan algoritma, rumus serta weight untuk penjadwalan
+          UNLUPA menggunakan algoritma, rumus serta weight untuk penjadwalan
           pengulangan ilmiah yang:
         </p>
         <ul className="faq-list">
@@ -106,7 +108,7 @@ const faqs: FAQItem[] = [
     answer: (
       <>
         <p className="mb-4">
-          <strong>Tidak.</strong> BAQEN memiliki fase yang jelas: belajar,
+          <strong>Tidak.</strong> UNLUPA memiliki fase yang jelas: belajar,
           penguatan, aktif, pemeliharaan, hingga penyelesaian (graduation).
         </p>
         <p>
@@ -119,14 +121,14 @@ const faqs: FAQItem[] = [
     group: "emerald",
   },
   {
-    question: "Bagaimana BAQEN menyikapi kesalahan dan lupa?",
+    question: "Bagaimana UNLUPA menyikapi kesalahan dan lupa?",
     answer: (
       <>
         <p className="mb-4">
           Lupa adalah bagian dari belajar, bukan kesalahan.
         </p>
         <p className="mb-4">
-          BAQEN tidak menilai Anda dari seberapa sering lupa, seberapa lama
+          UNLUPA tidak menilai Anda dari seberapa sering lupa, seberapa lama
           berhenti, atau seberapa cepat menguasai.
         </p>
         <div className="faq-quote">
@@ -140,11 +142,11 @@ const faqs: FAQItem[] = [
 
   // GROUP 3: PENGGUNAAN & FITUR (Blue Accent)
   {
-    question: "Apakah BAQEN hanya untuk hafalan Al-Qur’an?",
+    question: "Apakah UNLUPA hanya untuk hafalan Al-Qur’an?",
     answer: (
       <>
         <p className="mb-4">
-          <strong>Tidak.</strong> BAQEN mendukung:
+          <strong>Tidak.</strong> UNLUPA mendukung:
         </p>
         <ul className="faq-list">
           <li>Hafalan Al-Qur’an (dengan sistem khusus Qur’ani)</li>
@@ -158,11 +160,11 @@ const faqs: FAQItem[] = [
     group: "blue",
   },
   {
-    question: "Apakah BAQEN akan memberatkan saya dengan banyak review?",
+    question: "Apakah UNLUPA akan memberatkan saya dengan banyak review?",
     answer: (
       <>
         <p className="mb-4">
-          <strong>Tidak.</strong> BAQEN menghitung beban hafalan secara
+          <strong>Tidak.</strong> UNLUPA menghitung beban hafalan secara
           realistis, memberi peringatan jika terlalu berat, dan memberi kendali
           pada pengguna, bukan memaksa.
         </p>
@@ -172,7 +174,7 @@ const faqs: FAQItem[] = [
     group: "blue",
   },
   {
-    question: "Bagaimana peran guru dalam BAQEN?",
+    question: "Bagaimana peran guru dalam UNLUPA?",
     answer: (
       <>
         <p>
@@ -180,7 +182,7 @@ const faqs: FAQItem[] = [
           perkembangan murid, dan pembimbing (bukan sekadar pengontrol hafalan).
         </p>
         <p className="mt-2">
-          BAQEN membantu guru melihat progres nyata, bukan menambah beban
+          UNLUPA membantu guru melihat progres nyata, bukan menambah beban
           administrasi.
         </p>
       </>
@@ -235,11 +237,11 @@ const faqs: FAQItem[] = [
     group: "blue",
   },
   {
-    question: "Apakah BAQEN cocok untuk pesantren dan sekolah?",
+    question: "Apakah UNLUPA cocok untuk pesantren dan sekolah?",
     answer: (
       <>
         <p className="mb-2">
-          <strong>Sangat cocok.</strong> BAQEN dirancang dengan lingkungan
+          <strong>Sangat cocok.</strong> UNLUPA dirancang dengan lingkungan
           pendidikan, pembelajaran bertahap, pengawasan guru, dan kesadaran
           bahwa belajar adalah proses jangka panjang.
         </p>
@@ -249,11 +251,11 @@ const faqs: FAQItem[] = [
     group: "blue",
   },
   {
-    question: "Apakah BAQEN cocok untuk belajar pribadi di rumah?",
+    question: "Apakah UNLUPA cocok untuk belajar pribadi di rumah?",
     answer: (
       <>
         <p>
-          <strong>Ya.</strong> BAQEN tidak bergantung pada institusi. Siapa pun
+          <strong>Ya.</strong> UNLUPA tidak bergantung pada institusi. Siapa pun
           yang ingin menjaga ilmunya bisa menggunakannya.
         </p>
       </>
@@ -261,22 +263,23 @@ const faqs: FAQItem[] = [
     group: "blue",
   },
   {
-    question: "Apakah BAQEN menggantikan peran guru?",
+    question: "Apakah UNLUPA menggantikan peran guru?",
     answer: (
       <>
         <p className="mb-2">
-          <strong>Tidak.</strong> BAQEN adalah alat bantu, bukan pengganti guru.
+          <strong>Tidak.</strong> UNLUPA adalah alat bantu, bukan pengganti
+          guru.
         </p>
         <p>
           Guru tetap membimbing, menasehati, meluruskan, dan memberi makna.
-          BAQEN hanya membantu menjaga prosesnya.
+          UNLUPA hanya membantu menjaga prosesnya.
         </p>
       </>
     ),
     group: "blue",
   },
   {
-    question: "Apakah BAQEN gratis?",
+    question: "Apakah UNLUPA gratis?",
     answer: (
       <>
         <p>Sebagian fitur tersedia untuk digunakan tanpa hambatan.</p>
@@ -295,7 +298,7 @@ const faqs: FAQItem[] = [
     answer: (
       <>
         <p className="mb-2">
-          <strong>Tidak masalah.</strong> BAQEN tidak menghukum, tidak
+          <strong>Tidak masalah.</strong> UNLUPA tidak menghukum, tidak
           mengurangi nilai, dan tidak merusak sistem belajar Anda hanya karena
           Anda melewatkan review.
         </p>
@@ -320,7 +323,7 @@ const faqs: FAQItem[] = [
           itu akan disesuaikan kembali saat Anda melanjutkan.
         </p>
         <p className="text-sm text-gray-400 mt-2">
-          BAQEN dirancang untuk mengikuti ritme manusia, bukan memaksa manusia
+          UNLUPA dirancang untuk mengikuti ritme manusia, bukan memaksa manusia
           mengikuti ritme mesin.
         </p>
       </>
@@ -333,7 +336,7 @@ const faqs: FAQItem[] = [
     answer: (
       <>
         <p>
-          <strong>Tidak pernah.</strong> BAQEN tidak mengenal istilah gagal.
+          <strong>Tidak pernah.</strong> UNLUPA tidak mengenal istilah gagal.
         </p>
         <p>
           Yang ada hanyalah: belum dikerjakan, sudah dikerjakan, atau belum
@@ -346,11 +349,11 @@ const faqs: FAQItem[] = [
   },
   {
     question:
-      "Apakah sistem belajar BAQEN bisa kacau jika saya tidak disiplin?",
+      "Apakah sistem belajar UNLUPA bisa kacau jika saya tidak disiplin?",
     answer: (
       <>
         <p>
-          <strong>Tidak.</strong> Sistem BAQEN tidak berjalan otomatis tanpa
+          <strong>Tidak.</strong> Sistem UNLUPA tidak berjalan otomatis tanpa
           Anda. Ia hanya merespon apa yang benar-benar Anda lakukan dan Anda
           laporkan.
         </p>
@@ -368,7 +371,7 @@ const faqs: FAQItem[] = [
           Anda sendiri.
         </p>
         <p>
-          BAQEN tidak menghukum ketidakjujuran, tetapi kejujuran akan membuat
+          UNLUPA tidak menghukum ketidakjujuran, tetapi kejujuran akan membuat
           sistem membantu Anda dengan tepat.
         </p>
       </>
@@ -380,13 +383,13 @@ const faqs: FAQItem[] = [
       "Bagaimana jika saya merasa hafalan sudah kuat dan tidak perlu ditanya lagi?",
     answer: (
       <>
-        <p className="mb-2">BAQEN menyediakan fase penyelesaian.</p>
+        <p className="mb-2">UNLUPA menyediakan fase penyelesaian.</p>
         <p>
           Ketika Anda merasa hafalan sudah kokoh: Anda bisa membekukan item,
           menghentikan pengulangan, dan fokus pada ilmu lain.
         </p>
         <p className="italic text-sm text-gray-400 mt-2">
-          Belajar di BAQEN punya akhir yang sehat, bukan siklus tanpa ujung.
+          Belajar di UNLUPA punya akhir yang sehat, bukan siklus tanpa ujung.
         </p>
       </>
     ),
@@ -394,11 +397,11 @@ const faqs: FAQItem[] = [
   },
   {
     question:
-      "Apakah BAQEN cocok untuk orang yang sering naik-turun semangatnya?",
+      "Apakah UNLUPA cocok untuk orang yang sering naik-turun semangatnya?",
     answer: (
       <>
         <p className="mb-2">
-          <strong>Justru iya.</strong> BAQEN dirancang untuk manusia yang:
+          <strong>Justru iya.</strong> UNLUPA dirancang untuk manusia yang:
           semangatnya naik turun, punya kesibukan, dan tidak selalu stabil.
         </p>
         <p>Karena ilmu tidak boleh hilang hanya karena hidup berjalan.</p>
@@ -407,19 +410,19 @@ const faqs: FAQItem[] = [
     group: "purple",
   },
   {
-    question: "Apakah saya harus sempurna untuk menggunakan BAQEN?",
+    question: "Apakah saya harus sempurna untuk menggunakan UNLUPA?",
     answer: (
       <>
         <p>
-          <strong>Tidak.</strong> BAQEN dibuat bukan untuk yang sempurna, tetapi
-          untuk yang ingin menjaga ilmu dengan jujur.
+          <strong>Tidak.</strong> UNLUPA dibuat bukan untuk yang sempurna,
+          tetapi untuk yang ingin menjaga ilmu dengan jujur.
         </p>
       </>
     ),
     group: "purple",
   },
   {
-    question: "Apa prinsip utama BAQEN dalam belajar?",
+    question: "Apa prinsip utama UNLUPA dalam belajar?",
     answer: (
       <>
         <div className="faq-quote">

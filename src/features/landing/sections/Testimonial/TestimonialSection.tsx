@@ -6,7 +6,7 @@ export const TestimonialSection = () => {
       initial: "A",
       name: "Abdullah F.",
       role: "Hafalan Terjaga",
-      text: '"Dengan BAQEN, rasa cemas hilang. Saya tahu persis mana ayat yang kuat, mana yang butuh perhatian."',
+      text: '"Dengan UNLUPA, rasa cemas hilang. Saya tahu persis mana ayat yang kuat, mana yang butuh perhatian."',
       roleClass: "role-emerald",
       avatarColor: "text-emerald-400",
     },

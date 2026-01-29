@@ -46,7 +46,7 @@ export const FeatureSection = () => {
           <h2 className="font-serif text-4xl md:text-6xl text-white mb-3 leading-tight tracking-wide">
             Fitur Inti{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-200 to-amber-600 drop-shadow-lg">
-              BAQEN
+              UNLUPA
             </span>
           </h2>
           <p className="text-gray-400 text-lg md:text-xl font-light">
@@ -269,7 +269,7 @@ export const FeatureSection = () => {
             <div className="w-12 h-1 bg-orange-500/50 rounded-full mb-6 group-hover:w-24 transition-all duration-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]"></div>
             <p className="text-sm text-gray-400 font-light leading-relaxed">
               {" "}
-              Setiap hari, BAQEN menentukan apa yang perlu ditinjau, menghapus
+              Setiap hari, UNLUPA menentukan apa yang perlu ditinjau, menghapus
               kebingungan "belajar apa hari ini".{" "}
             </p>
           </div>
@@ -359,8 +359,8 @@ export const FeatureSection = () => {
             <div className="w-16 h-1 bg-amber-500 rounded-full mb-6 shadow-[0_0_20px_rgba(251,191,36,0.8)]"></div>
             <div className="pl-4 border-l-2 border-amber-500/30">
               <p className="text-sm md:text-base text-gray-200 font-light leading-relaxed">
-                Inti sistem BAQEN. Parameter akurat untuk menentukan waktu ulang
-                yang tepat, bukan sekadar tebakan.
+                Inti sistem UNLUPA. Parameter akurat untuk menentukan waktu
+                ulang yang tepat, bukan sekadar tebakan.
               </p>
             </div>
           </div>

@@ -22,7 +22,7 @@ export const MetodologiSection = () => {
           <h2 className="font-serif text-3xl md:text-5xl text-white mb-6 tracking-wide">
             Cara Kerja{" "}
             <span className="font-display text-amber-500 drop-shadow-[0_0_12px_rgba(245,158,11,0.8)]">
-              BAQEN
+              UNLUPA
             </span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto text-lg font-light leading-relaxed">
@@ -134,8 +134,8 @@ export const MetodologiSection = () => {
                     probabilitas mengingatnya 90-95%
                   </span>
                   . Bukan saat ingatan terlalu kuat (terlalu mudah), dan bukan
-                  saat sudah dilupakan (harus belajar ulang). BAQEN menjaga Anda
-                  tepat di zona ini.
+                  saat sudah dilupakan (harus belajar ulang). UNLUPA menjaga
+                  Anda tepat di zona ini.
                 </p>
               </div>
             </div>

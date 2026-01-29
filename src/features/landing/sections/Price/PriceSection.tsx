@@ -65,7 +65,7 @@ export const PriceSection = () => {
             {/* Kalimat 1: Manifesto */}
             <div className="mb-16 relative z-10">
               <p className="text-xl md:text-3xl text-white font-serif font-light leading-relaxed tracking-wide">
-                <strong className="font-bold text-amber-100">BAQEN</strong>{" "}
+                <strong className="font-bold text-amber-100">UNLUPA</strong>{" "}
                 dibangun agar bisa dimanfaatkan oleh siapa pun yang ingin
                 menjaga ilmunya.
               </p>
@@ -120,7 +120,7 @@ export const PriceSection = () => {
               </h3>
               <p className="text-sm text-gray-400 font-light leading-relaxed">
                 Bulan pertama dapat digunakan tanpa kewajiban kontribusi. Kami
-                ingin Anda benar-benar merasakan bagaimana BAQEN membantu
+                ingin Anda benar-benar merasakan bagaimana UNLUPA membantu
                 menjaga ilmu dengan lebih tenang dan terarah.
               </p>
             </div>
@@ -145,7 +145,7 @@ export const PriceSection = () => {
                 Setiap pengguna wajib berkontribusi untuk menjaga keberlanjutan
                 sistem. Namun, besar kontribusi tidak ditentukan. Anda bebas
                 menentukan nominal sesuai kemampuan dan nilai yang Anda rasakan
-                dari BAQEN.
+                dari UNLUPA.
               </p>
             </div>
             <div className="mt-6 flex items-center gap-2 text-xs text-amber-500 font-mono">
@@ -184,7 +184,7 @@ export const PriceSection = () => {
               icon={Droplet}
               label="Rutin"
               title="Jumlah Sedang"
-              description="Untuk pengguna rutin yang merasakan manfaat BAQEN dalam menjaga pembelajaran sehari-hari."
+              description="Untuk pengguna rutin yang merasakan manfaat UNLUPA dalam menjaga pembelajaran sehari-hari."
               placeholder="Rp 50.000 (Contoh)"
               onClick={() => fillAmount("50.000")}
             />
@@ -195,7 +195,7 @@ export const PriceSection = () => {
               icon={Gift}
               label="Support"
               title="Jumlah Lebih"
-              description="Untuk Anda yang ingin mendukung keberlanjutan BAQEN lebih jauh, agar semakin banyak orang merasakan manfaatnya."
+              description="Untuk Anda yang ingin mendukung keberlanjutan UNLUPA lebih jauh, agar semakin banyak orang merasakan manfaatnya."
               placeholder="Rp 100.000 (Contoh)"
               onClick={() => fillAmount("100.000")}
             />
@@ -265,7 +265,7 @@ export const PriceSection = () => {
 
               <div className="space-y-2">
                 <p className="font-cinzel text-amber-500 text-sm tracking-widest uppercase">
-                  BAQEN ingin tumbuh bersama Anda
+                  UNLUPA ingin tumbuh bersama Anda
                 </p>
                 <p className="font-mono text-xs text-gray-500">
                   Dengan Adil. Dengan Tenang. Dengan Kebermanfaatan.

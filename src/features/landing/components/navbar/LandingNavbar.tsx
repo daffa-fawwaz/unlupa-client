@@ -34,7 +34,7 @@ export const LandingNavbar = () => {
             </div>
           </div>
           <span className="font-display tracking-widest text-xl font-bold text-white">
-            BAQEN
+            UNLUPA
           </span>
         </div>
 

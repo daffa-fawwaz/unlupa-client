@@ -33,22 +33,22 @@ export const AkadSection = () => {
 
         <div className="glass-doc text-center">
           <p className="text-xl font-serif text-white italic mb-6">
-            "BAQEN dibangun untuk membantu menjaga ilmu agar tidak hilang
+            "UNLUPA dibangun untuk membantu menjaga ilmu agar tidak hilang
             setelah diperjuangkan."
           </p>
           <div className="w-16 h-px bg-white/10 mx-auto mb-6"></div>
           <div className="text-gray-400 font-light text-sm leading-relaxed space-y-4 text-left md:text-center max-w-2xl mx-auto">
             <p>
               Agar tujuan ini tercapai dengan baik, diperlukan kesepahaman dan
-              kejujuran antara BAQEN dan setiap penggunanya.
+              kejujuran antara UNLUPA dan setiap penggunanya.
             </p>
             <p>
               Dokumen ini bukan sekadar aturan teknis, melainkan akad moral yang
               menjaga adab, tanggung jawab, dan ketenangan dalam belajar.
             </p>
             <p className="text-white font-medium">
-              Dengan menggunakan BAQEN, pengguna menyepakati nilai-nilai berikut
-              sebagai dasar bersama.
+              Dengan menggunakan UNLUPA, pengguna menyepakati nilai-nilai
+              berikut sebagai dasar bersama.
             </p>
           </div>
         </div>
@@ -66,7 +66,7 @@ export const AkadSection = () => {
                 Tujuan Penggunaan
               </h3>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                BAQEN digunakan untuk membantu menjaga ilmu agar bertahan lama,
+                UNLUPA digunakan untuk membantu menjaga ilmu agar bertahan lama,
                 bukan sekadar untuk mengejar target cepat, nilai sesaat, atau
                 menyelesaikan program.
               </p>
@@ -75,9 +75,11 @@ export const AkadSection = () => {
                   Pengguna memahami bahwa:
                 </p>
                 <ul className="list-dot text-sm text-gray-400">
-                  <li>BAQEN bukan alat instan.</li>
-                  <li>BAQEN tidak menjanjikan hafalan sempurna tanpa usaha.</li>
-                  <li>BAQEN menemani proses jangka panjang.</li>
+                  <li>UNLUPA bukan alat instan.</li>
+                  <li>
+                    UNLUPA tidak menjanjikan hafalan sempurna tanpa usaha.
+                  </li>
+                  <li>UNLUPA menemani proses jangka panjang.</li>
                 </ul>
                 <p className="text-blue-200 text-xs mt-3 italic">
                   "Belajar adalah perjalanan, bukan perlombaan."
@@ -127,12 +129,12 @@ export const AkadSection = () => {
                 Lupa & Proses Belajar
               </h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                BAQEN tidak menyalahkan pengguna ketika lupa terjadi. Lupa
+                UNLUPA tidak menyalahkan pengguna ketika lupa terjadi. Lupa
                 adalah bagian dari manusia. Yang menjadi tanggung jawab sistem
                 adalah membantu mengelolanya dengan adil.
               </p>
               <p className="text-gray-400 text-sm">
-                Namun BAQEN juga mengajak pengguna untuk menjalani proses
+                Namun UNLUPA juga mengajak pengguna untuk menjalani proses
                 belajar dengan kesadaran dan konsistensi.
               </p>
             </div>
@@ -154,7 +156,7 @@ export const AkadSection = () => {
 
           <div className="space-y-8 text-gray-300">
             <p className="text-lg font-light">
-              BAQEN adalah sistem yang bekerja berdasarkan umpan balik
+              UNLUPA adalah sistem yang bekerja berdasarkan umpan balik
               (feedback) dari pengguna.
               <span className="text-white">
                 Kejujuran bukan hanya nilai moral, tetapi syarat teknis utama
@@ -189,7 +191,7 @@ export const AkadSection = () => {
                 </p>
                 <ul className="text-xs text-amber-200/80 space-y-2 list-disc pl-4">
                   <li>Jadwal ulang menjadi presisi.</li>
-                  <li>BAQEN melindungi sebelum lupa total.</li>
+                  <li>UNLUPA melindungi sebelum lupa total.</li>
                   <li>Proses belajar menjadi aman & tenang.</li>
                 </ul>
               </div>
@@ -200,7 +202,7 @@ export const AkadSection = () => {
                 Kesepakatan Kita
               </p>
               <p className="text-white italic font-serif">
-                "Dengan menggunakan BAQEN, pengguna menyepakati untuk jujur
+                "Dengan menggunakan UNLUPA, pengguna menyepakati untuk jujur
                 terhadap kondisi ingatannya dan kesulitannya. Ini bukan tuntutan
                 kesempurnaan, melainkan komitmen pada proses."
               </p>
@@ -218,7 +220,7 @@ export const AkadSection = () => {
                 Tentang Hafalan Al-Qur’an
               </h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                Ruang Al-Qur’an di BAQEN dibuat dengan perlakuan khusus karena
+                Ruang Al-Qur’an di UNLUPA dibuat dengan perlakuan khusus karena
                 Al-Qur’an adalah amanah besar.
               </p>
               <div className="border-l-2 border-emerald-500/30 pl-4">
@@ -245,8 +247,8 @@ export const AkadSection = () => {
                 Sistem & Batasannya
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                BAQEN membantu menentukan waktu yang tepat untuk mengulang ilmu.
-                Namun BAQEN tidak menggantikan:
+                UNLUPA membantu menentukan waktu yang tepat untuk mengulang
+                ilmu. Namun UNLUPA tidak menggantikan:
               </p>
               <div className="flex gap-2 mt-4">
                 <span className="px-3 py-1 bg-white/5 rounded text-xs text-gray-400">
@@ -276,8 +278,8 @@ export const AkadSection = () => {
                 Kontribusi & Keberlanjutan
               </h3>
               <p className="text-gray-300 leading-relaxed mb-4">
-                BAQEN dapat digunakan oleh siapa pun, namun keberlanjutan sistem
-                dijaga bersama.
+                UNLUPA dapat digunakan oleh siapa pun, namun keberlanjutan
+                sistem dijaga bersama.
               </p>
               <ul className="list-dot text-sm text-gray-400 space-y-2">
                 <li>Mulai waktu tertentu, kontribusi bersifat wajib.</li>
@@ -286,7 +288,7 @@ export const AkadSection = () => {
               </ul>
               <p className="text-xs text-gray-500 mt-4">
                 Dana digunakan untuk menjaga server, pengembangan, dan kehidupan
-                tim yang merawat BAQEN.
+                tim yang merawat UNLUPA.
               </p>
             </div>
           </div>
@@ -302,12 +304,12 @@ export const AkadSection = () => {
                 Itikad Baik
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                BAQEN dibangun dengan kejujuran, dan hanya dapat bertahan dengan
-                itikad baik dari penggunanya.
+                UNLUPA dibangun dengan kejujuran, dan hanya dapat bertahan
+                dengan itikad baik dari penggunanya.
               </p>
               <p className="text-sm text-gray-400 mt-2">
                 Pengguna diharapkan tidak menyalahgunakan sistem, memanipulasi
-                proses, atau menggunakan BAQEN untuk tujuan yang bertentangan
+                proses, atau menggunakan UNLUPA untuk tujuan yang bertentangan
                 dengan nilai pendidikan.
               </p>
             </div>
@@ -324,7 +326,7 @@ export const AkadSection = () => {
                 Tentang Perubahan
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                BAQEN akan terus berkembang. Sistem dan fitur dapat diperbaiki
+                UNLUPA akan terus berkembang. Sistem dan fitur dapat diperbaiki
                 seiring waktu. Namun nilai utama (Menjaga Ilmu, Kejujuran,
                 Kemanusiaan) tidak akan diubah.
               </p>
@@ -343,9 +345,9 @@ export const AkadSection = () => {
           </h3>
 
           <p className="text-gray-300 font-light text-lg mb-8 leading-relaxed">
-            "Dengan menggunakan BAQEN, pengguna menyepakati untuk belajar dengan
-            niat baik, menjaga adab terhadap ilmu, jujur dalam setiap proses,
-            dan ikut menjaga keberlanjutan sistem sesuai kemampuan."
+            "Dengan menggunakan UNLUPA, pengguna menyepakati untuk belajar
+            dengan niat baik, menjaga adab terhadap ilmu, jujur dalam setiap
+            proses, dan ikut menjaga keberlanjutan sistem sesuai kemampuan."
           </p>
 
           <p className="font-serif italic text-amber-500 text-xl">

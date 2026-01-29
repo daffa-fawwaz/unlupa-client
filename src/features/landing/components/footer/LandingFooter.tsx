@@ -6,10 +6,10 @@ export const LandingFooter = () => {
           <div className="w-6 h-6 bg-purple-600 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-[0_0_10px_rgba(147,51,234,0.5)]">
             B
           </div>
-          <span className="font-bold text-white">BAQEN</span>
+          <span className="font-bold text-white">UNLUPA</span>
         </div>
         <p className="text-purple-200/40 text-sm">
-          &copy; {new Date().getFullYear()} BAQEN. Dibuat untuk penuntut ilmu.
+          &copy; {new Date().getFullYear()} UNLUPA. Dibuat untuk penuntut ilmu.
         </p>
       </div>
     </footer>

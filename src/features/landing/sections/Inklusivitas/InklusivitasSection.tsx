@@ -24,7 +24,7 @@ export const InklusivitasSection = () => {
           <span className="w-1.5 h-1.5 bg-amber-500 rounded-full shadow-[0_0_10px_#fbbf24]"></span>
         </p>
         <h2 className="font-serif text-3xl md:text-5xl text-white mb-4 leading-tight tracking-wide drop-shadow-md">
-          BAQEN Dibangun Untuk Mereka <br />
+          UNLUPA Dibangun Untuk Mereka <br />
           <span className="text-gray-400 font-light italic">
             Yang Tidak Ingin Ilmunya Hilang
           </span>

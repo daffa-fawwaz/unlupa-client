@@ -28,7 +28,7 @@ export const DashboardSidebar = ({
               <span className="font-serif font-bold text-amber-500">B</span>
             </div>
             <span className="font-cinzel font-bold text-xl text-white tracking-widest">
-              BAQEN
+              UNLUPA
             </span>
           </div>
           <button

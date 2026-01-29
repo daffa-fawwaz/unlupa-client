@@ -62,7 +62,7 @@
 }
 
 /* ======================================================
-   LIGHT MODE — BAQEN DEFAULT
+   LIGHT MODE — UNLUPA DEFAULT
 ====================================================== */
 :root {
   --background: oklch(1 0 0);
@@ -74,7 +74,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.16 0 0);
 
-  /* PRIMARY — Ungu BAQEN */
+  /* PRIMARY — Ungu UNLUPA */
   --primary: oklch(0.65 0.26 292);
   --primary-foreground: oklch(0.99 0 0);
 
@@ -143,7 +143,7 @@
 }
 
 /* ======================================================
-   UTILITIES — BAQEN SIGNATURE EFFECTS
+   UTILITIES — UNLUPA SIGNATURE EFFECTS
 ====================================================== */
 @layer utilities {
   /* ---------- GLOW ---------- */
@@ -178,7 +178,7 @@
 }
 
 /* ======================================================
-   BAQEN — HERO CUSTOM STYLES
+   UNLUPA — HERO CUSTOM STYLES
 ====================================================== */
 
 .bg-deep-universe {

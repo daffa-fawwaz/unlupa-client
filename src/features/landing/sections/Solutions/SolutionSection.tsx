@@ -60,7 +60,7 @@ export const SolutionSection = () => {
           <div className="mt-8 pt-8 border-t border-white/5">
             <p className="text-base md:text-lg">
               <strong className="font-display text-amber-500 tracking-widest drop-shadow-[0_0_10px_rgba(245,158,11,0.6)]">
-                BAQEN
+                UNLUPA
               </strong>
               <span className="text-gray-300 font-light ml-2">
                 hadir untuk mengubah "Lupa" menjadi "Terjaga".

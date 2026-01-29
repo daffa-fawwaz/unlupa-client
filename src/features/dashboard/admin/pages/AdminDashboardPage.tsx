@@ -48,7 +48,7 @@ export const AdminDashboardPage = () => {
                 DASHBOARD <span className="text-gold-premium">ADMIN</span>
               </h1>
               <p className="text-sm text-gray-400">
-                Pusat Kontrol Ekosistem BAQEN
+                Pusat Kontrol Ekosistem UNLUPA
               </p>
             </div>
           </div>

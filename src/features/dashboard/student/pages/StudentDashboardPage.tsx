@@ -185,7 +185,7 @@ export const StudentDashboardPage = () => {
           Review Wajib Hari Ini
         </h2>
         <p className="text-xs text-gray-500 font-mono hidden md:block">
-          Disusun oleh Algoritma BAQEN
+          Disusun oleh Algoritma UNLUPA
         </p>
       </div>
 
