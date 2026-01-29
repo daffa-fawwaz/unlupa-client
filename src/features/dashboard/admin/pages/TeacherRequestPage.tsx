@@ -167,7 +167,7 @@ export const TeacherRequestPage = () => {
               <tbody className="divide-y divide-white/5">
                 {/* Empty State */}
                 <tr className="hover:bg-white/5 transition">
-                  <td colSpan={6} className="px-6 py-12 text-center">
+                  {/* <td colSpan={6} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <div className="p-4 rounded-full bg-white/5 border border-white/10">
                         <User className="w-12 h-12 text-gray-600" />
@@ -179,6 +179,32 @@ export const TeacherRequestPage = () => {
                         Once users apply to become teachers, their requests will
                         appear here for review.
                       </p>
+                    </div>
+                  </td> */}
+                  <td className="px-6 py-4 text-center">
+                    1
+                  </td>
+                  <td className="px-6 py-4">
+                    Muhammad Hamka Rifai
+                  </td>
+                  <td className="px-6 py-4">
+                    muhammad.hamkarifai@gmail.com
+                  </td>
+                  <td className="px-6 py-4">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Quisquam, quod.
+                  </td>
+                  <td className="px-6 py-4">
+                    Pending
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <button className="px-4 py-2 text-sm font-medium text-white bg-emerald-500 rounded hover:bg-emerald-600 transition">
+                        Approve
+                      </button>
+                      <button className="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded hover:bg-rose-600 transition">
+                        Reject
+                      </button>
                     </div>
                   </td>
                 </tr>

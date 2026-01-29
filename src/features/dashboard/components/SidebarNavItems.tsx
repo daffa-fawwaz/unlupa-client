@@ -1,65 +1,51 @@
-import { ChevronRight, GraduationCap, Moon, User } from "lucide-react";
+import { LayoutDashboard, FileText, Users } from "lucide-react";
+import { NavLink } from "react-router";
+import { useAuthStore } from "@/features/auth/stores/auth.store";
 
-type NavItemProps = {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  color: string;
-  navClass: string;
-};
+export const SidebarNavItems = () => {
+  const role = useAuthStore((s) => s.user?.role);
 
-export const sidebarNavItems = [
-  {
-    title: "Ruang Al-Qur'an",
-    description: "Jaga Hafalan Suci",
-    icon: <Moon className="w-5 h-5" />,
-    color: "emerald",
-    navClass: "nav-quran",
-  },
-  {
-    title: "Ruang Kelas",
-    description: "Terstruktur & Akademis",
-    icon: <GraduationCap className="w-5 h-5" />,
-    color: "blue",
-    navClass: "nav-class",
-  },
-  {
-    title: "Ruang Pribadi",
-    description: "Materi Pilihan Anda",
-    icon: <User className="w-5 h-5" />,
-    color: "purple",
-    navClass: "nav-private",
-  },
-];
-
-export function NavItem({
-  title,
-  description,
-  icon,
-  color,
-  navClass,
-}: NavItemProps) {
   return (
-    <div className={`nav-card ${navClass} group`}>
-      <div
-        className={`w-10 h-10 rounded-lg flex items-center justify-center border
-        bg-${color}-500/20 text-${color}-400 border-${color}-500/30`}
-      >
-        {icon}
-      </div>
-
-      <div className="flex-1">
-        <h4
-          className={`text-sm font-serif text-white group-hover:text-${color}-300`}
+    <div className="flex flex-col gap-2">
+      <nav className="flex flex-col space-y-1">
+        <NavLink
+          to="/dashboard"
+          end
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
+              isActive
+                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+                : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+            }`
+          }
         >
-          {title}
-        </h4>
-        <p className="text-xs text-gray-400">{description}</p>
-      </div>
+          <LayoutDashboard className="w-4 h-4" />
+          <span className="text-sm font-medium">Dashboard</span>
+        </NavLink>
 
-      <ChevronRight
-        className={`w-4 h-4 text-${color}-500/50 group-hover:translate-x-1 transition`}
-      />
+        {role === "admin" && (
+          <>
+            <NavLink
+              to="/dashboard/teacher-requests"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
+                  isActive
+                    ? "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                }`
+              }
+            >
+              <FileText className="w-4 h-4" />
+              <span className="text-sm font-medium">Teacher Requests</span>
+            </NavLink>
+
+            <div className="px-4 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 border border-transparent transition-all duration-300 flex items-center gap-3 cursor-pointer group">
+              <Users className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
+              <span className="text-sm font-medium">Users</span>
+            </div>
+          </>
+        )}
+      </nav>
     </div>
   );
-}
+};

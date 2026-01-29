@@ -4,7 +4,8 @@ import { X } from "lucide-react";
 import { DashboardRoleSwitcher } from "./DashboardRoleSwitcher";
 import { DashboardSidebarFooter } from "./DashboardSidebarFooter";
 import { LogoutConfirmModal } from "./LogoutConfirmModal";
-import { NavItem, sidebarNavItems } from "./SidebarNavItems";
+import { SidebarNavItems } from "./SidebarNavItems";
+import { sidebarClassItems, NavClassItem } from "./SidebarClassItems";
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -49,14 +50,22 @@ export const DashboardSidebar = ({
           </div>
         )}
 
+        {/* Navigasi */}
+        <div className="mb-8">
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2 px-1">
+            Navigasi
+          </p>
+          <SidebarNavItems />
+        </div>
+
         {/* Room Navigation */}
         <div className="flex-1 overflow-y-auto pr-2">
           <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-3 px-1">
             Ruang Belajar
           </p>
 
-          {sidebarNavItems.map((item) => (
-            <NavItem
+          {sidebarClassItems.map((item) => (
+            <NavClassItem
               key={item.title}
               title={item.title}
               description={item.description}
