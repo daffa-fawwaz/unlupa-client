@@ -5,53 +5,15 @@ import {
   Bell,
   Search,
   Users,
-  BookOpen,
-  DollarSign,
   Activity,
   MoreVertical,
   Calendar,
   Shield,
-  ArrowUpRight,
 } from "lucide-react";
+import { StatCard, stats } from "../../components/StatCard";
 
 export const AdminDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Dummy Data for Stats
-  const stats = [
-    {
-      title: "Total Pengguna",
-      value: "2,543",
-      change: "+12.5%",
-      icon: Users,
-      color: "blue",
-      desc: "Siswa & Pengajar",
-    },
-    {
-      title: "Kelas Aktif",
-      value: "156",
-      change: "+8.2%",
-      icon: BookOpen,
-      color: "emerald",
-      desc: "Sedang berlangsung",
-    },
-    {
-      title: "Pendapatan",
-      value: "Rp 154jt",
-      change: "+23.1%",
-      icon: DollarSign,
-      color: "gold",
-      desc: "Bulan ini",
-    },
-    {
-      title: "Aktivitas Sistem",
-      value: "98.9%",
-      change: "+0.4%",
-      icon: Activity,
-      color: "purple",
-      desc: "Uptime Server",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-deep-universe text-white relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
@@ -117,33 +79,16 @@ export const AdminDashboardPage = () => {
 
         {/* Stats Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {stats.map((stat, idx) => (
-            <div
-              key={idx}
-              className={`monolith-card ${stat.color} p-6 rounded-2xl group`}
-            >
-              <div className="card-nebula bg-current opacity-20"></div>
-              <div className="flex justify-between items-start mb-4">
-                <div className={`icon-orb text-${stat.color}-400`}>
-                  <stat.icon className="w-6 h-6 neon-icon" />
-                </div>
-                <div
-                  className={`flex items-center gap-1 text-xs font-mono px-2 py-1 rounded bg-${stat.color}-500/10 border border-${stat.color}-500/20 text-${stat.color}-400`}
-                >
-                  <ArrowUpRight className="w-3 h-3" />
-                  {stat.change}
-                </div>
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white mb-1 tracking-tight group-hover:scale-105 transition-transform origin-left">
-                  {stat.value}
-                </h3>
-                <p className="text-sm text-gray-400 mb-1">{stat.title}</p>
-                <p className="text-[10px] text-gray-500 uppercase tracking-widest">
-                  {stat.desc}
-                </p>
-              </div>
-            </div>
+          {stats.map((stat) => (
+            <StatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              change={stat.change}
+              desc={stat.desc}
+              icon={stat.icon}
+              color={stat.color}
+            />
           ))}
         </section>
 
