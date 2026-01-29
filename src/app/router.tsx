@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/guard/ProtectedRoute";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { DashboardShell } from "@/features/dashboard/DashboardShell";
 import { NotFoundPage } from "@/pages/404/NotFoundPage";
+import { TeacherRequestPage } from "@/features/dashboard/admin/pages/TeacherRequestPage";
 
 export const router = createBrowserRouter([
   {
@@ -33,7 +34,18 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <DashboardLayout />,
-            children: [{ path: "/dashboard", element: <DashboardShell /> }],
+            children: [
+              { path: "/dashboard", element: <DashboardShell /> },
+              {
+                element: <ProtectedRoute allowedRoles={["admin"]} />,
+                children: [
+                  {
+                    path: "/dashboard/teacher-requests",
+                    element: <TeacherRequestPage />,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
@@ -42,6 +54,6 @@ export const router = createBrowserRouter([
         path: "*",
         element: <NotFoundPage />,
       },
-    ], 
+    ],
   },
 ]);

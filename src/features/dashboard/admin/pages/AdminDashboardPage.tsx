@@ -41,13 +41,13 @@ export const AdminDashboardPage = () => {
               onClick={() => setIsSidebarOpen(true)}
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/50 transition text-amber-500"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <div>
-              <h1 className="text-2xl md:text-3xl font-display font-bold text-white tracking-widest">
+              <h1 className="text-xl md:text-3xl font-display font-bold text-white tracking-widest">
                 DASHBOARD <span className="text-gold-premium">ADMIN</span>
               </h1>
-              <p className="text-sm text-gray-400">
+              <p className="text-xs md:text-sm text-gray-400">
                 Pusat Kontrol Ekosistem UNLUPA
               </p>
             </div>
@@ -140,16 +140,16 @@ export const AdminDashboardPage = () => {
             </h3>
 
             <div className="space-y-3 flex-1">
-              <button className="w-full p-4 rounded-xl bg-linear-to-r from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/50 hover:from-amber-500/20 transition flex items-center gap-3 text-left group">
+              <button className="w-full cursor-pointer group p-4 rounded-xl bg-linear-to-r from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/50 hover:from-amber-500/20 transition flex items-center gap-3 text-left group">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-500">
                   <Users className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-amber-100 group-hover:text-white">
-                    Tambah Pengajar
+                    Teacher Requests
                   </h4>
                   <p className="text-[10px] text-amber-500/60">
-                    Verifikasi manual
+                    Lihat permintaan menjadi pengajar
                   </p>
                 </div>
               </button>
