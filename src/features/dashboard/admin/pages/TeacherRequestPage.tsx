@@ -38,7 +38,7 @@ const renderTeacherRequestCell = (
     case "name":
       return (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+          <div className="w-10 h-10 hidden md:flex rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 items-center justify-center text-white font-bold text-sm">
             {item.user.full_name.charAt(0)}
           </div>
           <div>
@@ -209,6 +209,7 @@ export const TeacherRequestPage = () => {
         </div>
 
         {/* Requests Table (Desktop) */}
+        {}
         <DashboardTable
           title="Recent Applications"
           columns={teacherRequestColumns}
