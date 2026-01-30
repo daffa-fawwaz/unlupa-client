@@ -8,9 +8,87 @@ import {
   Menu,
 } from "lucide-react";
 import { DashboardSidebar } from "@/features/dashboard/components/DashboardSidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
+import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
+import { StatusBadge } from "@/features/dashboard/components/StatusBadge";
+import type { TeacherRequest } from "../types/teacherRequest.types";
+import type { TableColumn } from "@/features/dashboard/types/table.types";
+
+const teacherRequestColumns: TableColumn[] = [
+  { key: "id", label: "ID" },
+  { key: "name", label: "Name" },
+  { key: "email", label: "Email" },
+  { key: "message", label: "Message" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "Actions", align: "right" },
+];
+
+const renderTeacherRequestCell = (
+  column: TableColumn,
+  item: TeacherRequest,
+  index: number,
+) => {
+  switch (column.key) {
+    case "id":
+      return (
+        <div className="text-gray-500 font-mono text-xs">#{index + 1}</div>
+      );
+
+    case "name":
+      return (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+            {item.user.full_name.charAt(0)}
+          </div>
+          <div>
+            <p className="font-medium text-white">{item.user.full_name}</p>
+            <p className="text-xs text-gray-400">Teacher Applicant</p>
+          </div>
+        </div>
+      );
+
+    case "email":
+      return (
+        <div className="text-gray-300 font-mono text-xs">{item.user.email}</div>
+      );
+
+    case "message":
+      return (
+        <div
+          className="max-w-[200px] truncate text-gray-400 italic text-sm"
+          title={item.message}
+        >
+          "{item.message}"
+        </div>
+      );
+
+    case "status":
+      return <StatusBadge status={item.status} />;
+
+    case "actions":
+      return (
+        <div className="flex justify-end gap-2">
+          <button className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white">
+            <CheckCircle className="w-4 h-4" />
+          </button>
+          <button className="p-2 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white">
+            <XCircle className="w-4 h-4" />
+          </button>
+        </div>
+      );
+
+    default:
+      return null;
+  }
+};
 
 export const TeacherRequestPage = () => {
+  const { data, getTeacherRequests } = useTeacherRequests();
+  useEffect(() => {
+    getTeacherRequests();
+  }, []);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   return (
     <div className="relative min-h-screen bg-deep-universe text-white font-primary max-w-7xl mx-auto p-6 md:p-10">
@@ -41,9 +119,7 @@ export const TeacherRequestPage = () => {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <p className="text-sm font-mono tracking-widest md:inline">
-            MENU
-          </p>
+          <p className="text-sm font-mono tracking-widest md:inline">MENU</p>
         </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5">
           <div>
@@ -133,85 +209,14 @@ export const TeacherRequestPage = () => {
         </div>
 
         {/* Requests Table (Desktop) */}
-        <div className="hidden md:block glass-panel rounded-2xl border border-white/5 overflow-hidden">
-          <div className="p-6 border-b border-white/5">
-            <h2 className="text-lg font-display font-semibold text-white">
-              Recent Applications
-            </h2>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-white/5 border-b border-white/5">
-                <tr>
-                  <th className="px-6 py-4 text-left font-medium text-gray-400 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-400 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-400 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-400 uppercase tracking-wider">
-                    Message
-                  </th>
-                  <th className="px-6 py-4 text-left font-medium text-gray-400 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-right font-medium text-gray-400 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {/* Empty State */}
-                <tr className="hover:bg-white/5 transition">
-                  {/* <td colSpan={6} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="p-4 rounded-full bg-white/5 border border-white/10">
-                        <User className="w-12 h-12 text-gray-600" />
-                      </div>
-                      <h3 className="text-lg font-display font-semibold text-white">
-                        No Applications Yet
-                      </h3>
-                      <p className="text-gray-500 text-sm max-w-md">
-                        Once users apply to become teachers, their requests will
-                        appear here for review.
-                      </p>
-                    </div>
-                  </td> */}
-                  <td className="px-6 py-4 text-center">
-                    1
-                  </td>
-                  <td className="px-6 py-4">
-                    Muhammad Hamka Rifai
-                  </td>
-                  <td className="px-6 py-4">
-                    muhammad.hamkarifai@gmail.com
-                  </td>
-                  <td className="px-6 py-4">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Quisquam, quod.
-                  </td>
-                  <td className="px-6 py-4">
-                    Pending
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button className="px-4 py-2 text-sm font-medium text-white bg-emerald-500 rounded hover:bg-emerald-600 transition">
-                        Approve
-                      </button>
-                      <button className="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded hover:bg-rose-600 transition">
-                        Reject
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <DashboardTable
+          title="Recent Applications"
+          columns={teacherRequestColumns}
+          data={data}
+          renderCell={(column, item, index) =>
+            renderTeacherRequestCell(column, item, index)
+          }
+        />
 
         {/* Requests List (Mobile) - Empty State Only for now per static code */}
         <div className="md:hidden glass-panel rounded-2xl border border-white/5 p-6 text-center">

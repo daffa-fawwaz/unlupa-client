@@ -13,13 +13,13 @@ export interface User {
 }
 
 export interface TeacherRequest {
-  id: string;
-  user_id: string;
-  message: string;
-  status: "pending" | "approved" | "rejected";
   created_at: string;
+  id: string;
+  message: string;
+  user_id: string;
   updated_at: string;
   user: User;
+  status: "pending" | "approved" | "rejected";
 }
 
 export interface TeacherRequestResponse {
