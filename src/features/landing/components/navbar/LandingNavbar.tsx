@@ -34,7 +34,7 @@ export const LandingNavbar = () => {
             </div>
           </div>
           <span className="font-display tracking-widest text-xl font-bold text-white">
-            UNLUPA
+            UNLUPA 
           </span>
         </div>
 
@@ -58,7 +58,7 @@ export const LandingNavbar = () => {
             to="/login"
             className="text-sm font-medium text-white/70 hover:text-white transition-colors px-4 py-2"
           >
-            Masuk
+            Login
           </Link>
           <Link
             to="/register"
