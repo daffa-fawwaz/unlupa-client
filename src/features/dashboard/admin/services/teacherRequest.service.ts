@@ -7,3 +7,20 @@ export const teacherRequestService = {
     return response.data;
   },
 };
+
+export const teacherApproveService = {
+  approveTeacherRequest: async (
+    id: string,
+  ): Promise<TeacherRequestResponse> => {
+    const response = await api.post(
+      `/api/v1/admin/teacher-requests/${id}/approve`,
+    );
+    return response.data;
+  },
+  rejectTeacherRequest: async (id: string): Promise<TeacherRequestResponse> => {
+    const response = await api.post(
+      `/api/v1/admin/teacher-requests/${id}/reject`,
+    );
+    return response.data;
+  },
+};

@@ -29,3 +29,10 @@ export interface TeacherRequestResponse {
   timestamp: string;
   path: string;
 }
+
+export interface TeacherRequestResponse {
+  status: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}

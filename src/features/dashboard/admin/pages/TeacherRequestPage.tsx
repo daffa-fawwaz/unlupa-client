@@ -14,6 +14,9 @@ import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
 import { StatusBadge } from "@/features/dashboard/components/StatusBadge";
 import type { TeacherRequest } from "../types/teacherRequest.types";
 import type { TableColumn } from "@/features/dashboard/types/table.types";
+import { useApproveTeacher } from "../hooks/useApproveTeacher";
+import { useRejectTeacher } from "../hooks/useRejectTeacher";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const teacherRequestColumns: TableColumn[] = [
   { key: "id", label: "ID" },
@@ -24,72 +27,144 @@ const teacherRequestColumns: TableColumn[] = [
   { key: "actions", label: "Actions", align: "right" },
 ];
 
-const renderTeacherRequestCell = (
-  column: TableColumn,
-  item: TeacherRequest,
-  index: number,
-) => {
-  switch (column.key) {
-    case "id":
-      return (
-        <div className="text-gray-500 font-mono text-xs">#{index + 1}</div>
-      );
-
-    case "name":
-      return (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 hidden md:flex rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 items-center justify-center text-white font-bold text-sm">
-            {item.user.full_name.charAt(0)}
-          </div>
-          <div>
-            <p className="font-medium text-white">{item.user.full_name}</p>
-            <p className="text-xs text-gray-400">Teacher Applicant</p>
-          </div>
-        </div>
-      );
-
-    case "email":
-      return (
-        <div className="text-gray-300 font-mono text-xs">{item.user.email}</div>
-      );
-
-    case "message":
-      return (
-        <div
-          className="max-w-[200px] truncate text-gray-400 italic text-sm"
-          title={item.message}
-        >
-          "{item.message}"
-        </div>
-      );
-
-    case "status":
-      return <StatusBadge status={item.status} />;
-
-    case "actions":
-      return (
-        <div className="flex justify-end gap-2">
-          <button className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white">
-            <CheckCircle className="w-4 h-4" />
-          </button>
-          <button className="p-2 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white">
-            <XCircle className="w-4 h-4" />
-          </button>
-        </div>
-      );
-
-    default:
-      return null;
-  }
-};
-
 export const TeacherRequestPage = () => {
   const { data, getTeacherRequests } = useTeacherRequests();
+  const { approveTeacherRequest } = useApproveTeacher();
+  const { rejectTeacherRequest } = useRejectTeacher();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Modal state
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: "approve" | "reject" | null;
+    requestId: string | null;
+    requestName: string;
+  }>({
+    isOpen: false,
+    type: null,
+    requestId: null,
+    requestName: "",
+  });
+
   useEffect(() => {
     getTeacherRequests();
   }, []);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const handleOpenModal = (
+    type: "approve" | "reject",
+    requestId: string,
+    requestName: string,
+  ) => {
+    setModalState({
+      isOpen: true,
+      type,
+      requestId,
+      requestName,
+    });
+  };
+
+  const handleCloseModal = () => {
+    setModalState({
+      isOpen: false,
+      type: null,
+      requestId: null,
+      requestName: "",
+    });
+  };
+
+  const handleConfirm = async () => {
+    if (modalState.requestId && modalState.type) {
+      try {
+        // Step 1: Eksekusi approve/reject request
+        if (modalState.type === "approve") {
+          await approveTeacherRequest(modalState.requestId);
+        } else {
+          await rejectTeacherRequest(modalState.requestId);
+        }
+
+        // Step 2: Setelah berhasil, refresh data untuk mendapatkan data terbaru
+        await getTeacherRequests();
+
+        // Step 3: Close modal setelah semua selesai
+        handleCloseModal();
+      } catch (error) {
+        // Jika ada error, modal tetap terbuka dan user bisa coba lagi
+        console.error("Error processing request:", error);
+      }
+    }
+  };
+
+  const renderTeacherRequestCell = (
+    column: TableColumn,
+    item: TeacherRequest,
+    index: number,
+  ) => {
+    switch (column.key) {
+      case "id":
+        return (
+          <div className="text-gray-500 font-mono text-xs">#{index + 1}</div>
+        );
+
+      case "name":
+        return (
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 hidden md:flex rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 items-center justify-center text-white font-bold text-sm">
+              {item.user.full_name.charAt(0)}
+            </div>
+            <div>
+              <p className="font-medium text-white">{item.user.full_name}</p>
+              <p className="text-xs text-gray-400">Teacher Applicant</p>
+            </div>
+          </div>
+        );
+
+      case "email":
+        return (
+          <div className="text-gray-300 font-mono text-xs">
+            {item.user.email}
+          </div>
+        );
+
+      case "message":
+        return (
+          <div
+            className="max-w-[200px] truncate text-gray-400 italic text-sm"
+            title={item.message}
+          >
+            "{item.message}"
+          </div>
+        );
+
+      case "status":
+        return <StatusBadge status={item.status} />;
+
+      case "actions":
+        return (
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() =>
+                handleOpenModal("approve", item.id, item.user.full_name)
+              }
+              className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition"
+            >
+              <CheckCircle className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() =>
+                handleOpenModal("reject", item.id, item.user.full_name)
+              }
+              className="p-2 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition"
+            >
+              <XCircle className="w-4 h-4" />
+            </button>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-deep-universe text-white font-primary max-w-7xl mx-auto p-6 md:p-10">
       {/* Background Elements */}
@@ -209,7 +284,6 @@ export const TeacherRequestPage = () => {
         </div>
 
         {/* Requests Table (Desktop) */}
-        {}
         <DashboardTable
           title="Recent Applications"
           columns={teacherRequestColumns}
@@ -235,6 +309,29 @@ export const TeacherRequestPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={modalState.isOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirm}
+        title={
+          modalState.type === "approve"
+            ? "Setujui Permintaan Guru"
+            : "Tolak Permintaan Guru"
+        }
+        message={
+          modalState.type === "approve"
+            ? `Apakah Anda yakin ingin menyetujui ${modalState.requestName} sebagai guru?`
+            : `Apakah Anda yakin ingin menolak permintaan dari ${modalState.requestName}?`
+        }
+        confirmText={
+          modalState.type === "approve" ? "Ya, Setujui" : "Ya, Tolak"
+        }
+        cancelText="Batal"
+        icon={modalState.type === "approve" ? CheckCircle : XCircle}
+        variant={modalState.type === "approve" ? "success" : "danger"}
+      />
     </div>
   );
 };
