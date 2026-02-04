@@ -48,7 +48,7 @@ export const DashboardTable = <T,>({
       <div className="md:hidden space-y-4">
         {data?.length === 0 ? (
           <div className="glass-panel rounded-2xl border border-white/5 p-6 text-center">
-            <p className="text-gray-500 text-sm">No records found</p>
+            <p className="text-gray-500 text-sm">Tidak ada data</p>
           </div>
         ) : (
           data?.map((item, index) => (
