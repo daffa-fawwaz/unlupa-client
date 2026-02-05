@@ -13,7 +13,7 @@ type StatCardProps = {
 export const stats = [
   {
     title: "Total Pengguna",
-    value: "2,543",
+    value: "3,533",
     change: "+12.5%",
     icon: Users,
     color: "blue",
