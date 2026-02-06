@@ -27,20 +27,30 @@ export const DashboardTable = <T,>({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <DashboardTableHeader columns={columns} />
-            <tbody className="divide-y divide-white/5">
-              {data?.map((item, index) => (
-                <DashboardTableRow
-                  key={index}
-                  item={item}
-                  index={index}
-                  columns={columns}
-                  renderCell={(column, item) => renderCell(column, item, index)}
-                />
-              ))}
-            </tbody>
-          </table>
+          {data && data.length > 0 ? (
+            <table className="w-full text-sm">
+              <DashboardTableHeader columns={columns} />
+              <tbody className="divide-y divide-white/5">
+                {data.map((item, index) => (
+                  <DashboardTableRow
+                    key={index}
+                    item={item}
+                    index={index}
+                    columns={columns}
+                    renderCell={(column, item) =>
+                      renderCell(column, item, index)
+                    }
+                  />
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="p-12 text-center">
+              <p className="text-gray-500 text-sm">
+                Tidak ada teacher request saat ini
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

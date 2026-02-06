@@ -39,10 +39,19 @@ export const SidebarNavItems = () => {
               <span className="text-sm font-medium">Teacher Requests</span>
             </NavLink>
 
-            <div className="px-4 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 border border-transparent transition-all duration-300 flex items-center gap-3 cursor-pointer group">
+            <NavLink
+              to="/dashboard/user-list"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
+                  isActive
+                    ? "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                }`
+              }
+            >
               <Users className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
               <span className="text-sm font-medium">Users</span>
-            </div>
+            </NavLink>
           </>
         )}
       </nav>

@@ -8,7 +8,7 @@ import {
   Menu,
 } from "lucide-react";
 import { DashboardSidebar } from "@/features/dashboard/components/DashboardSidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
 import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
 import { StatusBadge } from "@/features/dashboard/components/StatusBadge";
@@ -33,6 +33,14 @@ export const TeacherRequestPage = () => {
   const { rejectTeacherRequest } = useRejectTeacher();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Filter state - untuk menyimpan pilihan filter user
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "pending" | "approved" | "rejected"
+  >("all");
+
+  // Loading state untuk refresh button
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   // Modal state
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
@@ -49,6 +57,56 @@ export const TeacherRequestPage = () => {
   useEffect(() => {
     getTeacherRequests();
   }, []);
+
+  // STEP 1: Filter data berdasarkan status yang dipilih
+  // Menggunakan useMemo agar hanya recalculate ketika data atau filter berubah
+  const filteredData = useMemo(() => {
+    if (!data) return null;
+
+    // Jika filter "all", return semua data
+    if (statusFilter === "all") {
+      return data;
+    }
+
+    // Jika ada filter spesifik, filter data berdasarkan status
+    return data.filter((request) => request.status === statusFilter);
+  }, [data, statusFilter]);
+
+  // STEP 2: Hitung statistik dari DATA ASLI (bukan filtered data)
+  // Stats harus selalu menunjukkan total keseluruhan, bukan yang difilter
+  const stats = useMemo(() => {
+    if (!data || data.length === 0) {
+      return { pending: 0, approved: 0, rejected: 0 };
+    }
+
+    return {
+      pending: data.filter((req) => req.status === "pending").length,
+      approved: data.filter((req) => req.status === "approved").length,
+      rejected: data.filter((req) => req.status === "rejected").length,
+    };
+  }, [data]);
+
+  // STEP 3: Handler untuk refresh data
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await getTeacherRequests();
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      // Set timeout agar animasi terlihat (minimal 500ms)
+      setTimeout(() => {
+        setIsRefreshing(false);
+      }, 500);
+    }
+  };
+
+  // STEP 4: Handler untuk filter change
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatusFilter(
+      e.target.value as "all" | "pending" | "approved" | "rejected",
+    );
+  };
 
   const handleOpenModal = (
     type: "approve" | "reject",
@@ -139,26 +197,53 @@ export const TeacherRequestPage = () => {
         return <StatusBadge status={item.status} />;
 
       case "actions":
-        return (
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() =>
-                handleOpenModal("approve", item.id, item.user.full_name)
-              }
-              className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition"
-            >
-              <CheckCircle className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() =>
-                handleOpenModal("reject", item.id, item.user.full_name)
-              }
-              className="p-2 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition"
-            >
-              <XCircle className="w-4 h-4" />
-            </button>
-          </div>
-        );
+        // Conditional rendering based on status
+        if (item.status === "pending") {
+          // Show Approve & Reject buttons for pending requests
+          return (
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() =>
+                  handleOpenModal("approve", item.id, item.user.full_name)
+                }
+                className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition"
+                title="Approve Request"
+              >
+                <CheckCircle className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() =>
+                  handleOpenModal("reject", item.id, item.user.full_name)
+                }
+                className="p-2 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition"
+                title="Reject Request"
+              >
+                <XCircle className="w-4 h-4" />
+              </button>
+            </div>
+          );
+        } else if (item.status === "approved") {
+          // Show green badge for approved requests
+          return (
+            <div className="flex justify-end">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium border border-emerald-500/20">
+                <CheckCircle className="w-3.5 h-3.5" />
+                Approved
+              </span>
+            </div>
+          );
+        } else if (item.status === "rejected") {
+          // Show red badge for rejected requests
+          return (
+            <div className="flex justify-end">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-medium border border-rose-500/20">
+                <XCircle className="w-3.5 h-3.5" />
+                Rejected
+              </span>
+            </div>
+          );
+        }
+        return null;
 
       default:
         return null;
@@ -214,16 +299,26 @@ export const TeacherRequestPage = () => {
           </div>
 
           <div className="flex items-center gap-3 self-start md:self-center">
+            {/* STEP 5: Bind onClick handler ke refresh button */}
             <button
-              className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-gray-400 hover:text-white group"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-gray-400 hover:text-white group disabled:opacity-50 disabled:cursor-not-allowed"
               title="Refresh Data"
             >
-              <RefreshCw className="w-5 h-5 group-hover:text-amber-500" />
+              <RefreshCw
+                className={`w-5 h-5 group-hover:text-amber-500 transition-transform ${isRefreshing ? "animate-spin" : ""}`}
+              />
             </button>
 
+            {/* STEP 6: Bind value dan onChange ke select element */}
             <div className="relative group">
               <Filter className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-hover:text-amber-500 transition" />
-              <select className="pl-10 pr-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none cursor-pointer hover:bg-white/10 transition min-w-[160px] font-medium">
+              <select
+                value={statusFilter}
+                onChange={handleFilterChange}
+                className="pl-10 pr-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none cursor-pointer hover:bg-white/10 transition min-w-[160px] font-medium"
+              >
                 <option value="all">All Status</option>
                 <option value="pending">Pending Review</option>
                 <option value="approved">Approved</option>
@@ -244,7 +339,7 @@ export const TeacherRequestPage = () => {
                 Pending Review
               </p>
               <h3 className="text-4xl font-display font-bold text-white">
-                {0}
+                {stats.pending}
               </h3>
               <p className="text-xs text-gray-500 mt-2">Awaiting decision</p>
             </div>
@@ -259,7 +354,7 @@ export const TeacherRequestPage = () => {
                 Approved
               </p>
               <h3 className="text-4xl font-display font-bold text-white">
-                {0}
+                {stats.approved}
               </h3>
               <p className="text-xs text-gray-500 mt-2">New teachers joined</p>
             </div>
@@ -274,7 +369,7 @@ export const TeacherRequestPage = () => {
                 Rejected
               </p>
               <h3 className="text-4xl font-display font-bold text-white">
-                {0}
+                {stats.rejected}
               </h3>
               <p className="text-xs text-gray-500 mt-2">
                 Applications declined
@@ -284,10 +379,11 @@ export const TeacherRequestPage = () => {
         </div>
 
         {/* Requests Table (Desktop) */}
+        {/* STEP 7: Pass filteredData instead of raw data */}
         <DashboardTable
           title="Recent Applications"
           columns={teacherRequestColumns}
-          data={data}
+          data={filteredData}
           renderCell={(column, item, index) =>
             renderTeacherRequestCell(column, item, index)
           }
