@@ -11,7 +11,7 @@ export const userService = {
   // Activate user
   activateUser: async (userId: string): Promise<UserActionResponse> => {
     const response = await api.post<UserActionResponse>(
-      `/api/v1/admin/teachers/${userId}/activate`,
+      `/api/v1/admin/users/${userId}/activate`,
     );
     return response.data;
   },
@@ -19,7 +19,7 @@ export const userService = {
   // Deactivate user
   deactivateUser: async (userId: string): Promise<UserActionResponse> => {
     const response = await api.post<UserActionResponse>(
-      `/api/v1/admin/teachers/${userId}/deactivate`,
+      `/api/v1/admin/users/${userId}/deactivate`,
     );
     return response.data;
   },
