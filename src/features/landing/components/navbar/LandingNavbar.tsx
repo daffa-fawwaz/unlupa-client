@@ -29,7 +29,7 @@ export const LandingNavbar = () => {
             <div className="absolute inset-0 bg-primary/20 rounded-lg rotate-3 group-hover:rotate-6 transition-transform duration-500 ease-out border border-white/5 backdrop-blur-sm"></div>
             <div className="absolute inset-0 bg-[#1a102e]/80 rounded-lg -rotate-3 group-hover:-rotate-6 transition-transform duration-500 ease-out flex items-center justify-center border border-white/10 shadow-inner">
               <span className="font-display text-xl text-primary font-bold">
-                U
+                B
               </span>
             </div>
           </div>
