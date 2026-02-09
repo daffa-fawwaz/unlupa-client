@@ -75,6 +75,7 @@ export const DashboardSidebar = ({
               icon={item.icon}
               color={item.color}
               navClass={item.navClass}
+              href={item.href}
             />
           ))}
         </div>

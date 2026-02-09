@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText, Users, Moon } from "lucide-react";
+import { LayoutDashboard, FileText, Users } from "lucide-react";
 import { NavLink } from "react-router";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 
@@ -21,20 +21,6 @@ export const SidebarNavItems = () => {
         >
           <LayoutDashboard className="w-4 h-4" />
           <span className="text-sm font-medium">Dashboard</span>
-        </NavLink>
-
-        <NavLink
-          to="/dashboard/alquran"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
-              isActive
-                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
-                : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
-            }`
-          }
-        >
-          <Moon className="w-4 h-4" />
-          <span className="text-sm font-medium">Al-Qur'an</span>
         </NavLink>
 
         {role === "admin" && (
