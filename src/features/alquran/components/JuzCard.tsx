@@ -1,0 +1,87 @@
+import type { LifecycleStats } from "../types/quran.types";
+
+interface JuzCardProps {
+  juzNumber: string;
+  itemCount: number;
+  stats: LifecycleStats;
+  onClick: () => void;
+}
+
+export const JuzCard = ({
+  juzNumber,
+  itemCount,
+  stats,
+  onClick,
+}: JuzCardProps) => {
+  return (
+    <div
+      onClick={onClick}
+      className="relative bg-linear-to-br from-[rgba(20,15,10,0.9)] to-[rgba(10,10,10,0.7)] border border-amber-500/15 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/50 hover:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] min-h-[220px] flex flex-col overflow-hidden group"
+    >
+      {/* Large Juz Number Watermark */}
+      <div className="absolute top-[-15px] right-2.5 text-[5rem] font-cinzel font-bold text-white/5 pointer-events-none">
+        {juzNumber}
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 mb-auto">
+        <h3 className="text-2xl font-serif text-white mb-2">Juz {juzNumber}</h3>
+        <div className="inline-block px-2 py-1 bg-white/5 border border-white/10 rounded text-xs text-gray-400">
+          {itemCount} Item
+        </div>
+      </div>
+
+      {/* Lifecycle Grid */}
+      <div className="grid grid-cols-3 gap-3 border-t border-dashed border-white/10 pt-4 mt-auto">
+        <div className="flex flex-col items-center">
+          <span className="text-base font-mono font-bold text-blue-400">
+            {stats.new}
+          </span>
+          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
+            Belum
+          </span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-base font-mono font-bold text-orange-400">
+            {stats.memorizing}
+          </span>
+          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
+            Proses
+          </span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-base font-mono font-bold text-red-400">
+            {stats.consolidation}
+          </span>
+          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
+            Kuatkan
+          </span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-base font-mono font-bold text-amber-400">
+            {stats.active}
+          </span>
+          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
+            Ujian
+          </span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-base font-mono font-bold text-emerald-400">
+            {stats.maintenance}
+          </span>
+          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
+            Terjaga
+          </span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-base font-mono font-bold text-purple-400">
+            {stats.graduated}
+          </span>
+          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
+            Selesai
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
