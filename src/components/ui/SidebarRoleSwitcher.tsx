@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/features/auth/stores/auth.store";
-import { useDashboardModeStore } from "../stores/dashboard-mode.store";
+import { useDashboardModeStore } from "../../features/dashboard/stores/dashboard-mode.store";
 import {
   ChevronDown,
   GraduationCap,
