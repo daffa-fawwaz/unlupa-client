@@ -1,4 +1,4 @@
-import { DashboardSidebar } from "@/features/dashboard/components/DashboardSidebar";
+import { DashboardSidebar } from "@/features/dashboard/components/Sidebar";
 import { useState } from "react";
 import { Outlet } from "react-router";
 

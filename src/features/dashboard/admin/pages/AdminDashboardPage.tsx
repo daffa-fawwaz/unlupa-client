@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DashboardSidebar } from "@/features/dashboard/components/DashboardSidebar";
+import { DashboardSidebar } from "@/features/dashboard/components/Sidebar";
 import {
   Menu,
   Bell,

@@ -9,7 +9,7 @@ import {
   Crown,
   UserCircle,
 } from "lucide-react";
-import { DashboardSidebar } from "@/features/dashboard/components/DashboardSidebar";
+import { DashboardSidebar } from "@/features/dashboard/components/Sidebar";
 import { useEffect, useState, useMemo } from "react";
 import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
 import { useActivateUser } from "@/features/dashboard/admin/hooks/useActivateUser";

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { X } from "lucide-react";
-import { DashboardRoleSwitcher } from "./DashboardRoleSwitcher";
-import { DashboardSidebarFooter } from "./DashboardSidebarFooter";
+import { DashboardRoleSwitcher } from "./SidebarRoleSwitcher";
+import { DashboardSidebarFooter } from "./SidebarFooter";
 import { LogoutConfirmModal } from "./LogoutConfirmModal";
 import { SidebarNavItems } from "./SidebarNavItems";
 import { sidebarClassItems, NavClassItem } from "./SidebarClassItems";

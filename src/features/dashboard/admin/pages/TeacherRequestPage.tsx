@@ -7,7 +7,7 @@ import {
   RefreshCw,
   Menu,
 } from "lucide-react";
-import { DashboardSidebar } from "@/features/dashboard/components/DashboardSidebar";
+import { DashboardSidebar } from "@/features/dashboard/components/Sidebar";
 import { useEffect, useState, useMemo } from "react";
 import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
 import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
