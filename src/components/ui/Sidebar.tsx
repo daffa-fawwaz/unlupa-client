@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { X } from "lucide-react";
-import { DashboardRoleSwitcher } from "../../../components/ui/SidebarRoleSwitcher";
+import { DashboardRoleSwitcher } from "./SidebarRoleSwitcher";
 import { DashboardSidebarFooter } from "./SidebarFooter";
-import { LogoutConfirmModal } from "./LogoutConfirmModal";
+import { LogoutConfirmModal } from "../../features/dashboard/components/LogoutConfirmModal";
 import { SidebarNavItems } from "./SidebarNavItems";
-import { sidebarClassItems, NavClassItem } from "./SidebarClassItems";
+import {
+  sidebarClassItems,
+  NavClassItem,
+} from "@/components/ui/SidebarClassItems";
 
 interface DashboardSidebarProps {
   isOpen: boolean;

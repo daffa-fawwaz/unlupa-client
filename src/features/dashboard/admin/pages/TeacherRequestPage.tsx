@@ -7,11 +7,11 @@ import {
   RefreshCw,
   Menu,
 } from "lucide-react";
-import { DashboardSidebar } from "@/features/dashboard/components/Sidebar";
+import { DashboardSidebar } from "@/components/ui/Sidebar";
 import { useEffect, useState, useMemo } from "react";
 import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
 import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
-import { StatusBadge } from "@/features/dashboard/components/StatusBadge";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { TeacherRequest } from "../types/teacherRequest.types";
 import type { TableColumn } from "@/features/dashboard/types/table.types";
 import { useApproveTeacher } from "../hooks/useApproveTeacher";

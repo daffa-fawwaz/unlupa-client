@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DashboardSidebar } from "@/features/dashboard/components/Sidebar";
+import { DashboardSidebar } from "@/components/ui/Sidebar";
 import {
   Menu,
   Bell,
@@ -10,7 +10,7 @@ import {
   Calendar,
   Shield,
 } from "lucide-react";
-import { StatCard, stats } from "../../components/StatCard";
+import { StatCard, stats } from "../../../../components/ui/StatCard";
 
 export const AdminDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
