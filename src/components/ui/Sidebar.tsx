@@ -76,6 +76,7 @@ export const DashboardSidebar = ({
               color={item.color}
               navClass={item.navClass}
               href={item.href}
+              onClose={onClose}
             />
           ))}
         </div>
