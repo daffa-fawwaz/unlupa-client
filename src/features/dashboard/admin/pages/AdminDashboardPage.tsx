@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { DashboardSidebar } from "@/components/ui/Sidebar";
 import {
   Menu,
   Bell,
@@ -11,6 +10,7 @@ import {
   Shield,
 } from "lucide-react";
 import { StatCard, stats } from "../../../../components/ui/StatCard";
+import { Sidebar } from "@/components/ui/Sidebar";
 
 export const AdminDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -21,10 +21,7 @@ export const AdminDashboardPage = () => {
       <div className="stars-overlay"></div>
 
       {/* Sidebar Integration */}
-      <DashboardSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       {/* Overlay for mobile sidebar */}
       <div

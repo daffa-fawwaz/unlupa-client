@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Moon } from "lucide-react";
 
 // Hooks
 import { useQuranData } from "@/features/alquran/hooks/useQuranData";
@@ -65,29 +64,14 @@ export const AlquranPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0C0F] text-white font-sans selection:bg-amber-500/30">
+    <div className="min-h-screen bg-deep-universe text-white font-sans selection:bg-amber-500/30 ">
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Title (Only on Dashboard) */}
-        {view === "dashboard" && (
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-serif text-white mb-2 flex items-center gap-3">
-                <Moon className="w-8 h-8 text-amber-400" />
-                Al-Qur'an Tracker
-              </h1>
-              <p className="text-gray-400">
-                Pantau progres hafalan dan muraja'ahmu setiap hari.
-              </p>
-            </div>
-          </div>
-        )}
-
+      <div className="relative bg-deep-universe z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Content Area */}
         {view === "dashboard" && (
           <AlquranDashboard

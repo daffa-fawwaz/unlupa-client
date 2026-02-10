@@ -9,7 +9,6 @@ import {
   Crown,
   UserCircle,
 } from "lucide-react";
-import { DashboardSidebar } from "@/components/ui/Sidebar";
 import { useEffect, useState, useMemo } from "react";
 import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
 import { useActivateUser } from "@/features/dashboard/admin/hooks/useActivateUser";
@@ -18,6 +17,7 @@ import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
 import type { User } from "../types/user.types";
 import type { TableColumn } from "@/features/dashboard/types/table.types";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { Sidebar } from "@/components/ui/Sidebar";
 
 const userColumns: TableColumn[] = [
   { key: "id", label: "ID" },
@@ -284,7 +284,7 @@ export const UserListPage = () => {
       </div>
 
       {/* Sidebar Integration */}
-      <DashboardSidebar
+      <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />

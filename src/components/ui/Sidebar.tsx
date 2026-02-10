@@ -10,15 +10,12 @@ import {
   NavClassItem,
 } from "@/components/ui/SidebarClassItems";
 
-interface DashboardSidebarProps {
+interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const DashboardSidebar = ({
-  isOpen,
-  onClose,
-}: DashboardSidebarProps) => {
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const role = useAuthStore((s) => s.user?.role);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   return (

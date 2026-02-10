@@ -7,7 +7,6 @@ import {
   RefreshCw,
   Menu,
 } from "lucide-react";
-import { DashboardSidebar } from "@/components/ui/Sidebar";
 import { useEffect, useState, useMemo } from "react";
 import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
 import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
@@ -17,6 +16,7 @@ import type { TableColumn } from "@/features/dashboard/types/table.types";
 import { useApproveTeacher } from "../hooks/useApproveTeacher";
 import { useRejectTeacher } from "../hooks/useRejectTeacher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { Sidebar } from "@/components/ui/Sidebar";
 
 const teacherRequestColumns: TableColumn[] = [
   { key: "id", label: "ID" },
@@ -259,10 +259,7 @@ export const TeacherRequestPage = () => {
       </div>
 
       {/* Sidebar Integration */}
-      <DashboardSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       {/* Overlay for mobile sidebar */}
       <div
