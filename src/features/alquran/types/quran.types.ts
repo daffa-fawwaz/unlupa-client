@@ -1,3 +1,20 @@
+// CREATE JUZ
+
+export interface CreateJuzResponse {
+  status: string;
+  message: string;
+  data: DataJuz;
+  timestamp: string;
+  path: string;
+}
+
+export interface DataJuz {
+  ID: string;
+  UserID: string;
+  index: number;
+  CreatedAt: string;
+}
+
 // Enum for item lifecycle status
 // Item lifecycle status type
 export type ItemStatus =

@@ -7,7 +7,7 @@ import { useToast } from "@/features/alquran/hooks/useToast";
 // Components
 import { AlquranDashboard } from "@/features/alquran/components/AlquranDashboard";
 import { JuzDetailView } from "@/features/alquran/components/JuzDetailView";
-import { CreateHafalanForm } from "@/features/alquran/components/CreateHafalanForm";
+import { CreateHafalanForm } from "@/features/alquran/components/CreateJuzForm";
 import { Toast } from "@/features/alquran/components/Toast";
 
 // Styles
@@ -57,10 +57,6 @@ export const AlquranPage = () => {
     addItem(juz, surahName, ayatStart, ayatEnd, pageStart, pageEnd, time);
     setShowCreateForm(false);
     showToast("Hafalan berhasil ditambahkan!", "success");
-
-    // Optional: auto-navigate to the juz of the new item
-    // setActiveJuz(juz);
-    // setView("detail");
   };
 
   return (

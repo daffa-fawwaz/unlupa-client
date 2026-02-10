@@ -26,7 +26,7 @@ export const JuzCard = ({
       {/* Header */}
       <div className="relative z-10 mb-auto">
         <h3 className="text-2xl font-serif text-white mb-2">Juz {juzNumber}</h3>
-        <div className="inline-block px-2 py-1 bg-white/5 border border-white/10 rounded text-xs text-gray-400">
+        <div className="inline-block px-2 py-1 bg-white/5 border mb-2 border-white/10 rounded text-xs text-gray-400">
           {itemCount} Item
         </div>
       </div>
