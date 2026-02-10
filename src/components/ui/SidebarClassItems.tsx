@@ -48,7 +48,7 @@ export function NavClassItem({
   onClose,
 }: NavClassItemProps) {
   return (
-    <NavLink onClick={onClose} to={href} className={`nav-card ${navClass} group`}>
+    <NavLink onClick={onClose} to={`/${href}`} className={`nav-card ${navClass} group`}>
       <div
         className={`w-10 h-10 rounded-lg flex items-center justify-center border
         bg-${color}-500/20 text-${color}-400 border-${color}-500/30`}
