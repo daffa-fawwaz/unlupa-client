@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlusCircle, X } from "lucide-react";
+import { PlusCircle, X, CheckCircle, Loader2 } from "lucide-react";
 import { useCreateJuz } from "@/features/alquran/hooks/useCreateJuz";
 
 interface CreateJuzFormProps {
@@ -7,19 +7,55 @@ interface CreateJuzFormProps {
 }
 
 export const CreateHafalanForm = ({ onClose }: CreateJuzFormProps) => {
-  const { createJuz } = useCreateJuz();
+  const { createJuz, loading, data } = useCreateJuz();
   const [selectedJuz, setSelectedJuz] = useState("");
 
   const handleJuzChange = (juz: string) => {
     setSelectedJuz(juz);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedJuz) return;
-
-    createJuz(Number(selectedJuz));
-    onClose();
+    await createJuz(Number(selectedJuz));
   };
+
+  // SUCCESS STATE
+  if (data) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="w-full max-w-md bg-[#0F1115] border border-emerald-500/30 rounded-3xl p-8 shadow-[0_0_100px_-20px_rgba(16,185,129,0.2)] text-center relative overflow-hidden">
+          {/* Background effect */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/20 rounded-full blur-[50px]" />
+
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 animate-in zoom-in duration-500">
+              <CheckCircle className="w-10 h-10 text-emerald-400" />
+            </div>
+
+            <h2 className="text-2xl font-serif text-white mb-2">
+              Alhamdulillah!
+            </h2>
+            <p className="text-gray-400 mb-8">
+              Juz{" "}
+              <span className="text-emerald-400 font-bold">
+                {data?.data.Index}
+              </span>{" "}
+              berhasil ditambahkan.
+              <br />
+              Selamat memulai hafalan baru!
+            </p>
+
+            <button
+              onClick={onClose}
+              className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/20 cursor-pointer"
+            >
+              Mulai Menghafal
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
@@ -43,7 +79,8 @@ export const CreateHafalanForm = ({ onClose }: CreateJuzFormProps) => {
           <select
             value={selectedJuz}
             onChange={(e) => handleJuzChange(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 text-white px-3.5 py-3.5 rounded-xl font-inter cursor-pointer appearance-none transition-colors hover:bg-white/10 focus:outline-none focus:border-amber-400 focus:bg-amber-500/5"
+            disabled={loading}
+            className="w-full bg-white/5 border border-white/10 text-white px-3.5 py-3.5 rounded-xl font-inter cursor-pointer appearance-none transition-colors hover:bg-white/10 focus:outline-none focus:border-amber-400 focus:bg-amber-500/5 disabled:opacity-50"
           >
             <option value="">-- Pilih Juz --</option>
             {Array.from({ length: 30 }, (_, i) => 30 - i).map((juz) => (
@@ -57,10 +94,20 @@ export const CreateHafalanForm = ({ onClose }: CreateJuzFormProps) => {
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          className="w-full py-4 bg-linear-to-r from-amber-400 to-amber-600 text-black font-bold uppercase rounded-xl transition-transform hover:-translate-y-0.5 hover:shadow-[0_5px_20px_rgba(245,158,11,0.2)] tracking-wider flex items-center justify-center gap-2"
+          disabled={loading || !selectedJuz}
+          className="w-full py-4 bg-linear-to-r from-amber-400 to-amber-600 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-500 text-black font-bold uppercase rounded-xl transition-transform hover:-translate-y-0.5 hover:shadow-[0_5px_20px_rgba(245,158,11,0.2)] tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
         >
-          <PlusCircle className="w-5 h-5" />
-          Tambahkan Juz
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Menyimpan...
+            </>
+          ) : (
+            <>
+              <PlusCircle className="w-5 h-5" />
+              Tambahkan Juz
+            </>
+          )}
         </button>
       </div>
     </div>

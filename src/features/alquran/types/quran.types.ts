@@ -1,7 +1,7 @@
 // CREATE JUZ
 
 export interface CreateJuzResponse {
-  status: string;
+  status: number;
   message: string;
   data: DataJuz;
   timestamp: string;
@@ -11,7 +11,7 @@ export interface CreateJuzResponse {
 export interface DataJuz {
   ID: string;
   UserID: string;
-  index: number;
+  Index: number;
   CreatedAt: string;
 }
 
