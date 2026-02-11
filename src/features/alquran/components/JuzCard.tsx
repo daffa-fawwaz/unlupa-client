@@ -1,4 +1,4 @@
-import type { LifecycleStats } from "../types/quran.types";
+import type { LifecycleStats } from "@/features/alquran/types/quran.types";
 
 interface JuzCardProps {
   juzNumber: string;
@@ -32,42 +32,26 @@ export const JuzCard = ({
       </div>
 
       {/* Lifecycle Grid */}
-      <div className="grid grid-cols-3 gap-3 border-t border-dashed border-white/10 pt-4 mt-auto">
+      <div className="grid grid-cols-2 gap-3 border-t border-dashed border-white/10 pt-4 mt-auto">
         <div className="flex flex-col items-center">
           <span className="text-base font-mono font-bold text-blue-400">
-            {stats.new}
+            {stats.menghafal}
           </span>
           <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
-            Belum
-          </span>
-        </div>
-        <div className="flex flex-col items-center">
-          <span className="text-base font-mono font-bold text-orange-400">
-            {stats.memorizing}
-          </span>
-          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
-            Proses
-          </span>
-        </div>
-        <div className="flex flex-col items-center">
-          <span className="text-base font-mono font-bold text-red-400">
-            {stats.consolidation}
-          </span>
-          <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
-            Kuatkan
+            Menghafal
           </span>
         </div>
         <div className="flex flex-col items-center">
           <span className="text-base font-mono font-bold text-amber-400">
-            {stats.active}
+            {stats.murajaah}
           </span>
           <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
-            Ujian
+            Murajaah
           </span>
         </div>
         <div className="flex flex-col items-center">
           <span className="text-base font-mono font-bold text-emerald-400">
-            {stats.maintenance}
+            {stats.terjaga}
           </span>
           <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
             Terjaga
@@ -75,7 +59,7 @@ export const JuzCard = ({
         </div>
         <div className="flex flex-col items-center">
           <span className="text-base font-mono font-bold text-purple-400">
-            {stats.graduated}
+            {stats.selesai}
           </span>
           <span className="text-[0.5rem] text-gray-500 uppercase tracking-wider text-center mt-0.5">
             Selesai

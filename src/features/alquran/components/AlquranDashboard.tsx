@@ -107,12 +107,10 @@ export const AlquranDashboard = ({
               juzNumber={"1"}
               itemCount={0}
               stats={{
-                new: 0,
-                memorizing: 0,
-                consolidation: 0,
-                active: 0,
-                maintenance: 0,
-                graduated: 0,
+                menghafal: 0,
+                murajaah: 0,
+                terjaga: 0,
+                selesai: 0,
               }}
               onClick={() => onJuzClick("1")}
             />

@@ -15,6 +15,15 @@ export interface DataJuz {
   CreatedAt: string;
 }
 
+// Lifecycle statistics
+export interface LifecycleStats {
+  menghafal: number;
+  murajaah: number;
+  terjaga: number;
+  selesai: number;
+}
+
+
 // Enum for item lifecycle status
 // Item lifecycle status type
 export type ItemStatus =
@@ -88,12 +97,3 @@ export interface QuranDraft {
   time: number;
 }
 
-// Lifecycle statistics
-export interface LifecycleStats {
-  new: number;
-  memorizing: number;
-  consolidation: number;
-  active: number;
-  maintenance: number;
-  graduated: number;
-}
