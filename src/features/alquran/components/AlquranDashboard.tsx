@@ -1,9 +1,10 @@
 import { Menu, Moon, Plus } from "lucide-react";
 import { ProgressBar } from "./ProgressBar";
 import { JuzCard } from "./JuzCard";
-import type { LifecycleStats } from "../types/quran.types";
+import type { CardJuzData, LifecycleStats } from "../types/quran.types";
 import { Sidebar } from "@/components/ui/Sidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";
 
 interface AlquranDashboardProps {
   progress: {
@@ -22,7 +23,13 @@ export const AlquranDashboard = ({
   onJuzClick,
   onAddClick,
 }: AlquranDashboardProps) => {
+  const { data, getJuz } = useGetJuz();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    getJuz();
+  }, [data]);
+
   return (
     <>
       <div className="min-h-screen p-4 bg-deep-universe rounded">
@@ -102,18 +109,20 @@ export const AlquranDashboard = ({
 
           {/* Juz Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <JuzCard
-              key={"1"}
-              juzNumber={"1"}
-              itemCount={0}
-              stats={{
-                menghafal: 0,
-                murajaah: 0,
-                terjaga: 0,
-                selesai: 0,
-              }}
-              onClick={() => onJuzClick("1")}
-            />
+            {data?.data.map((juz: CardJuzData) => (
+              <JuzCard
+                key={juz.juz_id}
+                juzNumber={juz.juz_index}
+                itemCount={juz.total_items}
+                stats={{
+                  menghafal: juz.menghafal,
+                  murajaah: juz.fsrs_active,
+                  terjaga: juz.graduate,
+                  selesai: juz.graduate,
+                }}
+                onClick={() => onJuzClick(juz.juz_id)}
+              />
+            ))}
           </div>
         </div>
       </div>

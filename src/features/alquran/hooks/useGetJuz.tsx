@@ -1,17 +1,17 @@
 import { useState } from "react";
-import type { CreateJuzResponse } from "../types/quran.types";
+import type { GetJuzResponse } from "../types/quran.types";
 import { alquranService } from "../services/alquran.services";
 
-export const useCreateJuz = () => {
-  const [data, setData] = useState<CreateJuzResponse | null>(null);
+export const useGetJuz = () => {
+  const [data, setData] = useState<GetJuzResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createJuz = async (juzIndex: number) => {
+  const getJuz = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await alquranService.createJuz(juzIndex);
+      const response = await alquranService.getJuz();
       setData(response);
     } catch (err) {
       const message =
@@ -23,5 +23,5 @@ export const useCreateJuz = () => {
     }
   };
 
-  return { data, loading, error, createJuz };
+  return { data, loading, error, getJuz };
 };

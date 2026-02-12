@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { PlusCircle, X, CheckCircle, Loader2 } from "lucide-react";
 import { useCreateJuz } from "@/features/alquran/hooks/useCreateJuz";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
 
 interface CreateJuzFormProps {
   onClose: () => void;
 }
 
 export const CreateHafalanForm = ({ onClose }: CreateJuzFormProps) => {
-  const { createJuz, loading, data } = useCreateJuz();
+  const { createJuz, loading, data, error } = useCreateJuz();
   const [selectedJuz, setSelectedJuz] = useState("");
 
   const handleJuzChange = (juz: string) => {
@@ -109,6 +110,7 @@ export const CreateHafalanForm = ({ onClose }: CreateJuzFormProps) => {
             </>
           )}
         </button>
+        <ErrorMessage message={error} />
       </div>
     </div>
   );

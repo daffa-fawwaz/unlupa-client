@@ -15,6 +15,21 @@ export interface DataJuz {
   CreatedAt: string;
 }
 
+export interface GetJuzResponse {
+  status: number;
+  message: string;
+  data: CardJuzData[];
+}
+
+export interface CardJuzData {
+  juz_id: string;
+  juz_index: number;
+  total_items: number;
+  menghafal: number;
+  interval: number;
+  fsrs_active: number;
+  graduate: number;
+}
 // Lifecycle statistics
 export interface LifecycleStats {
   menghafal: number;
@@ -22,7 +37,6 @@ export interface LifecycleStats {
   terjaga: number;
   selesai: number;
 }
-
 
 // Enum for item lifecycle status
 // Item lifecycle status type
@@ -96,4 +110,3 @@ export interface QuranDraft {
   pageEnd: number;
   time: number;
 }
-
