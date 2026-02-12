@@ -7,7 +7,8 @@ interface CreateJuzFormProps {
   onClose: () => void;
 }
 
-export const CreateHafalanForm = ({ onClose }: CreateJuzFormProps) => {
+
+export const CreateJuzForm = ({ onClose }: CreateJuzFormProps) => {
   const { createJuz, loading, data, error } = useCreateJuz();
   const [selectedJuz, setSelectedJuz] = useState("");
 

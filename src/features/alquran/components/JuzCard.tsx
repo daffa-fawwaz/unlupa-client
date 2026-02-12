@@ -1,7 +1,7 @@
 import type { LifecycleStats } from "@/features/alquran/types/quran.types";
 
 interface JuzCardProps {
-  juzNumber:  number;
+  juzNumber: number;
   itemCount: number;
   stats: LifecycleStats;
   onClick: () => void;

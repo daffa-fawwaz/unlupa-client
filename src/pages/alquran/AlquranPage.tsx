@@ -7,7 +7,7 @@ import { useToast } from "@/features/alquran/hooks/useToast";
 // Components
 import { AlquranDashboard } from "@/features/alquran/components/AlquranDashboard";
 import { JuzDetailView } from "@/features/alquran/components/JuzDetailView";
-import { CreateHafalanForm } from "@/features/alquran/components/CreateJuzForm";
+import { CreateJuzForm } from "@/features/alquran/components/CreateJuzForm";
 import { Toast } from "@/features/alquran/components/Toast";
 
 // Styles
@@ -17,22 +17,12 @@ type ViewMode = "dashboard" | "detail" | "create";
 
 export const AlquranPage = () => {
   const [view, setView] = useState<ViewMode>("dashboard");
-  const [activeJuz, setActiveJuz] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [activeJuz, setActiveJuz] = useState<string | null>(null);
+  const { getJuzItems, getJuzStats, calculateProgress } = useQuranData();
 
-  const {
-    materials,
-    addItem,
-    updateItemStatus,
-    deleteItem,
-    getJuzItems,
-    getJuzStats,
-    calculateProgress,
-  } = useQuranData();
+  const { toast } = useToast();
 
-  const { toast, showToast } = useToast();
-
-  // Navigation Handlers
   const handleJuzClick = (juz: string) => {
     setActiveJuz(juz);
     setView("detail");
@@ -43,20 +33,6 @@ export const AlquranPage = () => {
     setActiveJuz(null);
     setView("dashboard");
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleCreateSubmit = (
-    juz: string,
-    surahName: string,
-    ayatStart: number,
-    ayatEnd: number,
-    pageStart: number,
-    pageEnd: number,
-    time: number,
-  ) => {
-    addItem(juz, surahName, ayatStart, ayatEnd, pageStart, pageEnd, time);
-    setShowCreateForm(false);
-    showToast("Hafalan berhasil ditambahkan!", "success");
   };
 
   return (
@@ -79,31 +55,12 @@ export const AlquranPage = () => {
           />
         )}
 
-        {view === "detail" && activeJuz && (
-          <JuzDetailView
-            juz={activeJuz}
-            items={getJuzItems(activeJuz)}
-            materials={materials}
-            onBack={handleBackToDashboard}
-            onStatusChange={(id, status) => {
-              updateItemStatus(id, status);
-              showToast("Status berhasil diperbarui!", "success");
-            }}
-            onDelete={(id) => {
-              deleteItem(id);
-              showToast("Item berhasil dihapus.", "info");
-            }}
-            onAddItem={() => setShowCreateForm(true)}
-          />
-        )}
+        {view === "detail" && activeJuz && <JuzDetailView backToDashboard={handleBackToDashboard} />}
       </div>
 
       {/* Modals & Overlays */}
       {showCreateForm && (
-        <CreateHafalanForm
-          onClose={() => setShowCreateForm(false)}
-          onSubmit={handleCreateSubmit}
-        />
+        <CreateJuzForm onClose={() => setShowCreateForm(false)} />
       )}
 
       {/* Toast Notification */}
