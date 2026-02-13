@@ -26,8 +26,8 @@ export const JuzDetailView = ({ backToDashboard }: JuzDetailViewProps) => {
       </div>
 
       {/* Content */}
-      {/* <div className="grid gap-3">
-        {sortedItems.length > 0 ? (
+      <div className="grid gap-3">
+        {/* {sortedItems.length > 0 ? (
           sortedItems.map((item) => (
             <QuranItemRow
               key={item.id_system}
@@ -37,18 +37,15 @@ export const JuzDetailView = ({ backToDashboard }: JuzDetailViewProps) => {
               onDelete={onDelete}
             />
           ))
-        ) : (
-          <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/2">
-            <p className="text-gray-500 mb-4">Belum ada hafalan di Juz {juz}</p>
-            <button
-              onClick={onAddItem}
-              className="px-6 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10 transition-all font-medium text-sm"
-            >
-              Mulai Menghafal
-            </button>
-          </div>
-        )}
-      </div> */}
+        ) : ( */}
+        <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/2">
+          <p className="text-gray-500 mb-4">Belum ada hafalan di Juz 1</p>
+          <button className="px-6 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10 transition-all font-medium text-sm">
+            Mulai Menghafal
+          </button>
+        </div>
+        {/* )} */}
+      </div>
     </div>
   );
 };
