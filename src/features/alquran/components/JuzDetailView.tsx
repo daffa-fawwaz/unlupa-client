@@ -8,7 +8,7 @@ export const JuzDetailView = ({ backToDashboard }: JuzDetailViewProps) => {
   return (
     <div className="animate-fadeIn">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-4 mb-8"> 
         <button
           className="p-2 rounded-xl cursor-pointer bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group"
           onClick={backToDashboard}
