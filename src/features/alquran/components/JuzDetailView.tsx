@@ -21,7 +21,7 @@ export const JuzDetailView = ({ backToDashboard }: JuzDetailViewProps) => {
         </div>
         <button className="ml-auto px-4 py-2 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-xl hover:bg-amber-500 hover:text-black transition-all flex items-center gap-2 text-sm font-medium">
           <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Tambah Hafalan</span>
+          <span className="hidden sm:inline">Tambah Hafalanmu Kisanak</span>
         </button>
       </div>
 
@@ -39,9 +39,9 @@ export const JuzDetailView = ({ backToDashboard }: JuzDetailViewProps) => {
           ))
         ) : ( */}
         <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/2">
-          <p className="text-gray-500 mb-4">Belum ada hafalan di Juz 1</p>
+          <p className="text-gray-500 mb-4">Belum ada hafalan</p>
           <button className="px-6 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10 transition-all font-medium text-sm">
-            Mulai Menghafal Juz 1
+            Mulai Menghafal
           </button>
         </div>
         {/* )} */}
