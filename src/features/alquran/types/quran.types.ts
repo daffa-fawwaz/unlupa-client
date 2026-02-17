@@ -30,6 +30,33 @@ export interface CardJuzData {
   fsrs_active: number;
   graduate: number;
 }
+
+// My Items API Response
+
+export interface MyItemDetail {
+  item_id: string;
+  content_ref: string;
+  status: string;
+  review_count: number;
+  created_at: string;
+}
+
+export interface QuranGroup {
+  juz_index: number;
+  juz_id: string;
+  item_count: number;
+  items: MyItemDetail[];
+}
+
+export interface MyItemsQuranResponse {
+  status: number;
+  message: string;
+  data: {
+    type: string;
+    groups: QuranGroup[];
+  };
+}
+
 // Lifecycle statistics
 export interface LifecycleStats {
   menghafal: number;

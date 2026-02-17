@@ -18,12 +18,15 @@ type ViewMode = "dashboard" | "detail" | "create";
 export const AlquranPage = () => {
   const [view, setView] = useState<ViewMode>("dashboard");
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [activeJuz, setActiveJuz] = useState<string | null>(null);
+  const [activeJuz, setActiveJuz] = useState<{
+    id: string;
+    index: number;
+  } | null>(null);
   const { getJuzItems, getJuzStats, calculateProgress } = useQuranData();
 
   const { toast } = useToast();
 
-  const handleJuzClick = (juz: string) => {
+  const handleJuzClick = (juz: { id: string; index: number }) => {
     setActiveJuz(juz);
     setView("detail");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -55,7 +58,13 @@ export const AlquranPage = () => {
           />
         )}
 
-        {view === "detail" && activeJuz && <JuzDetailView backToDashboard={handleBackToDashboard} />}
+        {view === "detail" && activeJuz && (
+          <JuzDetailView
+            juzId={activeJuz.id}
+            juzIndex={activeJuz.index}
+            backToDashboard={handleBackToDashboard}
+          />
+        )}
       </div>
 
       {/* Modals & Overlays */}

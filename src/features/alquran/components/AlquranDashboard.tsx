@@ -14,7 +14,7 @@ interface AlquranDashboardProps {
   };
   juzStats: (juz: string) => LifecycleStats;
   juzCounts: (juz: string) => number;
-  onJuzClick: (juz: string) => void;
+  onJuzClick: (juz: { id: string; index: number }) => void;
   onAddClick: () => void;
 }
 
@@ -120,7 +120,9 @@ export const AlquranDashboard = ({
                   terjaga: juz.graduate,
                   selesai: juz.graduate,
                 }}
-                onClick={() => onJuzClick(juz.juz_id)}
+                onClick={() =>
+                  onJuzClick({ id: juz.juz_id, index: juz.juz_index })
+                }
               />
             ))}
           </div>
