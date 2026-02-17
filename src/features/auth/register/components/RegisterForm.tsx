@@ -1,6 +1,6 @@
 import { Shield, AlertCircle } from "lucide-react";
-import type { RegisterPayload } from "../types/register.types";
-import type { RegisterFormProps } from "../types/register.types";
+import type { RegisterPayload } from "@/features/auth/register/types/register.types";
+import type { RegisterFormProps } from "@/features/auth/register/types/register.types";
 import { useState } from "react";
 
 export const RegisterForm = ({
