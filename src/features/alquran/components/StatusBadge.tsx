@@ -1,4 +1,4 @@
-import type { ItemStatus } from "../types/quran.types";
+import type { ItemStatus } from "@/features/alquran/types/quran.types";
 
 interface StatusBadgeProps {
   status: ItemStatus;

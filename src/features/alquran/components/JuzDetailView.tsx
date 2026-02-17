@@ -1,8 +1,8 @@
 import { ArrowLeft, Plus, BookOpen, Activity } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import { useGetMyItems } from "../hooks/useGetMyItems";
+import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { HafalanKosong } from "@/components/ui/HafalanKosong";
-import { HafalanCard } from "../../../components/ui/HafalanCard";
+import { HafalanCard } from "@/components/ui/HafalanCard";
 
 interface JuzDetailViewProps {
   juzId: string;

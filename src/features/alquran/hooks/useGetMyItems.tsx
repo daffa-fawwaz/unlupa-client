@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { MyItemsQuranResponse } from "../types/quran.types";
-import { alquranService } from "../services/alquran.services";
+import type { MyItemsQuranResponse } from "@/features/alquran/types/quran.types";
+import { alquranService } from "@/features/alquran/services/alquran.services";
 
 export const useGetMyItems = () => {
   const [data, setData] = useState<MyItemsQuranResponse | null>(null);

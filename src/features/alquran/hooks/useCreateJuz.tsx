@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { CreateJuzResponse } from "../types/quran.types";
-import { alquranService } from "../services/alquran.services";
+import type { CreateJuzResponse } from "@/features/alquran/types/quran.types";
+import { alquranService } from "@/features/alquran/services/alquran.services";
 
 export const useCreateJuz = () => {
   const [data, setData] = useState<CreateJuzResponse | null>(null);

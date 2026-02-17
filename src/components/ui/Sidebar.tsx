@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { X } from "lucide-react";
-import { DashboardRoleSwitcher } from "./SidebarRoleSwitcher";
-import { DashboardSidebarFooter } from "./SidebarFooter";
-import { LogoutConfirmModal } from "../../features/dashboard/components/LogoutConfirmModal";
-import { SidebarNavItems } from "./SidebarNavItems";
+import { SidebarRoleSwitcher } from "@/components/ui/SidebarRoleSwitcher";
+import { DashboardSidebarFooter } from "@/components/ui/SidebarFooter";
+import { LogoutConfirmModal } from "@/features/dashboard/components/LogoutConfirmModal";
+import { SidebarNavItems } from "@/components/ui/SidebarNavItems";
 import {
   sidebarClassItems,
   NavClassItem,
@@ -46,7 +46,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2 px-1">
               Mode Akun
             </p>
-            <DashboardRoleSwitcher />
+            <SidebarRoleSwitcher />
           </div>
         )}
 

@@ -1,6 +1,10 @@
 import { Trash2 } from "lucide-react";
-import { StatusBadge } from "./StatusBadge";
-import type { QuranItem, Material, ItemStatus } from "../types/quran.types";
+import { StatusBadge } from "@/features/alquran/components/StatusBadge";
+import type {
+  QuranItem,
+  Material,
+  ItemStatus,
+} from "@/features/alquran/types/quran.types";
 
 interface QuranItemRowProps {
   item: QuranItem;

@@ -1,4 +1,4 @@
-import type { SurahInfo, JuzPageRange } from "../types/quran.types";
+import type { SurahInfo, JuzPageRange } from "@/features/alquran/types/quran.types";
 
 // Database version
 export const DB_VERSION = 18;

@@ -1,4 +1,4 @@
-import type { ToastType } from "../hooks/useToast";
+import type { ToastType } from "@/features/alquran/hooks/useToast";
 
 interface ToastProps {
   show: boolean;

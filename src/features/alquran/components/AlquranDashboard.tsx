@@ -1,7 +1,10 @@
 import { Menu, Moon, Plus } from "lucide-react";
-import { ProgressBar } from "./ProgressBar";
-import { JuzCard } from "./JuzCard";
-import type { CardJuzData, LifecycleStats } from "../types/quran.types";
+import { ProgressBar } from "@/features/alquran/components/ProgressBar";
+import { JuzCard } from "@/features/alquran/components/JuzCard";
+import type {
+  CardJuzData,
+  LifecycleStats,
+} from "@/features/alquran/types/quran.types";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useEffect, useState } from "react";
 import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";

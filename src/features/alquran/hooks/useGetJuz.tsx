@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { GetJuzResponse } from "../types/quran.types";
-import { alquranService } from "../services/alquran.services";
+import type { GetJuzResponse } from "@/features/alquran/types/quran.types";
+import { alquranService } from "@/features/alquran/services/alquran.services";
 
 export const useGetJuz = () => {
   const [data, setData] = useState<GetJuzResponse | null>(null);
@@ -10,7 +10,7 @@ export const useGetJuz = () => {
   const getJuz = async () => {
     setLoading(true);
     setError(null);
-    try {
+    try { 
       const response = await alquranService.getJuz();
       setData(response);
     } catch (err) {
