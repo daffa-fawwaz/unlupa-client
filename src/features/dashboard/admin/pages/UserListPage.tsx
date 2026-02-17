@@ -14,7 +14,7 @@ import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
 import { useActivateUser } from "@/features/dashboard/admin/hooks/useActivateUser";
 import { useDeactivateUser } from "@/features/dashboard/admin/hooks/useDeactivateUser";
 import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
-import type { User } from "../types/user.types";
+import type { User } from "@/features/dashboard/admin/types/user.types";
 import type { TableColumn } from "@/features/dashboard/types/table.types";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Sidebar } from "@/components/ui/Sidebar";

@@ -11,10 +11,10 @@ import { useEffect, useState, useMemo } from "react";
 import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
 import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import type { TeacherRequest } from "../types/teacherRequest.types";
+import type { TeacherRequest } from "@/features/dashboard/admin/types/teacherRequest.types";
 import type { TableColumn } from "@/features/dashboard/types/table.types";
-import { useApproveTeacher } from "../hooks/useApproveTeacher";
-import { useRejectTeacher } from "../hooks/useRejectTeacher";
+import { useApproveTeacher } from "@/features/dashboard/admin/hooks/useApproveTeacher";
+import { useRejectTeacher } from "@/features/dashboard/admin/hooks/useRejectTeacher";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Sidebar } from "@/components/ui/Sidebar";
 

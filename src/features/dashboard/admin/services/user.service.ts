@@ -1,5 +1,5 @@
 import { api } from "@/lib/axios";
-import type { UserListResponse, UserActionResponse } from "../types/user.types";
+import type { UserListResponse, UserActionResponse } from "@/features/dashboard/admin/types/user.types";
 
 export const userService = {
   // Get all users

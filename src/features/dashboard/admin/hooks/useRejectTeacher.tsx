@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { teacherApproveService } from "../services/teacherRequest.service";
-import type { TeacherRequestResponse } from "../types/teacherRequest.types";
+import { teacherApproveService } from "@/features/dashboard/admin/services/teacherRequest.service";
+import type { TeacherRequestResponse } from "@/features/dashboard/admin/types/teacherRequest.types";
 
 export const useRejectTeacher = () => {
   const [loading, setLoading] = useState(false);

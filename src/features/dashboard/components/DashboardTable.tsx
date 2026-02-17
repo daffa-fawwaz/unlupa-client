@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { DashboardTableHeader } from "./DashboardTableHeader";
-import { DashboardTableRow } from "./DashboardTableRow";
-import type { TableColumn } from "../types/table.types";
+import { DashboardTableHeader } from "@/features/dashboard/components/DashboardTableHeader";
+import { DashboardTableRow } from "@/features/dashboard/components/DashboardTableRow";
+import type { TableColumn } from "@/features/dashboard/types/table.types";
 
 interface DashboardTableProps<T> {
   data: T[] | null;

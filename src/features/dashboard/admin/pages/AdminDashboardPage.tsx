@@ -9,7 +9,7 @@ import {
   Calendar,
   Shield,
 } from "lucide-react";
-import { StatCard, stats } from "../../../../components/ui/StatCard";
+import { StatCard, stats } from "@/components/ui/StatCard";
 import { Sidebar } from "@/components/ui/Sidebar";
 
 export const AdminDashboardPage = () => {

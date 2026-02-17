@@ -1,8 +1,8 @@
 import { useAuthStore } from "@/features/auth/stores/auth.store";
-import { AdminDashboardPage } from "./admin/pages/AdminDashboardPage";
-import { TeacherDashboardPage } from "./teacher/pages/TeacherDashboardPage";
-import { StudentDashboardPage } from "./student/pages/StudentDashboardPage";
-import { useDashboardModeStore } from "./stores/dashboard-mode.store";
+import { AdminDashboardPage } from "@/features/dashboard/admin/pages/AdminDashboardPage";
+import { TeacherDashboardPage } from "@/features/dashboard/teacher/pages/TeacherDashboardPage";
+import { StudentDashboardPage } from "@/features/dashboard/student/pages/StudentDashboardPage";
+import { useDashboardModeStore } from "@/features/dashboard/stores/dashboard-mode.store";
 import { Navigate } from "react-router";
 
 export const DashboardShell = () => {

@@ -1,4 +1,4 @@
-import type { TableColumn } from "../types/table.types";
+import type { TableColumn } from "@/features/dashboard/types/table.types";
 
 interface DashboardTableHeaderProps {
   columns: TableColumn[];

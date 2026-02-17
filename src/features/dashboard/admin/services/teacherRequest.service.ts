@@ -1,5 +1,5 @@
 import { api } from "@/services/api";
-import type { TeacherRequestResponse } from "../types/teacherRequest.types";
+import type { TeacherRequestResponse } from "@/features/dashboard/admin/types/teacherRequest.types";
 
 export const teacherRequestService = {
   getTeacherRequests: async (): Promise<TeacherRequestResponse> => {

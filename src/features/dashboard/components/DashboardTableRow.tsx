@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { TableColumn } from "../types/table.types";
+import type { TableColumn } from "@/features/dashboard/types/table.types";
 
 interface TableRowProps<T> {
   item: T;

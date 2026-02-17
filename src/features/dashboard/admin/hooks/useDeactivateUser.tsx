@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { userService } from "../services/user.service";
+import { userService } from "@/features/dashboard/admin/services/user.service";
 
 export const useDeactivateUser = () => {
   const [loading, setLoading] = useState(false);
