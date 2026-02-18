@@ -1,8 +1,9 @@
 import { ArrowLeft, Plus, BookOpen, Activity } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { HafalanKosong } from "@/components/ui/HafalanKosong";
 import { HafalanCard } from "@/components/ui/HafalanCard";
+import { AddHafalanModal } from "./AddHafalanModal";
 
 interface JuzDetailViewProps {
   juzId: string;
@@ -16,6 +17,7 @@ export const JuzDetailView = ({
   backToDashboard,
 }: JuzDetailViewProps) => {
   const { data, loading, error, getMyItems } = useGetMyItems();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     getMyItems("quran");
@@ -25,6 +27,11 @@ export const JuzDetailView = ({
     if (!data?.data?.groups) return null;
     return data.data.groups.find((group) => group.juz_id === juzId);
   }, [data, juzId]);
+
+  const handleSaveHafalan = () => {
+    // Refresh data after successful save
+    getMyItems("quran");
+  };
 
   return (
     <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,7 +71,10 @@ export const JuzDetailView = ({
             </div>
           </div>
 
-          <button className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-600 rounded-2xl text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 group">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-600 rounded-2xl text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 group"
+          >
             <div className="p-1 bg-black/20 rounded-full group-hover:rotate-90 transition-transform duration-300">
               <Plus className="w-5 h-5 text-black" />
             </div>
@@ -98,6 +108,16 @@ export const JuzDetailView = ({
           <HafalanKosong hafalan="Juz" />
         )}
       </div>
+
+      {/* Add Hafalan Modal */}
+      <AddHafalanModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        juzId={juzId}
+        juzNumber={juzIndex}
+        existingItems={juzData?.items || []}
+        onSave={handleSaveHafalan}
+      />
     </div>
   );
 };

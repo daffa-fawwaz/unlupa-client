@@ -31,6 +31,27 @@ export interface CardJuzData {
   graduate: number;
 }
 
+export interface CreateJuzItemResponse {
+  status: number;
+  message: string;
+  data: DataJuzItem;
+  timestamp: string;
+  path: string;
+}
+
+export interface DataJuzItem {
+  item_id: string;
+  juz_id: string;
+  source_stype: string;
+  content_ref: string;
+  status: string;
+}
+
+export interface CreateJuzItemPayload {
+  mode: string;
+  content_ref: string;
+}
+
 // My Items API Response
 
 export interface MyItemDetail {

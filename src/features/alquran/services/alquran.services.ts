@@ -1,5 +1,7 @@
 import { api } from "@/lib/axios";
 import type {
+  CreateJuzItemPayload,
+  CreateJuzItemResponse,
   CreateJuzResponse,
   GetJuzResponse,
   MyItemsQuranResponse,
@@ -13,6 +15,14 @@ export const alquranService = {
 
   async getJuz(): Promise<GetJuzResponse> {
     const response = await api.get("/api/v1/juz");
+    return response.data;
+  },
+
+  async createJuzItem(
+    juzId: string,
+    data: CreateJuzItemPayload,
+  ): Promise<CreateJuzItemResponse> {
+    const response = await api.post(`/api/v1/juz/${juzId}/items`, data);
     return response.data;
   },
 

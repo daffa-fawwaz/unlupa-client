@@ -1,0 +1,356 @@
+import { useState, useMemo, useEffect } from "react";
+import {
+  BookOpen,
+  FileText,
+  X,
+  ArrowLeft,
+  Check,
+  ChevronRight,
+} from "lucide-react";
+import {
+  SURAH_MAP,
+  PAGE_DATABASE,
+} from "@/features/alquran/constants/quranData";
+import { DualRangeSlider } from "@/components/ui/DualRangeSlider";
+import { clsx } from "clsx";
+import { useCreateJuzItem } from "@/features/alquran/hooks/useCreateJuzItem";
+import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
+
+import type { MyItemDetail } from "@/features/alquran/types/quran.types";
+
+interface AddHafalanModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  juzId: string; // e.g., UUID
+  juzNumber: number; // e.g., 1-30
+  existingItems: MyItemDetail[];
+  onSave: (data: any) => void;
+}
+
+type Mode = "SURAH" | "PAGE" | null;
+
+export const AddHafalanModal = ({
+  isOpen,
+  onClose,
+  juzId,
+  juzNumber,
+  existingItems = [],
+  onSave,
+}: AddHafalanModalProps) => {
+  const [mode, setMode] = useState<Mode>(null);
+  const [selectedSurahIndex, setSelectedSurahIndex] = useState<number>(0);
+  const [range, setRange] = useState({ min: 0, max: 0 });
+  const [isDuplicate, setIsDuplicate] = useState(false);
+
+  // Get data for this Juz using juzNumber
+  const pageRange = PAGE_DATABASE[juzNumber.toString()] || { min: 1, max: 1 }; // Fallback to avoid crash
+  const surahs = SURAH_MAP[juzNumber.toString()] || [];
+
+  // Parse Surah Range (e.g., "Al-Baqarah (142-252)" -> name: "Al-Baqarah", start: 142, end: 252)
+  const parsedSurahs = useMemo(() => {
+    return surahs.map((s) => {
+      const match = s.n.match(/(.+?)\s*\((\d+)-(\d+)\)/);
+      if (match) {
+        return {
+          name: match[1].trim(),
+          start: parseInt(match[2]),
+          end: parseInt(match[3]),
+          totalAyat: parseInt(match[3]) - parseInt(match[2]) + 1,
+        };
+      }
+      return {
+        name: s.n, // Full name if no range (e.g., "Al-Fatihah")
+        start: 1,
+        end: s.a,
+        totalAyat: s.a,
+      };
+    });
+  }, [surahs]);
+
+  // Check for duplicates whenever mode, surah, or range changes
+  useEffect(() => {
+    if (!mode) return;
+
+    let currentContentRef = "";
+    if (mode === "PAGE") {
+      currentContentRef = `page:${range.min}-${range.max}`;
+    } else {
+      const surah = parsedSurahs[selectedSurahIndex];
+      // Find Surah ID logic
+      let surahIndex = SURAH_NAMES.findIndex(
+        (name) =>
+          name === surah.name ||
+          name.startsWith(surah.name) ||
+          surah.name.startsWith(name),
+      );
+      const surahId = surahIndex !== -1 ? surahIndex + 1 : 0;
+      currentContentRef = `surah:${surahId}:${range.min}-${range.max}`;
+    }
+
+    // Check if this content_ref exists in existingItems
+    /* 
+       Note: Existing items might have content_ref like "surah:78:1-40".
+       We need to check exact matches.
+    */
+    const duplicate = existingItems.some(
+      (item) => item.content_ref === currentContentRef,
+    );
+    setIsDuplicate(duplicate);
+  }, [mode, range, selectedSurahIndex, existingItems, parsedSurahs]);
+
+  // Reset range when mode or selected Surah changes
+  useEffect(() => {
+    if (mode === "PAGE") {
+      setRange({ min: pageRange.min, max: pageRange.max });
+    } else if (mode === "SURAH" && parsedSurahs[selectedSurahIndex]) {
+      const surah = parsedSurahs[selectedSurahIndex];
+      setRange({ min: surah.start, max: surah.end });
+    }
+  }, [mode, selectedSurahIndex, pageRange, parsedSurahs]);
+
+  // API Hook
+  const { createJuzItem, loading, error } = useCreateJuzItem();
+
+  const handleSave = async () => {
+    if (isDuplicate) return;
+
+    let contentRef = "";
+    let modeType = "";
+
+    if (mode === "PAGE") {
+      modeType = "page";
+      // Format: "page:start-end"
+      contentRef = `page:${range.min}-${range.max}`;
+    } else {
+      modeType = "surah";
+      const surah = parsedSurahs[selectedSurahIndex];
+
+      // Find Surah ID
+      // Handle edge case like "An-Naba" vs "An-Naba'"
+      let surahIndex = SURAH_NAMES.findIndex(
+        (name) =>
+          name === surah.name ||
+          name.startsWith(surah.name) ||
+          surah.name.startsWith(name),
+      );
+
+      const surahId = surahIndex !== -1 ? surahIndex + 1 : 0;
+
+      // Format: "surah:SURAH_ID:START-END"
+      // Example: "surah:1:1-7"
+      contentRef = `surah:${surahId}:${range.min}-${range.max}`;
+    }
+
+    try {
+      await createJuzItem(juzId, {
+        mode: modeType,
+        content_ref: contentRef,
+      });
+
+      onSave(null); // Trigger refresh in parent
+      onClose();
+
+      // Reset state
+      setTimeout(() => {
+        setMode(null);
+        setSelectedSurahIndex(0);
+        setIsDuplicate(false);
+      }, 300);
+    } catch (err) {
+      console.error("Failed to save:", err);
+      // Optional: Show error toast here
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fadeIn"
+        onClick={onClose}
+      />
+
+      {/* Modal Content */}
+      <div className="relative w-full max-w-lg bg-[#0F1218] border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        {/* Header */}
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {mode && (
+              <button
+                onClick={() => setMode(null)}
+                className="p-2 -ml-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
+            <h2 className="text-xl font-serif text-white">
+              {mode === "PAGE"
+                ? "Target Halaman"
+                : mode === "SURAH"
+                  ? "Target Surah"
+                  : "Tambah Hafalan"}
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="p-6">
+          {!mode ? (
+            // STEP 1: Mode Selection
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => setMode("SURAH")}
+                className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all text-left flex flex-col gap-4 overflow-hidden"
+              >
+                <div className="p-3 w-fit rounded-2xl bg-amber-500/20 text-amber-500 group-hover:scale-110 transition-transform duration-300">
+                  <BookOpen className="w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">
+                    Per Surah
+                  </h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Hafalan berdasarkan ayat dalam surah tertentu.
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setMode("PAGE")}
+                className="group relative p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all text-left flex flex-col gap-4 overflow-hidden"
+              >
+                <div className="p-3 w-fit rounded-2xl bg-blue-500/20 text-blue-500 group-hover:scale-110 transition-transform duration-300">
+                  <FileText className="w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">
+                    Per Halaman
+                  </h3>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Hafalan berdasarkan rentang halaman Mushaf.
+                  </p>
+                </div>
+              </button>
+            </div>
+          ) : (
+            // STEP 2: Input Controls
+            <div className="space-y-8">
+              {/* Surah Selector (Only for SURAH mode) */}
+              {mode === "SURAH" && (
+                <div className="space-y-3">
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Pilih Surah di Juz {juzNumber}
+                  </label>
+                  <div className="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                    {parsedSurahs.map((surah, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedSurahIndex(idx)}
+                        className={clsx(
+                          "w-full p-4 rounded-xl border text-left transition-all flex items-center justify-between shrink-0",
+                          selectedSurahIndex === idx
+                            ? "bg-amber-500/20 border-amber-500/50 text-amber-500"
+                            : "bg-white/5 border-white/5 text-gray-400 hover:bg-white/10",
+                        )}
+                      >
+                        <div>
+                          <div className="font-bold text-sm">{surah.name}</div>
+                          <div className="text-xs opacity-70">
+                            Ayat {surah.start} - {surah.end}
+                          </div>
+                        </div>
+                        {selectedSurahIndex === idx && (
+                          <Check className="w-5 h-5" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Slider Input */}
+              <div className="space-y-6 pt-2">
+                <div className="flex justify-between items-end">
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    {mode === "PAGE" ? "Rentang Halaman" : "Rentang Ayat"}
+                  </label>
+                  <div className="text-2xl font-mono font-bold text-white">
+                    {range.min} <span className="text-gray-600">-</span>{" "}
+                    {range.max}
+                  </div>
+                </div>
+
+                <div className="px-2">
+                  <DualRangeSlider
+                    key={`${mode}-${selectedSurahIndex}`}
+                    min={
+                      mode === "PAGE"
+                        ? pageRange.min
+                        : parsedSurahs[selectedSurahIndex]?.start || 1
+                    }
+                    max={
+                      mode === "PAGE"
+                        ? pageRange.max
+                        : parsedSurahs[selectedSurahIndex]?.end || 10
+                    }
+                    onChange={setRange}
+                  />
+                </div>
+
+                <p className="text-xs text-center text-gray-500">
+                  Geser tombol untuk menentukan target hafalanmu.
+                </p>
+              </div>
+
+              {/* Save Button */}
+              <div className="space-y-3">
+                <button
+                  onClick={handleSave}
+                  disabled={loading || isDuplicate}
+                  className={clsx(
+                    "w-full py-4 rounded-xl text-black font-bold shadow-lg transition-all flex items-center justify-center gap-2",
+                    isDuplicate
+                      ? "bg-gray-700 text-gray-400 cursor-not-allowed shadow-none"
+                      : "bg-linear-to-r from-amber-500 to-orange-600 shadow-amber-900/20 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed",
+                  )}
+                >
+                  {loading ? (
+                    <span>Menyimpan...</span>
+                  ) : isDuplicate ? (
+                    <span>Hafalan Sudah Ada</span>
+                  ) : (
+                    <>
+                      <span>Simpan Target</span>
+                      <ChevronRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+
+                {isDuplicate && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-center animate-fadeIn">
+                    <p className="text-red-400 text-xs font-semibold">
+                      Anda sudah memiliki target hafalan ini. Silakan pilih
+                      rentang ayat atau surah lain.
+                    </p>
+                  </div>
+                )}
+
+                {error && (
+                  <p className="text-red-500 text-center text-sm">{error}</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
