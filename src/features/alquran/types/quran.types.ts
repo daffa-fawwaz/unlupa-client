@@ -52,6 +52,20 @@ export interface CreateJuzItemPayload {
   content_ref: string;
 }
 
+// Start Interval
+export interface StartIntervalPayload {
+  interval_days: number;
+}
+
+export interface StartIntervalResponse {
+  status: number;
+  message: string;
+  error: string;
+  status_code: number;
+  timestamp?: string;
+  path?: string;
+}
+
 // My Items API Response
 
 export interface MyItemDetail {

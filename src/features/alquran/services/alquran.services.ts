@@ -5,6 +5,8 @@ import type {
   CreateJuzResponse,
   GetJuzResponse,
   MyItemsQuranResponse,
+  StartIntervalPayload,
+  StartIntervalResponse,
 } from "@/features/alquran/types/quran.types";
 
 export const alquranService = {
@@ -30,6 +32,17 @@ export const alquranService = {
     type: "quran" | "book" = "quran",
   ): Promise<MyItemsQuranResponse> {
     const response = await api.get(`/api/v1/my-items?type=${type}`);
+    return response.data;
+  },
+  
+  async startInterval(
+    itemId: string,
+    payload: StartIntervalPayload,
+  ): Promise<StartIntervalResponse> {
+    const response = await api.post(
+      `/api/v1/items/${itemId}/start-interval`,
+      payload,
+    );
     return response.data;
   },
 };
