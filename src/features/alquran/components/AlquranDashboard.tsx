@@ -70,8 +70,8 @@ export const AlquranDashboard = ({
                 itemCount={juz.total_items}
                 stats={{
                   menghafal: juz.menghafal,
-                  murajaah: juz.fsrs_active,
-                  terjaga: juz.graduate,
+                  murajaah: juz.interval,
+                  terjaga: juz.fsrs_active,
                   selesai: juz.graduate,
                 }}
                 onClick={() =>

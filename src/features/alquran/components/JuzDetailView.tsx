@@ -4,17 +4,20 @@ import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { HafalanKosong } from "@/components/ui/HafalanKosong";
 import { HafalanCard } from "@/components/ui/HafalanCard";
 import { AddHafalanModal } from "./AddHafalanModal";
+import type { MyItemDetail } from "@/features/alquran/types/quran.types";
 
 interface JuzDetailViewProps {
   juzId: string;
   juzIndex: number;
   backToDashboard: () => void;
+  onItemClick: (item: MyItemDetail) => void;
 }
 
 export const JuzDetailView = ({
   juzId,
   juzIndex,
   backToDashboard,
+  onItemClick,
 }: JuzDetailViewProps) => {
   const { data, loading, error, getMyItems } = useGetMyItems();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -102,7 +105,11 @@ export const JuzDetailView = ({
           </div>
         ) : juzData && juzData.items.length > 0 ? (
           juzData.items.map((item) => (
-            <HafalanCard key={item.item_id} item={item} />
+            <HafalanCard
+              key={item.item_id}
+              item={item}
+              onClick={() => onItemClick(item)}
+            />
           ))
         ) : (
           <HafalanKosong hafalan="Juz" />
