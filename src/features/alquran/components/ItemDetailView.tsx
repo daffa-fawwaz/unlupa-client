@@ -260,7 +260,7 @@ export const ItemDetailView = ({
         <div className="flex flex-col gap-2 p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/15 transition-colors">
           <div className="flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-wider">
             <CheckCircle className="w-4 h-4 text-green-500/60" />
-            Ditambahkan
+            Ditambahkann
           </div>
           <span className="text-sm font-medium text-gray-300 leading-snug mt-1">
             {createdDate}
