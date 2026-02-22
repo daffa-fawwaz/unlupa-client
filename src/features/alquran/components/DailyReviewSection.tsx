@@ -59,7 +59,7 @@ export const DailyReviewSection = () => {
 
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold tracking-wide uppercase mb-2">
-                  <Star className="w-3.5 h-3.5" /> File Prioritas Utama
+                  <Star className="w-3.5 h-3.5" /> Prioritas Utama
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">
                   Target Review Hari Ini
