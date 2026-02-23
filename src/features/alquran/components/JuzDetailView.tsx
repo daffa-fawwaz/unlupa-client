@@ -39,21 +39,33 @@ export const JuzDetailView = ({
   return (
     <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Premium Header */}
-      <div className="relative mb-12 p-8 md:p-10 rounded-[3rem] bg-linear-to-br from-amber-500/20 via-purple-500/10 to-transparent border border-white/10 overflow-hidden shadow-2xl">
+      <div className="relative mb-8 md:mb-12 p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] bg-linear-to-br from-amber-500/20 via-purple-500/10 to-transparent border border-white/10 overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 p-12 opacity-[0.03] transform translate-x-1/3 -translate-y-1/3 pointer-events-none">
-          <BookOpen className="w-96 h-96 text-white" />
+          <BookOpen className="w-64 h-64 md:w-96 md:h-96 text-white" />
         </div>
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex gap-6 items-start">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8 text-center md:text-left">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center md:items-start">
             <button
-              className="mt-1 p-3 rounded-2xl cursor-pointer bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/30 hover:shadow-amber-500/20 hover:scale-105 transition-all group backdrop-blur-sm"
+              className="mt-0 md:mt-1 p-3 rounded-2xl cursor-pointer bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/30 hover:shadow-amber-500/20 hover:scale-105 transition-all group backdrop-blur-sm shrink-0 self-start md:self-auto hidden md:block"
               onClick={backToDashboard}
             >
               <ArrowLeft className="w-6 h-6 text-gray-400 group-hover:text-amber-400 transition-colors" />
             </button>
-            <div>
-              <div className="flex items-center gap-3 mb-2">
+            <div className="w-full flex items-center justify-between md:hidden mb-2">
+              <button
+                className="p-3 rounded-2xl cursor-pointer bg-white/5 border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm"
+                onClick={backToDashboard}
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-400" />
+              </button>
+              <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                Juz {juzIndex}
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center md:items-start w-full">
+              <div className="hidden md:flex items-center gap-3 mb-2">
                 <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider">
                   Juz {juzIndex}
                 </span>
@@ -61,13 +73,13 @@ export const JuzDetailView = ({
                   Al-Qur'an Tracker
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2 tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 tracking-tight">
                 Hafalan{" "}
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-400">
                   Juz {juzIndex}
                 </span>
               </h1>
-              <p className="text-gray-400 text-lg flex items-center gap-2">
+              <p className="text-gray-400 text-base md:text-lg flex items-center justify-center md:justify-start gap-2">
                 <Activity className="w-4 h-4 text-green-500" />
                 {juzData?.item_count || 0} Item sedang dipelajari
               </p>
@@ -76,7 +88,7 @@ export const JuzDetailView = ({
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-8 py-4 bg-linear-to-r from-amber-500 to-orange-600 rounded-2xl text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 group"
+            className="w-full md:w-auto shrink-0 px-6 py-4 md:px-8 md:py-4 bg-linear-to-r from-amber-500 to-orange-600 rounded-2xl text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
           >
             <div className="p-1 bg-black/20 rounded-full group-hover:rotate-90 transition-transform duration-300">
               <Plus className="w-5 h-5 text-black" />

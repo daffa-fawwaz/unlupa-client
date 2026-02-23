@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardActionButtons } from "./DashboardActionButtons";
+import { DailyReviewSection } from "./DailyReviewSection";
 
 interface AlquranDashboardProps {
   progress: {
@@ -58,7 +59,22 @@ export const AlquranDashboard = ({
             percentage={progress.percentage}
           />
 
-          {/* Actions Bar */}
+          {/* 🌟 HERO SECTION: Daily Review Target */}
+          <DailyReviewSection />
+
+          {/* Section: Koleksi Hafalan & Actions */}
+          <div className="mt-12 mb-6 border-t border-white/10 pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-1 border-l-4 border-emerald-500 pl-3">
+                Koleksi Hafalan & Juz
+              </h2>
+              <p className="text-gray-400 text-sm pl-4">
+                Pantau progress hafalan dan tambahkan target Juz baru di sini.
+              </p>
+            </div>
+          </div>
+
+          {/* Actions Bar (Tambah Target etc) */}
           <DashboardActionButtons onAddClick={onAddClick} />
 
           {/* Juz Grid */}
