@@ -24,10 +24,66 @@ interface AddHafalanModalProps {
   juzId: string; // e.g., UUID
   juzNumber: number; // e.g., 1-30
   existingItems: MyItemDetail[];
-  onSave: (data: any) => void;
+  onSave: (data: unknown) => void;
 }
 
 type Mode = "SURAH" | "PAGE" | null;
+
+type ParsedContentRef =
+  | { mode: "surah"; key: number; start: number; end: number }
+  | { mode: "page"; key: 0; start: number; end: number }
+  | null;
+
+const normalizeRange = (start: number, end: number) => ({
+  start: Math.min(start, end),
+  end: Math.max(start, end),
+});
+
+const parseContentRef = (contentRef: string): ParsedContentRef => {
+  if (contentRef.startsWith("surah:")) {
+    const [, surahIdRaw, rangeRaw] = contentRef.split(":");
+    const [startRaw, endRaw] = (rangeRaw || "").split("-");
+    const surahId = Number(surahIdRaw);
+    const start = Number(startRaw);
+    const end = Number(endRaw);
+    if (!Number.isFinite(surahId) || !Number.isFinite(start) || !Number.isFinite(end)) {
+      return null;
+    }
+    const normalized = normalizeRange(start, end);
+    return {
+      mode: "surah",
+      key: surahId,
+      start: normalized.start,
+      end: normalized.end,
+    };
+  }
+
+  if (contentRef.startsWith("page:")) {
+    const [, rangeRaw] = contentRef.split(":");
+    const [startRaw, endRaw] = (rangeRaw || "").split("-");
+    const start = Number(startRaw);
+    const end = Number(endRaw);
+    if (!Number.isFinite(start) || !Number.isFinite(end)) {
+      return null;
+    }
+    const normalized = normalizeRange(start, end);
+    return {
+      mode: "page",
+      key: 0,
+      start: normalized.start,
+      end: normalized.end,
+    };
+  }
+
+  return null;
+};
+
+const isRangeOverlapping = (
+  aStart: number,
+  aEnd: number,
+  bStart: number,
+  bEnd: number,
+) => Math.max(aStart, bStart) <= Math.min(aEnd, bEnd);
 
 export const AddHafalanModal = ({
   isOpen,
@@ -40,7 +96,6 @@ export const AddHafalanModal = ({
   const [mode, setMode] = useState<Mode>(null);
   const [selectedSurahIndex, setSelectedSurahIndex] = useState<number>(0);
   const [range, setRange] = useState({ min: 0, max: 0 });
-  const [isDuplicate, setIsDuplicate] = useState(false);
 
   // Get data for this Juz using juzNumber
   const pageRange = PAGE_DATABASE[juzNumber.toString()] || { min: 1, max: 1 }; // Fallback to avoid crash
@@ -67,36 +122,45 @@ export const AddHafalanModal = ({
     });
   }, [surahs]);
 
-  // Check for duplicates whenever mode, surah, or range changes
-  useEffect(() => {
-    if (!mode) return;
+  const currentParsedRef = useMemo<ParsedContentRef>(() => {
+    if (!mode) return null;
 
-    let currentContentRef = "";
     if (mode === "PAGE") {
-      currentContentRef = `page:${range.min}-${range.max}`;
-    } else {
-      const surah = parsedSurahs[selectedSurahIndex];
-      // Find Surah ID logic
-      let surahIndex = SURAH_NAMES.findIndex(
-        (name) =>
-          name === surah.name ||
-          name.startsWith(surah.name) ||
-          surah.name.startsWith(name),
-      );
-      const surahId = surahIndex !== -1 ? surahIndex + 1 : 0;
-      currentContentRef = `surah:${surahId}:${range.min}-${range.max}`;
+      const normalized = normalizeRange(range.min, range.max);
+      return { mode: "page", key: 0, start: normalized.start, end: normalized.end };
     }
 
-    // Check if this content_ref exists in existingItems
-    /* 
-       Note: Existing items might have content_ref like "surah:78:1-40".
-       We need to check exact matches.
-    */
-    const duplicate = existingItems.some(
-      (item) => item.content_ref === currentContentRef,
+    const surah = parsedSurahs[selectedSurahIndex];
+    if (!surah) return null;
+
+    const surahIndex = SURAH_NAMES.findIndex(
+      (name) =>
+        name === surah.name ||
+        name.startsWith(surah.name) ||
+        surah.name.startsWith(name),
     );
-    setIsDuplicate(duplicate);
-  }, [mode, range, selectedSurahIndex, existingItems, parsedSurahs]);
+    const surahId = surahIndex !== -1 ? surahIndex + 1 : 0;
+    const normalized = normalizeRange(range.min, range.max);
+    return { mode: "surah", key: surahId, start: normalized.start, end: normalized.end };
+  }, [mode, parsedSurahs, range.max, range.min, selectedSurahIndex]);
+
+  const isDuplicate = useMemo(() => {
+    if (!currentParsedRef) return false;
+
+    return existingItems.some((item) => {
+      const existingParsedRef = parseContentRef(item.content_ref);
+      if (!existingParsedRef) return false;
+      if (existingParsedRef.mode !== currentParsedRef.mode) return false;
+      if (existingParsedRef.key !== currentParsedRef.key) return false;
+
+      return isRangeOverlapping(
+        existingParsedRef.start,
+        existingParsedRef.end,
+        currentParsedRef.start,
+        currentParsedRef.end,
+      );
+    });
+  }, [currentParsedRef, existingItems]);
 
   // Reset range when mode or selected Surah changes
   useEffect(() => {
@@ -127,7 +191,7 @@ export const AddHafalanModal = ({
 
       // Find Surah ID
       // Handle edge case like "An-Naba" vs "An-Naba'"
-      let surahIndex = SURAH_NAMES.findIndex(
+      const surahIndex = SURAH_NAMES.findIndex(
         (name) =>
           name === surah.name ||
           name.startsWith(surah.name) ||
@@ -154,7 +218,6 @@ export const AddHafalanModal = ({
       setTimeout(() => {
         setMode(null);
         setSelectedSurahIndex(0);
-        setIsDuplicate(false);
       }, 300);
     } catch (err) {
       console.error("Failed to save:", err);
