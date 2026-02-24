@@ -7,7 +7,7 @@ import { ItemDetailStatsGrid } from "@/features/alquran/components/item-detail/I
 import {
   getActionConfig,
   getInitialPhase,
-  getStatusDisplay,
+  getStatusDisplayByPhase,
   getStatusStyle,
   parseContentRef,
   type ActionPhase,
@@ -35,7 +35,7 @@ export const ItemDetailView = ({
 
   const info = parseContentRef(item.content_ref);
   const statusStyle = getStatusStyle(item.status);
-  const statusDisplay = getStatusDisplay(item.status);
+  const statusDisplay = getStatusDisplayByPhase(phase);
   const config = getActionConfig(phase);
 
   const createdDate = new Date(item.created_at).toLocaleDateString("id-ID", {

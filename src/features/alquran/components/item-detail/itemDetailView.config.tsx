@@ -3,8 +3,11 @@ import { Clock, CheckCircle, Play, RotateCcw, Brain } from "lucide-react";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
 
 export const PHASES = ["menghafal", "interval_start", "interval_end"] as const;
+export const PHASES_STATUS = ["menghafal", "interval", "fsrs_active"] as const;
 
 export type ActionPhase = (typeof PHASES)[number];
+export type ActionPhaseStatus = (typeof PHASES_STATUS)[number];
+
 
 export interface ActionConfig {
   label: string;
@@ -72,7 +75,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
   },
 };
 
-const STATUS_DISPLAY_CONFIG: Record<ActionPhase, StatusDisplay> = {
+const STATUS_DISPLAY_CONFIG: Record<ActionPhaseStatus, StatusDisplay> = {
   menghafal: {
     title: "Fase Menghafal",
     icon: <Brain className="w-12 h-12 text-amber-400" />,
@@ -80,19 +83,19 @@ const STATUS_DISPLAY_CONFIG: Record<ActionPhase, StatusDisplay> = {
     description:
       "Item ini masih dalam tahap hafalan awal. Fokuslah untuk mengulang-ulang bacaan secara berkesinambungan hingga lancar tanpa melihat mushaf.",
   },
-  interval_start: {
+  interval: {
     title: "Fase Transisi",
     icon: <Clock className="w-12 h-12 text-blue-400" />,
     iconBg: "bg-blue-500/10 border-blue-500/20 shadow-blue-500/20",
     description:
       "Mantap! Hafalan sudah dikonfirmasi. Saat ini sedang mengatur jadwal murajaah agar ingatan tidak pudar.",
   },
-  interval_end: {
+  fsrs_active: {
     title: "Fase Murajaah",
     icon: <RotateCcw className="w-12 h-12 text-emerald-400" />,
     iconBg: "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/20",
     description:
-      "Hafalan ini sudah masuk ke jadwal murajaah berkala FSRS. Lakukan review rutin tepat waktu ketika jadwalnya tiba agar hafalan tetap terjaga seumur hidup.",
+      "Hafalan ini sudah masuk ke jadwal murajaah berkala. Lakukan review rutin tepat waktu ketika jadwalnya tiba agar hafalan tetap terjaga seumur hidup.",
   },
 };
 
@@ -102,6 +105,7 @@ export function getInitialPhase(status: string): ActionPhase {
     case "menghafal":
       return "menghafal";
     case "interval":
+      return "interval_start";
     case "fsrs_active":
       return "interval_end";
     default:
@@ -118,15 +122,32 @@ export function getStatusDisplay(status: string): StatusDisplay {
     return STATUS_DISPLAY_CONFIG.menghafal;
   }
 
-  if (["consolidation", "interval_start"].includes(status)) {
-    return STATUS_DISPLAY_CONFIG.interval_start;
+  if (["consolidation", "interval_start", "interval"].includes(status)) {
+    return STATUS_DISPLAY_CONFIG.interval;
   }
 
-  if (["maintenance", "terjaga", "graduated", "active"].includes(status)) {
-    return STATUS_DISPLAY_CONFIG.interval_end;
+  if (
+    ["maintenance", "terjaga", "graduated", "active", "fsrs_active"].includes(
+      status,
+    )
+  ) {
+    return STATUS_DISPLAY_CONFIG.fsrs_active;
   }
 
   return STATUS_DISPLAY_CONFIG.menghafal;
+}
+
+export function getStatusDisplayByPhase(phase: ActionPhase): StatusDisplay {
+  switch (phase) {
+    case "menghafal":
+      return STATUS_DISPLAY_CONFIG.menghafal;
+    case "interval_start":
+      return STATUS_DISPLAY_CONFIG.interval;
+    case "interval_end":
+      return STATUS_DISPLAY_CONFIG.fsrs_active;
+    default:
+      return STATUS_DISPLAY_CONFIG.menghafal;
+  }
 }
 
 export function parseContentRef(contentRef: string): ParsedContentRef {
