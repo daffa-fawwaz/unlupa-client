@@ -79,13 +79,13 @@ export const DailyReviewFlashcardModal = ({
           <X className="w-5 h-5" />
         </button>
 
-        <div className="[perspective:2200px]">
+        <div className="perspective-[2200px]">
           <div
-            className={`relative min-h-[480px] w-full [transform-style:preserve-3d] transition-transform duration-700 ${
-              isFlipped ? "[transform:rotateY(180deg)]" : ""
+            className={`relative min-h-[480px] w-full transform-3d transition-transform duration-700 ${
+              isFlipped ? "ransform-[rotateY(180deg)]" : ""
             }`}
           >
-            <div className="absolute inset-0 [backface-visibility:hidden] rounded-[2rem] border border-cyan-400/20 bg-linear-to-br from-[#101725] via-[#0D1422] to-[#0A111C] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="absolute inset-0 backface-hidden rounded-[2rem] border border-cyan-400/20 bg-linear-to-br from-[#101725] via-[#0D1422] to-[#0A111C] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(20,184,166,0.28),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.20),transparent_35%)]" />
 
               <div className="relative p-6 md:p-8">
@@ -150,7 +150,7 @@ export const DailyReviewFlashcardModal = ({
               </div>
             </div>
 
-            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-[2rem] border border-emerald-400/20 bg-linear-to-br from-[#13211D] via-[#101B19] to-[#0B1513] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="absolute inset-0 backface-hidden transform-[rotateY(180deg)] rounded-[2rem] border border-emerald-400/20 bg-linear-to-br from-[#13211D] via-[#101B19] to-[#0B1513] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_15%_25%,rgba(16,185,129,0.32),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(20,184,166,0.2),transparent_35%)]" />
 
               <div className="relative p-6 md:p-8">
