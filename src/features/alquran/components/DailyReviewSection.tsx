@@ -99,6 +99,15 @@ export const DailyReviewSection = () => {
   const dailyReviewItems = useMemo(
     () =>
       data
+        .filter((task, index, array) => {
+          const key = `${task.task_date}:${task.item_id}`;
+          return (
+            array.findIndex(
+              (candidate) =>
+                `${candidate.task_date}:${candidate.item_id}` === key,
+            ) === index
+          );
+        })
         .filter((task) => {
           if (task.state !== "pending") return false;
           if (!activeItemIds.has(task.item_id)) return false;

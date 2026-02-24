@@ -36,6 +36,7 @@ export const AlquranDashboard = ({
 
   const triggerDailyGenerateIfNeeded = useCallback(async () => {
     const storageKey = "alquran:last-daily-generate-date";
+    const lockKey = "alquran:daily-generate-lock";
     const now = new Date();
     const yyyy = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, "0");
@@ -48,10 +49,36 @@ export const AlquranDashboard = ({
     }
 
     try {
+      const lockRaw = localStorage.getItem(lockKey);
+      if (lockRaw) {
+        const lock = JSON.parse(lockRaw) as { date?: string; expiresAt?: number };
+        if (
+          lock.date === today &&
+          typeof lock.expiresAt === "number" &&
+          lock.expiresAt > Date.now()
+        ) {
+          return;
+        }
+      }
+    } catch {
+      localStorage.removeItem(lockKey);
+    }
+
+    try {
+      localStorage.setItem(
+        lockKey,
+        JSON.stringify({
+          date: today,
+          expiresAt: Date.now() + 30_000,
+        }),
+      );
+
       await alquranService.generateDaily();
       localStorage.setItem(storageKey, today);
+      localStorage.removeItem(lockKey);
       window.dispatchEvent(new Event("alquran:daily-generated"));
     } catch (error) {
+      localStorage.removeItem(lockKey);
       console.error("Failed to generate daily target", error);
     }
   }, []);

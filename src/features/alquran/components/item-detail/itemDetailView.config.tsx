@@ -105,7 +105,7 @@ export function getInitialPhase(status: string): ActionPhase {
     case "menghafal":
       return "menghafal";
     case "interval":
-      return "interval_start";
+      return "interval_end";
     case "fsrs_active":
       return "interval_end";
     default:
