@@ -211,3 +211,32 @@ export function getStatusStyle(status: string): StatusStyle {
       };
   }
 }
+
+export function getStatusStyleByPhase(phase: ActionPhase): StatusStyle {
+  switch (phase) {
+    case "menghafal":
+      return {
+        label: "Menghafal",
+        className:
+          "bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.1)]",
+      };
+    case "interval_start":
+      return {
+        label: "Transisi",
+        className:
+          "bg-blue-500/10 border-blue-500/20 text-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.1)]",
+      };
+    case "interval_end":
+      return {
+        label: "Murajaah",
+        className:
+          "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.1)]",
+      };
+    default:
+      return {
+        label: "Menghafal",
+        className:
+          "bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.1)]",
+      };
+  }
+}

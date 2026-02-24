@@ -8,7 +8,7 @@ import {
   getActionConfig,
   getInitialPhase,
   getStatusDisplayByPhase,
-  getStatusStyle,
+  getStatusStyleByPhase,
   parseContentRef,
   type ActionPhase,
 } from "@/features/alquran/components/item-detail/itemDetailView.config";
@@ -34,7 +34,7 @@ export const ItemDetailView = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const info = parseContentRef(item.content_ref);
-  const statusStyle = getStatusStyle(item.status);
+  const statusStyle = getStatusStyleByPhase(phase);
   const statusDisplay = getStatusDisplayByPhase(phase);
   const config = getActionConfig(phase);
 
