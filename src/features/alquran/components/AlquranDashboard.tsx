@@ -5,8 +5,9 @@ import type {
   LifecycleStats,
 } from "@/features/alquran/types/quran.types";
 import { Sidebar } from "@/components/ui/Sidebar";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";
+import { alquranService } from "@/features/alquran/services/alquran.services";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardActionButtons } from "./DashboardActionButtons";
 import { DailyReviewSection } from "./DailyReviewSection";
@@ -21,19 +22,69 @@ interface AlquranDashboardProps {
   juzCounts: (juz: string) => number;
   onJuzClick: (juz: { id: string; index: number }) => void;
   onAddClick: () => void;
+  refreshSignal?: number;
 }
 
 export const AlquranDashboard = ({
   progress,
   onJuzClick,
   onAddClick,
+  refreshSignal = 0,
 }: AlquranDashboardProps) => {
   const { data, getJuz } = useGetJuz();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const triggerDailyGenerateIfNeeded = useCallback(async () => {
+    const storageKey = "alquran:last-daily-generate-date";
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const today = `${yyyy}-${mm}-${dd}`;
+    const lastGeneratedDate = localStorage.getItem(storageKey);
+
+    if (lastGeneratedDate === today) {
+      return;
+    }
+
+    try {
+      await alquranService.generateDaily();
+      localStorage.setItem(storageKey, today);
+      window.dispatchEvent(new Event("alquran:daily-generated"));
+    } catch (error) {
+      console.error("Failed to generate daily target", error);
+    }
+  }, []);
+
   useEffect(() => {
-    getJuz();
-  }, [data]);
+    void getJuz();
+  }, [getJuz]);
+
+  useEffect(() => {
+    void getJuz();
+  }, [getJuz, refreshSignal]);
+
+  useEffect(() => {
+    void triggerDailyGenerateIfNeeded();
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void triggerDailyGenerateIfNeeded();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    const periodicCheckId = window.setInterval(
+      () => void triggerDailyGenerateIfNeeded(),
+      15 * 1000,
+    );
+
+    return () => {
+      window.clearInterval(periodicCheckId);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [triggerDailyGenerateIfNeeded]);
 
   return (
     <>
@@ -59,7 +110,7 @@ export const AlquranDashboard = ({
             percentage={progress.percentage}
           />
 
-          {/* 🌟 HERO SECTION: Daily Review Target */}
+          {/* HERO SECTION: Daily Review Target */}
           <DailyReviewSection />
 
           {/* Section: Koleksi Hafalan & Actions */}

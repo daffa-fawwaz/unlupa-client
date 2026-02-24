@@ -3,6 +3,7 @@ import { useState } from "react";
 // Hooks
 import { useQuranData } from "@/features/alquran/hooks/useQuranData";
 import { useToast } from "@/features/alquran/hooks/useToast";
+import { useRefreshSignal } from "@/features/alquran/hooks/useRefreshSignal";
 
 // Components
 import { AlquranDashboard } from "@/features/alquran/components/AlquranDashboard";
@@ -33,6 +34,8 @@ export const AlquranPage = () => {
   const [activeItem, setActiveItem] = useState<MyItemDetail | null>(null);
 
   const [itemPhases, setItemPhases] = useState<Record<string, ActionPhase>>({});
+  const { signal: juzRefreshSignal, triggerRefresh: triggerJuzRefresh } =
+    useRefreshSignal();
 
   const { getJuzItems, getJuzStats, calculateProgress } = useQuranData();
   const { toast } = useToast();
@@ -100,6 +103,7 @@ export const AlquranPage = () => {
             juzCounts={(juz) => getJuzItems(juz).length}
             onJuzClick={handleJuzClick}
             onAddClick={() => setShowCreateForm(true)}
+            refreshSignal={juzRefreshSignal}
           />
         )}
 
@@ -130,7 +134,10 @@ export const AlquranPage = () => {
 
       {/* Modals & Overlays */}
       {showCreateForm && (
-        <CreateJuzForm onClose={() => setShowCreateForm(false)} />
+        <CreateJuzForm
+          onClose={() => setShowCreateForm(false)}
+          onSuccess={triggerJuzRefresh}
+        />
       )}
 
       {/* Toast Notification */}

@@ -52,6 +52,45 @@ export interface CreateJuzItemPayload {
   content_ref: string;
 }
 
+export interface DailyGenerateResponse {
+  count: number;
+  task_date: string;
+}
+
+export interface DailyTask {
+  item_id: string;
+  source: string;
+  state: string;
+  task_date: string;
+  content_ref: string;
+  juz_index: number;
+}
+
+export type DailyTasksResponse = DailyTask[];
+
+export interface ReviewIntervalPayload {
+  rating: 1 | 2 | 3;
+}
+
+export interface ReviewIntervalResult {
+  item_id: string;
+  status: string;
+  rating: number;
+  rating_label: string;
+  interval_days: number;
+  interval_next_review_at: string;
+  review_count: number;
+  content_ref: string;
+}
+
+export interface ReviewIntervalResponse {
+  status: number;
+  message: string;
+  data: ReviewIntervalResult;
+  timestamp: string;
+  path: string;
+}
+
 // Start Interval
 export interface StartIntervalPayload {
   interval_days: number;

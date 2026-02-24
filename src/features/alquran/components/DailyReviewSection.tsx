@@ -6,39 +6,170 @@ import {
   ChevronRight,
   CheckCircle2,
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
+import type {
+  DailyTask,
+  ReviewIntervalResponse,
+} from "@/features/alquran/types/quran.types";
+import { DailyReviewFlashcardModal } from "@/features/alquran/components/DailyReviewFlashcardModal";
+import { alquranService } from "../services/alquran.services";
+
+const getTodayDateKey = () => {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+const getReviewedStorageKeyByTaskDate = (taskDate: string) =>
+  `alquran:daily-reviewed:${taskDate}`;
+
+const getReviewedIdsForTaskDate = (taskDate: string): string[] => {
+  try {
+    const raw = localStorage.getItem(getReviewedStorageKeyByTaskDate(taskDate));
+    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((v) => typeof v === "string")
+      : [];
+  } catch {
+    return [];
+  }
+};
 
 export const DailyReviewSection = () => {
-  // Dummy data for daily review items
-  const dailyReviewItems = [
-    {
-      id: "1",
-      title: "Al-Baqarah",
-      range: "Ayat 1-5",
-      type: "Murajaah",
-      urgency: "high", // high, medium, low
-      status: "pending",
-    },
-    {
-      id: "2",
-      title: "Ali 'Imran",
-      range: "Halaman 50",
-      type: "Hafalan Baru",
-      urgency: "medium",
-      status: "pending",
-    },
-    {
-      id: "3",
-      title: "An-Nisa",
-      range: "Juz 5, Hal 1-2",
-      type: "Ziyadah",
-      urgency: "low",
-      status: "completed",
-    },
-  ];
+  const { data, loading, error, getDaily } = useGetDaily();
+  const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<DailyTask | null>(null);
+  const [hiddenTaskKeys, setHiddenTaskKeys] = useState<string[]>([]);
+  const [activeItemIds, setActiveItemIds] = useState<Set<string>>(
+    () => new Set(),
+  );
 
-  const pendingCount = dailyReviewItems.filter(
-    (i) => i.status === "pending",
-  ).length;
+  const refreshActiveItemIds = useCallback(async () => {
+    try {
+      const response = await alquranService.getMyItems("quran");
+      const ids = response.data.groups.flatMap((group) =>
+        group.items.map((item) => item.item_id),
+      );
+      setActiveItemIds(new Set(ids));
+    } catch (refreshError) {
+      console.error("Failed to refresh active item ids", refreshError);
+    }
+  }, []);
+
+  useEffect(() => {
+    const refetchDaily = () => {
+      void getDaily().catch(() => undefined);
+      void refreshActiveItemIds();
+    };
+
+    refetchDaily();
+    const safetyRefetchId = window.setTimeout(refetchDaily, 800);
+    window.addEventListener("alquran:daily-generated", refetchDaily as EventListener);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refetchDaily();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.clearTimeout(safetyRefetchId);
+      window.removeEventListener(
+        "alquran:daily-generated",
+        refetchDaily as EventListener,
+      );
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [getDaily, refreshActiveItemIds]);
+
+  const mapSourceToType = (source: string) => {
+    switch (source) {
+      case "interval_review":
+        return "Murajaah";
+      case "new_memorization":
+        return "Hafalan Baru";
+      default:
+        return "Ziyadah";
+    }
+  };
+
+  const dailyReviewItems = useMemo(
+    () =>
+      data
+        .filter((task) => {
+          if (task.state !== "pending") return false;
+          if (!activeItemIds.has(task.item_id)) return false;
+          const reviewedIds = getReviewedIdsForTaskDate(task.task_date);
+          const isPersistedReviewed = reviewedIds.includes(task.item_id);
+          const localKey = `${task.task_date}:${task.item_id}`;
+          const isLocallyHidden = hiddenTaskKeys.includes(localKey);
+          return !isPersistedReviewed && !isLocallyHidden;
+        })
+        .map((task: DailyTask) => {
+          const status = task.state === "pending" ? "pending" : "completed";
+          const urgency =
+            task.state === "pending"
+              ? task.source === "interval_review"
+                ? "high"
+                : "medium"
+              : "low";
+          const title = task.juz_index > 0 ? `Juz ${task.juz_index}` : "Review";
+          const range =
+            task.content_ref && task.content_ref.trim().length > 0
+              ? task.content_ref
+              : `Task ${task.task_date}`;
+
+          return {
+            id: task.item_id,
+            task,
+            title,
+            range,
+            type: mapSourceToType(task.source),
+            urgency,
+            status,
+          };
+        }),
+    [activeItemIds, data, hiddenTaskKeys],
+  );
+
+  const pendingCount = dailyReviewItems.filter((i) => i.status === "pending")
+    .length;
+  const firstPendingTask = dailyReviewItems.find(
+    (item) => item.status === "pending",
+  )?.task;
+
+  const openFlashcard = (task: DailyTask) => {
+    setSelectedTask(task);
+    setIsFlashcardOpen(true);
+  };
+
+  const handleReviewed = async (result: ReviewIntervalResponse) => {
+    const reviewedItemId = result.data.item_id;
+    const reviewedTaskDate = selectedTask?.task_date ?? getTodayDateKey();
+    const reviewedStorageKey = getReviewedStorageKeyByTaskDate(reviewedTaskDate);
+    const localKey = `${reviewedTaskDate}:${reviewedItemId}`;
+
+    const reviewedIds = getReviewedIdsForTaskDate(reviewedTaskDate);
+    if (!reviewedIds.includes(reviewedItemId)) {
+      localStorage.setItem(
+        reviewedStorageKey,
+        JSON.stringify([...reviewedIds, reviewedItemId]),
+      );
+    }
+
+    setHiddenTaskKeys((prev) => {
+      if (prev.includes(localKey)) {
+        return prev;
+      }
+      const next = [...prev, localKey];
+      return next;
+    });
+
+    await getDaily();
+  };
 
   return (
     <div className="mb-8 animate-fadeIn relative">
@@ -75,14 +206,31 @@ export const DailyReviewSection = () => {
               </div>
             </div>
 
-            <button className="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-[#0B0E14] font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 whitespace-nowrap">
+            <button
+              disabled={pendingCount === 0}
+              onClick={() => {
+                if (firstPendingTask) {
+                  openFlashcard(firstPendingTask);
+                }
+              }}
+              className="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/40 disabled:text-gray-300 text-[#0B0E14] font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 disabled:hover:translate-y-0 whitespace-nowrap"
+            >
               <Play className="w-5 h-5 fill-current" />
               Gas Review Semua!
             </button>
           </div>
 
           {/* Items List */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4">
+          {loading && (
+            <p className="text-sm text-gray-400">Memuat target harian...</p>
+          )}
+          {error && <p className="text-sm text-red-400">{error}</p>}
+          {!loading && !error && dailyReviewItems.length === 0 && (
+            <p className="text-sm text-gray-400">
+              Belum ada target review untuk hari ini.
+            </p>
+          )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4 mt-2">
             {dailyReviewItems.map((item) => (
               <div
                 key={item.id}
@@ -91,6 +239,11 @@ export const DailyReviewSection = () => {
                     ? "bg-[#0B0E14]/50 border-emerald-500/20 opacity-60"
                     : "bg-[#161D26] border-white/10 hover:bg-[#1A222C] hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/5 cursor-pointer"
                 }`}
+                onClick={() => {
+                  if (item.status === "pending") {
+                    openFlashcard(item.task);
+                  }
+                }}
               >
                 <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
                   {/* Status Icon */}
@@ -149,6 +302,14 @@ export const DailyReviewSection = () => {
           </div>
         </div>
       </div>
+
+      <DailyReviewFlashcardModal
+        key={`${selectedTask?.item_id ?? "no-item"}-${isFlashcardOpen ? "open" : "close"}`}
+        isOpen={isFlashcardOpen}
+        task={selectedTask}
+        onClose={() => setIsFlashcardOpen(false)}
+        onReviewed={handleReviewed}
+      />
     </div>
   );
 };

@@ -3,8 +3,12 @@ import type {
   CreateJuzItemPayload,
   CreateJuzItemResponse,
   CreateJuzResponse,
+  DailyTasksResponse,
+  DailyGenerateResponse,
   GetJuzResponse,
   MyItemsQuranResponse,
+  ReviewIntervalPayload,
+  ReviewIntervalResponse,
   StartIntervalPayload,
   StartIntervalResponse,
 } from "@/features/alquran/types/quran.types";
@@ -34,7 +38,30 @@ export const alquranService = {
     const response = await api.get(`/api/v1/my-items?type=${type}`);
     return response.data;
   },
-  
+
+  async generateDaily(): Promise<DailyGenerateResponse> {
+    const response = await api.post("/api/v1/daily/generate");
+    return response.data;
+  },
+
+  async getDaily(): Promise<DailyTasksResponse> {
+    const response = await api.get("/api/v1/daily");
+    return response.data;
+  },
+
+  async reviewInterval(
+    itemId: string,
+    payload: ReviewIntervalPayload,
+  ): Promise<ReviewIntervalResponse> {
+    const response = await api.post(
+      `/api/v1/items/${itemId}/review-interval`,
+      payload,
+    );
+    return response.data;
+  },
+
+  // INTERVAL
+
   async startInterval(
     itemId: string,
     payload: StartIntervalPayload,

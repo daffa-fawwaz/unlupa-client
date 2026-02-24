@@ -1,24 +1,24 @@
 import { useCallback, useState } from "react";
-import type { GetJuzResponse } from "@/features/alquran/types/quran.types";
-import { alquranService } from "@/features/alquran/services/alquran.services";
 import { isAxiosError } from "axios";
+import type { DailyTasksResponse } from "@/features/alquran/types/quran.types";
+import { alquranService } from "@/features/alquran/services/alquran.services";
 
-export const useGetJuz = () => {
-  const [data, setData] = useState<GetJuzResponse | null>(null);
+export const useGetDaily = () => {
+  const [data, setData] = useState<DailyTasksResponse>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getJuz = useCallback(async () => {
+  const getDaily = useCallback(async () => {
     setLoading(true);
     setError(null);
-    try { 
-      const response = await alquranService.getJuz();
+    try {
+      const response = await alquranService.getDaily();
       setData(response);
     } catch (err: unknown) {
       const message = isAxiosError(err)
         ? (err.response?.data as { message?: string } | undefined)?.message ||
-          "Failed to create juz"
-        : "Failed to create juz";
+          "Failed to fetch daily tasks"
+        : "Failed to fetch daily tasks";
       setError(message);
       throw err;
     } finally {
@@ -26,5 +26,5 @@ export const useGetJuz = () => {
     }
   }, []);
 
-  return { data, loading, error, getJuz };
+  return { data, loading, error, getDaily };
 };

@@ -5,10 +5,11 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage";
 
 interface CreateJuzFormProps {
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 
-export const CreateJuzForm = ({ onClose }: CreateJuzFormProps) => {
+export const CreateJuzForm = ({ onClose, onSuccess }: CreateJuzFormProps) => {
   const { createJuz, loading, data, error } = useCreateJuz();
   const [selectedJuz, setSelectedJuz] = useState("");
 
@@ -19,6 +20,7 @@ export const CreateJuzForm = ({ onClose }: CreateJuzFormProps) => {
   const handleSubmit = async () => {
     if (!selectedJuz) return;
     await createJuz(Number(selectedJuz));
+    onSuccess?.();
   };
 
   // SUCCESS STATE
