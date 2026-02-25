@@ -12,6 +12,7 @@ import { NotFoundPage } from "@/pages/404/NotFoundPage";
 import { TeacherRequestPage } from "@/features/dashboard/admin/pages/TeacherRequestPage";
 import { UserListPage } from "@/features/dashboard/admin/pages/UserListPage";
 import { AlquranPage } from "@/pages/alquran/AlquranPage";
+import { ComingSoonRoomPage } from "@/pages/dashboard/ComingSoonRoomPage";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,8 @@ export const router = createBrowserRouter([
             children: [
               { path: "/dashboard", element: <DashboardShell /> },
               { path: "/dashboard/alquran", element: <AlquranPage /> },
+              { path: "/dashboard/kelas", element: <ComingSoonRoomPage /> },
+              { path: "/dashboard/pribadi", element: <ComingSoonRoomPage /> },
               {
                 element: <ProtectedRoute allowedRoles={["admin"]} />,
                 children: [

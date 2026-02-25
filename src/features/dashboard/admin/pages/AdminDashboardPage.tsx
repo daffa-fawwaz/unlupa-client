@@ -9,11 +9,63 @@ import {
   Calendar,
   Shield,
 } from "lucide-react";
-import { StatCard, stats } from "@/components/ui/StatCard";
+import { StatCard } from "@/components/ui/StatCard";
 import { Sidebar } from "@/components/ui/Sidebar";
+import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
+import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
 
 export const AdminDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const { data: users, loading: usersLoading } = useUsers();
+  const {
+    data: teacherRequests,
+    loading: teacherLoading,
+  } = useTeacherRequests();
+
+  const loading = usersLoading || teacherLoading;
+
+  const totalUsers = users?.length ?? 0;
+  const activeUsers = users?.filter((u) => u.is_active).length ?? 0;
+  const teacherCount = users?.filter((u) => u.role === "teacher").length ?? 0;
+  const studentCount = users?.filter((u) => u.role === "student").length ?? 0;
+  const pendingTeacherRequests =
+    teacherRequests?.filter((r) => r.status === "pending").length ?? 0;
+
+  const statCards = [
+    {
+      title: "Total Pengguna",
+      value: loading ? "..." : totalUsers.toLocaleString("id-ID"),
+      change: "Live",
+      desc: `Siswa & Pengajar (${studentCount} siswa, ${teacherCount} guru)`,
+      icon: Users,
+      color: "blue",
+    },
+    {
+      title: "Pengguna Aktif",
+      value: loading ? "..." : activeUsers.toLocaleString("id-ID"),
+      change: "Realtime",
+      desc: "Akun yang sedang aktif",
+      icon: Activity,
+      color: "emerald",
+    },
+    {
+      title: "Guru Terdaftar",
+      value: loading ? "..." : teacherCount.toString(),
+      change: "Terdata",
+      desc: "Akun dengan peran pengajar",
+      icon: Shield,
+      color: "gold",
+    },
+    {
+      title: "Permintaan Guru Pending",
+      value: loading ? "..." : pendingTeacherRequests.toString(),
+      change: "Butuh Review",
+      desc: "Belum diproses",
+      icon: Users,
+      color: "purple",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-deep-universe text-white relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
@@ -76,7 +128,7 @@ export const AdminDashboardPage = () => {
 
         {/* Stats Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {stats.map((stat) => (
+          {statCards.map((stat) => (
             <StatCard
               key={stat.title}
               title={stat.title}
