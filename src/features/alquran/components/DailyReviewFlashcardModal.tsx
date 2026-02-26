@@ -27,33 +27,45 @@ const REVIEW_BUTTONS = [
   {
     id: 1 as const,
     payloadValue: 1 as const,
+    header: "Lemah",
     descriptions: ["Blank", "Banyak Lupa", "Berpikir Lama", "Banyak Salah"],
-    className:
-      "border-2 border-rose-400/40 bg-rose-950/60 text-rose-100 hover:bg-rose-500/25 hover:border-rose-400/60 hover:shadow-lg hover:shadow-rose-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    wrapperClass:
+      "border-2 border-rose-500/50 bg-rose-950/80 text-rose-100 shadow-[0_4px_0_0_rgba(190,18,60,0.5),0_6px_12px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_0_rgba(190,18,60,0.5),0_8px_16px_rgba(0,0,0,0.45)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_0_rgba(190,18,60,0.5),0_2px_6px_rgba(0,0,0,0.3)] transition-all duration-200",
+    headerClass:
+      "bg-rose-600/90 text-white font-black tracking-wide border-b border-rose-400/30",
     dotClassName: "bg-rose-400",
   },
   {
     id: 2 as const,
     payloadValue: 2 as const,
+    header: "Sedang",
     descriptions: ["Sering Lupa", "Sering Salah", "Tersendat", "Lambat"],
-    className:
-      "border-2 border-amber-400/40 bg-amber-950/60 text-amber-100 hover:bg-amber-500/25 hover:border-amber-400/60 hover:shadow-lg hover:shadow-amber-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    wrapperClass:
+      "border-2 border-amber-500/50 bg-amber-950/80 text-amber-100 shadow-[0_4px_0_0_rgba(180,83,9,0.5),0_6px_12px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_0_rgba(180,83,9,0.5),0_8px_16px_rgba(0,0,0,0.45)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_0_rgba(180,83,9,0.5),0_2px_6px_rgba(0,0,0,0.3)] transition-all duration-200",
+    headerClass:
+      "bg-amber-600/90 text-white font-black tracking-wide border-b border-amber-400/30",
     dotClassName: "bg-amber-400",
   },
   {
     id: 3 as const,
     payloadValue: 3 as const,
+    header: "Baik",
     descriptions: ["Lancar", "Cepat", "Yakin", "Benar"],
-    className:
-      "border-2 border-emerald-400/40 bg-emerald-950/60 text-emerald-100 hover:bg-emerald-500/25 hover:border-emerald-400/60 hover:shadow-lg hover:shadow-emerald-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    wrapperClass:
+      "border-2 border-emerald-500/50 bg-emerald-950/80 text-emerald-100 shadow-[0_4px_0_0_rgba(4,120,87,0.5),0_6px_12px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_0_rgba(4,120,87,0.5),0_8px_16px_rgba(0,0,0,0.45)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_0_rgba(4,120,87,0.5),0_2px_6px_rgba(0,0,0,0.3)] transition-all duration-200",
+    headerClass:
+      "bg-emerald-600/90 text-white font-black tracking-wide border-b border-emerald-400/30",
     dotClassName: "bg-emerald-400",
   },
   {
     id: 4 as const,
     payloadValue: 3 as const,
+    header: "Sempurna",
     descriptions: ["Reflek", "Tanpa Salah", "Sangat Lancar", "Sempurna"],
-    className:
-      "border-2 border-blue-400/40 bg-blue-950/60 text-blue-100 hover:bg-blue-500/25 hover:border-blue-400/60 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    wrapperClass:
+      "border-2 border-blue-500/50 bg-blue-950/80 text-blue-100 shadow-[0_4px_0_0_rgba(29,78,216,0.5),0_6px_12px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_0_0_rgba(29,78,216,0.5),0_8px_16px_rgba(0,0,0,0.45)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_0_rgba(29,78,216,0.5),0_2px_6px_rgba(0,0,0,0.3)] transition-all duration-200",
+    headerClass:
+      "bg-blue-600/90 text-white font-black tracking-wide border-b border-blue-400/30",
     dotClassName: "bg-blue-400",
   },
 ] as const;
@@ -223,30 +235,37 @@ export const DailyReviewFlashcardModal = ({
                         type="button"
                         onClick={() => handleRatingClick(btn)}
                         disabled={submittingButtonId !== null}
-                        className={`relative text-left p-4 rounded-2xl min-h-[120px] flex flex-col justify-center ${btn.className} disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed`}
+                        className={`relative overflow-hidden rounded-2xl min-h-[132px] flex flex-col text-left ${btn.wrapperClass} disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed`}
                       >
-                        {isSubmitting ? (
-                          <div className="flex flex-col items-center justify-center gap-2 py-2">
-                            <Loader2 className="w-8 h-8 animate-spin opacity-90" />
-                            <span className="text-xs font-medium opacity-90">
-                              Menyimpan...
-                            </span>
-                          </div>
-                        ) : (
-                          <ul className="space-y-2 sm:space-y-2.5">
-                            {btn.descriptions.map((d) => (
-                              <li
-                                key={d}
-                                className="flex items-center gap-2 text-xs sm:text-sm font-medium leading-snug"
-                              >
-                                <span
-                                  className={`shrink-0 w-1.5 h-1.5 rounded-full ${btn.dotClassName}`}
-                                />
-                                <span>{d}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                        <div
+                          className={`flex items-center justify-center py-2 px-3 text-center text-sm uppercase tracking-wider ${btn.headerClass}`}
+                        >
+                          {btn.header}
+                        </div>
+                        <div className="flex-1 p-3 flex flex-col justify-center">
+                          {isSubmitting ? (
+                            <div className="flex flex-col items-center justify-center gap-2 py-2">
+                              <Loader2 className="w-7 h-7 animate-spin opacity-90" />
+                              <span className="text-xs font-medium opacity-90">
+                                Menyimpan...
+                              </span>
+                            </div>
+                          ) : (
+                            <ul className="space-y-1.5 sm:space-y-2">
+                              {btn.descriptions.map((d) => (
+                                <li
+                                  key={d}
+                                  className="flex items-center gap-2 text-xs sm:text-sm font-medium leading-snug"
+                                >
+                                  <span
+                                    className={`shrink-0 w-1.5 h-1.5 rounded-full ${btn.dotClassName}`}
+                                  />
+                                  <span>{d}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
                       </button>
                     );
                   })}
