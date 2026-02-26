@@ -26,10 +26,10 @@ export function ItemDetailHero({
         >
           <ArrowLeft className="w-5 h-5 text-gray-400 group-hover:text-amber-400 transition-colors" />
         </button>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <span>Juz {juzIndex}</span>
+        <div className="min-w-0 flex items-center gap-2 text-sm text-gray-500">
+          <span className="shrink-0">Juz {juzIndex}</span>
           <span>/</span>
-          <span className="text-gray-300">{info.title}</span>
+          <span className="text-gray-300 truncate">{info.title}</span>
         </div>
       </div>
 
@@ -50,12 +50,12 @@ export function ItemDetailHero({
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 leading-tight break-words">
             {info.title}
           </h1>
-          <div className="flex items-center gap-2 text-gray-400 text-lg">
+          <div className="flex items-center gap-2 text-gray-400 text-base md:text-lg">
             <Layers className="w-5 h-5 text-amber-500/60" />
-            <span>{info.subtitle}</span>
+            <span className="break-words">{info.subtitle}</span>
           </div>
         </div>
       </div>

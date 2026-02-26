@@ -24,9 +24,36 @@ interface DailyReviewFlashcardModalProps {
 }
 
 const RATING_OPTIONS = [
-  { value: 1 as const, label: "Buruk", description: "Masih banyak lupa" },
-  { value: 2 as const, label: "Sedang", description: "Sebagian lancar" },
-  { value: 3 as const, label: "Bagus", description: "Lancar dan yakin" },
+  {
+    value: 1 as const,
+    label: "Buruk",
+    description: "Masih banyak lupa",
+    accentClass:
+      "text-rose-300 border-rose-300/30 bg-rose-500/15 shadow-rose-500/15",
+    numberClass: "text-rose-200",
+    labelClass: "text-rose-200",
+    baseClass: "hover:bg-rose-500/10 hover:border-rose-400/30",
+  },
+  {
+    value: 2 as const,
+    label: "Sedang",
+    description: "Sebagian lancar",
+    accentClass:
+      "text-amber-300 border-amber-300/30 bg-amber-500/15 shadow-amber-500/15",
+    numberClass: "text-amber-200",
+    labelClass: "text-amber-200",
+    baseClass: "hover:bg-amber-500/10 hover:border-amber-400/30",
+  },
+  {
+    value: 3 as const,
+    label: "Bagus",
+    description: "Lancar dan yakin",
+    accentClass:
+      "text-emerald-300 border-emerald-300/30 bg-emerald-500/15 shadow-emerald-500/15",
+    numberClass: "text-emerald-200",
+    labelClass: "text-emerald-200",
+    baseClass: "hover:bg-emerald-500/10 hover:border-emerald-400/30",
+  },
 ];
 
 export const DailyReviewFlashcardModal = ({
@@ -65,31 +92,31 @@ export const DailyReviewFlashcardModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4">
       <div
         className="absolute inset-0 bg-black/85 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-2xl">
+      <div className="relative w-full max-w-2xl max-h-[92vh]">
         <button
           onClick={onClose}
-          className="absolute -top-4 -right-2 md:-top-5 md:-right-5 z-20 p-2 rounded-full bg-[#111826] border border-white/10 text-gray-400 hover:text-white hover:bg-[#1A2232] transition-colors"
+          className="absolute top-2 right-2 md:-top-5 md:-right-5 z-20 p-2 rounded-full bg-[#111826] border border-white/10 text-gray-400 hover:text-white hover:bg-[#1A2232] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="[perspective:2200px]">
           <div
-            className={`relative min-h-[480px] w-full [transform-style:preserve-3d] transition-transform duration-700 ${
+            className={`relative min-h-[520px] md:min-h-[560px] w-full [transform-style:preserve-3d] transition-transform duration-700 ${
               isFlipped ? "[transform:rotateY(180deg)]" : ""
             }`}
           >
-            <div className="absolute inset-0 [backface-visibility:hidden] rounded-[2rem] border border-cyan-400/20 bg-linear-to-br from-[#101725] via-[#0D1422] to-[#0A111C] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="absolute inset-0 [backface-visibility:hidden] rounded-[1.5rem] md:rounded-[2rem] border border-cyan-400/20 bg-linear-to-br from-[#101725] via-[#0D1422] to-[#0A111C] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
               <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(20,184,166,0.28),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.20),transparent_35%)]" />
 
-              <div className="relative p-6 md:p-8">
-                <div className="flex items-center justify-between mb-6">
+              <div className="relative p-4 md:p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
                   <span className="px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-400/20 text-xs font-bold tracking-wider uppercase">
                     Kartu Review
                   </span>
@@ -102,14 +129,16 @@ export const DailyReviewFlashcardModal = ({
                   </button>
                 </div>
 
-                <div className="p-6 rounded-2xl border border-cyan-300/20 bg-cyan-400/5 mb-6">
-                  <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                <div className="p-4 md:p-6 rounded-2xl border border-cyan-300/20 bg-cyan-400/5 mb-5">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight break-words">
                     {title}
                   </h3>
-                  <p className="text-cyan-200/80 mt-2 text-lg">{subtitle}</p>
+                  <p className="text-cyan-200/80 mt-2 text-sm md:text-lg break-words">
+                    {subtitle}
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                     <p className="text-[11px] uppercase tracking-wider text-gray-500 mb-2">
                       Sumber
@@ -150,11 +179,11 @@ export const DailyReviewFlashcardModal = ({
               </div>
             </div>
 
-            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-[2rem] border border-emerald-400/20 bg-linear-to-br from-[#13211D] via-[#101B19] to-[#0B1513] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-[1.5rem] md:rounded-[2rem] border border-emerald-400/20 bg-linear-to-br from-[#13211D] via-[#101B19] to-[#0B1513] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
               <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_15%_25%,rgba(16,185,129,0.32),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(20,184,166,0.2),transparent_35%)]" />
 
-              <div className="relative p-6 md:p-8">
-                <div className="flex items-center justify-between mb-6">
+              <div className="relative p-4 md:p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
                   <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/20 text-xs font-bold tracking-wider uppercase">
                     Nilai Hafalan
                   </span>
@@ -167,7 +196,7 @@ export const DailyReviewFlashcardModal = ({
                   </button>
                 </div>
 
-                <h3 className="text-2xl md:text-3xl font-black text-white mb-3">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-3">
                   Seberapa kuat hafalanmu?
                 </h3>
                 <p className="text-gray-300 text-sm md:text-base mb-6">
@@ -181,12 +210,28 @@ export const DailyReviewFlashcardModal = ({
                       onClick={() => setSelectedRating(option.value)}
                       className={`text-left p-4 rounded-xl border transition-all ${
                         selectedRating === option.value
-                          ? "border-emerald-300/70 bg-emerald-500/20 shadow-lg shadow-emerald-500/10"
-                          : "border-white/10 bg-white/5 hover:bg-white/10"
+                          ? `${option.accentClass} shadow-lg`
+                          : `border-white/10 bg-white/5 ${option.baseClass}`
                       }`}
                     >
-                      <p className="text-3xl font-black text-white">{option.value}</p>
-                      <p className="text-sm font-bold text-emerald-200">{option.label}</p>
+                      <p
+                        className={`text-3xl font-black ${
+                          selectedRating === option.value
+                            ? option.numberClass
+                            : "text-white"
+                        }`}
+                      >
+                        {option.value}
+                      </p>
+                      <p
+                        className={`text-sm font-bold ${
+                          selectedRating === option.value
+                            ? option.labelClass
+                            : "text-gray-200"
+                        }`}
+                      >
+                        {option.label}
+                      </p>
                       <p className="text-xs text-gray-400 mt-1">{option.description}</p>
                     </button>
                   ))}
