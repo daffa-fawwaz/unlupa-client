@@ -20,7 +20,6 @@ export const PHASES_STATUS = ["menghafal", "interval", "fsrs_active"] as const;
 export type ActionPhase = (typeof PHASES)[number];
 export type ActionPhaseStatus = (typeof PHASES_STATUS)[number];
 
-
 export interface ActionConfig {
   label: string;
   labelSecondary?: string;
@@ -76,6 +75,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
     description:
       "Kamu sedang dalam masa murajaah, item ini akan diulang sesuai interval yang telah ditentukan.",
     label: "Mulai Review",
+    href: "/dashboard/alquran",
     labelSecondary: "Mulai Terjaga",
     icon: <RotateCcw className="w-5 h-5" />,
     iconSecondary: <CheckCircle className="w-5 h-5" />,
