@@ -13,7 +13,7 @@ import type {
   DailyTask,
   ReviewIntervalResponse,
 } from "@/features/alquran/types/quran.types";
-import { parseContentRef } from "@/features/alquran/components/item-detail/itemDetailView.config";
+import { parseContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";
 import { useReviewInterval } from "@/features/alquran/hooks/useReviewInterval";
 
 interface DailyReviewFlashcardModalProps {
@@ -69,7 +69,9 @@ export const DailyReviewFlashcardModal = ({
   if (!isOpen || !task) return null;
   const info = task.content_ref ? parseContentRef(task.content_ref) : null;
 
-  const title = info?.title || (task.juz_index > 0 ? `Juz ${task.juz_index}` : "Review Harian");
+  const title =
+    info?.title ||
+    (task.juz_index > 0 ? `Juz ${task.juz_index}` : "Review Harian");
   const subtitle = info?.subtitle || "Detail konten belum tersedia";
   const range = info?.range || "-";
   const sourceLabel =
@@ -163,7 +165,9 @@ export const DailyReviewFlashcardModal = ({
                     </p>
                     <div className="flex items-center gap-2 text-white font-semibold">
                       <BookOpen className="w-4 h-4 text-cyan-300" />
-                      <span>{info?.type === "surah" ? "Per Surah" : "Per Halaman"}</span>
+                      <span>
+                        {info?.type === "surah" ? "Per Surah" : "Per Halaman"}
+                      </span>
                     </div>
                   </div>
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10">
@@ -232,7 +236,9 @@ export const DailyReviewFlashcardModal = ({
                       >
                         {option.label}
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">{option.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {option.description}
+                      </p>
                     </button>
                   ))}
                 </div>

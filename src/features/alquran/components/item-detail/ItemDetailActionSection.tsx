@@ -4,29 +4,41 @@ import type {
   ActionConfig,
   ActionPhase,
   StatusDisplay,
-} from "@/features/alquran/components/item-detail/itemDetailView.config";
-import { PHASES } from "@/features/alquran/components/item-detail/itemDetailView.config";
+} from "@/features/alquran/components/item-detail/ItemDetailView.config";
+import { PHASES } from "@/features/alquran/components/item-detail/ItemDetailView.config";
 
 interface ItemDetailActionSectionProps {
   phase: ActionPhase;
   config: ActionConfig;
   statusDisplay: StatusDisplay;
-  onPrimaryAction: () => void;
-  onSecondaryAction: () => void;
+  onPrimaryAction: () => void | Promise<void>;
+  onSecondaryAction: () => void | Promise<void>;
+  secondaryActionDisabled?: boolean;
+  secondaryActionLabel?: string;
+  secondaryActionError?: string | null;
 }
 
 interface PhaseButtonProps {
   label: string;
   icon: ReactNode;
   className: string;
-  onClick: () => void;
+  onClick: () => void | Promise<void>;
+  disabled?: boolean;
 }
 
-function PhaseButton({ label, icon, className, onClick }: PhaseButtonProps) {
+function PhaseButton({
+  label,
+  icon,
+  className,
+  onClick,
+  disabled = false,
+}: PhaseButtonProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`shrink-0 w-full lg:w-auto min-w-[200px] md:min-w-[240px] flex items-center justify-center gap-3 md:gap-4 py-4 md:py-5 px-6 md:px-10 rounded-xl md:rounded-2xl font-black text-lg md:text-xl shadow-2xl hover:-translate-y-1 hover:shadow-3xl active:translate-y-0 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group ${className}`}
+      disabled={disabled}
+      className={`shrink-0 w-full lg:w-auto min-w-[200px] md:min-w-[240px] flex items-center justify-center gap-3 md:gap-4 py-4 md:py-5 px-6 md:px-10 rounded-xl md:rounded-2xl font-black text-lg md:text-xl shadow-2xl cursor-pointer hover:-translate-y-1 hover:shadow-3xl active:translate-y-0 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#161D26] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100 ${className}`}
     >
       <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
       <div className="relative z-10 p-2 md:p-2.5 bg-black/20 rounded-lg md:rounded-xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
@@ -77,9 +89,10 @@ function PhaseProgress({ phase }: { phase: ActionPhase }) {
       })}
 
       <span className="hidden sm:inline-block md:ml-6 px-3 md:px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-widest shadow-inner mt-2 sm:mt-0">
-        {phase === "menghafal" && "Langkah 1 dari 3"}
-        {phase === "interval_start" && "Langkah 2 dari 3"}
-        {phase === "interval_end" && "Langkah 3 dari 3"}
+        {phase === "menghafal" && "Langkah 1 dari 4"}
+        {phase === "interval_start" && "Langkah 2 dari 4"}
+        {phase === "interval_end" && "Langkah 3 dari 4"}
+        {phase === "terjaga" && "Langkah 4 dari 4"}
       </span>
     </div>
   );
@@ -91,6 +104,9 @@ export function ItemDetailActionSection({
   statusDisplay,
   onPrimaryAction,
   onSecondaryAction,
+  secondaryActionDisabled = false,
+  secondaryActionLabel,
+  secondaryActionError,
 }: ItemDetailActionSectionProps) {
   return (
     <div className="p-1 rounded-[2.5rem] md:rounded-[3rem] bg-linear-to-b from-white/10 to-white/5 shadow-2xl mb-8 border border-white/5 mx-auto w-full">
@@ -154,13 +170,23 @@ export function ItemDetailActionSection({
                 label={config.label}
               />
 
-              {phase === "interval_end" && config.buttonSecondaryClass && config.iconSecondary && config.labelSecondary && (
-                <PhaseButton
-                  onClick={onSecondaryAction}
-                  className={config.buttonSecondaryClass}
-                  icon={config.iconSecondary}
-                  label={config.labelSecondary}
-                />
+              {phase === "interval_end" &&
+                config.buttonSecondaryClass &&
+                config.iconSecondary &&
+                config.labelSecondary && (
+                  <PhaseButton
+                    onClick={onSecondaryAction}
+                    className={config.buttonSecondaryClass}
+                    icon={config.iconSecondary}
+                    label={secondaryActionLabel ?? config.labelSecondary}
+                    disabled={secondaryActionDisabled}
+                  />
+                )}
+
+              {phase === "interval_end" && secondaryActionError && (
+                <p className="text-sm text-red-400 text-center max-w-[240px]">
+                  {secondaryActionError}
+                </p>
               )}
             </div>
           </div>

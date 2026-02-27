@@ -4,6 +4,7 @@ import { StartIntervalModal } from "@/features/alquran/components/StartIntervalM
 import { ItemDetailActionSection } from "@/features/alquran/components/item-detail/ItemDetailActionSection";
 import { ItemDetailHero } from "@/features/alquran/components/item-detail/ItemDetailHero";
 import { ItemDetailStatsGrid } from "@/features/alquran/components/item-detail/ItemDetailStatsGrid";
+import { useActivateFsrs } from "@/features/alquran/hooks/useActivateFsrs";
 import {
   getActionConfig,
   getInitialPhase,
@@ -11,7 +12,7 @@ import {
   getStatusStyleByPhase,
   parseContentRef,
   type ActionPhase,
-} from "@/features/alquran/components/item-detail/itemDetailView.config";
+} from "@/features/alquran/components/item-detail/ItemDetailView.config";
 
 export type { ActionPhase };
 
@@ -32,6 +33,11 @@ export const ItemDetailView = ({
 }: ItemDetailViewProps) => {
   const phase = currentPhase ?? getInitialPhase(item.status);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    activateFsrs,
+    loading: activateFsrsLoading,
+    error: activateFsrsError,
+  } = useActivateFsrs();
 
   const info = parseContentRef(item.content_ref);
   const statusStyle = getStatusStyleByPhase(phase);
@@ -64,6 +70,22 @@ export const ItemDetailView = ({
           console.log("Review dimulai untuk item:", item.item_id);
         }
         break;
+      case "terjaga":
+        if (config.href) {
+          window.location.href = config.href;
+        }
+        break;
+    }
+  };
+
+  const handleSecondaryActionClick = async () => {
+    if (phase !== "interval_end") return;
+
+    try {
+      await activateFsrs(item.item_id);
+      transitionTo("terjaga");
+    } catch {
+      // Error ditampilkan di action section.
     }
   };
 
@@ -91,7 +113,12 @@ export const ItemDetailView = ({
         config={config}
         statusDisplay={statusDisplay}
         onPrimaryAction={handleActionClick}
-        onSecondaryAction={handleActionClick}
+        onSecondaryAction={handleSecondaryActionClick}
+        secondaryActionDisabled={activateFsrsLoading}
+        secondaryActionLabel={
+          activateFsrsLoading ? "Mengaktifkan..." : undefined
+        }
+        secondaryActionError={activateFsrsError}
       />
 
       <StartIntervalModal

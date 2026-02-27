@@ -1,8 +1,20 @@
 import type { ReactNode } from "react";
-import { Clock, CheckCircle, Play, RotateCcw, Brain } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  CheckCircle,
+  Play,
+  RotateCcw,
+  Brain,
+} from "lucide-react";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
 
-export const PHASES = ["menghafal", "interval_start", "interval_end"] as const;
+export const PHASES = [
+  "menghafal",
+  "interval_start",
+  "interval_end",
+  "terjaga",
+] as const;
 export const PHASES_STATUS = ["menghafal", "interval", "fsrs_active"] as const;
 
 export type ActionPhase = (typeof PHASES)[number];
@@ -61,7 +73,6 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
   },
   interval_end: {
     sectionTitle: "Masa Murajaah",
-    href: "/dashboard/alquran",
     description:
       "Kamu sedang dalam masa murajaah, item ini akan diulang sesuai interval yang telah ditentukan.",
     label: "Mulai Review",
@@ -72,6 +83,16 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
       "bg-linear-to-r from-blue-500 to-indigo-600 text-white shadow-blue-900/20 hover:shadow-blue-500/30",
     buttonSecondaryClass:
       "bg-linear-to-r from-emerald-500 to-green-600 text-white shadow-emerald-900/20 hover:shadow-emerald-500/30",
+  },
+  terjaga: {
+    sectionTitle: "Mode Terjaga Aktif",
+    href: "/dashboard/alquran",
+    description:
+      "Bagus, hafalan ini sekarang terjaga. Sistem akan mengatur kapan kamu perlu review berikutnya berdasarkan performa terakhir.",
+    label: "Ke Dashboard",
+    icon: <ArrowRight className="w-5 h-5" />,
+    buttonClass:
+      "bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-900/20 hover:shadow-emerald-500/30",
   },
 };
 
@@ -91,7 +112,7 @@ const STATUS_DISPLAY_CONFIG: Record<ActionPhaseStatus, StatusDisplay> = {
       "Mantap! Hafalan sudah dikonfirmasi. Saat ini sedang mengatur jadwal murajaah agar ingatan tidak pudar.",
   },
   fsrs_active: {
-    title: "Fase Murajaah",
+    title: "Fase Terjaga",
     icon: <RotateCcw className="w-12 h-12 text-emerald-400" />,
     iconBg: "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/20",
     description:
@@ -107,7 +128,7 @@ export function getInitialPhase(status: string): ActionPhase {
     case "interval":
       return "interval_end";
     case "fsrs_active":
-      return "interval_end";
+      return "terjaga";
     default:
       return "menghafal";
   }
@@ -144,6 +165,8 @@ export function getStatusDisplayByPhase(phase: ActionPhase): StatusDisplay {
     case "interval_start":
       return STATUS_DISPLAY_CONFIG.interval;
     case "interval_end":
+      return STATUS_DISPLAY_CONFIG.interval;
+    case "terjaga":
       return STATUS_DISPLAY_CONFIG.fsrs_active;
     default:
       return STATUS_DISPLAY_CONFIG.menghafal;
@@ -229,6 +252,12 @@ export function getStatusStyleByPhase(phase: ActionPhase): StatusStyle {
     case "interval_end":
       return {
         label: "Murajaah",
+        className:
+          "bg-blue-500/10 border-blue-500/20 text-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.1)]",
+      };
+    case "terjaga":
+      return {
+        label: "Terjaga",
         className:
           "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.1)]",
       };

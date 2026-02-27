@@ -105,6 +105,15 @@ export interface StartIntervalResponse {
   path?: string;
 }
 
+// Activate FSRS
+export interface ActivateFsrsResponse {
+  status: number;
+  message: string;
+  data: Record<string, unknown>;
+  timestamp?: string;
+  path?: string;
+}
+
 // My Items API Response
 
 export interface MyItemDetail {

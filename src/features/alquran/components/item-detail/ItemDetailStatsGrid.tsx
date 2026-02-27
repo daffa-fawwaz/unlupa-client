@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Clock, CheckCircle, BarChart2, CalendarDays } from "lucide-react";
-import type {
-  ParsedContentRef,
-} from "@/features/alquran/components/item-detail/itemDetailView.config";
+import type { ParsedContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";
 
 interface ItemDetailStatsGridProps {
   reviewCount: number;
@@ -42,7 +40,11 @@ export function ItemDetailStatsGrid({
 }: ItemDetailStatsGridProps) {
   return (
     <div className="grid grid-cols-2 gap-4 mb-8">
-      <StatCard icon={Clock} iconClassName="text-amber-500/60" label="Total Review">
+      <StatCard
+        icon={Clock}
+        iconClassName="text-amber-500/60"
+        label="Total Review"
+      >
         <span className="text-3xl font-mono font-bold text-white">
           {reviewCount}
           <span className="text-base text-gray-500 font-normal ml-1">kali</span>
@@ -59,13 +61,21 @@ export function ItemDetailStatsGrid({
         </span>
       </StatCard>
 
-      <StatCard icon={BarChart2} iconClassName="text-blue-500/60" label="Tipe Hafalan">
+      <StatCard
+        icon={BarChart2}
+        iconClassName="text-blue-500/60"
+        label="Tipe Hafalan"
+      >
         <span className="text-lg font-bold text-white capitalize">
           {info.type === "surah" ? "Per Surah" : "Per Halaman"}
         </span>
       </StatCard>
 
-      <StatCard icon={CalendarDays} iconClassName="text-purple-500/60" label="Rentang">
+      <StatCard
+        icon={CalendarDays}
+        iconClassName="text-purple-500/60"
+        label="Rentang"
+      >
         <span className="text-lg font-mono font-bold text-white">
           {info.range.replace("-", " – ")}
         </span>

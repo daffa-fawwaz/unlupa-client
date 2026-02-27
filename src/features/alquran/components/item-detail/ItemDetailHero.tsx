@@ -2,7 +2,7 @@ import { ArrowLeft, BookOpen, Layers } from "lucide-react";
 import type {
   ParsedContentRef,
   StatusStyle,
-} from "@/features/alquran/components/item-detail/itemDetailView.config";
+} from "@/features/alquran/components/item-detail/ItemDetailView.config";
 
 interface ItemDetailHeroProps {
   juzIndex: number;

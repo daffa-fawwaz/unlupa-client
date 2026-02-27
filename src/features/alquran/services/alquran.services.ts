@@ -1,5 +1,6 @@
 import { api } from "@/lib/axios";
 import type {
+  ActivateFsrsResponse,
   CreateJuzItemPayload,
   CreateJuzItemResponse,
   CreateJuzResponse,
@@ -70,6 +71,11 @@ export const alquranService = {
       `/api/v1/items/${itemId}/start-interval`,
       payload,
     );
+    return response.data;
+  },
+
+  async activateFsrs(itemId: string): Promise<ActivateFsrsResponse> {
+    const response = await api.post(`/api/v1/items/${itemId}/activate-fsrs`);
     return response.data;
   },
 };
