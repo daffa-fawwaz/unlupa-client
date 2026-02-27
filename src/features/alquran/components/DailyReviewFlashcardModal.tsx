@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   BookOpen,
   CalendarDays,
-  CheckCircle2,
   Layers,
   Loader2,
   RefreshCw,
@@ -23,38 +22,41 @@ interface DailyReviewFlashcardModalProps {
   onReviewed: (result: ReviewIntervalResponse) => Promise<void> | void;
 }
 
-const RATING_OPTIONS = [
+/** Payload: merah=1, kuning=2, hijau=3, biru=3. Klik tombol = submit langsung. */
+const REVIEW_BUTTONS = [
   {
-    value: 1 as const,
-    label: "Buruk",
-    description: "Masih banyak lupa",
-    accentClass:
-      "text-rose-300 border-rose-300/30 bg-rose-500/15 shadow-rose-500/15",
-    numberClass: "text-rose-200",
-    labelClass: "text-rose-200",
-    baseClass: "hover:bg-rose-500/10 hover:border-rose-400/30",
+    id: 1 as const,
+    payloadValue: 1 as const,
+    descriptions: ["Blank", "Banyak Lupa", "Berpikir Lama", "Banyak Salah"],
+    className:
+      "border-2 border-rose-400/40 bg-rose-950/60 text-rose-100 hover:bg-rose-500/25 hover:border-rose-400/60 hover:shadow-lg hover:shadow-rose-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    dotClassName: "bg-rose-400",
   },
   {
-    value: 2 as const,
-    label: "Sedang",
-    description: "Sebagian lancar",
-    accentClass:
-      "text-amber-300 border-amber-300/30 bg-amber-500/15 shadow-amber-500/15",
-    numberClass: "text-amber-200",
-    labelClass: "text-amber-200",
-    baseClass: "hover:bg-amber-500/10 hover:border-amber-400/30",
+    id: 2 as const,
+    payloadValue: 2 as const,
+    descriptions: ["Sering Lupa", "Sering Salah", "Tersendat", "Lambat"],
+    className:
+      "border-2 border-amber-400/40 bg-amber-950/60 text-amber-100 hover:bg-amber-500/25 hover:border-amber-400/60 hover:shadow-lg hover:shadow-amber-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    dotClassName: "bg-amber-400",
   },
   {
-    value: 3 as const,
-    label: "Bagus",
-    description: "Lancar dan yakin",
-    accentClass:
-      "text-emerald-300 border-emerald-300/30 bg-emerald-500/15 shadow-emerald-500/15",
-    numberClass: "text-emerald-200",
-    labelClass: "text-emerald-200",
-    baseClass: "hover:bg-emerald-500/10 hover:border-emerald-400/30",
+    id: 3 as const,
+    payloadValue: 3 as const,
+    descriptions: ["Lancar", "Cepat", "Yakin", "Benar"],
+    className:
+      "border-2 border-emerald-400/40 bg-emerald-950/60 text-emerald-100 hover:bg-emerald-500/25 hover:border-emerald-400/60 hover:shadow-lg hover:shadow-emerald-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    dotClassName: "bg-emerald-400",
   },
-];
+  {
+    id: 4 as const,
+    payloadValue: 3 as const,
+    descriptions: ["Reflek", "Tanpa Salah", "Sangat Lancar", "Sempurna"],
+    className:
+      "border-2 border-blue-400/40 bg-blue-950/60 text-blue-100 hover:bg-blue-500/25 hover:border-blue-400/60 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 active:translate-y-0 transition-all duration-200",
+    dotClassName: "bg-blue-400",
+  },
+] as const;
 
 export const DailyReviewFlashcardModal = ({
   isOpen,
@@ -63,7 +65,9 @@ export const DailyReviewFlashcardModal = ({
   onReviewed,
 }: DailyReviewFlashcardModalProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<1 | 2 | 3 | null>(null);
+  const [submittingButtonId, setSubmittingButtonId] = useState<
+    1 | 2 | 3 | 4 | null
+  >(null);
   const { reviewInterval, loading, error } = useReviewInterval();
 
   if (!isOpen || !task) return null;
@@ -81,15 +85,18 @@ export const DailyReviewFlashcardModal = ({
         ? "Hafalan Baru"
         : "Ziyadah";
 
-  const handleSubmitRating = async () => {
-    if (!selectedRating || loading) return;
+  const handleRatingClick = async (
+    btn: (typeof REVIEW_BUTTONS)[number],
+  ) => {
+    if (loading || submittingButtonId !== null) return;
 
+    setSubmittingButtonId(btn.id);
     try {
-      const response = await reviewInterval(task.item_id, selectedRating);
+      const response = await reviewInterval(task.item_id, btn.payloadValue);
       await onReviewed(response);
       onClose();
     } catch {
-      // Error sudah disimpan di hook untuk ditampilkan di UI.
+      setSubmittingButtonId(null);
     }
   };
 
@@ -110,7 +117,7 @@ export const DailyReviewFlashcardModal = ({
 
         <div className="[perspective:2200px]">
           <div
-            className={`relative min-h-[520px] md:min-h-[560px] w-full [transform-style:preserve-3d] transition-transform duration-700 ${
+            className={`relative min-h-[520px] md:min-h-[450px] w-full [transform-style:preserve-3d] transition-transform duration-700 ${
               isFlipped ? "[transform:rotateY(180deg)]" : ""
             }`}
           >
@@ -204,68 +211,52 @@ export const DailyReviewFlashcardModal = ({
                   Seberapa kuat hafalanmu?
                 </h3>
                 <p className="text-gray-300 text-sm md:text-base mb-6">
-                  Pilih nilai review untuk update interval item ini.
+                  Pilih satu tombol — nilai langsung tersimpan.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-                  {RATING_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => setSelectedRating(option.value)}
-                      className={`text-left p-4 rounded-xl border transition-all ${
-                        selectedRating === option.value
-                          ? `${option.accentClass} shadow-lg`
-                          : `border-white/10 bg-white/5 ${option.baseClass}`
-                      }`}
-                    >
-                      <p
-                        className={`text-3xl font-black ${
-                          selectedRating === option.value
-                            ? option.numberClass
-                            : "text-white"
-                        }`}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-4">
+                  {REVIEW_BUTTONS.map((btn) => {
+                    const isSubmitting = submittingButtonId === btn.id;
+                    return (
+                      <button
+                        key={btn.id}
+                        type="button"
+                        onClick={() => handleRatingClick(btn)}
+                        disabled={submittingButtonId !== null}
+                        className={`relative text-left p-4 rounded-2xl min-h-[120px] flex flex-col justify-center ${btn.className} disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed`}
                       >
-                        {option.value}
-                      </p>
-                      <p
-                        className={`text-sm font-bold ${
-                          selectedRating === option.value
-                            ? option.labelClass
-                            : "text-gray-200"
-                        }`}
-                      >
-                        {option.label}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {option.description}
-                      </p>
-                    </button>
-                  ))}
+                        {isSubmitting ? (
+                          <div className="flex flex-col items-center justify-center gap-2 py-2">
+                            <Loader2 className="w-8 h-8 animate-spin opacity-90" />
+                            <span className="text-xs font-medium opacity-90">
+                              Menyimpan...
+                            </span>
+                          </div>
+                        ) : (
+                          <ul className="space-y-2 sm:space-y-2.5">
+                            {btn.descriptions.map((d) => (
+                              <li
+                                key={d}
+                                className="flex items-center gap-2 text-xs sm:text-sm font-medium leading-snug"
+                              >
+                                <span
+                                  className={`shrink-0 w-1.5 h-1.5 rounded-full ${btn.dotClassName}`}
+                                />
+                                <span>{d}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {error && (
-                  <div className="mb-4 p-3 rounded-xl border border-rose-400/30 bg-rose-500/10 text-rose-300 text-sm">
+                  <div className="p-3 rounded-xl border border-rose-400/30 bg-rose-500/10 text-rose-300 text-sm">
                     {error}
                   </div>
                 )}
-
-                <button
-                  onClick={handleSubmitRating}
-                  disabled={!selectedRating || loading}
-                  className="w-full py-4 rounded-xl bg-linear-to-r from-emerald-400 to-teal-500 text-[#07110E] font-black tracking-wide disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-110 transition-all flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Menyimpan review...</span>
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-5 h-5" />
-                      <span>Submit Nilai</span>
-                    </>
-                  )}
-                </button>
               </div>
             </div>
           </div>
