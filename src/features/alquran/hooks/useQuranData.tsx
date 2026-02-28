@@ -144,17 +144,22 @@ export function useQuranData() {
     (juz: string): LifecycleStats => {
       const items = getJuzItems(juz);
       const stats: LifecycleStats = {
-        new: 0,
-        memorizing: 0,
-        consolidation: 0,
-        active: 0,
-        maintenance: 0,
-        graduated: 0,
+        menghafal: 0,
+        murajaah: 0,
+        terjaga: 0,
+        selesai: 0,
       };
 
       items.forEach((item) => {
-        if (stats[item.status] !== undefined) {
-          stats[item.status]++;
+        // Map ItemStatus to LifecycleStats
+        if (item.status === "new" || item.status === "memorizing") {
+          stats.menghafal++;
+        } else if (item.status === "consolidation" || item.status === "active") {
+          stats.murajaah++;
+        } else if (item.status === "maintenance") {
+          stats.terjaga++;
+        } else if (item.status === "graduated") {
+          stats.selesai++;
         }
       });
 

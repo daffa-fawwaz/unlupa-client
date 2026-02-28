@@ -112,6 +112,14 @@ export interface ActivateFsrsResponse {
   data: Record<string, unknown>;
   timestamp?: string;
   path?: string;
+} 
+
+export interface ReviewFsrsResponse {
+  status: number;
+  message: string;
+  data: Record<string, unknown>;
+  timestamp?: string;
+  path?: string;
 }
 
 // My Items API Response

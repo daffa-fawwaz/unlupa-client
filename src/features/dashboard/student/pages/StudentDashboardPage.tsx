@@ -1,20 +1,11 @@
 import {
-  Book,
-  Check,
-  Code,
-  Coffee,
   Flame,
-  GraduationCap,
   Hourglass,
-  Loader2,
   Menu,
-  Moon,
-  Play,
   ShieldCheck,
   Sun,
-  User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useOutletContext } from "react-router";
 import type { DashboardContextType } from "@/layouts/DashboardLayout";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
@@ -22,9 +13,6 @@ import { DailyReviewSection } from "@/features/alquran/components/DailyReviewSec
 
 export const StudentDashboardPage = () => {
   const { toggleSidebar } = useOutletContext<DashboardContextType>();
-  const [taskStatus, setTaskStatus] = useState<
-    Record<string, "idle" | "loading" | "completed">
-  >({});
 
   const { data: myItems, loading: myItemsLoading, getMyItems } = useGetMyItems();
 
@@ -34,34 +22,6 @@ export const StudentDashboardPage = () => {
 
   const totalTerjaga =
     myItems?.data.groups.reduce((sum, group) => sum + group.item_count, 0) ?? 0;
-
-  const simulateReview = (taskId: string) => {
-    setTaskStatus((prev) => ({ ...prev, [taskId]: "loading" }));
-    setTimeout(() => {
-      setTaskStatus((prev) => ({ ...prev, [taskId]: "completed" }));
-    }, 1500);
-  };
-
-  const getButtonContent = (taskId: string) => {
-    const status = taskStatus[taskId] || "idle";
-    if (status === "loading") {
-      return <Loader2 className="w-4 h-4 spin-loader" />;
-    }
-    if (status === "completed") {
-      return <Check className="w-4 h-4" />;
-    }
-    return <Play className="w-4 h-4 fill-current" />;
-  };
-
-  const getButtonClass = (taskId: string, baseClass: string) => {
-    const status = taskStatus[taskId] || "idle";
-    if (status === "completed") {
-      return "btn-play bg-gray-700 text-gray-400 cursor-default";
-    }
-    return `btn-play ${baseClass}`;
-  };
-
-  const isCompleted = (taskId: string) => taskStatus[taskId] === "completed";
 
   return (
     <div className="max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
