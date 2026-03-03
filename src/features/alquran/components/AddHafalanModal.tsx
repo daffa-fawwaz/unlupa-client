@@ -46,7 +46,11 @@ const parseContentRef = (contentRef: string): ParsedContentRef => {
     const surahId = Number(surahIdRaw);
     const start = Number(startRaw);
     const end = Number(endRaw);
-    if (!Number.isFinite(surahId) || !Number.isFinite(start) || !Number.isFinite(end)) {
+    if (
+      !Number.isFinite(surahId) ||
+      !Number.isFinite(start) ||
+      !Number.isFinite(end)
+    ) {
       return null;
     }
     const normalized = normalizeRange(start, end);
@@ -95,11 +99,16 @@ export const AddHafalanModal = ({
 }: AddHafalanModalProps) => {
   const [mode, setMode] = useState<Mode>(null);
   const [selectedSurahIndex, setSelectedSurahIndex] = useState<number>(0);
-  const [range, setRange] = useState({ min: 0, max: 0 });
 
   // Get data for this Juz using juzNumber
-  const pageRange = PAGE_DATABASE[juzNumber.toString()] || { min: 1, max: 1 }; // Fallback to avoid crash
-  const surahs = SURAH_MAP[juzNumber.toString()] || [];
+  const pageRange = useMemo(
+    () => PAGE_DATABASE[juzNumber.toString()] ?? { min: 1, max: 1 },
+    [juzNumber],
+  ); // Fallback to avoid crash
+  const surahs = useMemo(
+    () => SURAH_MAP[juzNumber.toString()] ?? [],
+    [juzNumber],
+  );
 
   // Parse Surah Range (e.g., "Al-Baqarah (142-252)" -> name: "Al-Baqarah", start: 142, end: 252)
   const parsedSurahs = useMemo(() => {
@@ -122,12 +131,36 @@ export const AddHafalanModal = ({
     });
   }, [surahs]);
 
+  // Compute initial range based on mode and selection
+  const initialRange = useMemo(() => {
+    if (mode === "PAGE") {
+      return { min: pageRange.min, max: pageRange.max };
+    }
+    if (mode === "SURAH" && parsedSurahs[selectedSurahIndex]) {
+      const surah = parsedSurahs[selectedSurahIndex];
+      return { min: surah.start, max: surah.end };
+    }
+    return { min: 0, max: 0 };
+  }, [mode, pageRange, parsedSurahs, selectedSurahIndex]);
+
+  const [range, setRange] = useState(initialRange);
+
+  // Sync range when mode or surah selection changes
+  useEffect(() => {
+    setRange(initialRange);
+  }, [initialRange]);
+
   const currentParsedRef = useMemo<ParsedContentRef>(() => {
     if (!mode) return null;
 
     if (mode === "PAGE") {
       const normalized = normalizeRange(range.min, range.max);
-      return { mode: "page", key: 0, start: normalized.start, end: normalized.end };
+      return {
+        mode: "page",
+        key: 0,
+        start: normalized.start,
+        end: normalized.end,
+      };
     }
 
     const surah = parsedSurahs[selectedSurahIndex];
@@ -141,7 +174,12 @@ export const AddHafalanModal = ({
     );
     const surahId = surahIndex !== -1 ? surahIndex + 1 : 0;
     const normalized = normalizeRange(range.min, range.max);
-    return { mode: "surah", key: surahId, start: normalized.start, end: normalized.end };
+    return {
+      mode: "surah",
+      key: surahId,
+      start: normalized.start,
+      end: normalized.end,
+    };
   }, [mode, parsedSurahs, range.max, range.min, selectedSurahIndex]);
 
   const isDuplicate = useMemo(() => {
@@ -161,16 +199,6 @@ export const AddHafalanModal = ({
       );
     });
   }, [currentParsedRef, existingItems]);
-
-  // Reset range when mode or selected Surah changes
-  useEffect(() => {
-    if (mode === "PAGE") {
-      setRange({ min: pageRange.min, max: pageRange.max });
-    } else if (mode === "SURAH" && parsedSurahs[selectedSurahIndex]) {
-      const surah = parsedSurahs[selectedSurahIndex];
-      setRange({ min: surah.start, max: surah.end });
-    }
-  }, [mode, selectedSurahIndex, pageRange, parsedSurahs]);
 
   // API Hook
   const { createJuzItem, loading, error } = useCreateJuzItem();
@@ -236,7 +264,7 @@ export const AddHafalanModal = ({
       />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-lg max-h-[92vh] bg-[#0F1218] border border-white/10 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl overflow-y-auto animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg max-h-[92vh] bg-[#0F1218] border border-white/10 rounded-3xl sm:rounded-[2rem] shadow-2xl overflow-y-auto animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="sticky top-0 z-10 p-4 sm:p-6 border-b border-white/5 flex items-center justify-between bg-[#0F1218]/95 backdrop-blur">
           <div className="flex items-center gap-3">
