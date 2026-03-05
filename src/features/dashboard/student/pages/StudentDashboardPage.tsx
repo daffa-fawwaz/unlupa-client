@@ -10,9 +10,11 @@ import { useOutletContext } from "react-router";
 import type { DashboardContextType } from "@/layouts/DashboardLayout";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
 export const StudentDashboardPage = () => {
   const { toggleSidebar } = useOutletContext<DashboardContextType>();
+  const { name } = useCurrentUser();
 
   const { data: myItems, loading: myItemsLoading, getMyItems } = useGetMyItems();
 
@@ -22,6 +24,9 @@ export const StudentDashboardPage = () => {
 
   const totalTerjaga =
     myItems?.data.groups.reduce((sum, group) => sum + group.item_count, 0) ?? 0;
+
+  // Get initial letter for avatar
+  const initialLetter = name.charAt(0).toUpperCase();
 
   return (
     <div className="max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
@@ -40,18 +45,18 @@ export const StudentDashboardPage = () => {
           </span>
         </button>
 
-        {/* Right: User Identity (Tanpa Angka Estimasi) */}
+        {/* Right: User Identity (Dynamic from auth store) */}
         <div className="flex items-center gap-4">
           <div className="text-right">
             <p className="text-sm text-white font-serif font-medium">
-              Abdullah F.
+              {name}
             </p>
             <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
               Penjaga Ilmu
             </p>
           </div>
           <div className="w-10 h-10 rounded-full bg-linear-to-b from-amber-500 to-amber-700 flex items-center justify-center font-serif font-bold text-black border-2 border-amber-400/50 shadow-lg shadow-amber-500/20">
-            A
+            {initialLetter}
           </div>
         </div>
       </nav>

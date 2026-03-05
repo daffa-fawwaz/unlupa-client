@@ -14,10 +14,12 @@ import { Sidebar } from "@/components/ui/Sidebar";
 import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
 import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherRequests";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
 
 export const AdminDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { name } = useCurrentUser();
 
   const { data: users, loading: usersLoading } = useUsers();
   const {
@@ -33,6 +35,9 @@ export const AdminDashboardPage = () => {
   const studentCount = users?.filter((u) => u.role === "student").length ?? 0;
   const pendingTeacherRequests =
     teacherRequests?.filter((r) => r.status === "pending").length ?? 0;
+
+  // Get initial letter for avatar
+  const initialLetter = name.charAt(0).toUpperCase();
 
   const statCards = [
     {
@@ -121,9 +126,9 @@ export const AdminDashboardPage = () => {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
             </button>
 
-            {/* Admin Profile Tiny */}
+            {/* Admin Profile (Dynamic from auth store) */}
             <div className="h-9 w-9 rounded-lg bg-linear-to-br from-amber-500 to-amber-700 flex items-center justify-center font-serif font-bold text-black border border-amber-400/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-              A
+              {initialLetter}
             </div>
           </div>
         </header>

@@ -21,9 +21,11 @@ import { Sidebar } from "@/components/ui/Sidebar";
 import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
 export const TeacherDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { name } = useCurrentUser();
 
   const { data: dailyTasks, loading: dailyLoading } = useGetDaily();
   const { data: myItems, loading: myItemsLoading, getMyItems } = useGetMyItems();
@@ -35,6 +37,9 @@ export const TeacherDashboardPage = () => {
   const totalStudents = myItems?.data.groups.length ?? 0;
   const totalItems =
     myItems?.data.groups.reduce((sum, group) => sum + group.item_count, 0) ?? 0;
+
+  // Get initial letter for avatar
+  const initialLetter = name.charAt(0).toUpperCase();
 
   const statCards = [
     {
@@ -154,9 +159,9 @@ export const TeacherDashboardPage = () => {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
             </button>
 
-            {/* Teacher Profile */}
+            {/* Teacher Profile (Dynamic from auth store) */}
             <div className="h-9 w-9 rounded-lg bg-linear-to-br from-amber-500 to-amber-700 flex items-center justify-center font-serif font-bold text-black border border-amber-400/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-              U
+              {initialLetter}
             </div>
           </div>
         </header>
