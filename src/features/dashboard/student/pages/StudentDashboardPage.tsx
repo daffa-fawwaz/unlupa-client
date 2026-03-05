@@ -1,9 +1,9 @@
 import {
-  Flame,
-  Hourglass,
   Menu,
   ShieldCheck,
   Sun,
+  Target,
+  Trophy,
 } from "lucide-react";
 import { useEffect } from "react";
 import { useOutletContext } from "react-router";
@@ -11,12 +11,37 @@ import type { DashboardContextType } from "@/layouts/DashboardLayout";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
+import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
+
+const getTodayDateKey = () => {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+const getReviewedStorageKeyByTaskDate = (taskDate: string) =>
+  `alquran:daily-reviewed:${taskDate}`;
+
+const getReviewedIdsForTaskDate = (taskDate: string): string[] => {
+  try {
+    const raw = localStorage.getItem(getReviewedStorageKeyByTaskDate(taskDate));
+    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((v) => typeof v === "string")
+      : [];
+  } catch {
+    return [];
+  }
+};
 
 export const StudentDashboardPage = () => {
   const { toggleSidebar } = useOutletContext<DashboardContextType>();
   const { name } = useCurrentUser();
 
   const { data: myItems, loading: myItemsLoading, getMyItems } = useGetMyItems();
+  const { data: dailyTasks, loading: dailyLoading } = useGetDaily();
 
   useEffect(() => {
     void getMyItems("quran");
@@ -24,6 +49,20 @@ export const StudentDashboardPage = () => {
 
   const totalTerjaga =
     myItems?.data.groups.reduce((sum, group) => sum + group.item_count, 0) ?? 0;
+
+  // Calculate items by status (dinamis dari API)
+  const allItems = myItems?.data.groups.flatMap((group) => group.items) ?? [];
+  const totalSelesai = allItems.filter(
+    (item) => item.status === "graduated" || item.status === "graduate"
+  ).length;
+
+  // Review hari ini (dari daily tasks)
+  const reviewHariIni = dailyTasks?.length ?? 0;
+
+  // Calculate estimated focus time today (dinamis dari localStorage)
+  // Asumsi: 1 item review = ~3-5 menit (estimasi berdasarkan kompleksitas)
+  const reviewedToday = getReviewedIdsForTaskDate(getTodayDateKey()).length;
+  const estimatedFocusTime = reviewedToday * 4; // 4 menit per item (rata-rata)
 
   // Get initial letter for avatar
   const initialLetter = name.charAt(0).toUpperCase();
@@ -104,53 +143,59 @@ export const StudentDashboardPage = () => {
           </div>
         </div>
 
-        {/* Stat 2: Waktu (THE TROPHY) */}
+        {/* Stat 2: Review Hari Ini (dinamis dari daily tasks API) */}
         <div className="glass-stat border-purple-500/20 bg-purple-900/5 relative overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300">
           <div className="absolute inset-0 bg-linear-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
           <div className="flex justify-between items-start mb-6 relative z-10">
             <p className="text-[10px] text-purple-400/80 uppercase tracking-widest font-mono">
-              Dedikasi Waktu
+              Review Hari Ini
             </p>
-            <Hourglass className="w-5 h-5 text-purple-500" />
+            <Target className="w-5 h-5 text-purple-500" />
           </div>
           <div className="text-center py-2 relative z-10">
             <h3 className="text-5xl text-white font-serif tracking-tight">
-              12.5
+              {dailyLoading ? "..." : reviewHariIni}
             </h3>
-            <p className="text-sm text-purple-300 mt-1">Jam Bulan Ini</p>
+            <p className="text-sm text-purple-300 mt-1">Tugas Review</p>
           </div>
           <p className="text-[10px] text-center text-gray-500 mt-6 relative z-10">
-            "Waktu yang tak akan sia-sia"
+            {reviewHariIni > 0 
+              ? "Ayo selesaikan sekarang!" 
+              : "Tidak ada tugas hari ini"}
           </p>
         </div>
 
-        {/* Stat 3: Konsistensi (Heatmap) */}
-        <div className="glass-stat border-amber-500/20">
+        {/* Stat 3: Total Selesai/Graduated (dinamis dari my-items API) */}
+        <div className="glass-stat border-amber-500/20 relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition"></div>
           <div className="flex justify-between items-start mb-4">
             <p className="text-[10px] text-amber-500/80 uppercase tracking-widest font-mono">
-              Konsistensi
+              Total Selesai
             </p>
             <div className="flex items-center gap-1 text-amber-500">
-              <Flame className="w-4 h-4 fill-current" />
-              <span className="text-sm font-bold">12 Hari</span>
+              <Trophy className="w-5 h-5" />
+              <span className="text-sm font-bold">{totalSelesai}</span>
             </div>
           </div>
-          <div className="flex items-end gap-2 h-full">
-            <div className="heatmap-grid flex-1 content-end">
-              {[...Array(28)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`heatmap-cell ${
-                    [
-                      0, 1, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19,
-                      20,
-                    ].includes(i)
-                      ? "active"
-                      : ""
-                  }`}
-                ></div>
-              ))}
+          <div className="text-center py-2">
+            <p className="text-xs text-gray-400 mb-2">
+              Item yang telah dihafal dengan sempurna
+            </p>
+            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-linear-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500"
+                style={{ 
+                  width: totalTerjaga > 0 
+                    ? `${Math.min((totalSelesai / totalTerjaga) * 100, 100)}%` 
+                    : "0%" 
+                }}
+              />
             </div>
+            <p className="text-[10px] text-amber-500/70 mt-2">
+              {totalTerjaga > 0 
+                ? `${Math.round((totalSelesai / totalTerjaga) * 100)}% dari total terjaga`
+                : "Mulai menghafal untuk melihat progress"}
+            </p>
           </div>
         </div>
       </div>
@@ -171,7 +216,7 @@ export const StudentDashboardPage = () => {
               Total Fokus Hari Ini
             </p>
             <p className="text-3xl font-serif text-amber-400">
-              ± 45{" "}
+              ± {estimatedFocusTime}{" "}
               <span className="text-sm font-sans text-amber-500/50">Menit</span>
             </p>
           </div>
