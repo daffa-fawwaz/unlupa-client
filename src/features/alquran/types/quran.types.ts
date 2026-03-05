@@ -138,6 +138,7 @@ export interface MyItemDetail {
   status: string;
   review_count: number;
   created_at: string;
+  next_review_at?: string; // Next review schedule
 }
 
 export interface QuranGroup {

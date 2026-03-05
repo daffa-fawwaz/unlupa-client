@@ -4,6 +4,7 @@ import {
   CheckCircle,
   Layers,
   ChevronRight,
+  Calendar,
 } from "lucide-react";
 import type { MyItemDetail } from "@/features/alquran/types/quran.types";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
@@ -86,7 +87,7 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
         </div>
 
         <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
-          <div className="flex gap-6 text-xs font-medium text-gray-500">
+          <div className="flex flex-col gap-3 text-xs font-medium text-gray-500">
             <div className="flex items-center gap-2 group-hover:text-gray-400 transition-colors">
               <Clock className="w-4 h-4 text-amber-500/50" />
               <span>{item.review_count}x Review</span>
@@ -100,6 +101,17 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
                 })}
               </span>
             </div>
+            {item.next_review_at && (
+              <div className="flex items-center gap-2 group-hover:text-gray-400 transition-colors">
+                <Calendar className="w-4 h-4 text-blue-500/50" />
+                <span>
+                  {new Date(item.next_review_at).toLocaleDateString("id-ID", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Chevron sebagai visual cue bahwa card bisa diklik */}

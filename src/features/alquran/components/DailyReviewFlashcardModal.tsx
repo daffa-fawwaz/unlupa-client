@@ -15,6 +15,7 @@ import type {
 } from "@/features/alquran/types/quran.types";
 import { parseContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";
 import { useReviewFsrs } from "@/features/alquran/hooks/useReviewFsrs";
+import { useReviewInterval } from "../hooks/useReviewInterval";
 
 interface DailyReviewFlashcardModalProps {
   isOpen: boolean;
@@ -82,18 +83,22 @@ export const DailyReviewFlashcardModal = ({
     1 | 2 | 3 | 4 | null
   >(null);
   const { reviewFsrs, loading: loadingFsrs, error: errorFsrs } = useReviewFsrs();
-
-  // For Daily Review tasks, we always use FSRS review endpoint
-  // Because items in daily review are already in 'fsrs_active' / 'terjaga' status
-  // The 'state' field in DailyTask is 'pending' (task status), not item status
-  const useFsrsReview = true;
-  
-  console.log("[DailyReviewFlashcard] Using FSRS Review:", useFsrsReview);
-  
-  const loading = loadingFsrs;
-  const error = errorFsrs;
+  const { reviewInterval, loading: loadingInterval, error: errorInterval } = useReviewInterval();
 
   if (!isOpen || !task) return null;
+
+  // Determine which review endpoint to use based on item status
+  // 'interval' status -> use reviewInterval (rating 1-3)
+  // 'fsrs_active', 'graduated', or 'graduate' status -> use reviewFsrs (rating 1-4)
+  const itemStatus = task.status?.toLowerCase() || "";
+  const useFsrsReview =
+    itemStatus === "fsrs_active" ||
+    itemStatus === "graduated" ||
+    itemStatus === "graduate";
+
+  const loading = useFsrsReview ? loadingFsrs : loadingInterval;
+  const error = useFsrsReview ? errorFsrs : errorInterval;
+
   const info = task.content_ref ? parseContentRef(task.content_ref) : null;
 
   const title =
@@ -115,8 +120,18 @@ export const DailyReviewFlashcardModal = ({
 
     setSubmittingButtonId(btn.id);
     try {
-      // Always use FSRS review for Daily Review tasks
-      const response = await reviewFsrs(task.item_id, btn.payloadValue as 1 | 2 | 3 | 4);
+      let response: ReviewIntervalResponse | ReviewFsrsResponse;
+      
+      if (useFsrsReview) {
+        // Use FSRS review for 'fsrs_active' or 'graduated' items (rating 1-4)
+        response = await reviewFsrs(task.item_id, btn.payloadValue as 1 | 2 | 3 | 4);
+      } else {
+        // Use Interval review for 'interval' items (rating 1-3 only)
+        // Map rating 4 to 3 for interval review
+        const intervalRating = Math.min(btn.payloadValue, 3) as 1 | 2 | 3;
+        response = await reviewInterval(task.item_id, intervalRating);
+      }
+      
       await onReviewed(response);
       onClose();
     } catch {
@@ -139,13 +154,13 @@ export const DailyReviewFlashcardModal = ({
           <X className="w-5 h-5" />
         </button>
 
-        <div className="[perspective:2200px]">
+        <div className="perspective-[2200px]">
           <div
-            className={`relative min-h-[520px] md:min-h-[450px] w-full [transform-style:preserve-3d] transition-transform duration-700 ${
-              isFlipped ? "[transform:rotateY(180deg)]" : ""
+            className={`relative min-h-130 md:min-h-112.5 w-full transform-3d transition-transform duration-700 ${
+              isFlipped ? "transform-[rotateY(180deg)]" : ""
             }`}
           >
-            <div className="absolute inset-0 [backface-visibility:hidden] rounded-[1.5rem] md:rounded-[2rem] border border-cyan-400/20 bg-linear-to-br from-[#101725] via-[#0D1422] to-[#0A111C] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
+            <div className="absolute inset-0 backface-hidden rounded-3xl md:rounded-[2rem] border border-cyan-400/20 bg-linear-to-br from-[#101725] via-[#0D1422] to-[#0A111C] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
               <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(20,184,166,0.28),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.20),transparent_35%)]" />
 
               <div className="relative p-4 md:p-8">

@@ -12,6 +12,7 @@ import type {
   DailyTask,
   ReviewIntervalResponse,
   ReviewFsrsResponse,
+  MyItemDetail,
 } from "@/features/alquran/types/quran.types";
 import { DailyReviewFlashcardModal } from "@/features/alquran/components/DailyReviewFlashcardModal";
 import { alquranService } from "../services/alquran.services";
@@ -47,6 +48,9 @@ export const DailyReviewSection = () => {
   const [activeItemIds, setActiveItemIds] = useState<Set<string>>(
     () => new Set(),
   );
+  const [itemStatusMap, setItemStatusMap] = useState<Map<string, string>>(
+    () => new Map(),
+  );
 
   const refreshActiveItemIds = useCallback(async () => {
     try {
@@ -55,6 +59,15 @@ export const DailyReviewSection = () => {
         group.items.map((item) => item.item_id),
       );
       setActiveItemIds(new Set(ids));
+
+      // Build status map from all items
+      const statusMap = new Map<string, string>();
+      response.data.groups.forEach((group) => {
+        group.items.forEach((item: MyItemDetail) => {
+          statusMap.set(item.item_id, item.status);
+        });
+      });
+      setItemStatusMap(statusMap);
     } catch (refreshError) {
       console.error("Failed to refresh active item ids", refreshError);
     }
@@ -68,7 +81,10 @@ export const DailyReviewSection = () => {
 
     refetchDaily();
     const safetyRefetchId = window.setTimeout(refetchDaily, 800);
-    window.addEventListener("alquran:daily-generated", refetchDaily as EventListener);
+    window.addEventListener(
+      "alquran:daily-generated",
+      refetchDaily as EventListener,
+    );
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         refetchDaily();
@@ -145,22 +161,31 @@ export const DailyReviewSection = () => {
     [activeItemIds, data, hiddenTaskKeys],
   );
 
-  const pendingCount = dailyReviewItems.filter((i) => i.status === "pending")
-    .length;
+  const pendingCount = dailyReviewItems.filter(
+    (i) => i.status === "pending",
+  ).length;
   const firstPendingTask = dailyReviewItems.find(
     (item) => item.status === "pending",
   )?.task;
 
   const openFlashcard = (task: DailyTask) => {
-    setSelectedTask(task);
+    // Enrich task with item status from the API
+    const enrichedTask: DailyTask = {
+      ...task,
+      status: itemStatusMap.get(task.item_id) || task.status,
+    };
+    setSelectedTask(enrichedTask);
     setIsFlashcardOpen(true);
   };
 
-  const handleReviewed = async (_result: ReviewIntervalResponse | ReviewFsrsResponse) => {
+  const handleReviewed = async (
+    _result: ReviewIntervalResponse | ReviewFsrsResponse,
+  ) => {
     // Handle both response types - they have different data structures
     const reviewedItemId = selectedTask?.item_id;
     const reviewedTaskDate = selectedTask?.task_date ?? getTodayDateKey();
-    const reviewedStorageKey = getReviewedStorageKeyByTaskDate(reviewedTaskDate);
+    const reviewedStorageKey =
+      getReviewedStorageKeyByTaskDate(reviewedTaskDate);
     const localKey = `${reviewedTaskDate}:${reviewedItemId}`;
 
     const reviewedIds = getReviewedIdsForTaskDate(reviewedTaskDate);
@@ -180,7 +205,9 @@ export const DailyReviewSection = () => {
     });
 
     await getDaily();
+
   };
+  console.log("selectedTask", selectedTask);
 
   return (
     <div className="mb-8 animate-fadeIn relative">
