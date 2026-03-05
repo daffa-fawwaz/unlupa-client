@@ -25,8 +25,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded border border-amber-500/30 flex items-center justify-center">
-              <span className="font-serif font-bold text-amber-500">B</span>
+            <div className="w-10 h-10 rounded border border-amber-500/30 flex items-center justify-center">
+              <span className="font-serif font-bold text-amber-500">
+                <img src="@/../public/unlupa.logo.png" alt="" />
+              </span>
             </div>
             <span className="font-cinzel font-bold text-xl text-white tracking-widest">
               UNLUPA
