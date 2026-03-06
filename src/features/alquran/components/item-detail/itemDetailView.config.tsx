@@ -6,6 +6,7 @@ import {
   Play,
   RotateCcw,
   Brain,
+  Trophy,
 } from "lucide-react";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
 import { convertPageRangeToSurahLabel } from "@/features/alquran/utils/pageToSurahConverter";
@@ -15,8 +16,9 @@ export const PHASES = [
   "interval_start",
   "interval_end",
   "terjaga",
+  "graduated",
 ] as const;
-export const PHASES_STATUS = ["menghafal", "interval", "fsrs_active"] as const;
+export const PHASES_STATUS = ["menghafal", "interval", "fsrs_active", "graduated"] as const;
 
 export type ActionPhase = (typeof PHASES)[number];
 export type ActionPhaseStatus = (typeof PHASES_STATUS)[number];
@@ -95,6 +97,16 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
     buttonClass:
       "bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-900/20 hover:shadow-emerald-500/30",
   },
+  graduated: {
+    sectionTitle: "Selamat! Anda Telah Menyelesaikan Fase Ini",
+    description:
+      "Alhamdulillah, hafalan ini telah selesai dan mencapai tingkat kelulusan. Pertahankan konsistensi murajaah agar hafalan tetap melekat selamanya.",
+    label: "Lihat Progress",
+    href: "/dashboard/alquran",
+    icon: <Trophy className="w-5 h-5" />,
+    buttonClass:
+      "bg-linear-to-r from-purple-500 to-violet-600 text-white shadow-purple-900/20 hover:shadow-purple-500/30",
+  },
 };
 
 const STATUS_DISPLAY_CONFIG: Record<ActionPhaseStatus, StatusDisplay> = {
@@ -118,6 +130,13 @@ const STATUS_DISPLAY_CONFIG: Record<ActionPhaseStatus, StatusDisplay> = {
     iconBg: "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/20",
     description:
       "Hafalan ini sudah masuk ke jadwal murajaah berkala. Lakukan review rutin tepat waktu ketika jadwalnya tiba agar hafalan tetap terjaga seumur hidup.",
+  },
+  graduated: {
+    title: "Fase Lulus",
+    icon: <Trophy className="w-12 h-12 text-purple-400" />,
+    iconBg: "bg-purple-500/10 border-purple-500/20 shadow-purple-500/20",
+    description:
+      "Alhamdulillah! Anda telah menyelesaikan fase hafalan ini dengan sukses. Terus pertahankan dengan murajaah rutin agar hafalan tetap melekat.",
   },
 };
 
@@ -169,6 +188,8 @@ export function getStatusDisplayByPhase(phase: ActionPhase): StatusDisplay {
       return STATUS_DISPLAY_CONFIG.interval;
     case "terjaga":
       return STATUS_DISPLAY_CONFIG.fsrs_active;
+    case "graduated":
+      return STATUS_DISPLAY_CONFIG.graduated;
     default:
       return STATUS_DISPLAY_CONFIG.menghafal;
   }
@@ -277,6 +298,12 @@ export function getStatusStyleByPhase(phase: ActionPhase): StatusStyle {
         label: "Terjaga",
         className:
           "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.1)]",
+      };
+    case "graduated":
+      return {
+        label: "Lulus",
+        className:
+          "bg-purple-500/10 border-purple-500/20 text-purple-400 shadow-[0_0_12px_rgba(192,132,252,0.1)]",
       };
     default:
       return {
