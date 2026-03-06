@@ -18,7 +18,12 @@ export const PHASES = [
   "terjaga",
   "graduated",
 ] as const;
-export const PHASES_STATUS = ["menghafal", "interval", "fsrs_active", "graduated"] as const;
+export const PHASES_STATUS = [
+  "menghafal",
+  "interval",
+  "fsrs_active",
+  "graduated",
+] as const;
 
 export type ActionPhase = (typeof PHASES)[number];
 export type ActionPhaseStatus = (typeof PHASES_STATUS)[number];
@@ -218,10 +223,12 @@ export function parseContentRef(contentRef: string): ParsedContentRef {
   if (parts[0] === "page" && parts[1]) {
     const pageRange = `page:${parts[1]}`;
     const convertedLabel = convertPageRangeToSurahLabel(pageRange);
-    
-    // Parse the converted label: "Hal 582-604 - An-Naba 1-40"
-    const [pagePart, surahPart] = convertedLabel.split(" - ");
-    
+
+    // Split hanya di " - " pertama
+    const dashIndex = convertedLabel.indexOf(" - ");
+    const pagePart = convertedLabel.substring(0, dashIndex);
+    const surahPart = convertedLabel.substring(dashIndex + 3); // ambil sisanya semua
+
     return {
       type: "page",
       title: surahPart || pagePart,

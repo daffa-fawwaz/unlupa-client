@@ -574,7 +574,7 @@ const PAGE_TO_SURAH_MAP: Record<number, SurahEntry | SurahEntry[]> = {
   561: { surahName: "At-Tahrim", startAyah: 8, endAyah: 12 },
 
   // Juz 29 (pages 562-581 in some prints, but typically 562-581)
- 562: { surahName: "Al-Mulk", startAyah: 1, endAyah: 12 },
+  562: { surahName: "Al-Mulk", startAyah: 1, endAyah: 12 },
   563: { surahName: "Al-Mulk", startAyah: 13, endAyah: 26 },
   564: { surahName: "Al-Mulk - Al-Qalam", startAyah: 27, endAyah: 15 },
   565: { surahName: "Al-Qalam", startAyah: 16, endAyah: 42 },
@@ -603,20 +603,44 @@ const PAGE_TO_SURAH_MAP: Record<number, SurahEntry | SurahEntry[]> = {
   586: { surahName: "At-Takwir", startAyah: 1, endAyah: 19 },
   587: { surahName: "Al-Infithar - Al-Mutaffifin", startAyah: 1, endAyah: 6 },
   588: { surahName: "Al-Muthaffifin", startAyah: 7, endAyah: 34 },
-  589: { surahName: "Al-Muthaffifin - Al-Insyiqaq", startAyah: 35, endAyah: 25 },
+  589: {
+    surahName: "Al-Muthaffifin - Al-Insyiqaq",
+    startAyah: 35,
+    endAyah: 25,
+  },
   590: { surahName: "Al-Buruuj", startAyah: 1, endAyah: 22 },
   591: { surahName: "At-Tariq - Al-A'la", startAyah: 1, endAyah: 15 },
   592: { surahName: "Al-A'la - Al-Ghasyiyah", startAyah: 16, endAyah: 26 },
   593: { surahName: "Al-Fajr", startAyah: 1, endAyah: 23 },
   594: { surahName: "Al-Fajr - Al-Balad", startAyah: 24, endAyah: 20 },
   595: { surahName: "Asy-Syams - Al-Lail", startAyah: 1, endAyah: 14 },
-  596: { surahName: "Al-Lail - Ad-Duha - Asy-Syarh", startAyah: 21, endAyah: 8 },
+  596: {
+    surahName: "Al-Lail - Ad-Duha - Asy-Syarh",
+    startAyah: 21,
+    endAyah: 8,
+  },
   597: { surahName: "At-Tiin - Al-Alaq", startAyah: 1, endAyah: 19 },
   598: { surahName: "Al-Qadr - Al-Bayyinah", startAyah: 1, endAyah: 7 },
-  599: { surahName: "Al-Bayyinah - Al-Zalzalah - Al-Adiyat", startAyah: 8, endAyah: 9 },
-  600: { surahName: "Al-Adiyat - Al-Qariah - At-Takasur", startAyah: 11, endAyah: 8 },
-  601: { surahName: "Al-Asr' - Al-Humazah - Al-Fiil", startAyah: 1, endAyah: 5 },
-  602: { surahName: "Al-Quraisy - Al-Maun - Al-Kautsar", startAyah: 1, endAyah: 3 },
+  599: {
+    surahName: "Al-Bayyinah - Al-Zalzalah - Al-Adiyat",
+    startAyah: 8,
+    endAyah: 9,
+  },
+  600: {
+    surahName: "Al-Adiyat - Al-Qariah - At-Takasur",
+    startAyah: 11,
+    endAyah: 8,
+  },
+  601: {
+    surahName: "Al-Asr' - Al-Humazah - Al-Fiil",
+    startAyah: 1,
+    endAyah: 5,
+  },
+  602: {
+    surahName: "Al-Quraisy - Al-Maun - Al-Kautsar",
+    startAyah: 1,
+    endAyah: 3,
+  },
   603: {
     surahName: "Al-Kafirun - An-Nasr - Al-Lahab",
     startAyah: 1,
@@ -667,7 +691,7 @@ export function convertPageRangeToSurahLabel(pageRange: string): string {
   }
 
   // Different surahs on different pages
-return `Hal ${startPage}-${endPage} - ${firstSurah.surahName} ${firstSurah.startAyah} s/d ${lastSurah.surahName} ${lastSurah.endAyah}`;;
+  return `Hal ${startPage}-${endPage} - ${firstSurah.surahName} ${firstSurah.startAyah} s/d ${lastSurah.surahName} ${lastSurah.endAyah}`;
 }
 
 /**

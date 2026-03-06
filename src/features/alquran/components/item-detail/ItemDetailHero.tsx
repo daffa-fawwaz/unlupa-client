@@ -50,12 +50,12 @@ export function ItemDetailHero({
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 leading-tight break-words">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 leading-tight">
             {info.title}
           </h1>
           <div className="flex items-center gap-2 text-gray-400 text-base md:text-lg">
             <Layers className="w-5 h-5 text-amber-500/60" />
-            <span className="break-words">{info.subtitle}</span>
+            <span className="wrap-break-word`">{info.subtitle}</span>
           </div>
         </div>
       </div>
