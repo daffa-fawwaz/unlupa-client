@@ -109,7 +109,7 @@ export const FeatureSection = () => {
           </div>
         </div>
 
-        {/* 2. 6 Fase Hafalan (Amber) */}
+        {/* 2. 4 Fase Hafalan (Amber) */}
         <div className="min-w-[320px] md:min-w-[380px] h-[520px] snap-center monolith-card amber rounded-[32px] p-10 flex flex-col group cursor-default justify-between">
           <div className="card-nebula bg-amber-500"></div>
           <div className="mb-auto relative z-10">
@@ -118,7 +118,7 @@ export const FeatureSection = () => {
               <Layers className="w-8 h-8 text-amber-400 neon-icon" />{" "}
             </div>
             <h3 className="text-3xl font-serif text-white mb-4 leading-tight group-hover:text-amber-300 transition-colors drop-shadow-md">
-              6 Fase Hafalan <br />
+              5 Fase Hafalan <br />
               Terstruktur
             </h3>
             <div className="w-12 h-1 bg-amber-500/50 rounded-full mb-6 group-hover:w-24 transition-all duration-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
@@ -351,7 +351,7 @@ export const FeatureSection = () => {
               <Star className="w-10 h-10 text-amber-500 fill-amber-500/20 neon-icon" />
             </div>
             <h3 className="text-3xl md:text-4xl font-serif text-white mb-4 leading-tight">
-              10 Tombol Feedback <br />{" "}
+              4 Tombol Feedback <br />{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-300 to-amber-600 drop-shadow-lg">
                 Kejujuran
               </span>

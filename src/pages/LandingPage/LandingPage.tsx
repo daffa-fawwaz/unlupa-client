@@ -5,9 +5,6 @@ import { FeatureSection } from "@/features/landing/sections/FeatureSection/Featu
 import { InklusivitasSection } from "@/features/landing/sections/Inklusivitas/InklusivitasSection";
 import { CtaSection } from "@/features/landing/sections/CTA/CtaSection";
 import { TestimonialSection } from "@/features/landing/sections/Testimonial/TestimonialSection";
-import { PriceSection } from "@/features/landing/sections/Price/PriceSection";
-import { AboutSection } from "@/features/landing/sections/About/AboutSection";
-import { AkadSection } from "@/features/landing/sections/Akad/AkadSection";
 import { FAQSection } from "@/features/landing/sections/FAQ/FAQSection";
 
 export const LandingPage = () => {
@@ -20,9 +17,6 @@ export const LandingPage = () => {
       <FeatureSection />
       <InklusivitasSection />
       <TestimonialSection />
-      <PriceSection />
-      <AboutSection />
-      <AkadSection />
       <FAQSection />
       <CtaSection />
     </div>

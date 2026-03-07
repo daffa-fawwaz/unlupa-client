@@ -26,15 +26,16 @@ export const LandingNavbar = () => {
         {/* Left: Logo & Title */}
         <div className="flex items-center gap-3 group cursor-pointer">
           <div className="relative w-10 h-10 flex items-center justify-center">
-            <div className="absolute inset-0 bg-primary/20 rounded-lg rotate-3 group-hover:rotate-6 transition-transform duration-500 ease-out border border-white/5 backdrop-blur-sm"></div>
-            <div className="absolute inset-0 bg-[#1a102e]/80 rounded-lg -rotate-3 group-hover:-rotate-6 transition-transform duration-500 ease-out flex items-center justify-center border border-white/10 shadow-inner">
-              <span className="font-display text-xl text-primary font-bold">
-                U
-              </span>
+            <div className="w-10 h-10 rounded border border-amber-500/30 flex items-center justify-center bg-white/5 overflow-hidden">
+              <img
+                src="/unlupa.logo.png"
+                alt="UNLUPA Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <span className="font-display tracking-widest text-xl font-bold text-white">
-            UNLUPA 
+            UNLUPA
           </span>
         </div>
 
