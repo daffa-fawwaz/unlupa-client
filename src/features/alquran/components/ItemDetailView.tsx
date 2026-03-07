@@ -13,6 +13,7 @@ import {
   parseContentRef,
   type ActionPhase,
 } from "@/features/alquran/components/item-detail/ItemDetailView.config";
+import { useNavigate } from "react-router";
 
 export type { ActionPhase };
 
@@ -31,6 +32,7 @@ export const ItemDetailView = ({
   currentPhase,
   onPhaseChange,
 }: ItemDetailViewProps) => {
+  const navigate = useNavigate();
   const phase = currentPhase ?? getInitialPhase(item.status);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
@@ -65,19 +67,17 @@ export const ItemDetailView = ({
         break;
       case "interval_end":
         if (config.href) {
-          window.location.href = config.href;
-        } else {
-          console.log("Review dimulai untuk item:", item.item_id);
+          navigate(config.href);
         }
         break;
       case "terjaga":
         if (config.href) {
-          window.location.href = config.href;
+          navigate(config.href);
         }
         break;
-      case "graduate": 
+      case "graduate":
         if (config.href) {
-          window.location.href = config.href;
+          navigate(config.href);
         }
         break;
     }
