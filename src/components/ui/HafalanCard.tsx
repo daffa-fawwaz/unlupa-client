@@ -42,6 +42,7 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
     displaySubtitle = "Mushaf";
   }
 
+  console.log("item:", item);
   return (
     <div
       onClick={onClick}
@@ -64,11 +65,13 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
           <div className="flex items-center gap-2">
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border backdrop-blur-md ${
-                item.status === "active"
+                item.status === "fsrs_active"
                   ? "bg-green-500/10 border-green-500/20 text-green-400 shadow-[0_0_10px_rgba(74,222,128,0.1)]"
-                  : item.status === "memorizing"
+                  : item.status === "menghafal"
                     ? "bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.1)]"
-                    : "bg-gray-500/10 border-gray-500/20 text-gray-400"
+                    : item.status === "interval"
+                      ? "bg-blue-500/10 border-blue-500/20 text-blue-400 shadow-[0_0_10px_rgba(251,191,36,0.1)]"
+                      : "bg-gray-500/10 border-gray-500/20 text-gray-400"
               }`}
             >
               {item.status}

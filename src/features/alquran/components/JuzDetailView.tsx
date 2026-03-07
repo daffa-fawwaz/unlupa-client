@@ -1,6 +1,7 @@
 import { ArrowLeft, Plus, BookOpen, Activity } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
+import { useItemsByStatus } from "@/features/alquran/hooks/useItemsByStatus";
 import { HafalanKosong } from "@/components/ui/HafalanKosong";
 import { HafalanCard } from "@/components/ui/HafalanCard";
 import { AddHafalanModal } from "./AddHafalanModal";
@@ -20,22 +21,65 @@ export const JuzDetailView = ({
   onItemClick,
 }: JuzDetailViewProps) => {
   const { data, loading, error, getMyItems } = useGetMyItems();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { data: fsrsData, refetch: refetchFsrs } = useItemsByStatus({
+    status: "fsrs_active",
+  });
+  const { data: intervalData, refetch: refetchInterval } = useItemsByStatus({
+    status: "interval",
+  });
 
   useEffect(() => {
     getMyItems("quran");
+    refetchFsrs();
+    refetchInterval();
   }, []);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Build map item_id -> next_review_at dari statusData
+
+  const nextReviewMap = useMemo(() => {
+    const map: Record<string, string | undefined> = {};
+    for (const d of [fsrsData, intervalData]) {
+      console.log("d:", d);
+      console.log("d.data:", d?.data);
+      console.log("fsrsData:", fsrsData);
+      console.log("fsrsData.data[0]:", fsrsData?.data?.[0]);
+      if (!d?.data) continue;
+      for (const item of d.data) {
+        console.log("raw item:", item);
+        if (item.interval_next_review_at) {
+          map[item.item_id] = item.interval_next_review_at;
+        } else {
+          map[item.item_id] = item.next_review_at;
+        }
+      }
+    }
+    return map;
+  }, [fsrsData, intervalData]);
+
+  console.log("nextReviewMap:", nextReviewMap);
 
   const juzData = useMemo(() => {
     if (!data?.data?.groups) return null;
-    return data.data.groups.find((group) => group.juz_id === juzId);
-  }, [data, juzId]);
+    const group = data.data.groups.find((g) => g.juz_id === juzId);
+    if (!group) return null;
+
+    // Merge next_review_at dari statusData
+    return {
+      ...group,
+      items: group.items.map((item) => ({
+        ...item,
+        next_review_at: nextReviewMap[item.item_id] ?? item.next_review_at,
+      })),
+    };
+  }, [data, juzId, nextReviewMap]);
 
   const handleSaveHafalan = () => {
-    // Refresh data after successful save
     getMyItems("quran");
+    refetchFsrs();
+    refetchInterval();
   };
-
   return (
     <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Premium Header */}
@@ -101,7 +145,6 @@ export const JuzDetailView = ({
       {/* Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {loading ? (
-          // Loading Skeletons
           [...Array(3)].map((_, i) => (
             <div
               key={i}

@@ -14,6 +14,8 @@ import type {
   ReviewFsrsResponse,
   StartIntervalPayload,
   StartIntervalResponse,
+  ItemsByStatusResponse,
+  RawItemByStatus,
 } from "@/features/alquran/types/quran.types";
 
 export const alquranService = {
@@ -85,10 +87,30 @@ export const alquranService = {
     itemId: string,
     payload: ReviewFsrsPayload,
   ): Promise<ReviewFsrsResponse> {
-    const response = await api.post(
-      `/api/v1/items/${itemId}/review`,
-      payload,
-    );
+    const response = await api.post(`/api/v1/items/${itemId}/review`, payload);
     return response.data;
+  },
+
+  async getItemsByStatus(status: string): Promise<ItemsByStatusResponse> {
+    const response = await api.get(`/api/v1/items?status=${status}`);
+    const raw = response.data;
+    console.log("raw service response:", JSON.stringify(response.data.data[0]));
+
+    return {
+      ...raw,
+      data: raw.data.map((item: RawItemByStatus) => ({
+        item_id: item.ID,
+        content_ref: item.ContentRef,
+        status: item.Status,
+        review_count: item.ReviewCount,
+        created_at: item.CreatedAt,
+        next_review_at: item.NextReviewAt ?? undefined,
+        last_review_at: item.LastReviewAt ?? undefined,
+        interval_next_review_at: item.IntervalNextReviewAt ?? undefined,
+        interval_days: item.IntervalDays,
+        stability: item.Stability,
+        difficulty: item.Difficulty,
+      })),
+    };
   },
 };

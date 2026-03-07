@@ -7,6 +7,7 @@ interface ItemDetailStatsGridProps {
   reviewCount: number;
   createdDate: string;
   info: ParsedContentRef;
+  nextReviewAt?: string;
 }
 
 interface StatCardProps {
@@ -33,10 +34,21 @@ function StatCard({
   );
 }
 
+/** Format date to readable Indonesian format */
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export function ItemDetailStatsGrid({
   reviewCount,
   createdDate,
   info,
+  nextReviewAt,
 }: ItemDetailStatsGridProps) {
   return (
     <div className="grid grid-cols-2 gap-4 mb-8">
@@ -57,7 +69,7 @@ export function ItemDetailStatsGrid({
         label="Ditambahkan"
       >
         <span className="text-sm font-medium text-gray-300 leading-snug mt-1">
-          {createdDate}
+          {formatDate(createdDate)}
         </span>
       </StatCard>
 
@@ -74,11 +86,15 @@ export function ItemDetailStatsGrid({
       <StatCard
         icon={CalendarDays}
         iconClassName="text-purple-500/60"
-        label="Rentang"
+        label="Jadwal Review"
       >
-        <span className="text-lg font-mono font-bold text-white">
-          {info.range.replace("-", " – ")}
-        </span>
+        {nextReviewAt ? (
+          <span className="text-sm font-mono font-bold text-white">
+            {formatDate(nextReviewAt)}
+          </span>
+        ) : (
+          <span className="text-sm font-medium text-gray-500">Belum ada</span>
+        )}
       </StatCard>
     </div>
   );

@@ -138,7 +138,7 @@ export interface MyItemDetail {
   status: string;
   review_count: number;
   created_at: string;
-  next_review_at?: string; // Next review schedule
+  next_review_at: string; // Next review schedule
 }
 
 export interface QuranGroup {
@@ -157,6 +157,43 @@ export interface MyItemsQuranResponse {
   };
 }
 
+// Items by Status API Response (for fsrs_active, etc.)
+export interface ItemByStatus {
+  item_id: string;
+  content_ref: string;
+  status: string;
+  review_count: number;
+  created_at: string;
+  next_review_at?: string;
+  last_review_at?: string;
+  interval_next_review_at?: string;
+  interval_days: number;
+  stability: number;
+  difficulty: number;
+}
+
+export interface RawItemByStatus {
+  ID: string;
+  ContentRef: string;
+  Status: string;
+  ReviewCount: number;
+  CreatedAt: string;
+  NextReviewAt: string | null;
+  LastReviewAt: string | null;
+  IntervalNextReviewAt: string | null;
+  IntervalDays: number;
+  Stability: number;
+  Difficulty: number;
+}
+
+
+export interface ItemsByStatusResponse {
+  status: number;
+  message: string;
+  data: ItemByStatus[];
+  timestamp: string;
+  path: string;
+}
 // Lifecycle statistics
 export interface LifecycleStats {
   menghafal: number;
