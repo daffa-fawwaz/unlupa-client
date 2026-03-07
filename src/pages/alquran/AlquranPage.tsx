@@ -37,7 +37,7 @@ export const AlquranPage = () => {
   const { signal: juzRefreshSignal, triggerRefresh: triggerJuzRefresh } =
     useRefreshSignal();
 
-  const { getJuzItems, getJuzStats, calculateProgress } = useQuranData();
+  const { getJuzItems, getJuzStats } = useQuranData();
   const { toast } = useToast();
 
   // ── Handlers Navigasi ──
@@ -98,7 +98,6 @@ export const AlquranPage = () => {
         {/* Level 1: Dashboard */}
         {view === "dashboard" && (
           <AlquranDashboard
-            progress={calculateProgress}
             juzStats={getJuzStats}
             juzCounts={(juz) => getJuzItems(juz).length}
             onJuzClick={handleJuzClick}

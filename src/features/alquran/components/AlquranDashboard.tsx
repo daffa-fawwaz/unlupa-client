@@ -5,19 +5,15 @@ import type {
   LifecycleStats,
 } from "@/features/alquran/types/quran.types";
 import { Sidebar } from "@/components/ui/Sidebar";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";
+import { useUserProgress } from "@/features/alquran/hooks/useUserProgress";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardActionButtons } from "./DashboardActionButtons";
 import { DailyReviewSection } from "./DailyReviewSection";
 
 interface AlquranDashboardProps {
-  progress: {
-    totalPages: number;
-    juzMastered: number;
-    percentage: number;
-  };
   juzStats: (juz: string) => LifecycleStats;
   juzCounts: (juz: string) => number;
   onJuzClick: (juz: { id: string; index: number }) => void;
@@ -26,12 +22,12 @@ interface AlquranDashboardProps {
 }
 
 export const AlquranDashboard = ({
-  progress,
   onJuzClick,
   onAddClick,
   refreshSignal = 0,
 }: AlquranDashboardProps) => {
   const { data, getJuz } = useGetJuz();
+  const { completedJuz, fetchUserProgress } = useUserProgress();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const triggerDailyGenerateIfNeeded = useCallback(async () => {
@@ -91,6 +87,19 @@ export const AlquranDashboard = ({
     void getJuz();
   }, [getJuz, refreshSignal]);
 
+  // Listen for completed juz updates from JuzDetailView
+  useEffect(() => {
+    const handleCompletedUpdate = () => {
+      void fetchUserProgress();
+    };
+
+    window.addEventListener("alquran:completedJuz-updated", handleCompletedUpdate);
+
+    return () => {
+      window.removeEventListener("alquran:completedJuz-updated", handleCompletedUpdate);
+    };
+  }, [fetchUserProgress]);
+
   useEffect(() => {
     void triggerDailyGenerateIfNeeded();
 
@@ -113,6 +122,42 @@ export const AlquranDashboard = ({
     };
   }, [triggerDailyGenerateIfNeeded]);
 
+  // Calculate dynamic stats from API data
+  const stats = useMemo(() => {
+    if (!data?.data) {
+      return {
+        totalItems: 0,
+        completedItems: 0,
+        totalJuz: 30,
+        completedJuz: 0,
+        manualCompletedJuz: 0,
+      };
+    }
+
+    // Total hafalan dan yang sudah selesai
+    const totalItems = data.data.reduce(
+      (sum, juz) => sum + juz.total_items,
+      0,
+    );
+    const completedItems = data.data.reduce(
+      (sum, juz) => sum + juz.graduate,
+      0,
+    );
+
+    // Juz yang sudah tamat 100% (dari API) + yang di-mark manual oleh user
+    const completedJuzFromApi = data.data.filter(
+      (juz) => juz.total_items > 0 && juz.graduate === juz.total_items,
+    ).length;
+
+    return {
+      totalItems,
+      completedItems,
+      totalJuz: 30,
+      completedJuz: completedJuzFromApi + completedJuz.length,
+      manualCompletedJuz: completedJuz.length,
+    };
+  }, [data, completedJuz]);
+
   return (
     <>
       <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-[#0B0E14] rounded-3xl">
@@ -132,9 +177,11 @@ export const AlquranDashboard = ({
 
           {/* Main Stats / Progress */}
           <ProgressBar
-            current={progress.juzMastered}
-            total={30}
-            percentage={progress.percentage}
+            totalItems={stats.totalItems}
+            completedItems={stats.completedItems}
+            totalJuz={stats.totalJuz}
+            completedJuz={stats.completedJuz}
+            manualCompletedJuz={stats.manualCompletedJuz}
           />
 
           {/* HERO SECTION: Daily Review Target */}

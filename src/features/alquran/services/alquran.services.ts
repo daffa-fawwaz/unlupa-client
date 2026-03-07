@@ -19,6 +19,30 @@ import type {
   JuzToggleActiveResponse,
 } from "@/features/alquran/types/quran.types";
 
+export interface UserProgressResponse {
+  status: number;
+  message: string;
+  data: {
+    completed_juz: number[];
+  };
+  timestamp: string;
+  path: string;
+}
+
+export interface SaveUserProgressPayload {
+  completed_juz: number[];
+}
+
+export interface SaveUserProgressResponse {
+  status: number;
+  message: string;
+  data: {
+    completed_juz: number[];
+  };
+  timestamp: string;
+  path: string;
+}
+
 export const alquranService = {
   async createJuz(juzIndex: number): Promise<CreateJuzResponse> {
     const response = await api.post(`/api/v1/juz/${juzIndex}`);
@@ -122,6 +146,19 @@ export const alquranService = {
 
   async deactivateJuz(juzIndex: number): Promise<JuzToggleActiveResponse> {
     const response = await api.post(`/api/v1/juz/${juzIndex}/deactivate`);
+    return response.data;
+  },
+
+  // User Progress (Completed Juz per User)
+  async getUserProgress(): Promise<UserProgressResponse> {
+    const response = await api.get("/api/v1/user/progress");
+    return response.data;
+  },
+
+  async saveUserProgress(
+    payload: SaveUserProgressPayload,
+  ): Promise<SaveUserProgressResponse> {
+    const response = await api.post("/api/v1/user/progress", payload);
     return response.data;
   },
 };

@@ -75,6 +75,11 @@ export const ItemDetailView = ({
           window.location.href = config.href;
         }
         break;
+      case "graduate": 
+        if (config.href) {
+          window.location.href = config.href;
+        }
+        break;
     }
   };
 

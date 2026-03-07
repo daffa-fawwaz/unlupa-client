@@ -16,13 +16,13 @@ export const PHASES = [
   "interval_start",
   "interval_end",
   "terjaga",
-  "graduated",
+  "graduate",
 ] as const;
 export const PHASES_STATUS = [
   "menghafal",
   "interval",
   "fsrs_active",
-  "graduated",
+  "graduate",
 ] as const;
 
 export type ActionPhase = (typeof PHASES)[number];
@@ -102,7 +102,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
     buttonClass:
       "bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-900/20 hover:shadow-emerald-500/30",
   },
-  graduated: {
+  graduate: {
     sectionTitle: "Selamat! Anda Telah Menyelesaikan Fase Ini",
     description:
       "Alhamdulillah, hafalan ini telah selesai dan mencapai tingkat kelulusan. Pertahankan konsistensi murajaah agar hafalan tetap melekat selamanya.",
@@ -136,7 +136,7 @@ const STATUS_DISPLAY_CONFIG: Record<ActionPhaseStatus, StatusDisplay> = {
     description:
       "Hafalan ini sudah masuk ke jadwal murajaah berkala. Lakukan review rutin tepat waktu ketika jadwalnya tiba agar hafalan tetap terjaga seumur hidup.",
   },
-  graduated: {
+  graduate: {
     title: "Fase Lulus",
     icon: <Trophy className="w-12 h-12 text-purple-400" />,
     iconBg: "bg-purple-500/10 border-purple-500/20 shadow-purple-500/20",
@@ -154,6 +154,8 @@ export function getInitialPhase(status: string): ActionPhase {
       return "interval_end";
     case "fsrs_active":
       return "terjaga";
+    case "graduate":
+      return "graduate";
     default:
       return "menghafal";
   }
@@ -193,8 +195,8 @@ export function getStatusDisplayByPhase(phase: ActionPhase): StatusDisplay {
       return STATUS_DISPLAY_CONFIG.interval;
     case "terjaga":
       return STATUS_DISPLAY_CONFIG.fsrs_active;
-    case "graduated":
-      return STATUS_DISPLAY_CONFIG.graduated;
+    case "graduate":
+      return STATUS_DISPLAY_CONFIG.graduate;
     default:
       return STATUS_DISPLAY_CONFIG.menghafal;
   }
@@ -306,7 +308,7 @@ export function getStatusStyleByPhase(phase: ActionPhase): StatusStyle {
         className:
           "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.1)]",
       };
-    case "graduated":
+    case "graduate":
       return {
         label: "Lulus",
         className:

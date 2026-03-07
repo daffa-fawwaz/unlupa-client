@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { useItemsByStatus } from "@/features/alquran/hooks/useItemsByStatus";
 import { useJuzToggle } from "@/features/alquran/hooks/useJuzToggle";
+import { useUserProgress } from "@/features/alquran/hooks/useUserProgress";
 import { HafalanKosong } from "@/components/ui/HafalanKosong";
 import { HafalanCard } from "@/components/ui/HafalanCard";
 import { AddHafalanModal } from "./AddHafalanModal";
@@ -37,6 +38,10 @@ export const JuzDetailView = ({
     status: "interval",
   });
   const { activateJuz, deactivateJuz, loading: toggleLoading } = useJuzToggle();
+  const {
+    completedJuz,
+    toggleJuzCompleted,
+  } = useUserProgress();
 
   useEffect(() => {
     getMyItems("quran");
@@ -47,11 +52,13 @@ export const JuzDetailView = ({
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
 
-  // Initialize state from localStorage or default to true
+  // Initialize state from localStorage
   const [isJuzActive, setIsJuzActive] = useState(() => {
     const stored = localStorage.getItem(`juz_${juzIndex}_active`);
     return stored !== null ? JSON.parse(stored) : true;
   });
+
+  const isJuzCompleted = completedJuz.includes(juzIndex);
 
   // Persist state to localStorage whenever it changes
   useEffect(() => {
@@ -123,6 +130,14 @@ export const JuzDetailView = ({
     }
   };
 
+  const handleToggleCompleted = async () => {
+    console.log("Toggle clicked! Juz:", juzIndex, "Current completed:", completedJuz);
+    const success = await toggleJuzCompleted(juzIndex, !isJuzCompleted);
+    console.log("Toggle result:", success);
+    // Refresh dashboard
+    window.dispatchEvent(new Event("alquran:completedJuz-updated"));
+  };
+
   return (
     <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Premium Header */}
@@ -185,6 +200,35 @@ export const JuzDetailView = ({
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* Add Hafalan Button */}
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              disabled={!isJuzActive}
+              className="w-full sm:w-auto shrink-0 px-6 py-4 bg-linear-to-r from-amber-500 to-orange-600 rounded-2xl text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div className="p-1 bg-black/20 rounded-full group-hover:rotate-90 transition-transform duration-300">
+                <Plus className="w-5 h-5 text-black" />
+              </div>
+              <span>Tambah Hafalan</span>
+            </button>
+
+            {/* Toggle Completed Button */}
+            <button
+              onClick={handleToggleCompleted}
+              className={`w-full sm:w-auto shrink-0 px-6 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group ${
+                isJuzCompleted
+                  ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30 hover:border-emerald-400"
+                  : "bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20"
+              }`}
+            >
+              <CheckCircle2
+                className={`w-5 h-5 ${isJuzCompleted ? "fill-emerald-400" : ""}`}
+              />
+              <span>
+                {isJuzCompleted ? "Sudah Selesai ✓" : "Tandai Sudah Selesai"}
+              </span>
+            </button>
+
             {/* Toggle Button */}
             {isJuzActive ? (
               <button
@@ -209,18 +253,6 @@ export const JuzDetailView = ({
                 <span>Aktifkan Juz</span>
               </button>
             )}
-
-            {/* Add Hafalan Button */}
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              disabled={!isJuzActive}
-              className="w-full sm:w-auto shrink-0 px-6 py-4 bg-linear-to-r from-amber-500 to-orange-600 rounded-2xl text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <div className="p-1 bg-black/20 rounded-full group-hover:rotate-90 transition-transform duration-300">
-                <Plus className="w-5 h-5 text-black" />
-              </div>
-              <span>Tambah Hafalan</span>
-            </button>
           </div>
         </div>
       </div>
@@ -243,19 +275,11 @@ export const JuzDetailView = ({
           </div>
         ) : !isJuzActive ? (
           <div className="col-span-full">
-            <HafalanKosong
-              hafalan="Juz"
-              title="Juz Dinonaktifkan"
-              description="Aktifkan Juz ini untuk melihat dan mengelola hafalan Anda"
-            />
+            <HafalanKosong hafalan="Juz" title="Juz Dinonaktifkan" description="Aktifkan Juz ini untuk melihat dan mengelola hafalan Anda" />
           </div>
         ) : juzData && juzData.items.length > 0 ? (
           juzData.items.map((item) => (
-            <HafalanCard
-              key={item.item_id}
-              item={item}
-              onClick={() => onItemClick(item)}
-            />
+            <HafalanCard key={item.item_id} item={item} onClick={() => onItemClick(item)} />
           ))
         ) : (
           <HafalanKosong hafalan="Juz" />
