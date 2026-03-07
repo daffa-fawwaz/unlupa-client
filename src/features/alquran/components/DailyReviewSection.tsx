@@ -40,6 +40,18 @@ const getReviewedIdsForTaskDate = (taskDate: string): string[] => {
   }
 };
 
+// Get deactivated Juz indexes from localStorage
+const getDeactivatedJuzIndexes = (): Set<number> => {
+  const deactivated = new Set<number>();
+  for (let i = 1; i <= 30; i++) {
+    const stored = localStorage.getItem(`juz_${i}_active`);
+    if (stored !== null && JSON.parse(stored) === false) {
+      deactivated.add(i);
+    }
+  }
+  return deactivated;
+};
+
 export const DailyReviewSection = () => {
   const { data, loading, error, getDaily } = useGetDaily();
   const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
@@ -50,6 +62,9 @@ export const DailyReviewSection = () => {
   );
   const [itemStatusMap, setItemStatusMap] = useState<Map<string, string>>(
     () => new Map(),
+  );
+  const [deactivatedJuzIndexes, setDeactivatedJuzIndexes] = useState<Set<number>>(
+    () => getDeactivatedJuzIndexes(),
   );
 
   const refreshActiveItemIds = useCallback(async () => {
@@ -68,6 +83,9 @@ export const DailyReviewSection = () => {
         });
       });
       setItemStatusMap(statusMap);
+      
+      // Update deactivated Juz indexes
+      setDeactivatedJuzIndexes(getDeactivatedJuzIndexes());
     } catch (refreshError) {
       console.error("Failed to refresh active item ids", refreshError);
     }
@@ -126,6 +144,11 @@ export const DailyReviewSection = () => {
           );
         })
         .filter((task) => {
+          // Filter out items from deactivated Juz
+          if (task.juz_index > 0 && deactivatedJuzIndexes.has(task.juz_index)) {
+            return false;
+          }
+          
           if (task.state !== "pending") return false;
           if (!activeItemIds.has(task.item_id)) return false;
           const reviewedIds = getReviewedIdsForTaskDate(task.task_date);
@@ -158,7 +181,7 @@ export const DailyReviewSection = () => {
             status,
           };
         }),
-    [activeItemIds, data, hiddenTaskKeys],
+    [activeItemIds, data, hiddenTaskKeys, deactivatedJuzIndexes],
   );
 
   const pendingCount = dailyReviewItems.filter(

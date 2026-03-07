@@ -29,6 +29,7 @@ export interface CardJuzData {
   interval: number;
   fsrs_active: number;
   graduate: number;
+  active: boolean;
 }
 
 export interface CreateJuzItemResponse {
@@ -194,6 +195,19 @@ export interface ItemsByStatusResponse {
   timestamp: string;
   path: string;
 }
+
+// Juz Activate/Deactivate Response
+export interface JuzToggleActiveResponse {
+  status: number;
+  message: string;
+  data: {
+    active: boolean;
+    index: number;
+  };
+  timestamp: string;
+  path: string;
+}
+
 // Lifecycle statistics
 export interface LifecycleStats {
   menghafal: number;

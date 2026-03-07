@@ -16,6 +16,7 @@ import type {
   StartIntervalResponse,
   ItemsByStatusResponse,
   RawItemByStatus,
+  JuzToggleActiveResponse,
 } from "@/features/alquran/types/quran.types";
 
 export const alquranService = {
@@ -112,5 +113,15 @@ export const alquranService = {
         difficulty: item.Difficulty,
       })),
     };
+  },
+
+  async activateJuz(juzIndex: number): Promise<JuzToggleActiveResponse> {
+    const response = await api.post(`/api/v1/juz/${juzIndex}/activate`);
+    return response.data;
+  },
+
+  async deactivateJuz(juzIndex: number): Promise<JuzToggleActiveResponse> {
+    const response = await api.post(`/api/v1/juz/${juzIndex}/deactivate`);
+    return response.data;
   },
 };
