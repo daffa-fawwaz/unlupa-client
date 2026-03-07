@@ -101,12 +101,18 @@ export const LandingNavbar = () => {
             </a>
           ))}
           <div className="flex flex-col gap-3 mt-4">
-            <button className="w-full py-3 text-sm font-medium text-white hover:bg-white/5 rounded-lg transition-colors">
+            <Link
+              to="/login"
+              className="w-full flex justify-center items-center py-3 text-sm font-medium text-white hover:bg-white/5 rounded-lg transition-colors"
+            >
               Masuk
-            </button>
-            <button className="w-full py-3 rounded-lg bg-primary/20 border border-primary/30 text-white font-medium text-sm hover:bg-primary/30 transition-all shadow-[0_0_15px_rgba(124,58,237,0.1)]">
-              Pendaftaran
-            </button>
+            </Link>
+            <Link
+              to="/register"
+              className="w-full flex justify-center items-center py-3 rounded-lg bg-primary/20 border border-primary/30 text-white font-medium text-sm hover:bg-primary/30 transition-all shadow-[0_0_15px_rgba(124,58,237,0.1)]"
+            >
+              Daftar
+            </Link>
           </div>
         </div>
       </div>
