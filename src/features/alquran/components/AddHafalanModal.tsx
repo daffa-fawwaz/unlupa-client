@@ -12,9 +12,11 @@ import {
   PAGE_DATABASE,
 } from "@/features/alquran/constants/quranData";
 import { DualRangeSlider } from "@/components/ui/DualRangeSlider";
+import { TimeSlider } from "@/components/ui/TimeSlider";
 import { clsx } from "clsx";
 import { useCreateJuzItem } from "@/features/alquran/hooks/useCreateJuzItem";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
+import { convertPageRangeToSurahLabel } from "@/features/alquran/utils/pageToSurahConverter";
 
 import type { MyItemDetail } from "@/features/alquran/types/quran.types";
 
@@ -99,6 +101,7 @@ export const AddHafalanModal = ({
 }: AddHafalanModalProps) => {
   const [mode, setMode] = useState<Mode>(null);
   const [selectedSurahIndex, setSelectedSurahIndex] = useState<number>(0);
+  const [estimateTime, setEstimateTime] = useState<number>(5); // Default 5 minutes
 
   // Get data for this Juz using juzNumber
   const pageRange = useMemo(
@@ -149,6 +152,15 @@ export const AddHafalanModal = ({
   useEffect(() => {
     setRange(initialRange);
   }, [initialRange]);
+
+  // Display label for page mode (e.g., "Hal 582-604 - An-Naba 1-40")
+  const displayLabel = useMemo(() => {
+    if (mode === "PAGE") {
+      const pageRange = `page:${range.min}-${range.max}`;
+      return convertPageRangeToSurahLabel(pageRange);
+    }
+    return null;
+  }, [mode, range.min, range.max]);
 
   const currentParsedRef = useMemo<ParsedContentRef>(() => {
     if (!mode) return null;
@@ -237,6 +249,8 @@ export const AddHafalanModal = ({
       await createJuzItem(juzId, {
         mode: modeType,
         content_ref: contentRef,
+        estimate_value: estimateTime,
+        estimate_unit: "minutes",
       });
 
       onSave(null); // Trigger refresh in parent
@@ -246,6 +260,7 @@ export const AddHafalanModal = ({
       setTimeout(() => {
         setMode(null);
         setSelectedSurahIndex(0);
+        setEstimateTime(5);
       }, 300);
     } catch (err) {
       console.error("Failed to save:", err);
@@ -373,11 +388,20 @@ export const AddHafalanModal = ({
                   <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                     {mode === "PAGE" ? "Rentang Halaman" : "Rentang Ayat"}
                   </label>
-                  <div className="text-xl sm:text-2xl font-mono font-bold text-white shrink-0">
+                  <div className="text-xl sm:text-2xl font-mono font-bold text-white shrink-0 text-right">
                     {range.min} <span className="text-gray-600">-</span>{" "}
                     {range.max}
                   </div>
                 </div>
+
+                {/* Display converted label for PAGE mode */}
+                {mode === "PAGE" && displayLabel && (
+                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                    <p className="text-sm font-semibold text-blue-400 text-center">
+                      {displayLabel}
+                    </p>
+                  </div>
+                )}
 
                 <div className="px-2">
                   <DualRangeSlider
@@ -398,6 +422,20 @@ export const AddHafalanModal = ({
 
                 <p className="text-xs text-center text-gray-500">
                   Geser tombol untuk menentukan target hafalanmu.
+                </p>
+              </div>
+
+              {/* Time Estimate Slider */}
+              <div className="space-y-4 pt-2">
+                <TimeSlider
+                  min={1}
+                  max={30}
+                  defaultValue={5}
+                  onChange={setEstimateTime}
+                  label="Estimasi Waktu Murajaah"
+                />
+                <p className="text-xs text-center pt-6 text-gray-500">
+                  Perkiraan waktu yang dibutuhkan untuk murajaah hafalan ini.
                 </p>
               </div>
 

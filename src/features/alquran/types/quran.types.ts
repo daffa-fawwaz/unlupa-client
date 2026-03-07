@@ -50,6 +50,8 @@ export interface DataJuzItem {
 export interface CreateJuzItemPayload {
   mode: string;
   content_ref: string;
+  estimate_value?: number;
+  estimate_unit?: string;
 }
 
 export interface DailyGenerateResponse {

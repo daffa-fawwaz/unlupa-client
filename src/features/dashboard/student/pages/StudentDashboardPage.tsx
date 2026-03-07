@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import { useOutletContext } from "react-router";
 import type { DashboardContextType } from "@/layouts/DashboardLayout";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
-import { DailyReviewSection } from "@/features/alquran/components/DailyReviewSection";
 
 export const StudentDashboardPage = () => {
   const { toggleSidebar } = useOutletContext<DashboardContextType>();
@@ -146,9 +145,6 @@ export const StudentDashboardPage = () => {
           </div>
         </div>
       </div>
-
-      {/* 3. TASK CENTER (REVIEW WAJIB) */}
-      <DailyReviewSection />
 
       {/* FOOTER SUMMARY */}
       <div className="mt-20 border-t border-white/5 pt-8 pb-4">

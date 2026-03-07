@@ -8,6 +8,7 @@ import {
   Brain,
 } from "lucide-react";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
+import { convertPageRangeToSurahLabel } from "@/features/alquran/utils/pageToSurahConverter";
 
 export const PHASES = [
   "menghafal",
@@ -189,6 +190,22 @@ export function parseContentRef(contentRef: string): ParsedContentRef {
       title: surahName,
       subtitle: `Ayat ${start} – ${end}`,
       range: parts[2] || "?",
+    };
+  }
+
+  // Handle page mode - use converter for rich label
+  if (parts[0] === "page" && parts[1]) {
+    const pageRange = `page:${parts[1]}`;
+    const convertedLabel = convertPageRangeToSurahLabel(pageRange);
+    
+    // Parse the converted label: "Hal 582-604 - An-Naba 1-40"
+    const [pagePart, surahPart] = convertedLabel.split(" - ");
+    
+    return {
+      type: "page",
+      title: surahPart || pagePart,
+      subtitle: pagePart,
+      range: parts[1],
     };
   }
 

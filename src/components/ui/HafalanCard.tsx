@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import type { MyItemDetail } from "@/features/alquran/types/quran.types";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
+import { convertPageRangeToSurahLabel } from "@/features/alquran/utils/pageToSurahConverter";
 
 interface HafalanCardProps {
   item: MyItemDetail;
@@ -27,6 +28,14 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
     const ayatRange = parts[2] ? parts[2].replace("-", " - ") : "?";
     displayTitle = surahName;
     displaySubtitle = `Ayat ${ayatRange}`;
+  } else if (parts[0] === "page" && parts[1]) {
+    // Use converter for rich label
+    const pageRange = `page:${parts[1]}`;
+    const convertedLabel = convertPageRangeToSurahLabel(pageRange);
+    // Parse: "Hal 582-604 - An-Naba 1-40"
+    const [pagePart, surahPart] = convertedLabel.split(" - ");
+    displayTitle = surahPart || pagePart;
+    displaySubtitle = pagePart;
   } else {
     displayTitle = `Halaman ${parts[1]}`;
     displaySubtitle = "Mushaf";

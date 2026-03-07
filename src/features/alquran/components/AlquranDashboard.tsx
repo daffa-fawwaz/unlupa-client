@@ -127,7 +127,7 @@ export const AlquranDashboard = ({
           onClick={() => setIsSidebarOpen(false)}
         />
 
-        <div className="animate-fadeIn max-w-[1600px] mx-auto">
+        <div className="animate-fadeIn max-w-400 mx-auto">
           <DashboardHeader onMenuClick={() => setIsSidebarOpen(true)} />
 
           {/* Main Stats / Progress */}
