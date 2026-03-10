@@ -67,7 +67,7 @@ export interface DailyTask {
   task_date: string;
   content_ref: string;
   juz_index: number;
-  status?: string; // Add status field for FSRS check
+  status?: string;
 }
 
 export type DailyTasksResponse = DailyTask[];

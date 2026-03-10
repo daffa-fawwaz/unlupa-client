@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import {
-  BookOpen,
   CalendarDays,
   Check,
-  Layers,
   Loader2,
   RefreshCw,
   RotateCw,
@@ -17,8 +15,9 @@ import type {
 } from "@/features/alquran/types/quran.types";
 import { parseContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";
 import { useReviewFsrs } from "@/features/alquran/hooks/useReviewFsrs";
-import { useReviewInterval } from "../hooks/useReviewInterval";
+import { useReviewInterval } from "@/features/alquran/hooks/useReviewInterval";
 import { alquranService } from "@/features/alquran/services/alquran.services";
+import { useItemStatus } from "@/features/alquran/hooks/useItemStatus";
 
 interface DailyReviewFlashcardModalProps {
   isOpen: boolean;
@@ -103,7 +102,8 @@ export const DailyReviewFlashcardModal = ({
     error: errorInterval,
   } = useReviewInterval();
 
-  // Fetch item data when task changes
+  const { status } = useItemStatus(task?.item_id || null);
+
   useEffect(() => {
     const fetchItemData = async () => {
       if (!task?.item_id) return;
@@ -150,13 +150,12 @@ export const DailyReviewFlashcardModal = ({
     info?.title ||
     (task.juz_index > 0 ? `Juz ${task.juz_index}` : "Review Harian");
   const subtitle = info?.subtitle || "Detail konten belum tersedia";
-  const range = info?.range || "-";
   const sourceLabel =
-    task.source === "interval_review"
-      ? "Murajaah"
-      : task.source === "new_memorization"
-        ? "Hafalan Baru"
-        : "Ziyadah";
+    status === "interval"
+      ? "Interval"
+      : status === "fsrs_active"
+        ? "Terjaga"
+        : "Menghafal";
 
   const handleRatingClick = (btn: (typeof REVIEW_BUTTONS)[number]) => {
     if (loading || submittingButtonId !== null) return;
@@ -265,7 +264,7 @@ export const DailyReviewFlashcardModal = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                     <p className="text-[11px] uppercase tracking-wider text-gray-500 mb-2">
-                      Sumber
+                      Fase
                     </p>
                     <div className="flex items-center gap-2 text-white font-semibold">
                       <RefreshCw className="w-4 h-4 text-cyan-300" />
@@ -279,26 +278,6 @@ export const DailyReviewFlashcardModal = ({
                     <div className="flex items-center gap-2 text-white font-semibold">
                       <CalendarDays className="w-4 h-4 text-cyan-300" />
                       <span>{task.task_date}</span>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-[11px] uppercase tracking-wider text-gray-500 mb-2">
-                      Tipe
-                    </p>
-                    <div className="flex items-center gap-2 text-white font-semibold">
-                      <BookOpen className="w-4 h-4 text-cyan-300" />
-                      <span>
-                        {info?.type === "surah" ? "Per Surah" : "Per Halaman"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <p className="text-[11px] uppercase tracking-wider text-gray-500 mb-2">
-                      Rentang
-                    </p>
-                    <div className="flex items-center gap-2 text-white font-semibold">
-                      <Layers className="w-4 h-4 text-cyan-300" />
-                      <span>{range.replace("-", " - ")}</span>
                     </div>
                   </div>
                 </div>

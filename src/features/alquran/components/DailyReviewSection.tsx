@@ -10,8 +10,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
 import type {
   DailyTask,
-  ReviewIntervalResponse,
-  ReviewFsrsResponse,
   MyItemDetail,
 } from "@/features/alquran/types/quran.types";
 import { DailyReviewFlashcardModal } from "@/features/alquran/components/DailyReviewFlashcardModal";
@@ -63,9 +61,9 @@ export const DailyReviewSection = () => {
   const [itemStatusMap, setItemStatusMap] = useState<Map<string, string>>(
     () => new Map(),
   );
-  const [deactivatedJuzIndexes, setDeactivatedJuzIndexes] = useState<Set<number>>(
-    () => getDeactivatedJuzIndexes(),
-  );
+  const [deactivatedJuzIndexes, setDeactivatedJuzIndexes] = useState<
+    Set<number>
+  >(() => getDeactivatedJuzIndexes());
 
   const refreshActiveItemIds = useCallback(async () => {
     try {
@@ -83,7 +81,7 @@ export const DailyReviewSection = () => {
         });
       });
       setItemStatusMap(statusMap);
-      
+
       // Update deactivated Juz indexes
       setDeactivatedJuzIndexes(getDeactivatedJuzIndexes());
     } catch (refreshError) {
@@ -148,7 +146,7 @@ export const DailyReviewSection = () => {
           if (task.juz_index > 0 && deactivatedJuzIndexes.has(task.juz_index)) {
             return false;
           }
-          
+
           if (task.state !== "pending") return false;
           if (!activeItemIds.has(task.item_id)) return false;
           const reviewedIds = getReviewedIdsForTaskDate(task.task_date);
@@ -201,9 +199,7 @@ export const DailyReviewSection = () => {
     setIsFlashcardOpen(true);
   };
 
-  const handleReviewed = async (
-    _result: ReviewIntervalResponse | ReviewFsrsResponse,
-  ) => {
+  const handleReviewed = async () => {
     // Handle both response types - they have different data structures
     const reviewedItemId = selectedTask?.item_id;
     const reviewedTaskDate = selectedTask?.task_date ?? getTodayDateKey();
@@ -228,7 +224,6 @@ export const DailyReviewSection = () => {
     });
 
     await getDaily();
-
   };
   console.log("selectedTask", selectedTask);
 
