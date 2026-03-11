@@ -13,7 +13,6 @@ import {
   parseContentRef,
   type ActionPhase,
 } from "@/features/alquran/components/item-detail/ItemDetailView.config";
-import { useNavigate } from "react-router";
 
 export type { ActionPhase };
 
@@ -32,7 +31,6 @@ export const ItemDetailView = ({
   currentPhase,
   onPhaseChange,
 }: ItemDetailViewProps) => {
-  const navigate = useNavigate();
   const phase = currentPhase ?? getInitialPhase(item.status);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
@@ -57,7 +55,10 @@ export const ItemDetailView = ({
     onPhaseChange(newPhase);
   };
 
-  const handleActionClick = () => {
+  const handleActionClick = async () => {
+    console.log("handleActionClick called, phase:", phase);
+    console.log("config.href:", config?.href);
+    
     switch (phase) {
       case "menghafal":
         transitionTo("interval_start");
@@ -66,20 +67,15 @@ export const ItemDetailView = ({
         setIsModalOpen(true);
         break;
       case "interval_end":
-        if (config.href) {
-          navigate(config.href);
-        }
-        break;
       case "terjaga":
-        if (config.href) {
-          navigate(config.href);
-        }
-        break;
       case "graduate":
         if (config.href) {
-          navigate(config.href);
+          console.log("Navigating to:", config.href);
+          window.location.href = config.href;
         }
         break;
+      default:
+        console.log("default case, phase:", phase);
     }
   };
 

@@ -22,7 +22,7 @@ interface PhaseButtonProps {
   label: string;
   icon: ReactNode;
   className: string;
-  onClick: () => void | Promise<void>;
+  onClick?: () => void | Promise<void>;
   disabled?: boolean;
 }
 
@@ -33,18 +33,26 @@ function PhaseButton({
   onClick,
   disabled = false,
 }: PhaseButtonProps) {
+  const buttonClass = `shrink-0 w-full lg:w-auto min-w-[200px] md:min-w-[240px] flex items-center justify-center gap-3 md:gap-4 py-4 md:py-5 px-6 md:px-10 rounded-xl md:rounded-2xl font-black text-lg md:text-xl shadow-2xl cursor-pointer hover:-translate-y-1 hover:shadow-3xl active:translate-y-0 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#161D26] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100 ${className}`;
+
+  const content = (
+    <>
+      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out pointer-events-none" />
+      <div className="relative z-10 p-2 md:p-2.5 bg-black/20 rounded-lg md:rounded-xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 pointer-events-none">
+        {icon}
+      </div>
+      <span className="relative z-10 text-center pointer-events-none">{label}</span>
+    </>
+  );
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`shrink-0 w-full lg:w-auto min-w-[200px] md:min-w-[240px] flex items-center justify-center gap-3 md:gap-4 py-4 md:py-5 px-6 md:px-10 rounded-xl md:rounded-2xl font-black text-lg md:text-xl shadow-2xl cursor-pointer hover:-translate-y-1 hover:shadow-3xl active:translate-y-0 active:scale-[0.98] transition-all duration-300 relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#161D26] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100 ${className}`}
+      className={buttonClass}
     >
-      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-      <div className="relative z-10 p-2 md:p-2.5 bg-black/20 rounded-lg md:rounded-xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-        {icon}
-      </div>
-      <span className="relative z-10 text-center">{label}</span>
+      {content}
     </button>
   );
 }
