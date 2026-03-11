@@ -1,23 +1,40 @@
-import { AlertCircle, Moon } from "lucide-react";
+import { useState } from "react";
+import { AlertCircle, Moon, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router";
 import type {
   LoginFormProps,
   LoginPayload,
 } from "@/features/auth/login/types/login.types";
 
-export const LoginForm = ({ onSubmit, error, loading }: LoginFormProps) => {
+interface ExtendedLoginFormProps extends LoginFormProps {
+  email: string;
+  setEmail: (email: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
+}
+
+export const LoginForm = ({
+  onSubmit,
+  error,
+  loading,
+  email,
+  setEmail,
+  password,
+  setPassword,
+}: ExtendedLoginFormProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-
     const payload: LoginPayload = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
+      email,
+      password,
     };
 
     onSubmit(payload);
   };
+
   return (
     <div className="w-full flex items-center justify-center p-6">
       {/* GLASS CONTAINER */}
@@ -46,8 +63,9 @@ export const LoginForm = ({ onSubmit, error, loading }: LoginFormProps) => {
                 Email
               </label>
               <input
-                name="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/40 focus:bg-amber-500/2 transition-all placeholder:text-white/15"
                 placeholder="alamat@email.com"
                 required
@@ -60,13 +78,27 @@ export const LoginForm = ({ onSubmit, error, loading }: LoginFormProps) => {
                   Kata Sandi
                 </label>
               </div>
-              <input
-                name="password"
-                type="password"
-                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3.5 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/40 focus:bg-amber-500/2 transition-all placeholder:text-white/15"
-                placeholder="••••••••"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3.5 pr-12 text-white font-sans text-[0.95rem] focus:outline-none focus:border-amber-500/40 focus:bg-amber-500/2 transition-all placeholder:text-white/15"
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {error && (

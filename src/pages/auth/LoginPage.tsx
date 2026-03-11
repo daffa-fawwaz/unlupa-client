@@ -4,12 +4,20 @@ import { LoginSuccess } from "@/features/auth/login/components/LoginSuccess";
 import { useLogin } from "@/features/auth/login/hooks/useLogin";
 
 export const LoginPage = () => {
-  const { login, error, loading, view } = useLogin();
+  const { login, error, loading, view, email, setEmail, password, setPassword } = useLogin();
   return (
     <>
       <div className="bg-deep-universe min-h-screen text-white relative">
         {view === "form" && (
-          <LoginForm onSubmit={login} error={error} loading={loading} />
+          <LoginForm
+            onSubmit={login}
+            error={error}
+            loading={loading}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+          />
         )}
         {view === "loading" && <LoginLoading />}
         {view === "success" && <LoginSuccess />}
