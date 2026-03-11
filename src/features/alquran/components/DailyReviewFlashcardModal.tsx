@@ -155,7 +155,7 @@ export const DailyReviewFlashcardModal = ({
       ? "Interval"
       : status === "fsrs_active"
         ? "Terjaga"
-        : "Menghafal";
+        : "Terjaga";
 
   const handleRatingClick = (btn: (typeof REVIEW_BUTTONS)[number]) => {
     if (loading || submittingButtonId !== null) return;
@@ -245,7 +245,7 @@ export const DailyReviewFlashcardModal = ({
                   </span>
                   <button
                     onClick={() => setIsFlipped(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-200 hover:bg-cyan-500/20 hover:border-cyan-300/40 transition-colors"
+                    className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-200 hover:bg-cyan-500/20 hover:border-cyan-300/40 transition-colors"
                   >
                     <RotateCw className="w-4 h-4" />
                     Balik Kartu
@@ -281,6 +281,14 @@ export const DailyReviewFlashcardModal = ({
                     </div>
                   </div>
                 </div>
+
+                <button
+                  onClick={() => setIsFlipped(true)}
+                  className="sm:hidden w-full mt-6 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-200 hover:bg-cyan-500/20 hover:border-cyan-300/40 transition-colors"
+                >
+                  <RotateCw className="w-5 h-5" />
+                  Balik Kartu
+                </button>
               </div>
             </div>
 
