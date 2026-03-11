@@ -271,15 +271,15 @@ export const AddHafalanModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fadeIn"
         onClick={onClose}
       />
 
-      {/* Modal Content */}
-      <div className="relative w-full max-w-lg max-h-[92vh] bg-[#0F1218] border border-white/10 rounded-3xl sm:rounded-[2rem] shadow-2xl overflow-y-auto animate-in zoom-in-95 duration-200">
+      {/* Modal Content - Top sheet on mobile, centered on desktop */}
+      <div className="relative w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] bg-[#0F1218] sm:border border-white/10 rounded-b-[2rem] sm:rounded-[2rem] shadow-2xl overflow-y-auto animate-in slide-in-from-top sm:zoom-in-95 duration-200 sm:mt-0">
         {/* Header */}
         <div className="sticky top-0 z-10 p-4 sm:p-6 border-b border-white/5 flex items-center justify-between bg-[#0F1218]/95 backdrop-blur">
           <div className="flex items-center gap-3">
