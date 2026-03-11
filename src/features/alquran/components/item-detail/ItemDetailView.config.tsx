@@ -84,7 +84,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
       "Kamu sedang dalam masa murajaah, item ini akan diulang sesuai interval yang telah ditentukan.",
     label: "Mulai Review",
     href: "/dashboard/alquran",
-    labelSecondary: "Mulai Terjaga",
+    labelSecondary: "Ke Next Fase",
     icon: <RotateCcw className="w-5 h-5" />,
     iconSecondary: <CheckCircle className="w-5 h-5" />,
     buttonClass:
