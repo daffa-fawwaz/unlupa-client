@@ -107,6 +107,7 @@ export const ItemDetailView = ({
         reviewCount={item.review_count}
         createdDate={createdDate}
         info={info}
+        nextReviewAt={item.next_review_at}
       />
 
       <ItemDetailActionSection
