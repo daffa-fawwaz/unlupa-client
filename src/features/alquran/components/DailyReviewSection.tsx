@@ -2,17 +2,19 @@ import {
   Play,
   Flame,
   Star,
-  AlertCircle,
+  Clock,
   ChevronRight,
-  CheckCircle2,
+  BookOpen,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
+import { useDailyReviewEstimate, type JuzReviewEstimate } from "@/features/alquran/hooks/useDailyReviewEstimate";
 import type {
   DailyTask,
   MyItemDetail,
 } from "@/features/alquran/types/quran.types";
 import { DailyReviewFlashcardModal } from "@/features/alquran/components/DailyReviewFlashcardModal";
+import { DailyReviewJuzModal } from "@/features/alquran/components/DailyReviewJuzModal";
 import { alquranService } from "../services/alquran.services";
 
 const getTodayDateKey = () => {
@@ -51,13 +53,17 @@ const getDeactivatedJuzIndexes = (): Set<number> => {
 };
 
 export const DailyReviewSection = () => {
-  const { data, loading, error, getDaily } = useGetDaily();
+  const { getDaily } = useGetDaily();
+  const { 
+    loading: estimateLoading, 
+    juzEstimates, 
+    refetch: refetchEstimates 
+  } = useDailyReviewEstimate();
+  
   const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
+  const [isJuzModalOpen, setIsJuzModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<DailyTask | null>(null);
-  const [hiddenTaskKeys, setHiddenTaskKeys] = useState<string[]>([]);
-  const [activeItemIds, setActiveItemIds] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const [selectedJuzEstimate, setSelectedJuzEstimate] = useState<JuzReviewEstimate | null>(null);
   const [itemStatusMap, setItemStatusMap] = useState<Map<string, string>>(
     () => new Map(),
   );
@@ -68,10 +74,6 @@ export const DailyReviewSection = () => {
   const refreshActiveItemIds = useCallback(async () => {
     try {
       const response = await alquranService.getMyItems("quran");
-      const ids = response.data.groups.flatMap((group) =>
-        group.items.map((item) => item.item_id),
-      );
-      setActiveItemIds(new Set(ids));
 
       // Build status map from all items
       const statusMap = new Map<string, string>();
@@ -93,6 +95,7 @@ export const DailyReviewSection = () => {
     const refetchDaily = () => {
       void getDaily().catch(() => undefined);
       void refreshActiveItemIds();
+      void refetchEstimates();
     };
 
     refetchDaily();
@@ -116,79 +119,31 @@ export const DailyReviewSection = () => {
       );
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [getDaily, refreshActiveItemIds]);
+  }, [getDaily, refreshActiveItemIds, refetchEstimates]);
 
-  const dailyReviewItems = useMemo(
-    () =>
-      data
-        .filter((task, index, array) => {
-          const key = `${task.task_date}:${task.item_id}`;
-          return (
-            array.findIndex(
-              (candidate) =>
-                `${candidate.task_date}:${candidate.item_id}` === key,
-            ) === index
-          );
-        })
-        .filter((task) => {
-          // Filter out items from deactivated Juz
-          if (task.juz_index > 0 && deactivatedJuzIndexes.has(task.juz_index)) {
-            return false;
-          }
+  // Filter juz estimates by deactivated status
+  const filteredJuzEstimates = useMemo(() => {
+    return juzEstimates.filter(
+      (juz) => !deactivatedJuzIndexes.has(juz.juz_index)
+    );
+  }, [juzEstimates, deactivatedJuzIndexes]);
 
-          if (task.state !== "pending") return false;
-          if (!activeItemIds.has(task.item_id)) return false;
-          const reviewedIds = getReviewedIdsForTaskDate(task.task_date);
-          const isPersistedReviewed = reviewedIds.includes(task.item_id);
-          const localKey = `${task.task_date}:${task.item_id}`;
-          const isLocallyHidden = hiddenTaskKeys.includes(localKey);
-          return !isPersistedReviewed && !isLocallyHidden;
-        })
-        .map((task: DailyTask) => {
-          const status = task.state === "pending" ? "pending" : "completed";
-          const urgency =
-            task.state === "pending"
-              ? task.source === "interval_review"
-                ? "high"
-                : "medium"
-              : "low";
-          const title = task.juz_index > 0 ? `Juz ${task.juz_index}` : "Review";
-          const range =
-            task.content_ref && task.content_ref.trim().length > 0
-              ? task.content_ref
-              : `Task ${task.task_date}`;
-
-          const mapSourceToType = (task: DailyTask) => {
-            const itemStatus = itemStatusMap.get(task.item_id);
-            switch (itemStatus) {
-              case "interval":
-                return "Latihan Interval";
-              case "fsrs_active":
-                return "Ujian Interval";
-              default:
-                return "Murajaah";
-            }
-          };
-
-          return {
-            id: task.item_id,
-            task,
-            title,
-            range,
-            type: mapSourceToType(task),
-            urgency,
-            status,
-          };
-        }),
-    [activeItemIds, data, hiddenTaskKeys, deactivatedJuzIndexes, itemStatusMap],
+  // Calculate total items and time
+  const totalItems = filteredJuzEstimates.reduce(
+    (sum, juz) => sum + juz.itemCount,
+    0
   );
 
-  const pendingCount = dailyReviewItems.filter(
-    (i) => i.status === "pending",
-  ).length;
-  const firstPendingTask = dailyReviewItems.find(
-    (item) => item.status === "pending",
-  )?.task;
+  const formatTotalTime = (seconds: number) => {
+    if (seconds < 60) return `${seconds}d`;
+    const mins = Math.floor(seconds / 60);
+    return `${mins}m`;
+  };
+
+  const openJuzModal = (juzEstimate: JuzReviewEstimate) => {
+    setSelectedJuzEstimate(juzEstimate);
+    setIsJuzModalOpen(true);
+  };
 
   const openFlashcard = (task: DailyTask) => {
     // Enrich task with item status from the API
@@ -198,15 +153,14 @@ export const DailyReviewSection = () => {
     };
     setSelectedTask(enrichedTask);
     setIsFlashcardOpen(true);
+    setIsJuzModalOpen(false);
   };
 
   const handleReviewed = async () => {
-    // Handle both response types - they have different data structures
     const reviewedItemId = selectedTask?.item_id;
     const reviewedTaskDate = selectedTask?.task_date ?? getTodayDateKey();
     const reviewedStorageKey =
       getReviewedStorageKeyByTaskDate(reviewedTaskDate);
-    const localKey = `${reviewedTaskDate}:${reviewedItemId}`;
 
     const reviewedIds = getReviewedIdsForTaskDate(reviewedTaskDate);
     if (reviewedItemId && !reviewedIds.includes(reviewedItemId)) {
@@ -216,17 +170,9 @@ export const DailyReviewSection = () => {
       );
     }
 
-    setHiddenTaskKeys((prev) => {
-      if (prev.includes(localKey)) {
-        return prev;
-      }
-      const next = [...prev, localKey];
-      return next;
-    });
-
     await getDaily();
+    await refetchEstimates();
   };
-  console.log("selectedTask", selectedTask);
 
   return (
     <div className="mb-8 animate-fadeIn relative">
@@ -255,111 +201,106 @@ export const DailyReviewSection = () => {
                 <p className="text-gray-400 text-sm md:text-base max-w-2xl">
                   Ada{" "}
                   <strong className="text-emerald-400">
-                    {pendingCount} flashcard
+                    {totalItems} item
                   </strong>{" "}
-                  yang menunggu untuk direview. Pertahankan streak hafalanmu
-                  agar tidak lupa!
+                  di{" "}
+                  <strong className="text-emerald-400">
+                    {filteredJuzEstimates.length} Juz
+                  </strong>{" "}
+                  yang menunggu untuk direview.
                 </p>
               </div>
             </div>
 
-            <button
-              disabled={pendingCount === 0}
-              onClick={() => {
-                if (firstPendingTask) {
-                  openFlashcard(firstPendingTask);
-                }
-              }}
-              className="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-500/40 disabled:text-gray-300 text-[#0B0E14] font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 disabled:hover:translate-y-0 whitespace-nowrap"
-            >
-              <Play className="w-5 h-5 fill-current" />
-              Gas Review Semua!
-            </button>
+            {filteredJuzEstimates.length > 0 && (
+              <button
+                onClick={() => {
+                  const firstJuz = filteredJuzEstimates[0];
+                  if (firstJuz.items.length > 0) {
+                    const task: DailyTask = {
+                      item_id: firstJuz.items[0].item_id,
+                      source: "interval_review",
+                      state: "pending",
+                      task_date: getTodayDateKey(),
+                      content_ref: firstJuz.items[0].content_ref,
+                      juz_index: firstJuz.juz_index,
+                      status: firstJuz.items[0].status,
+                    };
+                    openFlashcard(task);
+                  }
+                }}
+                className="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-[#0B0E14] font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <Play className="w-5 h-5 fill-current" />
+                Gas Review!
+              </button>
+            )}
           </div>
 
-          {/* Items List */}
-          {loading && (
+          {/* Juz Cards Grid */}
+          {estimateLoading && (
             <p className="text-sm text-gray-400">Memuat target harian...</p>
           )}
-          {error && <p className="text-sm text-red-400">{error}</p>}
-          {!loading && !error && dailyReviewItems.length === 0 && (
+          {!estimateLoading && filteredJuzEstimates.length === 0 && (
             <p className="text-sm text-gray-400">
               Belum ada target review untuk hari ini.
             </p>
           )}
-          <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4 mt-2">
-            {dailyReviewItems.map((item) => (
-              <div
-                key={item.id}
-                className={`group flex items-center justify-between p-4 md:p-5 rounded-xl border transition-all duration-300 ${
-                  item.status === "completed"
-                    ? "bg-[#0B0E14]/50 border-emerald-500/20 opacity-60"
-                    : "bg-[#161D26] border-white/10 hover:bg-[#1A222C] hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/5 cursor-pointer"
-                }`}
-                onClick={() => {
-                  if (item.status === "pending") {
-                    openFlashcard(item.task);
-                  }
-                }}
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            {filteredJuzEstimates.map((juz, index) => (
+              <button
+                key={juz.juz_id}
+                onClick={() => openJuzModal(juz)}
+                className="group relative overflow-hidden rounded-xl p-5 bg-[#161D26] border border-white/10 hover:bg-[#1A222C] hover:border-emerald-500/40 transition-all duration-300 text-left hover:-translate-y-1 hover:shadow-xl"
+                style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
-                  {/* Status Icon */}
-                  <div
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shrink-0 ${
-                      item.status === "completed"
-                        ? "bg-emerald-500/10 text-emerald-500"
-                        : item.urgency === "high"
-                          ? "bg-red-500/10 text-red-500"
-                          : item.urgency === "medium"
-                            ? "bg-orange-500/10 text-orange-500"
-                            : "bg-blue-500/10 text-blue-500"
-                    }`}
-                  >
-                    {item.status === "completed" ? (
-                      <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6" />
-                    ) : (
-                      <AlertCircle
-                        className={`w-5 h-5 md:w-6 md:h-6 ${item.urgency === "high" ? "animate-pulse" : ""}`}
-                      />
-                    )}
-                  </div>
-
-                  <div className="min-w-0 pr-2">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3
-                        className={`text-lg md:text-xl font-bold truncate ${item.status === "completed" ? "text-gray-400" : "text-white group-hover:text-emerald-400 transition-colors"}`}
-                      >
-                        {item.title}
-                      </h3>
-                      <span
-                        className={`text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 ${
-                          item.type === "Murajaah"
-                            ? "bg-blue-500/20 text-blue-400"
-                            : item.type === "Hafalan Baru"
-                              ? "bg-purple-500/20 text-purple-400"
-                              : "bg-teal-500/20 text-teal-400"
-                        }`}
-                      >
-                        {item.type}
-                      </span>
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-teal-500/0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 transition-all duration-500" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <BookOpen className="w-6 h-6 text-emerald-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-black text-white group-hover:text-emerald-400 transition-colors">
+                          Juz {juz.juz_index}
+                        </h3>
+                        <p className="text-gray-400 text-xs">
+                          {juz.itemCount} item
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-gray-400 text-xs md:text-sm font-medium truncate">
-                      {item.range}
-                    </p>
+                    <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
+                  </div>
+                  
+                  <div className="flex items-center gap-2 pt-4 border-t border-white/10">
+                    <Clock className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-400 font-bold text-sm">
+                      {formatTotalTime(juz.totalEstimatedSeconds)}
+                    </span>
+                    <span className="text-gray-500 text-xs">
+                      estimasi review
+                    </span>
                   </div>
                 </div>
-
-                {item.status !== "completed" && (
-                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-[#0B0E14] text-gray-400 transition-all shrink-0">
-                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-                  </div>
-                )}
-              </div>
+              </button>
             ))}
           </div>
         </div>
       </div>
 
+      {/* Juz Modal - Shows items within a Juz */}
+      <DailyReviewJuzModal
+        isOpen={isJuzModalOpen}
+        juzEstimate={selectedJuzEstimate}
+        onClose={() => setIsJuzModalOpen(false)}
+        onItemSelected={openFlashcard}
+      />
+
+      {/* Flashcard Modal - For reviewing individual items */}
       <DailyReviewFlashcardModal
         key={`${selectedTask?.item_id ?? "no-item"}-${isFlashcardOpen ? "open" : "close"}`}
         isOpen={isFlashcardOpen}

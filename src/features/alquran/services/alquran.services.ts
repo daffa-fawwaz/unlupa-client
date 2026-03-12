@@ -119,7 +119,6 @@ export const alquranService = {
   async getItemsByStatus(status: string): Promise<ItemsByStatusResponse> {
     const response = await api.get(`/api/v1/items?status=${status}`);
     const raw = response.data;
-    console.log("raw service response:", JSON.stringify(response.data.data[0]));
 
     return {
       ...raw,
@@ -135,6 +134,7 @@ export const alquranService = {
         interval_days: item.IntervalDays,
         stability: item.Stability,
         difficulty: item.Difficulty,
+        estimatedReviewSeconds: item.EstimatedReviewSeconds ?? 0,
       })),
     };
   },

@@ -171,6 +171,7 @@ export interface ItemByStatus {
   interval_days: number;
   stability: number;
   difficulty: number;
+  estimatedReviewSeconds?: number;
 }
 
 export interface RawItemByStatus {
@@ -185,6 +186,7 @@ export interface RawItemByStatus {
   IntervalDays: number;
   Stability: number;
   Difficulty: number;
+  EstimatedReviewSeconds?: number;
 }
 
 
