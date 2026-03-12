@@ -47,7 +47,10 @@ export const AlquranDashboard = ({
     try {
       const lockRaw = localStorage.getItem(lockKey);
       if (lockRaw) {
-        const lock = JSON.parse(lockRaw) as { date?: string; expiresAt?: number };
+        const lock = JSON.parse(lockRaw) as {
+          date?: string;
+          expiresAt?: number;
+        };
         if (
           lock.date === today &&
           typeof lock.expiresAt === "number" &&
@@ -93,10 +96,16 @@ export const AlquranDashboard = ({
       void fetchUserProgress();
     };
 
-    window.addEventListener("alquran:completedJuz-updated", handleCompletedUpdate);
+    window.addEventListener(
+      "alquran:completedJuz-updated",
+      handleCompletedUpdate,
+    );
 
     return () => {
-      window.removeEventListener("alquran:completedJuz-updated", handleCompletedUpdate);
+      window.removeEventListener(
+        "alquran:completedJuz-updated",
+        handleCompletedUpdate,
+      );
     };
   }, [fetchUserProgress]);
 
@@ -135,10 +144,7 @@ export const AlquranDashboard = ({
     }
 
     // Total hafalan dan yang sudah selesai
-    const totalItems = data.data.reduce(
-      (sum, juz) => sum + juz.total_items,
-      0,
-    );
+    const totalItems = data.data.reduce((sum, juz) => sum + juz.total_items, 0);
     const completedItems = data.data.reduce(
       (sum, juz) => sum + juz.graduate,
       0,

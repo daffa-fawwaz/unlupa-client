@@ -17,7 +17,7 @@ export const JuzCard = ({
   return (
     <div
       onClick={onClick}
-      className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-[2rem] p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/10 min-h-[240px] flex flex-col overflow-hidden"
+      className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-[2rem] p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-amber-500/30 hover:shadow-2xl hover:shadow-amber-500/10 min-h-60 flex flex-col overflow-hidden"
     >
       {/* Background Gradient/Glow */}
       <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
@@ -62,7 +62,7 @@ export const JuzCard = ({
         </div>
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
           <span className="text-[0.65rem] text-gray-500 uppercase tracking-wider font-bold mb-1">
-            Murajaah
+            Latihan Interval
           </span>
           <span className="text-lg font-mono font-bold text-amber-400 leading-none">
             {stats.murajaah}
@@ -70,7 +70,7 @@ export const JuzCard = ({
         </div>
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
           <span className="text-[0.65rem] text-gray-500 uppercase tracking-wider font-bold mb-1">
-            Terjaga
+            Ujian Interval
           </span>
           <span className="text-lg font-mono font-bold text-emerald-400 leading-none">
             {stats.terjaga}

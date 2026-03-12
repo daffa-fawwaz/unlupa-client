@@ -42,6 +42,19 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
     displaySubtitle = "Mushaf";
   }
 
+  const intervalLabel = () => {
+    switch (item.status) {
+      case "fsrs_active":
+        return "Ujian Interval";
+      case "interval":
+        return "Latihan Interval";
+      case "graduate":
+        return "Selesai";
+      default:
+        return item.status;
+    }
+  };
+
   console.log("item:", item);
   return (
     <div
@@ -66,15 +79,15 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border backdrop-blur-md ${
                 item.status === "fsrs_active"
-                  ? "bg-green-500/10 border-green-500/20 text-green-400 shadow-[0_0_10px_rgba(74,222,128,0.1)]"
+                  ? "bg-teal-500/10 border-teal-500/20 text-teal-400 shadow-[0_0_12px_rgba(20,184,166,0.1)]"
                   : item.status === "menghafal"
                     ? "bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.1)]"
                     : item.status === "interval"
                       ? "bg-blue-500/10 border-blue-500/20 text-blue-400 shadow-[0_0_10px_rgba(251,191,36,0.1)]"
-                      : "bg-gray-500/10 border-gray-500/20 text-gray-400"
+                      : "bg-green-500/10 border-green-500/20 text-green-400 shadow-[0_0_10px_rgba(74,222,128,0.1)]"
               }`}
             >
-              {item.status}
+              {intervalLabel()}
             </span>
           </div>
         </div>
