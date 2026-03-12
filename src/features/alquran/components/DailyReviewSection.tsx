@@ -14,6 +14,7 @@ import type {
 } from "@/features/alquran/types/quran.types";
 import { DailyReviewFlashcardModal } from "@/features/alquran/components/DailyReviewFlashcardModal";
 import { alquranService } from "../services/alquran.services";
+import { useItemStatus } from "@/features/alquran/hooks/useItemStatus";
 
 const getTodayDateKey = () => {
   const now = new Date();
@@ -118,17 +119,6 @@ export const DailyReviewSection = () => {
     };
   }, [getDaily, refreshActiveItemIds]);
 
-  const mapSourceToType = (source: string) => {
-    switch (source) {
-      case "interval_review":
-        return "Murajaah";
-      case "new_memorization":
-        return "Hafalan Baru";
-      default:
-        return "Ziyadah";
-    }
-  };
-
   const dailyReviewItems = useMemo(
     () =>
       data
@@ -169,17 +159,29 @@ export const DailyReviewSection = () => {
               ? task.content_ref
               : `Task ${task.task_date}`;
 
+          const mapSourceToType = (task: DailyTask) => {
+            const itemStatus = itemStatusMap.get(task.item_id);
+            switch (itemStatus) {
+              case "interval":
+                return "Latihan Interval";
+              case "fsrs_active":
+                return "Ujian Interval";
+              default:
+                return "Murajaah";
+            }
+          };
+
           return {
             id: task.item_id,
             task,
             title,
             range,
-            type: mapSourceToType(task.source),
+            type: mapSourceToType(task),
             urgency,
             status,
           };
         }),
-    [activeItemIds, data, hiddenTaskKeys, deactivatedJuzIndexes],
+    [activeItemIds, data, hiddenTaskKeys, deactivatedJuzIndexes, itemStatusMap],
   );
 
   const pendingCount = dailyReviewItems.filter(
