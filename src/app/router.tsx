@@ -13,6 +13,8 @@ import { TeacherRequestPage } from "@/features/dashboard/admin/pages/TeacherRequ
 import { UserListPage } from "@/features/dashboard/admin/pages/UserListPage";
 import { AlquranPage } from "@/pages/alquran/AlquranPage";
 import { ComingSoonRoomPage } from "@/pages/dashboard/ComingSoonRoomPage";
+import { StatusItemsByJuzPage } from "@/features/alquran/pages/StatusItemsByJuzPage";
+import { StatusItemsView } from "@/features/alquran/pages/StatusItemsView";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +44,15 @@ export const router = createBrowserRouter([
               { path: "/dashboard/alquran", element: <AlquranPage /> },
               { path: "/dashboard/kelas", element: <ComingSoonRoomPage /> },
               { path: "/dashboard/pribadi", element: <ComingSoonRoomPage /> },
+              // Status-based item pages
+              {
+                path: "/dashboard/alquran/status/:status",
+                element: <StatusItemsByJuzPage />,
+              },
+              {
+                path: "/dashboard/alquran/status/:status/:juzId",
+                element: <StatusItemsView />,
+              },
               {
                 element: <ProtectedRoute allowedRoles={["admin"]} />,
                 children: [

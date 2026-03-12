@@ -14,7 +14,6 @@ import type {
 } from "@/features/alquran/types/quran.types";
 import { DailyReviewFlashcardModal } from "@/features/alquran/components/DailyReviewFlashcardModal";
 import { alquranService } from "../services/alquran.services";
-import { useItemStatus } from "@/features/alquran/hooks/useItemStatus";
 
 const getTodayDateKey = () => {
   const now = new Date();

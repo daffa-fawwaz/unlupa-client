@@ -73,7 +73,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
     sectionTitle: "Mulai Latihan Interval",
     description:
       "Atur jadwal pengulangan hafalan. Kamu akan diingatkan sesuai interval yang dipilih.",
-    label: "Mulai Murajaah",
+    label: "Mulai Latihan Interval",
     icon: <Play className="w-5 h-5 fill-current" />,
     buttonClass:
       "bg-linear-to-r from-amber-500 to-orange-600 text-black shadow-amber-900/20 hover:shadow-amber-500/30",

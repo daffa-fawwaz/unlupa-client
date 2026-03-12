@@ -12,6 +12,7 @@ import { alquranService } from "@/features/alquran/services/alquran.services";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardActionButtons } from "./DashboardActionButtons";
 import { DailyReviewSection } from "./DailyReviewSection";
+import { QuickAccessButtons } from "./QuickAccessButtons";
 
 interface AlquranDashboardProps {
   juzStats: (juz: string) => LifecycleStats;
@@ -29,6 +30,12 @@ export const AlquranDashboard = ({
   const { data, getJuz } = useGetJuz();
   const { completedJuz, fetchUserProgress } = useUserProgress();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [statusCounts, setStatusCounts] = useState({
+    menghafal: 0,
+    interval: 0,
+    fsrs_active: 0,
+    graduate: 0,
+  });
 
   const triggerDailyGenerateIfNeeded = useCallback(async () => {
     const storageKey = "alquran:last-daily-generate-date";
@@ -89,6 +96,36 @@ export const AlquranDashboard = ({
   useEffect(() => {
     void getJuz();
   }, [getJuz, refreshSignal]);
+
+  // Fetch status counts from my-items API
+  useEffect(() => {
+    const fetchStatusCounts = async () => {
+      try {
+        const response = await alquranService.getMyItems("quran");
+        const counts = {
+          menghafal: 0,
+          interval: 0,
+          fsrs_active: 0,
+          graduate: 0,
+        };
+
+        response.data.groups.forEach((group) => {
+          group.items.forEach((item) => {
+            if (item.status === "menghafal") counts.menghafal++;
+            else if (item.status === "interval") counts.interval++;
+            else if (item.status === "fsrs_active") counts.fsrs_active++;
+            else if (item.status === "graduate") counts.graduate++;
+          });
+        });
+
+        setStatusCounts(counts);
+      } catch (error) {
+        console.error("Failed to fetch status counts:", error);
+      }
+    };
+
+    fetchStatusCounts();
+  }, [refreshSignal]);
 
   // Listen for completed juz updates from JuzDetailView
   useEffect(() => {
@@ -192,6 +229,14 @@ export const AlquranDashboard = ({
 
           {/* HERO SECTION: Daily Review Target */}
           <DailyReviewSection />
+
+          {/* Quick Access Buttons */}
+          <div className="mt-12 mb-6">
+            <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-blue-500 pl-3">
+              Akses Cepat Berdasarkan Status
+            </h2>
+            <QuickAccessButtons counts={statusCounts} />
+          </div>
 
           {/* Section: Koleksi Hafalan & Actions */}
           <div className="mt-12 mb-6 border-t border-white/10 pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
