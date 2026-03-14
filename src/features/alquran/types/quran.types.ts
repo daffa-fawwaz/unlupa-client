@@ -66,6 +66,7 @@ export interface DailyTask {
   task_date: string;
   content_ref: string;
   juz_index: number;
+  status?: string; // Add status field for FSRS check
 }
 
 export type DailyTasksResponse = DailyTask[];
@@ -114,7 +115,12 @@ export interface ActivateFsrsResponse {
   data: Record<string, unknown>;
   timestamp?: string;
   path?: string;
-} 
+}
+
+// Review FSRS (for fsrs_active items)
+export interface ReviewFsrsPayload {
+  rating: 1 | 2 | 3 | 4;
+}
 
 export interface ReviewFsrsResponse {
   status: number;

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useOutletContext } from "react-router";
 import type { DashboardContextType } from "@/layouts/DashboardLayout";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
+import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 
 export const StudentDashboardPage = () => {
   const { toggleSidebar } = useOutletContext<DashboardContextType>();
@@ -69,6 +70,9 @@ export const StudentDashboardPage = () => {
           </span>
         </p>
       </div>
+
+      {/* QUICK ACCESS CARDS */}
+      <QuickAccessCards role="student" />
 
       {/* 2. STATS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">

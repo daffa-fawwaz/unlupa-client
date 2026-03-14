@@ -10,6 +10,8 @@ import type {
   MyItemsQuranResponse,
   ReviewIntervalPayload,
   ReviewIntervalResponse,
+  ReviewFsrsPayload,
+  ReviewFsrsResponse,
   StartIntervalPayload,
   StartIntervalResponse,
 } from "@/features/alquran/types/quran.types";
@@ -76,6 +78,17 @@ export const alquranService = {
 
   async activateFsrs(itemId: string): Promise<ActivateFsrsResponse> {
     const response = await api.post(`/api/v1/items/${itemId}/activate-fsrs`);
+    return response.data;
+  },
+
+  async reviewFsrs(
+    itemId: string,
+    payload: ReviewFsrsPayload,
+  ): Promise<ReviewFsrsResponse> {
+    const response = await api.post(
+      `/api/v1/items/${itemId}/review`,
+      payload,
+    );
     return response.data;
   },
 };

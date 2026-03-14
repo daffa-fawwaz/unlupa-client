@@ -11,6 +11,7 @@ import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
 import type {
   DailyTask,
   ReviewIntervalResponse,
+  ReviewFsrsResponse,
 } from "@/features/alquran/types/quran.types";
 import { DailyReviewFlashcardModal } from "@/features/alquran/components/DailyReviewFlashcardModal";
 import { alquranService } from "../services/alquran.services";
@@ -155,14 +156,15 @@ export const DailyReviewSection = () => {
     setIsFlashcardOpen(true);
   };
 
-  const handleReviewed = async (result: ReviewIntervalResponse) => {
-    const reviewedItemId = result.data.item_id;
+  const handleReviewed = async (_result: ReviewIntervalResponse | ReviewFsrsResponse) => {
+    // Handle both response types - they have different data structures
+    const reviewedItemId = selectedTask?.item_id;
     const reviewedTaskDate = selectedTask?.task_date ?? getTodayDateKey();
     const reviewedStorageKey = getReviewedStorageKeyByTaskDate(reviewedTaskDate);
     const localKey = `${reviewedTaskDate}:${reviewedItemId}`;
 
     const reviewedIds = getReviewedIdsForTaskDate(reviewedTaskDate);
-    if (!reviewedIds.includes(reviewedItemId)) {
+    if (reviewedItemId && !reviewedIds.includes(reviewedItemId)) {
       localStorage.setItem(
         reviewedStorageKey,
         JSON.stringify([...reviewedIds, reviewedItemId]),

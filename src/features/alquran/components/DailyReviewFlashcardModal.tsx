@@ -11,15 +11,16 @@ import {
 import type {
   DailyTask,
   ReviewIntervalResponse,
+  ReviewFsrsResponse,
 } from "@/features/alquran/types/quran.types";
 import { parseContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";
-import { useReviewInterval } from "@/features/alquran/hooks/useReviewInterval";
+import { useReviewFsrs } from "@/features/alquran/hooks/useReviewFsrs";
 
 interface DailyReviewFlashcardModalProps {
   isOpen: boolean;
   task: DailyTask | null;
   onClose: () => void;
-  onReviewed: (result: ReviewIntervalResponse) => Promise<void> | void;
+  onReviewed: (result: ReviewIntervalResponse | ReviewFsrsResponse) => Promise<void> | void;
 }
 
 /** Payload: merah=1, kuning=2, hijau=3, biru=3. Klik tombol = submit langsung. */
@@ -80,7 +81,17 @@ export const DailyReviewFlashcardModal = ({
   const [submittingButtonId, setSubmittingButtonId] = useState<
     1 | 2 | 3 | 4 | null
   >(null);
-  const { reviewInterval, loading, error } = useReviewInterval();
+  const { reviewFsrs, loading: loadingFsrs, error: errorFsrs } = useReviewFsrs();
+
+  // For Daily Review tasks, we always use FSRS review endpoint
+  // Because items in daily review are already in 'fsrs_active' / 'terjaga' status
+  // The 'state' field in DailyTask is 'pending' (task status), not item status
+  const useFsrsReview = true;
+  
+  console.log("[DailyReviewFlashcard] Using FSRS Review:", useFsrsReview);
+  
+  const loading = loadingFsrs;
+  const error = errorFsrs;
 
   if (!isOpen || !task) return null;
   const info = task.content_ref ? parseContentRef(task.content_ref) : null;
@@ -104,7 +115,8 @@ export const DailyReviewFlashcardModal = ({
 
     setSubmittingButtonId(btn.id);
     try {
-      const response = await reviewInterval(task.item_id, btn.payloadValue);
+      // Always use FSRS review for Daily Review tasks
+      const response = await reviewFsrs(task.item_id, btn.payloadValue as 1 | 2 | 3 | 4);
       await onReviewed(response);
       onClose();
     } catch {
@@ -151,10 +163,10 @@ export const DailyReviewFlashcardModal = ({
                 </div>
 
                 <div className="p-4 md:p-6 rounded-2xl border border-cyan-300/20 bg-cyan-400/5 mb-5">
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight break-words">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight wrap-break-word">
                     {title}
                   </h3>
-                  <p className="text-cyan-200/80 mt-2 text-sm md:text-lg break-words">
+                  <p className="text-cyan-200/80 mt-2 text-sm md:text-lg wrap-break-word">
                     {subtitle}
                   </p>
                 </div>
@@ -202,7 +214,7 @@ export const DailyReviewFlashcardModal = ({
               </div>
             </div>
 
-            <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-[1.5rem] md:rounded-[2rem] border border-emerald-400/20 bg-linear-to-br from-[#13211D] via-[#101B19] to-[#0B1513] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
+            <div className="absolute inset-0 backface-hidden transform-[rotateY(180deg)] rounded-3xl md:rounded-[2rem] border border-emerald-400/20 bg-linear-to-br from-[#13211D] via-[#101B19] to-[#0B1513] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
               <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_15%_25%,rgba(16,185,129,0.32),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(20,184,166,0.2),transparent_35%)]" />
 
               <div className="relative p-4 md:p-8">
@@ -235,7 +247,7 @@ export const DailyReviewFlashcardModal = ({
                         type="button"
                         onClick={() => handleRatingClick(btn)}
                         disabled={submittingButtonId !== null}
-                        className={`relative overflow-hidden rounded-2xl min-h-[132px] flex flex-col text-left ${btn.wrapperClass} disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed`}
+                        className={`relative overflow-hidden rounded-2xl min-h-33 flex flex-col text-left ${btn.wrapperClass} disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed`}
                       >
                         <div
                           className={`flex items-center justify-center py-2 px-3 text-center text-sm uppercase tracking-wider ${btn.headerClass}`}

@@ -20,6 +20,7 @@ import { StatCard } from "@/components/ui/StatCard";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
+import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 
 export const TeacherDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -159,6 +160,9 @@ export const TeacherDashboardPage = () => {
             </div>
           </div>
         </header>
+
+        {/* QUICK ACCESS CARDS */}
+        <QuickAccessCards role="teacher" />
 
         {/* Stats Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
