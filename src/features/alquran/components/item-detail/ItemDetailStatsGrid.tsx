@@ -86,7 +86,7 @@ export function ItemDetailStatsGrid({
       <StatCard
         icon={CalendarDays}
         iconClassName="text-purple-500/60"
-        label="Jadwal Review"
+        label="Jadwal Latihan Interval Selanjutnya"
       >
         {nextReviewAt ? (
           <span className="text-sm font-mono font-bold text-white">

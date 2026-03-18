@@ -91,6 +91,7 @@ export const DailyReviewFlashcardModal = ({
   >(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [itemData, setItemData] = useState<ItemByStatus | null>(null);
+  console.log("itemData:", itemData);
   const {
     reviewFsrs,
     loading: loadingFsrs,
@@ -191,6 +192,19 @@ export const DailyReviewFlashcardModal = ({
       }
 
       await onReviewed(response);
+      
+      console.log("[DailyReviewFlashcardModal] Review completed, dispatching event for item:", task.item_id, "useFsrsReview:", useFsrsReview);
+      // Dispatch event to notify other components that item was reviewed
+      // For fsrs_active, use longer delay to ensure server has updated
+      window.dispatchEvent(
+        new CustomEvent("alquran:item-reviewed", {
+          detail: { 
+            itemId: task.item_id,
+            delay: useFsrsReview ? 1000 : 500,
+          },
+        })
+      );
+      
       onClose();
     } catch {
       setSubmittingButtonId(null);
@@ -205,14 +219,14 @@ export const DailyReviewFlashcardModal = ({
   };
 
   /** Format date to Indonesian format */
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
+  // const formatDate = (dateString: string | undefined) => {
+  //   if (!dateString) return "-";
+  //   return new Date(dateString).toLocaleDateString("id-ID", {
+  //     day: "numeric",
+  //     month: "short",
+  //     year: "numeric",
+  //   });
+  // };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4">
@@ -449,29 +463,6 @@ export const DailyReviewFlashcardModal = ({
                   ))}
                 </ul>
               </div>
-
-              {/* Next Review Info */}
-              {itemData && (
-                <div className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="flex items-center gap-3 mb-3">
-                    <CalendarDays className="w-5 h-5 text-purple-400" />
-                    <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                      Jadwal Review Berikutnya
-                    </span>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-mono font-bold text-purple-400">
-                      {formatDate(
-                        itemData.interval_next_review_at ??
-                          itemData.next_review_at,
-                      )}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Sudah direview {itemData.review_count} kali
-                    </p>
-                  </div>
-                </div>
-              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <button

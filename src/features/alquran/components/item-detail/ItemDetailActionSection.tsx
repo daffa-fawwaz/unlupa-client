@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, Edit2, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 import type {
   ActionConfig,
@@ -16,6 +16,8 @@ interface ItemDetailActionSectionProps {
   secondaryActionDisabled?: boolean;
   secondaryActionLabel?: string;
   secondaryActionError?: string | null;
+  onEditClick?: () => void;
+  onDeleteClick?: () => void;
 }
 
 interface PhaseButtonProps {
@@ -53,6 +55,36 @@ function PhaseButton({
       className={buttonClass}
     >
       {content}
+    </button>
+  );
+}
+
+interface ActionIconButtonProps {
+  label: string;
+  icon: ReactNode;
+  onClick?: () => void;
+  variant?: "default" | "danger";
+}
+
+function ActionIconButton({
+  label,
+  icon,
+  onClick,
+  variant = "default",
+}: ActionIconButtonProps) {
+  const baseStyles = "flex items-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all";
+  const variantStyles = variant === "danger"
+    ? "bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/50"
+    : "bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`${baseStyles} ${variantStyles}`}
+    >
+      {icon}
+      <span>{label}</span>
     </button>
   );
 }
@@ -116,6 +148,8 @@ export function ItemDetailActionSection({
   secondaryActionDisabled = false,
   secondaryActionLabel,
   secondaryActionError,
+  onEditClick,
+  onDeleteClick,
 }: ItemDetailActionSectionProps) {
   return (
     <div className="p-1 rounded-[2.5rem] md:rounded-[3rem] bg-linear-to-b from-white/10 to-white/5 shadow-2xl mb-8 border border-white/5 mx-auto w-full">
@@ -197,6 +231,28 @@ export function ItemDetailActionSection({
                   {secondaryActionError}
                 </p>
               )}
+            </div>
+          </div>
+
+          {/* Item Management Actions */}
+          <div className="mt-8 pt-6 border-t border-white/10">
+            <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                Kelola Item
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+              <ActionIconButton
+                label="Edit Item"
+                icon={<Edit2 className="w-4 h-4" />}
+                onClick={onEditClick}
+              />
+              <ActionIconButton
+                label="Hapus"
+                icon={<Trash2 className="w-4 h-4" />}
+                onClick={onDeleteClick}
+                variant="danger"
+              />
             </div>
           </div>
         </div>

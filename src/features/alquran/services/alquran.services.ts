@@ -17,6 +17,11 @@ import type {
   ItemsByStatusResponse,
   RawItemByStatus,
   JuzToggleActiveResponse,
+  UpdateItemPayload,
+  UpdateItemResponse,
+  DeleteItemResponse,
+  EditIntervalDaysPayload,
+  EditIntervalDaysResponse,
 } from "@/features/alquran/types/quran.types";
 
 export interface UserProgressResponse {
@@ -159,6 +164,31 @@ export const alquranService = {
     payload: SaveUserProgressPayload,
   ): Promise<SaveUserProgressResponse> {
     const response = await api.post("/api/v1/user/progress", payload);
+    return response.data;
+  },
+
+  // Item Management
+  async updateItem(
+    itemId: string,
+    payload: UpdateItemPayload,
+  ): Promise<UpdateItemResponse> {
+    const response = await api.put(`/api/v1/juz/items/${itemId}`, payload);
+    return response.data;
+  },
+
+  async deleteItem(itemId: string): Promise<DeleteItemResponse> {
+    const response = await api.delete(`/api/v1/juz/items/${itemId}`);
+    return response.data;
+  },
+
+  async editIntervalDays(
+    itemId: string,
+    payload: EditIntervalDaysPayload,
+  ): Promise<EditIntervalDaysResponse> {
+    const response = await api.put(
+      `/api/v1/items/${itemId}/interval-days`,
+      payload,
+    );
     return response.data;
   },
 };

@@ -70,6 +70,7 @@ export const DailyReviewSection = () => {
   const [deactivatedJuzIndexes, setDeactivatedJuzIndexes] = useState<
     Set<number>
   >(() => getDeactivatedJuzIndexes());
+  const [reviewedItemsVersion, setReviewedItemsVersion] = useState(0);
 
   const refreshActiveItemIds = useCallback(async () => {
     try {
@@ -121,12 +122,40 @@ export const DailyReviewSection = () => {
     };
   }, [getDaily, refreshActiveItemIds, refetchEstimates]);
 
-  // Filter juz estimates by deactivated status
+  // Filter juz estimates by deactivated status and reviewed items
   const filteredJuzEstimates = useMemo(() => {
-    return juzEstimates.filter(
-      (juz) => !deactivatedJuzIndexes.has(juz.juz_index)
-    );
-  }, [juzEstimates, deactivatedJuzIndexes]);
+    const todayKey = getTodayDateKey();
+    const reviewedIds = getReviewedIdsForTaskDate(todayKey);
+
+    return juzEstimates
+      .map((juz) => {
+        // Filter out reviewed items from each juz
+        const filteredItems = juz.items.filter(
+          (item) => !reviewedIds.includes(item.item_id)
+        );
+
+        // Return updated juz with filtered items
+        return {
+          ...juz,
+          items: filteredItems,
+          itemCount: filteredItems.length,
+          totalEstimatedSeconds: filteredItems.reduce(
+            (sum, item) => sum + (item.estimatedReviewSeconds || 0),
+            0
+          ),
+          totalEstimatedMinutes: Math.ceil(
+            filteredItems.reduce(
+              (sum, item) => sum + (item.estimatedReviewSeconds || 0),
+              0
+            ) / 60
+          ),
+        };
+      })
+      .filter(
+        (juz) =>
+          !deactivatedJuzIndexes.has(juz.juz_index) && juz.itemCount > 0
+      );
+  }, [juzEstimates, deactivatedJuzIndexes, reviewedItemsVersion]);
 
   // Calculate total items and time
   const totalItems = filteredJuzEstimates.reduce(
@@ -140,9 +169,15 @@ export const DailyReviewSection = () => {
     return `${mins}m`;
   };
 
-  const openJuzModal = (juzEstimate: JuzReviewEstimate) => {
-    setSelectedJuzEstimate(juzEstimate);
-    setIsJuzModalOpen(true);
+  const openJuzModal = (juzIndex: number) => {
+    // Find the filtered juz estimate by index
+    const filteredJuz = filteredJuzEstimates.find(
+      (juz) => juz.juz_index === juzIndex
+    );
+    if (filteredJuz) {
+      setSelectedJuzEstimate(filteredJuz);
+      setIsJuzModalOpen(true);
+    }
   };
 
   const openFlashcard = (task: DailyTask) => {
@@ -168,6 +203,8 @@ export const DailyReviewSection = () => {
         reviewedStorageKey,
         JSON.stringify([...reviewedIds, reviewedItemId]),
       );
+      // Trigger re-render of filteredJuzEstimates
+      setReviewedItemsVersion((prev) => prev + 1);
     }
 
     await getDaily();
@@ -251,7 +288,7 @@ export const DailyReviewSection = () => {
             {filteredJuzEstimates.map((juz, index) => (
               <button
                 key={juz.juz_id}
-                onClick={() => openJuzModal(juz)}
+                onClick={() => openJuzModal(juz.juz_index)}
                 className="group relative overflow-hidden rounded-xl p-5 bg-[#161D26] border border-white/10 hover:bg-[#1A222C] hover:border-emerald-500/40 transition-all duration-300 text-left hover:-translate-y-1 hover:shadow-xl"
                 style={{ animationDelay: `${index * 50}ms` }}
               >

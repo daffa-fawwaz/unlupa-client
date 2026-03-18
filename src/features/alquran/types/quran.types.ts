@@ -131,6 +131,83 @@ export interface ReviewFsrsResponse {
   path?: string;
 }
 
+// Update Item
+export interface UpdateItemPayload {
+  mode: "surah" | "page";
+  content_ref: string;
+  estimate_value: number;
+  estimate_unit: "minutes" | "seconds";
+}
+
+export interface UpdateItemResponse {
+  status: number;
+  message: string;
+  data: {
+    ID: string;
+    OwnerID: string;
+    SourceType: string;
+    ContentRef: string;
+    Status: string;
+    IntervalDays: number;
+    IntervalStartAt: string;
+    IntervalEndAt: string | null;
+    IntervalNextReviewAt: string;
+    Stability: number;
+    Difficulty: number;
+    ReviewCount: number;
+    LastReviewAt: string | null;
+    NextReviewAt: string;
+    ApprovedBy: string | null;
+    ApprovedAt: string | null;
+    FSRSStartAt: string | null;
+    EstimatedReviewSeconds: number;
+    CreatedAt: string;
+  };
+  timestamp: string;
+  path: string;
+}
+
+// Delete Item
+export interface DeleteItemResponse {
+  status: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}
+
+// Edit Interval Days
+export interface EditIntervalDaysPayload {
+  interval_days: number;
+}
+
+export interface EditIntervalDaysResponse {
+  status: number;
+  message: string;
+  data: {
+    ID: string;
+    OwnerID: string;
+    SourceType: string;
+    ContentRef: string;
+    Status: string;
+    IntervalDays: number;
+    IntervalStartAt: string;
+    IntervalEndAt: string | null;
+    IntervalNextReviewAt: string;
+    Stability: number;
+    Difficulty: number;
+    ReviewCount: number;
+    LastReviewAt: string | null;
+    NextReviewAt: string | null;
+    ApprovedBy: string | null;
+    ApprovedAt: string | null;
+    FSRSStartAt: string | null;
+    EstimatedReviewSeconds: number;
+    CreatedAt: string;
+  };
+  timestamp: string;
+  path: string;
+}
+
 // My Items API Response
 
 export interface MyItemDetail {
@@ -140,6 +217,7 @@ export interface MyItemDetail {
   review_count: number;
   created_at: string;
   next_review_at: string; // Next review schedule
+  interval_days?: number;
 }
 
 export interface QuranGroup {
