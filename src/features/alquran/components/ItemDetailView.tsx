@@ -80,9 +80,9 @@ export const ItemDetailView = ({
       const foundItem = allItems.find(
         (item) => item.item_id === itemIdRef.current
       );
-      
+
       console.log("[ItemDetailView] Found item:", foundItem);
-      
+
       if (foundItem) {
         console.log("[ItemDetailView] Found item, old next_review_at:", currentItem.next_review_at, "new next_review_at:", foundItem.next_review_at);
         setCurrentItem({
@@ -100,14 +100,18 @@ export const ItemDetailView = ({
   }, [currentItem.next_review_at, currentItem.review_count, currentItem.interval_days]);
 
   useEffect(() => {
-    setCurrentItem(item);
     itemIdRef.current = item.item_id;
     
     // Fetch interval_days on mount if not present
     if (!item.interval_days) {
       void refreshItemData();
     }
-  }, [item, refreshItemData]);
+  }, [item.item_id, refreshItemData]);
+
+  // Sync currentItem with item prop when item changes
+  useEffect(() => {
+    setCurrentItem(item);
+  }, [item]);
 
   useEffect(() => {
     const handleReviewComplete = (event: CustomEvent<{ itemId: string; delay?: number }>) => {
