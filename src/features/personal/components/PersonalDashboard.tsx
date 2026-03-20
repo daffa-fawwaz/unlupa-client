@@ -78,7 +78,7 @@ export const PersonalDashboard = () => {
               <Plus className="w-7 h-7" />
             </div>
             <div className="relative z-10">
-              <h3 className="text-2xl font-bold text-white mb-2 leading-tight tracking-wide group-hover:text-blue-50 transition-colors">
+              <h3 className="text-2xl font-display text-white mb-2 leading-tight tracking-wide group-hover:text-blue-50 transition-colors">
                 Buat Materi
               </h3>
               <p className="text-sm text-gray-400 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
@@ -95,7 +95,7 @@ export const PersonalDashboard = () => {
               <Share2 className="w-7 h-7" />
             </div>
             <div className="relative z-10">
-              <h3 className="text-2xl font-bold text-white mb-2 leading-tight tracking-wide group-hover:text-emerald-50 transition-colors">
+              <h3 className="text-2xl font-display text-white mb-2 leading-tight tracking-wide group-hover:text-emerald-50 transition-colors">
                 Bagikan Kitab
               </h3>
               <p className="text-sm text-gray-400 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
@@ -112,7 +112,7 @@ export const PersonalDashboard = () => {
               <Download className="w-7 h-7" />
             </div>
             <div className="relative z-10">
-              <h3 className="text-2xl font-bold text-white mb-2 leading-tight tracking-wide group-hover:text-purple-50 transition-colors">
+              <h3 className="text-2xl font-display text-white mb-2 leading-tight tracking-wide group-hover:text-purple-50 transition-colors">
                 Import Kitab
               </h3>
               <p className="text-sm text-gray-400 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
