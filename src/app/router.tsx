@@ -15,6 +15,7 @@ import { AlquranPage } from "@/pages/alquran/AlquranPage";
 import { ComingSoonRoomPage } from "@/pages/dashboard/ComingSoonRoomPage";
 import { StatusItemsByJuzPage } from "@/features/alquran/pages/StatusItemsByJuzPage";
 import { StatusItemsView } from "@/features/alquran/pages/StatusItemsView";
+import { PersonalPage } from "@/pages/personal/PersonalPage";
 
 export const router = createBrowserRouter([
   {
@@ -42,8 +43,8 @@ export const router = createBrowserRouter([
             children: [
               { path: "/dashboard", element: <DashboardShell /> },
               { path: "/dashboard/alquran", element: <AlquranPage /> },
+              { path: "/dashboard/pribadi", element: <PersonalPage /> },
               { path: "/dashboard/kelas", element: <ComingSoonRoomPage /> },
-              { path: "/dashboard/pribadi", element: <ComingSoonRoomPage /> },
               // Status-based item pages
               {
                 path: "/dashboard/alquran/status/:status",
