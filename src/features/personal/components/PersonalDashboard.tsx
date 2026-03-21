@@ -1,5 +1,5 @@
 import { Sidebar } from "@/components/ui/Sidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu,
   UserCircle,
@@ -9,207 +9,364 @@ import {
   Download,
   Plus,
   Library,
+  Loader2,
+  TrendingUp,
+  Clock,
+  Award,
+  ArrowRight
 } from "lucide-react";
+import { useBooks } from "../hooks/useBooks";
+import { BookCard } from "./BookCard";
+import { CreateBookModal } from "./CreateBookModal";
+import { EditBookModal } from "./EditBookModal";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import type { Book } from "../types/personal.types";
 
 export const PersonalDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const totalMateri = 0; // Placeholder until integrated with real data
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
+  
+  const { books, loading, fetchBooks, deleteBook } = useBooks();
+
+  useEffect(() => {
+    void fetchBooks();
+  }, [fetchBooks]);
+
+  const totalMateri = books.length;
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-[#0B0E14] rounded-3xl">
+    <div className="min-h-screen relative bg-[#090A0F] rounded-3xl overflow-hidden selection:bg-blue-500/30">
+      {/* --- Dynamic Background Atmosphere --- */}
+      <div className="absolute top-0 inset-x-0 h-[500px] bg-linear-to-b from-blue-900/10 via-[#090A0F] to-transparent pointer-events-none" />
+      <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none" />
+      
+      {/* Decorative Grid Pattern */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
+
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       {/* Overlay for mobile sidebar */}
       <div
-        className={`sidebar-overlay ${isSidebarOpen ? "active" : ""}`}
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         onClick={() => setIsSidebarOpen(false)}
       />
 
-      <div className="animate-fadeIn max-w-400 mx-auto">
-        {/* === HEADER SECTION === */}
-        <div className="mb-14 flex flex-col justify-between relative z-10">
-          <div className="flex justify-between items-start">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="flex items-center gap-3 text-gray-400 hover:text-blue-400 transition-all group cursor-pointer"
-            >
-              <div className="p-2.5 rounded-2xl border border-white/10 group-hover:border-blue-500/50 bg-white/5 group-hover:bg-blue-500/10 transition-all duration-300 backdrop-blur-sm shadow-xl shadow-black/20">
-                <Menu className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="text-sm font-mono tracking-[0.2em] hidden md:inline opacity-70 group-hover:opacity-100 transition-opacity">
-                MENU
-              </span>
-            </button>
-
-            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-bold backdrop-blur-md shadow-[0_0_15px_rgba(59,130,246,0.15)] select-none">
-              <Files className="w-4 h-4" />
-              <span>{totalMateri} Kitab Tersimpan</span>
+      <div className="p-4 sm:p-6 lg:p-8 animate-fadeIn max-w-[1600px] mx-auto relative z-10">
+        
+        {/* === TOP NAVIGATION BAR === */}
+        <div className="flex justify-between items-center mb-10">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="flex items-center gap-3 text-gray-400 hover:text-white transition-all group cursor-pointer"
+          >
+            <div className="p-2.5 rounded-2xl border border-white/5 group-hover:border-white/20 bg-white/5 group-hover:bg-white/10 transition-all duration-300 backdrop-blur-xl shadow-lg">
+              <Menu className="w-5 h-5 group-hover:scale-110 transition-transform" />
             </div>
-          </div>
+            <span className="text-xs font-mono tracking-[0.2em] font-semibold hidden md:inline opacity-70 group-hover:opacity-100 transition-opacity">
+              MENU
+            </span>
+          </button>
 
-          <div className="mt-8">
-            <h1 className="text-5xl md:text-6xl font-serif font-black text-white mb-4 flex items-center gap-5 tracking-tight">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-blue-500/30 blur-2xl rounded-full group-hover:bg-blue-400/40 transition-all duration-500" />
-                <div className="relative z-10 p-3 rounded-2xl bg-linear-to-br from-blue-500/20 to-purple-500/20 border border-blue-400/30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
-                  <UserCircle className="w-10 h-10 text-blue-400" />
-                </div>
-              </div>
-              <span className="bg-clip-text text-transparent bg-linear-to-r from-white via-blue-50 to-gray-400">
-                Ruang Pribadi
-              </span>
-            </h1>
-            <p className="text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed font-light">
-              Kelola materi hafalan Anda sendiri, publikasikan karya Anda, dan
-              unduh materi premium dari perpustakaan global untuk pengalaman
-              belajar yang tak terbatas.
-            </p>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#131824]/80 border border-blue-500/20 text-xs text-blue-400 font-bold backdrop-blur-xl shadow-lg shadow-blue-500/5 select-none transition-all hover:bg-[#1A2235]">
+              <Files className="w-4 h-4" />
+              <span>{totalMateri} Kitab Disimpan</span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-linear-to-tr from-blue-600 to-purple-600 p-[2px] cursor-pointer hover:scale-105 transition-transform shadow-lg">
+               <div className="w-full h-full bg-[#0A0D14] rounded-full flex items-center justify-center border border-black/50 overflow-hidden">
+                 <UserCircle className="w-6 h-6 text-gray-300" />
+               </div>
+            </div>
           </div>
         </div>
 
-        {/* === MAIN ACTION BUTTONS === */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 mb-16 relative z-10">
-          {/* Action 1: Buat Materi (Primary) */}
-          <button className="relative cursor-pointer overflow-hidden group p-8 rounded-[2rem] bg-linear-to-br from-[#1E2532] to-[#111620] border border-blue-500/20 hover:border-blue-400/60 transition-all duration-500 text-left flex flex-col justify-between min-h-[200px] hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.3)]">
-            <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full group-hover:bg-blue-500/20 transition-all duration-500" />
+        {/* === HERO / HEADER SECTION === */}
+        <div className="mb-12 relative">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 text-xs font-medium text-gray-400 backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            Workspace Pribadi
+          </div>
+          
+          <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-5 tracking-tight drop-shadow-lg leading-tight">
+            Ruang Belajar <br className="hidden md:block" />
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-blue-400 via-cyan-300 to-emerald-400">
+              Tanpa Batas.
+            </span>
+          </h1>
+          <p className="text-gray-400 text-lg max-w-2xl leading-relaxed font-light mb-8">
+            Bangun kurikulum hafalan Anda sendiri, kelola materi secara mandiri, 
+            dan eksplorasi ribuan perpustakaan global untuk pengalaman belajar maksimal.
+          </p>
 
-            <div className="relative z-10 w-14 h-14 rounded-2xl bg-linear-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center mb-6 border border-blue-500/30 group-hover:scale-110 group-hover:bg-blue-500 group-hover:border-blue-400 text-blue-400 group-hover:text-white transition-all duration-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-              <Plus className="w-7 h-7" />
+          {/* Quick Stats Strip */}
+          <div className="flex flex-wrap items-center gap-4 md:gap-8 p-6 rounded-[2rem] bg-[#111620]/60 border border-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl pointer-events-none" />
+             
+             <div className="flex items-center gap-4 flex-1 min-w-[200px]">
+               <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
+                 <TrendingUp className="w-6 h-6" />
+               </div>
+               <div>
+                  <div className="text-2xl font-black text-white">0</div>
+                  <div className="text-xs font-bold tracking-widest uppercase text-gray-500">Aktivitas Hari Ini</div>
+               </div>
+             </div>
+
+             <div className="hidden md:block w-px h-12 bg-white/10" />
+
+             <div className="flex items-center gap-4 flex-1 min-w-[200px]">
+               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400">
+                 <Clock className="w-6 h-6" />
+               </div>
+               <div>
+                  <div className="text-2xl font-black text-white">0<span className="text-base text-gray-500 ml-1">menit</span></div>
+                  <div className="text-xs font-bold tracking-widest uppercase text-gray-500">Waktu Belajar</div>
+               </div>
+             </div>
+
+             <div className="hidden lg:block w-px h-12 bg-white/10" />
+
+             <div className="flex items-center gap-4 flex-1 min-w-[200px]">
+               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 text-amber-400">
+                 <Award className="w-6 h-6" />
+               </div>
+               <div>
+                  <div className="text-2xl font-black text-white">Pemula</div>
+                  <div className="text-xs font-bold tracking-widest uppercase text-gray-500">Level Saat Ini</div>
+               </div>
+             </div>
+          </div>
+        </div>
+
+        {/* === MAIN ACTION BUTTONS (Bento Grid Style) === */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16 relative z-10">
+          
+          {/* Action 1: Buat Materi */}
+          <button 
+            onClick={() => setIsCreateModalOpen(true)}
+            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-blue-500/20 hover:border-blue-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.3)] hover:-translate-y-1"
+          >
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-[40px] rounded-full group-hover:bg-blue-500/20 transition-all duration-700" />
+            
+            <div className="flex justify-between items-start relative z-10 w-full mb-6">
+              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-blue-500 to-cyan-500 p-[1px] shadow-lg group-hover:scale-110 transition-transform duration-500">
+                 <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
+                    <Plus className="w-6 h-6 text-blue-400 group-hover:text-white transition-colors" />
+                 </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
             </div>
+
             <div className="relative z-10">
-              <h3 className="text-2xl font-display text-white mb-2 leading-tight tracking-wide group-hover:text-blue-50 transition-colors">
-                Buat Materi
+              <h3 className="text-xl font-bold text-white mb-2 tracking-wide group-hover:text-blue-50 transition-colors">
+                Buat Materi LKS
               </h3>
-              <p className="text-sm text-gray-400 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
-                Tulis manual, racik kurikulum hafalan Anda sendiri dari nol.
+              <p className="text-sm text-gray-500 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
+                Tulis dan racik kurikulum sistematis dari nol untuk target hafalan pribadi.
               </p>
             </div>
           </button>
 
           {/* Action 2: Bagikan Kitab */}
-          <button className="relative cursor-pointer overflow-hidden group p-8 rounded-[2rem] bg-[#131922] border border-emerald-500/15 hover:border-emerald-400/50 transition-all duration-500 text-left flex flex-col justify-between min-h-[200px] hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.2)]">
-            <div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            <div className="relative z-10 w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6 border border-emerald-500/20 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:border-emerald-400 text-emerald-400 group-hover:text-white transition-all duration-500">
-              <Share2 className="w-7 h-7" />
+          <button className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-emerald-500/20 hover:border-emerald-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.2)] hover:-translate-y-1">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-[40px] rounded-full group-hover:bg-emerald-500/20 transition-all duration-700" />
+            
+            <div className="flex justify-between items-start relative z-10 w-full mb-6">
+              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-emerald-500 to-teal-500 p-[1px] shadow-lg group-hover:scale-110 transition-transform duration-500">
+                 <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
+                    <Share2 className="w-6 h-6 text-emerald-400 group-hover:text-white transition-colors" />
+                 </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
             </div>
+
             <div className="relative z-10">
-              <h3 className="text-2xl font-display text-white mb-2 leading-tight tracking-wide group-hover:text-emerald-50 transition-colors">
-                Bagikan Kitab
+              <h3 className="text-xl font-bold text-white mb-2 tracking-wide group-hover:text-emerald-50 transition-colors">
+                Bagikan Karya
               </h3>
-              <p className="text-sm text-gray-400 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
-                Publikasikan karya Anda untuk jadi amal jariyah bagi umat.
+              <p className="text-sm text-gray-500 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
+                Jadikan karya Anda amal jariyah dengan mempublikasikannya ke seluruh umat.
               </p>
             </div>
           </button>
 
           {/* Action 3: Import Kitab */}
-          <button className="relative cursor-pointer overflow-hidden group p-8 rounded-[2rem] bg-[#131922] border border-purple-500/15 hover:border-purple-400/50 transition-all duration-500 text-left flex flex-col justify-between min-h-[200px] hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(168,85,247,0.2)]">
-            <div className="absolute inset-0 bg-linear-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            <div className="relative z-10 w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6 border border-purple-500/20 group-hover:scale-110 group-hover:bg-purple-500 group-hover:border-purple-400 text-purple-400 group-hover:text-white transition-all duration-500">
-              <Download className="w-7 h-7" />
+          <button className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-purple-500/20 hover:border-purple-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(168,85,247,0.2)] hover:-translate-y-1">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-[40px] rounded-full group-hover:bg-purple-500/20 transition-all duration-700" />
+            
+            <div className="flex justify-between items-start relative z-10 w-full mb-6">
+              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-purple-500 to-pink-500 p-[1px] shadow-lg group-hover:scale-110 transition-transform duration-500">
+                 <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
+                    <Download className="w-6 h-6 text-purple-400 group-hover:text-white transition-colors" />
+                 </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
             </div>
+
             <div className="relative z-10">
-              <h3 className="text-2xl font-display text-white mb-2 leading-tight tracking-wide group-hover:text-purple-50 transition-colors">
-                Import Kitab
+              <h3 className="text-xl font-bold text-white mb-2 tracking-wide group-hover:text-purple-50 transition-colors">
+                Impor dari Katalog
               </h3>
-              <p className="text-sm text-gray-400 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
-                Unduh materi berkualitas siap pakai dari perpustakaan global.
+              <p className="text-sm text-gray-500 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
+                Salin paket materi siap saji milik para guru & kontributor dari perpustakaan.
               </p>
             </div>
           </button>
         </div>
 
         {/* === SECTION 1: KARYA MANDIRI === */}
-        <div className="mb-16">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold text-white border-l-4 border-blue-500 pl-4 tracking-wide">
-                Materi Karya Mandiri
-              </h2>
-            </div>
-            <div className="text-sm text-gray-500 bg-[#161D26] px-4 py-1.5 rounded-full border border-white/5 w-max">
-              Koleksi Pribadi
-            </div>
-          </div>
-
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-linear-to-r from-blue-500/20 to-cyan-500/20 rounded-[2.5rem] blur opacity-40 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative flex flex-col items-center justify-center py-24 px-4 rounded-[2.5rem] border border-blue-500/20 bg-[#0F141C] text-center overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl" />
-
-              <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.15)] mx-auto relative z-10">
-                  <div className="absolute inset-0 bg-blue-400/20 rounded-full animate-ping opacity-20" />
-                  <BookOpen className="w-8 h-8 text-blue-400" />
-                </div>
+        <div className="mb-20">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-3xl font-serif font-bold text-white tracking-wide flex items-center gap-3">
+                  Karya Mandiri
+                  <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 align-middle">
+                    Manajemen
+                  </span>
+                </h2>
               </div>
-
-              <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">
-                Mulai Berkarya
-              </h3>
-              <p className="text-gray-400 max-w-md mb-8 text-lg font-light leading-relaxed">
-                Tulis dan susun materi hafalan Anda sendiri secara terstruktur.
-                Karya Anda bisa menjadi bekal berharga.
+              <p className="text-gray-500 text-sm">
+                Buku, kitab, atau kurikulum hafalan yang Anda buat sendiri.
               </p>
-
-              <button className="px-8 py-4 rounded-full cursor-pointer bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-lg shadow-blue-500/25 text-white font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3 relative overflow-hidden group/btn border border-blue-400/30">
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
-                <Plus className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">Buat Materi Sekarang</span>
-              </button>
             </div>
           </div>
+
+          {loading && books.length === 0 ? (
+            <div className="flex flex-col justify-center items-center py-20 bg-[#111620]/30 rounded-[2.5rem] border border-white/5">
+              <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-4" />
+              <p className="text-gray-500 text-sm animate-pulse">Memuat koleksi...</p>
+            </div>
+          ) : books.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {books.map((book) => (
+                <BookCard 
+                  key={book.id} 
+                  book={book} 
+                  onEdit={(b) => setEditingBook(b)}
+                  onDelete={(b) => setBookToDelete(b)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-linear-to-r from-blue-500/20 to-cyan-500/20 rounded-[3rem] blur opacity-30 group-hover:opacity-60 transition duration-1000"></div>
+              <div className="relative flex flex-col items-center justify-center py-28 px-4 rounded-[3rem] border border-blue-500/20 bg-[#0F141C] text-center overflow-hidden">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-[2rem] bg-[#161D29] flex items-center justify-center mb-8 border border-white/10 shadow-2xl mx-auto relative z-10 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-700">
+                    <div className="absolute inset-0 bg-blue-500/10 rounded-[2rem] animate-pulse" />
+                    <BookOpen className="w-10 h-10 text-blue-400" />
+                  </div>
+                </div>
+
+                <h3 className="text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-md">
+                  Kanvas Anda Masih Kosong
+                </h3>
+                <p className="text-gray-400 max-w-md mb-10 text-lg font-light leading-relaxed">
+                  Langkah terbaik dimulai dari huruf pertama. Tulis panduan hafalan 
+                  Anda sendiri dan rasakan progres belajarnya.
+                </p>
+
+                <button 
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="px-8 py-4 rounded-full cursor-pointer bg-white text-black font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)]"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span>Mulai Berkarya</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* === SECTION 2: KOLEKSI PERPUSTAKAAN DUNIA === */}
         <div className="mb-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold text-white border-l-4 border-purple-500 pl-4 tracking-wide">
-                Koleksi Perpustakaan Dunia
-              </h2>
-            </div>
-            <div className="text-sm text-purple-400 bg-purple-500/10 px-4 py-1.5 rounded-full border border-purple-500/20 w-max font-medium flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-              Live Global
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+             <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-3xl font-serif font-bold text-white tracking-wide flex items-center gap-3">
+                  Perpustakaan Global
+                  <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 align-middle flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                    Live
+                  </span>
+                </h2>
+              </div>
+              <p className="text-gray-500 text-sm">
+                Lebih dari 10.000 materi tersedia. Download karya pengguna lain ke dalam workspace Anda.
+              </p>
             </div>
           </div>
 
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-linear-to-r from-purple-500/20 to-indigo-500/20 rounded-[2.5rem] blur opacity-40 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative flex flex-col items-center justify-center py-24 px-4 rounded-[2.5rem] border border-purple-500/20 bg-[#0F141C] text-center overflow-hidden">
-              <div className="absolute top-0 left-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl mix-blend-screen" />
-              <div className="absolute bottom-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl mix-blend-screen" />
+            <div className="absolute -inset-0.5 bg-linear-to-r from-purple-500/10 to-pink-500/10 rounded-[3rem] blur opacity-40 group-hover:opacity-75 transition duration-1000"></div>
+            <div className="relative flex flex-col items-center justify-center py-28 px-4 rounded-[3rem] border border-white/5 bg-[#0F141C] text-center overflow-hidden">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[400px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
 
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-purple-500/10 flex items-center justify-center mb-6 border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.15)] mx-auto relative z-10">
-                  <Library className="w-8 h-8 text-purple-400" />
+                <div className="w-24 h-24 rounded-[2rem] bg-linear-to-br from-[#1A1A2E] to-[#16213E] flex items-center justify-center mb-8 border border-purple-500/20 shadow-[0_0_40px_rgba(168,85,247,0.15)] mx-auto relative z-10 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700">
+                  <Library className="w-10 h-10 text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
                 </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">
-                Belum Ada Kitab Yang Diimpor
+              <h3 className="text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-md">
+                Area Unduhan Kosong
               </h3>
-              <p className="text-gray-400 max-w-md mb-8 text-lg font-light leading-relaxed">
-                Jelajahi berbagai materi kurikulum pilihan dari penuntut ilmu
-                yang lain yang siap pakai untuk Anda pelajari.
+              <p className="text-gray-400 max-w-md mb-10 text-lg font-light leading-relaxed">
+                Jelajahi berbagai materi kurikulum pilihan dari penuntut ilmu 
+                yang lain yang siap pakai untuk Anda pelajari sekarang.
               </p>
 
-              <button className="px-8 py-4 rounded-full cursor-pointer bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-[0_10px_20px_-10px_rgba(168,85,247,0.5)] text-white font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3 relative overflow-hidden group/btn border border-purple-400/30">
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
-                <Download className="w-5 h-5 relative z-10" />
-                <span className="relative z-10 tracking-wide">
-                  Jelajahi Perpustakaan
-                </span>
+              <button className="px-8 py-4 rounded-full cursor-pointer bg-[#1A1A2E] border border-purple-500/30 hover:border-purple-400 hover:bg-[#202035] shadow-[0_10px_30px_rgba(168,85,247,0.15)] hover:shadow-[0_10px_40px_rgba(168,85,247,0.3)] text-white font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+                <Download className="w-5 h-5 text-purple-400" />
+                <span className="tracking-wide">Jelajahi Perpustakaan</span>
               </button>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Create Book Modal */}
+      {isCreateModalOpen && (
+        <CreateBookModal 
+          onClose={() => setIsCreateModalOpen(false)} 
+          onSuccess={() => fetchBooks()} 
+        />
+      )}
+
+      {/* Edit Book Modal */}
+      {editingBook && (
+        <EditBookModal 
+          book={editingBook}
+          onClose={() => setEditingBook(null)}
+          onSuccess={() => fetchBooks()}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!bookToDelete}
+        onClose={() => setBookToDelete(null)}
+        onConfirm={async () => {
+          if (bookToDelete) {
+            await deleteBook(bookToDelete.id);
+            setBookToDelete(null);
+          }
+        }}
+        title="Hapus Kitab?"
+        message={`Apakah Anda yakin ingin menghapus kitab "${bookToDelete?.title}" secara permanen? Semua data di dalamnya akan hilang.`}
+        confirmText="Hapus Permanen"
+        variant="danger"
+      />
     </div>
   );
 };
