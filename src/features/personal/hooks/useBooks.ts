@@ -63,6 +63,20 @@ export const useBooks = () => {
     }
   };
 
+  const requestPublish = async (id: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await personalService.requestPublishBook(id);
+      await fetchBooks();
+      return response;
+    } catch (err: any) {
+      throw new Error(err?.response?.data?.message || "Gagal membagikan kitab");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     books,
     loading,
@@ -71,5 +85,6 @@ export const useBooks = () => {
     createBook,
     updateBook,
     deleteBook,
+    requestPublish,
   };
 };
