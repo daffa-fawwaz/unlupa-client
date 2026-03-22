@@ -5,6 +5,7 @@ export interface Book {
   description: string;
   cover_image: string;
   status: string;
+  published_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -55,6 +56,14 @@ export interface DeleteBookResponse {
 export interface RequestPublishBookResponse {
   status: number;
   message: string;
+  timestamp: string;
+  path: string;
+}
+
+export interface GetBookDetailResponse {
+  status: number;
+  message: string;
+  data: Book;
   timestamp: string;
   path: string;
 }
