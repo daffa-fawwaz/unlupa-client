@@ -14,6 +14,11 @@ export const personalService = {
     return response.data;
   },
 
+  async getPublishedBooks(): Promise<GetBooksResponse> {
+    const response = await api.get("/api/v1/books/published");
+    return response.data;
+  },
+
   async createBook(data: CreateBookPayload): Promise<CreateBookResponse> {
     const response = await api.post("/api/v1/books", data);
     return response.data;
