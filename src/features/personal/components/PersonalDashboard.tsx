@@ -153,10 +153,10 @@ export const PersonalDashboard = () => {
             className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-blue-500/20 hover:border-blue-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.3)] hover:-translate-y-1"
           >
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
-            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-[40px] rounded-full group-hover:bg-blue-500/20 transition-all duration-700" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-2xl rounded-full group-hover:bg-blue-500/20 transition-all duration-700" />
 
             <div className="flex justify-between items-start relative z-10 w-full mb-6">
-              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-blue-500 to-cyan-500 p-[1px] shadow-lg group-hover:scale-110 transition-transform duration-500">
+              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-blue-500 to-cyan-500 p-px shadow-lg group-hover:scale-110 transition-transform duration-500">
                 <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
                   <Plus className="w-6 h-6 text-blue-400 group-hover:text-white transition-colors" />
                 </div>
@@ -176,12 +176,15 @@ export const PersonalDashboard = () => {
           </button>
 
           {/* Action 2: Bagikan Kitab */}
-          <Link to="/dashboard/pribadi/share" className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-emerald-500/20 hover:border-emerald-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.2)] hover:-translate-y-1 decoration-transparent">
+          <Link
+            to="/dashboard/pribadi/share"
+            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-emerald-500/20 hover:border-emerald-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.2)] hover:-translate-y-1 decoration-transparent"
+          >
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
-            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-[40px] rounded-full group-hover:bg-emerald-500/20 transition-all duration-700" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-2xl rounded-full group-hover:bg-emerald-500/20 transition-all duration-700" />
 
             <div className="flex justify-between items-start relative z-10 w-full mb-6">
-              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-emerald-500 to-teal-500 p-[1px] shadow-lg group-hover:scale-110 transition-transform duration-500">
+              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-emerald-500 to-teal-500 p-px shadow-lg group-hover:scale-110 transition-transform duration-500">
                 <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
                   <Share2 className="w-6 h-6 text-emerald-400 group-hover:text-white transition-colors" />
                 </div>
@@ -209,7 +212,7 @@ export const PersonalDashboard = () => {
             <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-2xl rounded-full group-hover:bg-purple-500/20 transition-all duration-700" />
 
             <div className="flex justify-between items-start relative z-10 w-full mb-6">
-              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-purple-500 to-pink-500 p-[1px] shadow-lg group-hover:scale-110 transition-transform duration-500">
+              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-purple-500 to-pink-500 p-px shadow-lg group-hover:scale-110 transition-transform duration-500">
                 <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
                   <Download className="w-6 h-6 text-purple-400 group-hover:text-white transition-colors" />
                 </div>
