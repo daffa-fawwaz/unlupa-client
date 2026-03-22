@@ -19,6 +19,7 @@ import { StatusItemsView } from "@/features/alquran/pages/StatusItemsView";
 import { PersonalPage } from "@/pages/personal/PersonalPage";
 import { GlobalLibraryPage } from "@/pages/personal/GlobalLibraryPage";
 import { ShareBooksPage } from "@/pages/personal/ShareBooksPage";
+import { BookDetailPage } from "@/pages/personal/BookDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
               { path: "/dashboard/pribadi", element: <PersonalPage /> },
               { path: "/dashboard/pribadi/explore", element: <GlobalLibraryPage /> },
               { path: "/dashboard/pribadi/share", element: <ShareBooksPage /> },
+              { path: "/dashboard/pribadi/book/:id", element: <BookDetailPage /> },
               { path: "/dashboard/kelas", element: <ComingSoonRoomPage /> },
               // Status-based item pages
               {
