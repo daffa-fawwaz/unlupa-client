@@ -15,7 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useBooks } from "../hooks/useBooks";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { BookCard } from "./BookCard";
 import { CreateBookModal } from "./CreateBookModal";
 import { EditBookModal } from "./EditBookModal";
@@ -23,6 +23,7 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import type { Book } from "../types/personal.types";
 
 export const PersonalDashboard = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
@@ -205,7 +206,7 @@ export const PersonalDashboard = () => {
             className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-purple-500/20 hover:border-purple-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(168,85,247,0.2)] hover:-translate-y-1 decoration-transparent"
           >
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
-            <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-[40px] rounded-full group-hover:bg-purple-500/20 transition-all duration-700" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-2xl rounded-full group-hover:bg-purple-500/20 transition-all duration-700" />
 
             <div className="flex justify-between items-start relative z-10 w-full mb-6">
               <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-purple-500 to-pink-500 p-[1px] shadow-lg group-hover:scale-110 transition-transform duration-500">
@@ -259,6 +260,7 @@ export const PersonalDashboard = () => {
                 <BookCard
                   key={book.id}
                   book={book}
+                  onClick={() => navigate(`/dashboard/pribadi/book/${book.id}`)}
                   onEdit={(b) => setEditingBook(b)}
                   onDelete={(b) => setBookToDelete(b)}
                 />
