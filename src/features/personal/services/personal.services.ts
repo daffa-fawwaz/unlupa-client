@@ -4,6 +4,9 @@ import type {
   CreateBookResponse,
   GetBooksResponse,
   GetBookDetailResponse,
+  GetBookTreeResponse,
+  CreateModulePayload,
+  CreateModuleResponse,
   UpdateBookPayload,
   UpdateBookResponse,
   DeleteBookResponse,
@@ -23,6 +26,22 @@ export const personalService = {
 
   async getBookById(id: string): Promise<GetBookDetailResponse> {
     const response = await api.get(`/api/v1/books/${id}`);
+    return response.data;
+  },
+
+  async getBookTree(bookId: string): Promise<GetBookTreeResponse> {
+    const response = await api.get(`/api/v1/books/${bookId}/tree`);
+    return response.data;
+  },
+
+  async createModule(
+    bookId: string,
+    payload: CreateModulePayload,
+  ): Promise<CreateModuleResponse> {
+    const response = await api.post(
+      `/api/v1/books/${bookId}/modules`,
+      payload,
+    );
     return response.data;
   },
 
