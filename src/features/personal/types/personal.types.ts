@@ -51,3 +51,10 @@ export interface DeleteBookResponse {
   timestamp: string;
   path: string;
 }
+
+export interface RequestPublishBookResponse {
+  status: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}
