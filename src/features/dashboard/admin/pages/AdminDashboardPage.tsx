@@ -8,7 +8,9 @@ import {
   MoreVertical,
   Calendar,
   Shield,
+  BookMarked,
 } from "lucide-react";
+import { Link } from "react-router";
 import { StatCard } from "@/components/ui/StatCard";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
@@ -199,8 +201,11 @@ export const AdminDashboardPage = () => {
             </h3>
 
             <div className="space-y-3 flex-1">
-              <button className="w-full cursor-pointer group p-4 rounded-xl bg-linear-to-r from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/50 hover:from-amber-500/20 transition flex items-center gap-3 text-left group">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-500">
+              <Link
+                to="/dashboard/teacher-requests"
+                className="w-full cursor-pointer group p-4 rounded-xl bg-linear-to-r from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/50 hover:from-amber-500/20 transition flex items-center gap-3 text-left"
+              >
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
                   <Users className="w-4 h-4" />
                 </div>
                 <div>
@@ -211,10 +216,27 @@ export const AdminDashboardPage = () => {
                     Lihat permintaan menjadi pengajar
                   </p>
                 </div>
-              </button>
+              </Link>
+
+              <Link
+                to="/dashboard/book-requests"
+                className="w-full cursor-pointer group p-4 rounded-xl bg-linear-to-r from-violet-500/10 to-transparent border border-violet-500/20 hover:border-violet-500/50 hover:from-violet-500/20 transition flex items-center gap-3 text-left"
+              >
+                <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform">
+                  <BookMarked className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-violet-100 group-hover:text-white">
+                    Book Requests
+                  </h4>
+                  <p className="text-[10px] text-violet-400/60">
+                    Review publikasi buku guru
+                  </p>
+                </div>
+              </Link>
 
               <button className="w-full p-4 rounded-xl bg-linear-to-r from-blue-500/10 to-transparent border border-blue-500/20 hover:border-blue-500/50 hover:from-blue-500/20 transition flex items-center gap-3 text-left group">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-500">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                   <Calendar className="w-4 h-4" />
                 </div>
                 <div>

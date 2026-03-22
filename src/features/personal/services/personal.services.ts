@@ -6,6 +6,7 @@ import type {
   UpdateBookPayload,
   UpdateBookResponse,
   DeleteBookResponse,
+  RequestPublishBookResponse,
 } from "../types/personal.types";
 
 export const personalService = {
@@ -31,6 +32,11 @@ export const personalService = {
 
   async deleteBook(id: string): Promise<DeleteBookResponse> {
     const response = await api.delete(`/api/v1/books/${id}`);
+    return response.data;
+  },
+
+  async requestPublishBook(id: string): Promise<RequestPublishBookResponse> {
+    const response = await api.post(`/api/v1/books/${id}/request-publish`);
     return response.data;
   },
 };

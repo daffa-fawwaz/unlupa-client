@@ -53,16 +53,14 @@ const QuickAccessCard = ({
       to={href}
       className={`group p-4 rounded-xl bg-linear-to-r ${colors.bg} border ${colors.border} ${colors.hover} transition flex items-center gap-3 text-left cursor-pointer`}
     >
-      <div className={`w-10 h-10 rounded-lg ${colors.iconBg} flex items-center justify-center ${colors.iconText} group-hover:scale-110 transition-transform`}>
+      <div
+        className={`w-10 h-10 rounded-lg ${colors.iconBg} flex items-center justify-center ${colors.iconText} group-hover:scale-110 transition-transform`}
+      >
         {icon}
       </div>
       <div>
-        <h4 className={`text-sm font-bold ${colors.titleText}`}>
-          {title}
-        </h4>
-        <p className={`text-[10px] ${colors.descText}`}>
-          {description}
-        </p>
+        <h4 className={`text-sm font-bold ${colors.titleText}`}>{title}</h4>
+        <p className={`text-[10px] ${colors.descText}`}>{description}</p>
       </div>
     </Link>
   );
@@ -72,7 +70,9 @@ interface QuickAccessCardsProps {
   role?: "student" | "teacher" | "admin";
 }
 
-export const QuickAccessCards = ({ role = "student" }: QuickAccessCardsProps) => {
+export const QuickAccessCards = ({
+  role = "student",
+}: QuickAccessCardsProps) => {
   // Define quick access items based on role
   const getQuickAccessItems = () => {
     if (role === "student") {

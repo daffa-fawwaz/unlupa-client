@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText, Users } from "lucide-react";
+import { LayoutDashboard, FileText, Users, BookOpen } from "lucide-react";
 import { NavLink } from "react-router";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 
@@ -37,6 +37,20 @@ export const SidebarNavItems = () => {
             >
               <FileText className="w-4 h-4" />
               <span className="text-sm font-medium">Teacher Requests</span>
+            </NavLink>
+
+            <NavLink
+              to="/dashboard/book-requests"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
+                  isActive
+                    ? "bg-violet-500/10 text-violet-400 border border-violet-500/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]"
+                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                }`
+              }
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="text-sm font-medium">Book Requests</span>
             </NavLink>
 
             <NavLink

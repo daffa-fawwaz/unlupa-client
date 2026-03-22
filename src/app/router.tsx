@@ -11,11 +11,14 @@ import { DashboardShell } from "@/features/dashboard/DashboardShell";
 import { NotFoundPage } from "@/pages/404/NotFoundPage";
 import { TeacherRequestPage } from "@/features/dashboard/admin/pages/TeacherRequestPage";
 import { UserListPage } from "@/features/dashboard/admin/pages/UserListPage";
+import { PublishedBooksRequestPage } from "@/features/dashboard/admin/pages/PublishedBooksRequestPage";
 import { AlquranPage } from "@/pages/alquran/AlquranPage";
 import { ComingSoonRoomPage } from "@/pages/dashboard/ComingSoonRoomPage";
 import { StatusItemsByJuzPage } from "@/features/alquran/pages/StatusItemsByJuzPage";
 import { StatusItemsView } from "@/features/alquran/pages/StatusItemsView";
 import { PersonalPage } from "@/pages/personal/PersonalPage";
+import { GlobalLibraryPage } from "@/pages/personal/GlobalLibraryPage";
+import { ShareBooksPage } from "@/pages/personal/ShareBooksPage";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +47,8 @@ export const router = createBrowserRouter([
               { path: "/dashboard", element: <DashboardShell /> },
               { path: "/dashboard/alquran", element: <AlquranPage /> },
               { path: "/dashboard/pribadi", element: <PersonalPage /> },
+              { path: "/dashboard/pribadi/explore", element: <GlobalLibraryPage /> },
+              { path: "/dashboard/pribadi/share", element: <ShareBooksPage /> },
               { path: "/dashboard/kelas", element: <ComingSoonRoomPage /> },
               // Status-based item pages
               {
@@ -64,6 +69,10 @@ export const router = createBrowserRouter([
                   {
                     path: "/dashboard/user-list",
                     element: <UserListPage />,
+                  },
+                  {
+                    path: "/dashboard/book-requests",
+                    element: <PublishedBooksRequestPage />,
                   },
                 ],
               },

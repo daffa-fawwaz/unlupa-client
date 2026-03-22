@@ -2,7 +2,6 @@ import { Sidebar } from "@/components/ui/Sidebar";
 import { useState, useEffect } from "react";
 import {
   Menu,
-  UserCircle,
   Files,
   BookOpen,
   Share2,
@@ -16,6 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useBooks } from "../hooks/useBooks";
+import { Link } from "react-router";
 import { BookCard } from "./BookCard";
 import { CreateBookModal } from "./CreateBookModal";
 import { EditBookModal } from "./EditBookModal";
@@ -175,7 +175,7 @@ export const PersonalDashboard = () => {
           </button>
 
           {/* Action 2: Bagikan Kitab */}
-          <button className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-emerald-500/20 hover:border-emerald-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.2)] hover:-translate-y-1">
+          <Link to="/dashboard/pribadi/share" className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-emerald-500/20 hover:border-emerald-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.2)] hover:-translate-y-1 decoration-transparent">
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
             <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-[40px] rounded-full group-hover:bg-emerald-500/20 transition-all duration-700" />
 
@@ -197,10 +197,13 @@ export const PersonalDashboard = () => {
                 seluruh umat.
               </p>
             </div>
-          </button>
+          </Link>
 
           {/* Action 3: Import Kitab */}
-          <button className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-purple-500/20 hover:border-purple-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(168,85,247,0.2)] hover:-translate-y-1">
+          <Link
+            to="/dashboard/pribadi/explore"
+            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-purple-500/20 hover:border-purple-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(168,85,247,0.2)] hover:-translate-y-1 decoration-transparent"
+          >
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
             <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-[40px] rounded-full group-hover:bg-purple-500/20 transition-all duration-700" />
 
@@ -222,7 +225,7 @@ export const PersonalDashboard = () => {
                 perpustakaan.
               </p>
             </div>
-          </button>
+          </Link>
         </div>
 
         {/* === SECTION 1: KARYA MANDIRI === */}
@@ -333,10 +336,13 @@ export const PersonalDashboard = () => {
                 yang lain yang siap pakai untuk Anda pelajari sekarang.
               </p>
 
-              <button className="px-8 py-4 rounded-full cursor-pointer bg-[#1A1A2E] border border-purple-500/30 hover:border-purple-400 hover:bg-[#202035] shadow-[0_10px_30px_rgba(168,85,247,0.15)] hover:shadow-[0_10px_40px_rgba(168,85,247,0.3)] text-white font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+              <Link
+                to="/dashboard/pribadi/explore"
+                className="w-max px-8 py-4 rounded-full cursor-pointer bg-[#1A1A2E] border border-purple-500/30 hover:border-purple-400 hover:bg-[#202035] shadow-[0_10px_30px_rgba(168,85,247,0.15)] hover:shadow-[0_10px_40px_rgba(168,85,247,0.3)] text-white font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 decoration-transparent"
+              >
                 <Download className="w-5 h-5 text-purple-400" />
                 <span className="tracking-wide">Jelajahi Perpustakaan</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

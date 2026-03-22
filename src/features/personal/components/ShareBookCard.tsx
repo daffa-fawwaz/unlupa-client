@@ -63,7 +63,6 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
         )}
 
         {/* Top Floating Controls */}
-        {/* Top Floating Controls */}
         <div className="absolute top-5 left-5 right-5 flex justify-between items-start z-20">
           {isPublished ? (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-sky-500/10 backdrop-blur-xl border border-sky-500/30 shadow-lg rounded-full text-[9px] font-bold tracking-widest uppercase text-sky-200 group-hover:text-sky-100 group-hover:bg-sky-500/20 transition-all duration-500">
