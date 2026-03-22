@@ -3,6 +3,7 @@ import type {
   CreateBookPayload,
   CreateBookResponse,
   GetBooksResponse,
+  GetBookDetailResponse,
   UpdateBookPayload,
   UpdateBookResponse,
   DeleteBookResponse,
@@ -17,6 +18,11 @@ export const personalService = {
 
   async getPublishedBooks(): Promise<GetBooksResponse> {
     const response = await api.get("/api/v1/books/published");
+    return response.data;
+  },
+
+  async getBookById(id: string): Promise<GetBookDetailResponse> {
+    const response = await api.get(`/api/v1/books/${id}`);
     return response.data;
   },
 
