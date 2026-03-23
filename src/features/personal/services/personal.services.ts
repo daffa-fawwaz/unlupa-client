@@ -11,6 +11,9 @@ import type {
   UpdateBookResponse,
   DeleteBookResponse,
   RequestPublishBookResponse,
+  UpdateModulePayload,
+  UpdateModuleResponse,
+  DeleteModuleResponse,
 } from "../types/personal.types";
 
 export const personalService = {
@@ -38,10 +41,20 @@ export const personalService = {
     bookId: string,
     payload: CreateModulePayload,
   ): Promise<CreateModuleResponse> {
-    const response = await api.post(
-      `/api/v1/books/${bookId}/modules`,
-      payload,
-    );
+    const response = await api.post(`/api/v1/books/${bookId}/modules`, payload);
+    return response.data;
+  },
+
+  async updateModule(
+    moduleId: string,
+    payload: UpdateModulePayload,
+  ): Promise<UpdateModuleResponse> {
+    const response = await api.put(`/api/v1/books/modules/${moduleId}`, payload);
+    return response.data;
+  },
+
+  async deleteModule(moduleId: string): Promise<DeleteModuleResponse> {
+    const response = await api.delete(`/api/v1/books/modules/${moduleId}`);
     return response.data;
   },
 
@@ -50,7 +63,10 @@ export const personalService = {
     return response.data;
   },
 
-  async updateBook(id: string, data: UpdateBookPayload): Promise<UpdateBookResponse> {
+  async updateBook(
+    id: string,
+    data: UpdateBookPayload,
+  ): Promise<UpdateBookResponse> {
     const response = await api.put(`/api/v1/books/${id}`, data);
     return response.data;
   },

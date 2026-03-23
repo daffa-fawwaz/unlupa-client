@@ -51,9 +51,9 @@ const AddModuleModal = ({
     description: "",
     order: nextOrder,
   });
-  const [resultState, setResultState] = useState<
-    "idle" | "success" | "error"
-  >("idle");
+  const [resultState, setResultState] = useState<"idle" | "success" | "error">(
+    "idle",
+  );
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,8 +102,11 @@ const AddModuleModal = ({
                   Modul Berhasil Dibuat!
                 </h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  Modul <span className="text-white font-semibold">"{form.title}"</span> telah
-                  berhasil ditambahkan ke buku ini.
+                  Modul{" "}
+                  <span className="text-white font-semibold">
+                    "{form.title}"
+                  </span>{" "}
+                  telah berhasil ditambahkan ke buku ini.
                 </p>
               </div>
               <button
@@ -364,7 +367,6 @@ const AddContentModal = ({ onClose, onSelectModule }: AddContentModalProps) => {
 /* ------------------------------------------------------------------ */
 const ModuleCard = ({
   module,
-  bookId,
   onClick,
 }: {
   module: Module;
@@ -717,8 +719,8 @@ export const BookDetailPage = () => {
                     Buku Masih Kosong
                   </h3>
                   <p className="text-gray-500 text-sm max-w-sm leading-relaxed mb-8">
-                    Mulai tambahkan modul pertama Anda untuk membangun
-                    kurikulum yang terstruktur.
+                    Mulai tambahkan modul pertama Anda untuk membangun kurikulum
+                    yang terstruktur.
                   </p>
                   <button
                     onClick={() => setModalStep("module")}

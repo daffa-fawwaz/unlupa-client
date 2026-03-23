@@ -115,3 +115,33 @@ export interface CreateModuleResponse {
   timestamp: string;
   path: string;
 }
+
+export interface UpdateModulePayload {
+  title: string;
+  description: string;
+  order: number;
+}
+
+export interface UpdatedModule {
+  id: string;
+  book_id: string;
+  title: string;
+  description: string;
+  order: number;
+  created_at: string;
+}
+
+export interface UpdateModuleResponse {
+  status: number;
+  message: string;
+  data: UpdatedModule;
+  timestamp: string;
+  path: string;
+}
+
+export interface DeleteModuleResponse {
+  status: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}

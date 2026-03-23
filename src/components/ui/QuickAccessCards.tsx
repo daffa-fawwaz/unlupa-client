@@ -121,7 +121,7 @@ export const QuickAccessCards = ({
           title: "Dashboard Pribadi",
           description: "Statistik mengajar",
           icon: <User className="w-4 h-4" />,
-          href: "/dashboard/profile",
+          href: "/dashboard/pribadi",
           color: "emerald" as const,
         },
       ];
@@ -147,7 +147,7 @@ export const QuickAccessCards = ({
         title: "Dashboard Pribadi",
         description: "Pengaturan akun",
         icon: <User className="w-4 h-4" />,
-        href: "/dashboard/profile",
+        href: "/dashboard/pribadi",
         color: "emerald" as const,
       },
     ];

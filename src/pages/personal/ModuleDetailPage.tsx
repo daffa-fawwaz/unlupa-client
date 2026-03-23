@@ -16,9 +16,11 @@ import {
   Tag,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
+import { useDeleteModule } from "@/features/personal/hooks/useDeleteModule";
+import { EditModuleModal } from "@/features/personal/components/EditModuleModal";
 import type { Module } from "@/features/personal/types/personal.types";
-
 
 /* ------------------------------------------------------------------ */
 /* Module Detail Page                                                   */
@@ -30,7 +32,10 @@ export const ModuleDetailPage = () => {
   }>();
   const navigate = useNavigate();
   const { tree, loading, error, fetchBookTree } = useBookTree();
+  const { deleteModule } = useDeleteModule();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (bookId) fetchBookTree(bookId);
@@ -50,6 +55,21 @@ export const ModuleDetailPage = () => {
 
   const module = tree && moduleId ? findModule(tree.modules, moduleId) : null;
   const items = module?.items ?? [];
+
+  const handleEditSuccess = () => {
+    if (bookId) fetchBookTree(bookId);
+  };
+
+  const handleDelete = async () => {
+    if (!moduleId) return;
+    try {
+      await deleteModule(moduleId);
+      setIsDeleteModalOpen(false);
+      navigate(`/dashboard/pribadi/book/${bookId}`);
+    } catch (err) {
+      // Error is handled by the hook and will be shown via toast/notification
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#090A0F] text-white font-primary selection:bg-blue-500/30">
@@ -104,17 +124,15 @@ export const ModuleDetailPage = () => {
           {/* Action buttons */}
           <div className="flex items-center gap-2">
             <button
-              disabled
-              title="Edit Modul (segera hadir)"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-500/30 text-gray-400 hover:text-amber-400 text-sm font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-500/30 text-gray-400 hover:text-amber-400 text-sm font-medium transition-all duration-300"
             >
               <Edit2 className="w-4 h-4" />
               <span className="hidden sm:inline">Edit</span>
             </button>
             <button
-              disabled
-              title="Hapus Modul (segera hadir)"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-rose-500/10 border border-white/5 hover:border-rose-500/30 text-gray-400 hover:text-rose-400 text-sm font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-rose-500/10 border border-white/5 hover:border-rose-500/30 text-gray-400 hover:text-rose-400 text-sm font-medium transition-all duration-300"
             >
               <Trash2 className="w-4 h-4" />
               <span className="hidden sm:inline">Hapus</span>
@@ -391,6 +409,28 @@ export const ModuleDetailPage = () => {
           </div>
         )}
       </div>
+
+      {/* Edit Module Modal */}
+      {isEditModalOpen && module && (
+        <EditModuleModal
+          module={module}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={handleEditSuccess}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Hapus Modul"
+        message={`Apakah Anda yakin ingin menghapus modul "${module?.title}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmText="Ya, Hapus"
+        cancelText="Batal"
+        icon={Trash2}
+        variant="danger"
+      />
     </div>
   );
 };
