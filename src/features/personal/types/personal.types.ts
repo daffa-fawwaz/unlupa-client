@@ -68,19 +68,31 @@ export interface GetBookDetailResponse {
   path: string;
 }
 
+export interface BookItem {
+  id: string;
+  book_id: string;
+  title: string;
+  content: string;
+  answer: string;
+  order: number;
+  estimated_review_seconds: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Module {
   id: string;
   title: string;
   description: string;
   order: number;
-  items: null | any[];
+  items: BookItem[] | null;
   children: Module[];
 }
 
 export interface BookTree {
   book_id: string;
   title: string;
-  items: any[];
+  items: BookItem[];
   modules: Module[];
 }
 
@@ -142,6 +154,33 @@ export interface UpdateModuleResponse {
 export interface DeleteModuleResponse {
   status: number;
   message: string;
+  timestamp: string;
+  path: string;
+}
+
+export interface CreateItemPayload {
+  title: string;
+  content: string;
+  answer: string;
+  order: number;
+}
+
+export interface CreatedItem {
+  id: string;
+  book_id: string;
+  title: string;
+  content: string;
+  answer: string;
+  order: number;
+  estimated_review_seconds: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateItemResponse {
+  status: number;
+  message: string;
+  data: CreatedItem;
   timestamp: string;
   path: string;
 }

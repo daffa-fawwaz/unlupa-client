@@ -378,34 +378,6 @@ export const ModuleDetailPage = () => {
                 </div>
               )}
             </div>
-
-            {/* Edit & Delete actions — placeholder UI */}
-            <div className="flex items-center justify-between p-6 rounded-2xl bg-white/3 border border-white/5">
-              <div>
-                <p className="text-sm font-medium text-gray-400">
-                  Kelola Modul
-                </p>
-                <p className="text-xs text-gray-600 mt-0.5">
-                  Edit detail atau hapus modul ini secara permanen.
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  disabled
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 text-sm font-medium opacity-50 cursor-not-allowed"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  Edit Modul
-                </button>
-                <button
-                  disabled
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-500/5 border border-rose-500/15 text-rose-400/60 text-sm font-medium opacity-50 cursor-not-allowed"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Hapus
-                </button>
-              </div>
-            </div>
           </div>
         )}
       </div>

@@ -72,7 +72,7 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
           ) : isPending ? (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 backdrop-blur-xl border border-amber-500/30 shadow-lg rounded-full text-[9px] font-bold tracking-widest uppercase text-amber-200 group-hover:text-amber-100 group-hover:bg-amber-500/20 transition-all duration-500">
               <Clock className="w-3 h-3 text-amber-400 animate-pulse" />
-              <span>Buku Sudah Dibagikan</span>
+              <span>Proses Review</span>
             </div>
           ) : (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-xl border border-emerald-500/30 shadow-lg rounded-full text-[9px] font-bold tracking-widest uppercase text-emerald-200 group-hover:text-emerald-100 group-hover:bg-emerald-500/20 transition-all duration-500">
@@ -122,7 +122,7 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
               className="w-full py-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400/80 font-bold flex items-center justify-center gap-2 cursor-not-allowed opacity-80"
             >
               <CheckCircle className="w-4 h-4" />
-              <span>Sudah Dibagikan</span>
+              <span>Menunggu Persetujuan</span>
             </button>
           ) : (
             <button

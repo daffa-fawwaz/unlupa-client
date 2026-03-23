@@ -14,6 +14,8 @@ import type {
   UpdateModulePayload,
   UpdateModuleResponse,
   DeleteModuleResponse,
+  CreateItemPayload,
+  CreateItemResponse,
 } from "../types/personal.types";
 
 export const personalService = {
@@ -55,6 +57,14 @@ export const personalService = {
 
   async deleteModule(moduleId: string): Promise<DeleteModuleResponse> {
     const response = await api.delete(`/api/v1/books/modules/${moduleId}`);
+    return response.data;
+  },
+
+  async createItem(
+    bookId: string,
+    payload: CreateItemPayload,
+  ): Promise<CreateItemResponse> {
+    const response = await api.post(`/api/v1/books/${bookId}/items`, payload);
     return response.data;
   },
 

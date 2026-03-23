@@ -22,12 +22,16 @@ import {
   ChevronRight,
   Hash,
   AlignLeft,
+  Sparkles,
+  Eye,
+  Timer,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
-import type { Module } from "@/features/personal/types/personal.types";
+import { useCreateItem } from "@/features/personal/hooks/useCreateItem";
+import type { Module, BookItem } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
 /* Add Module Form Modal                                                */
@@ -275,14 +279,282 @@ const AddModuleModal = ({
 };
 
 /* ------------------------------------------------------------------ */
+/* Add Item Modal (Add Hafalan without Module)                          */
+/* ------------------------------------------------------------------ */
+interface AddItemModalProps {
+  bookId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+  nextOrder: number;
+}
+
+const AddItemModal = ({
+  bookId,
+  onClose,
+  onSuccess,
+  nextOrder,
+}: AddItemModalProps) => {
+  const { createItem, loading } = useCreateItem();
+  const [form, setForm] = useState({
+    title: "",
+    content: "",
+    answer: "",
+    order: nextOrder,
+  });
+  const [resultState, setResultState] = useState<"idle" | "success" | "error">(
+    "idle",
+  );
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title.trim() || !form.content.trim() || !form.answer.trim()) {
+      setErrorMsg("Semua field wajib diisi.");
+      setResultState("error");
+      return;
+    }
+    try {
+      await createItem(bookId, {
+        title: form.title.trim(),
+        content: form.content.trim(),
+        answer: form.answer.trim(),
+        order: form.order,
+      });
+      setResultState("success");
+    } catch (err: any) {
+      setErrorMsg(err.message ?? "Terjadi kesalahan.");
+      setResultState("error");
+    }
+  };
+
+  const handleSuccessClose = () => {
+    onSuccess();
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/75 backdrop-blur-md"
+        onClick={resultState === "idle" ? onClose : undefined}
+      />
+
+      <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
+        <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-emerald-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
+
+        <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
+          {/* ---- Success State ---- */}
+          {resultState === "success" && (
+            <div className="p-10 flex flex-col items-center text-center gap-5">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-[2rem] bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                  <CheckCircle className="w-10 h-10 text-emerald-400" />
+                </div>
+                <div className="absolute inset-0 bg-emerald-500/10 rounded-[2rem] blur-2xl" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Item Berhasil Dibuat!
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  Item hafalan{" "}
+                  <span className="text-white font-semibold">
+                    "{form.title}"
+                  </span>{" "}
+                  telah berhasil ditambahkan ke buku ini.
+                </p>
+              </div>
+              <button
+                onClick={handleSuccessClose}
+                className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+              >
+                Lihat Item
+              </button>
+            </div>
+          )}
+
+          {/* ---- Error State ---- */}
+          {resultState === "error" && (
+            <div className="p-10 flex flex-col items-center text-center gap-5">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-[2rem] bg-rose-500/15 border border-rose-500/30 flex items-center justify-center">
+                  <AlertCircle className="w-10 h-10 text-rose-400" />
+                </div>
+                <div className="absolute inset-0 bg-rose-500/10 rounded-[2rem] blur-2xl" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Gagal Membuat Item
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {errorMsg}
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setResultState("idle")}
+                  className="px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm transition"
+                >
+                  Coba Lagi
+                </button>
+                <button
+                  onClick={onClose}
+                  className="px-6 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-medium text-sm transition"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ---- Form State ---- */}
+          {resultState === "idle" && (
+            <>
+              {/* Header */}
+              <div className="relative px-8 pt-8 pb-6 border-b border-white/5">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none" />
+                <button
+                  onClick={onClose}
+                  className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white tracking-tight">
+                    Tambah Item Hafalan
+                  </h2>
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Tambahkan unit hafalan langsung tanpa modul.
+                </p>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="p-8 space-y-5">
+                {/* Title */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    <FileText className="w-3.5 h-3.5" />
+                    Judul Item
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="cth. Data Buku"
+                    value={form.title}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, title: e.target.value }))
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors"
+                  />
+                </div>
+
+                {/* Content */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    <AlignLeft className="w-3.5 h-3.5" />
+                    Pertanyaan / Konten
+                  </label>
+                  <textarea
+                    rows={3}
+                    required
+                    placeholder="cth. Apa Nama Buku Ini?"
+                    value={form.content}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, content: e.target.value }))
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
+                  />
+                </div>
+
+                {/* Answer */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    <Lock className="w-3.5 h-3.5" />
+                    Jawaban
+                  </label>
+                  <textarea
+                    rows={3}
+                    required
+                    placeholder="cth. Tentang Kamu"
+                    value={form.answer}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, answer: e.target.value }))
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
+                  />
+                </div>
+
+                {/* Order */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    <Hash className="w-3.5 h-3.5" />
+                    Urutan
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    value={form.order}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        order: parseInt(e.target.value) || 1,
+                      }))
+                    }
+                    className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading || !form.title.trim()}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Menyimpan...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4" />
+                        Buat Item
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
 /* Add Content Picker (Step 1)                                         */
 /* ------------------------------------------------------------------ */
 interface AddContentModalProps {
   onClose: () => void;
   onSelectModule: () => void;
+  onSelectItem: () => void;
 }
 
-const AddContentModal = ({ onClose, onSelectModule }: AddContentModalProps) => {
+const AddContentModal = ({ onClose, onSelectModule, onSelectItem }: AddContentModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -335,25 +607,21 @@ const AddContentModal = ({ onClose, onSelectModule }: AddContentModalProps) => {
             </button>
 
             <button
-              disabled
-              className="w-full group flex items-center gap-5 p-5 rounded-2xl bg-linear-to-r from-emerald-500/5 to-transparent border border-white/5 transition-all duration-300 text-left cursor-not-allowed opacity-40"
+              onClick={onSelectItem}
+              className="w-full group flex items-center gap-5 p-5 rounded-2xl bg-linear-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 hover:border-emerald-400/60 hover:from-emerald-500/20 transition-all duration-300 text-left cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <FileText className="w-6 h-6 text-emerald-400" />
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-bold text-white text-base">
-                    Tambah Item
-                  </h3>
-                  <span className="px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-[10px] font-bold tracking-widest uppercase">
-                    Soon
-                  </span>
-                </div>
+                <h3 className="font-bold text-white text-base mb-1">
+                  Tambah Item
+                </h3>
                 <p className="text-xs text-gray-500 leading-relaxed">
                   Tambahkan unit hafalan langsung, tanpa modul.
                 </p>
               </div>
+              <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
             </button>
           </div>
         </div>
@@ -401,6 +669,91 @@ const ModuleCard = ({
 );
 
 /* ------------------------------------------------------------------ */
+/* Item Card - Grid Display                                             */
+/* ------------------------------------------------------------------ */
+const ItemCard = ({
+  item,
+}: {
+  item: BookItem;
+}) => {
+  return (
+    <div className="group relative overflow-hidden rounded-3xl bg-[#0E1420] border border-white/5 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgba(16,185,129,0.2)]">
+      {/* Decorative gradient top */}
+      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/40 to-transparent" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-[60px] rounded-full pointer-events-none" />
+
+      <div className="relative p-5">
+        {/* Header: Order + Type badge */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-xl">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-400">
+              Item {item.order}
+            </span>
+          </div>
+          {item.estimated_review_seconds > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
+              <Timer className="w-3 h-3 text-gray-500" />
+              <span className="text-[10px] font-bold text-gray-400">
+                {item.estimated_review_seconds}s
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Title with highlight */}
+        <div className="relative mb-3">
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="relative p-3 rounded-xl bg-linear-to-r from-emerald-500/10 via-transparent to-cyan-500/10 border border-emerald-500/20 group-hover:border-emerald-500/40 transition-colors duration-300">
+            <h3 className="text-base font-black text-white leading-snug text-center bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-400 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300">
+              {item.title}
+            </h3>
+          </div>
+        </div>
+
+        {/* Content preview */}
+        <div className="mb-4 p-3 rounded-xl bg-white/3 border border-white/5">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+              Pertanyaan
+            </span>
+          </div>
+          <p className="text-sm text-gray-300 leading-relaxed line-clamp-2">
+            {item.content}
+          </p>
+        </div>
+
+        {/* Hidden answer teaser */}
+        <div className="relative p-3 rounded-xl bg-gradient-to-br from-amber-500/5 to-orange-500/5 border border-amber-500/10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0E1420] via-transparent to-transparent opacity-60" />
+          <div className="flex items-center gap-2 mb-2 relative">
+            <Lock className="w-3.5 h-3.5 text-amber-500/50" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/70">
+              Jawaban
+            </span>
+          </div>
+          <div className="relative flex items-center gap-2">
+            <div className="flex-1 h-px bg-gradient-to-r from-amber-500/20 to-transparent" />
+            <Eye className="w-3.5 h-3.5 text-amber-500/30" />
+            <div className="flex-1 h-px bg-gradient-to-l from-amber-500/20 to-transparent" />
+          </div>
+          <p className="text-xs text-amber-400/30 text-center mt-2 blur-[2px] select-none">
+            {item.answer}
+          </p>
+        </div>
+
+        {/* Footer action hint */}
+        <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-center gap-2 text-xs text-gray-500 group-hover:text-emerald-400/70 transition-colors">
+          <Eye className="w-3.5 h-3.5" />
+          <span className="font-medium">Klik untuk melihat detail</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ------------------------------------------------------------------ */
 /* Book Detail Page                                                     */
 /* ------------------------------------------------------------------ */
 export const BookDetailPage = () => {
@@ -410,8 +763,8 @@ export const BookDetailPage = () => {
   const { tree, fetchBookTree } = useBookTree();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Modal flow: null | "picker" | "module"
-  const [modalStep, setModalStep] = useState<null | "picker" | "module">(null);
+  // Modal flow: null | "picker" | "module" | "item"
+  const [modalStep, setModalStep] = useState<null | "picker" | "module" | "item">(null);
 
   useEffect(() => {
     if (id) {
@@ -421,6 +774,10 @@ export const BookDetailPage = () => {
   }, [id, fetchBookDetail, fetchBookTree]);
 
   const handleModuleCreated = () => {
+    if (id) fetchBookTree(id);
+  };
+
+  const handleItemCreated = () => {
     if (id) fetchBookTree(id);
   };
 
@@ -461,6 +818,7 @@ export const BookDetailPage = () => {
   const StatusIcon = status.icon;
 
   const modules = tree?.modules ?? [];
+  const items = tree?.items ?? [];
   const nextOrder = modules.length + 1;
 
   return (
@@ -671,10 +1029,10 @@ export const BookDetailPage = () => {
               <div className="px-8 py-7 border-b border-white/5 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
                   <Layers className="w-5 h-5 text-blue-400" />
-                  Konten Buku
-                  {modules.length > 0 && (
+                  Modul & Konten
+                  {(modules.length > 0 || items.length > 0) && (
                     <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold">
-                      {modules.length}
+                      {modules.length + items.length}
                     </span>
                   )}
                 </h2>
@@ -688,26 +1046,63 @@ export const BookDetailPage = () => {
               </div>
 
               {/* Module list */}
-              {modules.length > 0 ? (
-                <div className="p-6 space-y-3">
-                  {modules
-                    .slice()
-                    .sort((a, b) => a.order - b.order)
-                    .map((mod) => (
-                      <ModuleCard
-                        key={mod.id}
-                        module={mod}
-                        bookId={id!}
-                        onClick={() =>
-                          navigate(
-                            `/dashboard/pribadi/book/${id}/module/${mod.id}`,
-                          )
-                        }
-                      />
-                    ))}
+              {modules.length > 0 && (
+                <div className="p-6 pb-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Layers className="w-4 h-4 text-purple-400" />
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+                      Modul ({modules.length})
+                    </h3>
+                  </div>
+                  <div className="space-y-3">
+                    {modules
+                      .slice()
+                      .sort((a, b) => a.order - b.order)
+                      .map((mod) => (
+                        <ModuleCard
+                          key={mod.id}
+                          module={mod}
+                          bookId={id!}
+                          onClick={() =>
+                            navigate(
+                              `/dashboard/pribadi/book/${id}/module/${mod.id}`,
+                            )
+                          }
+                        />
+                      ))}
+                  </div>
                 </div>
-              ) : (
-                /* Empty state */
+              )}
+
+              {/* Items Grid Section */}
+              {items.length > 0 && (
+                <>
+                  <div className="px-8 py-4 border-t border-white/5">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+                        Item Hafalan ({items.length})
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="p-8 pt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {items
+                        .slice()
+                        .sort((a, b) => a.order - b.order)
+                        .map((item) => (
+                          <ItemCard
+                            key={item.id}
+                            item={item}
+                          />
+                        ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Empty state */}
+              {modules.length === 0 && items.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
                   <div className="relative mb-8">
                     <div className="w-20 h-20 rounded-[2rem] bg-[#161D29] border border-white/10 flex items-center justify-center shadow-2xl">
@@ -741,6 +1136,7 @@ export const BookDetailPage = () => {
         <AddContentModal
           onClose={() => setModalStep(null)}
           onSelectModule={() => setModalStep("module")}
+          onSelectItem={() => setModalStep("item")}
         />
       )}
 
@@ -750,6 +1146,15 @@ export const BookDetailPage = () => {
           nextOrder={nextOrder}
           onClose={() => setModalStep(null)}
           onSuccess={handleModuleCreated}
+        />
+      )}
+
+      {modalStep === "item" && id && (
+        <AddItemModal
+          bookId={id}
+          nextOrder={nextOrder}
+          onClose={() => setModalStep(null)}
+          onSuccess={handleItemCreated}
         />
       )}
     </div>
