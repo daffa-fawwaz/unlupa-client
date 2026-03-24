@@ -1,0 +1,430 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import {
+  ArrowLeft,
+  LayoutList,
+  Loader2,
+  AlertCircle,
+  FileText,
+  Lock,
+  Flame,
+  Calendar,
+  Brain,
+  Target,
+  CheckCircle2,
+  Play,
+  Sparkles,
+  Clock,
+} from "lucide-react";
+import { Sidebar } from "@/components/ui/Sidebar";
+import { useBookTree } from "@/features/personal/hooks/useBookTree";
+import type { BookItem } from "@/features/personal/types/personal.types";
+
+/* ------------------------------------------------------------------ */
+/* Item Detail Page (for Book Items)                                    */
+/* ------------------------------------------------------------------ */
+export const ItemDetailPage = () => {
+  const { itemId, bookId } = useParams<{ itemId: string; bookId: string }>();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [item, setItem] = useState<BookItem | null>(null);
+  const [currentPhase] = useState<"menghafal" | "interval" | "terjaga" | "graduate">("menghafal");
+  const [isStartModalOpen, setIsStartModalOpen] = useState(false);
+
+  const { tree, loading, error, fetchBookTree } = useBookTree();
+
+  useEffect(() => {
+    if (bookId && !tree) {
+      void fetchBookTree(bookId);
+    }
+  }, [bookId, tree, fetchBookTree]);
+
+  useEffect(() => {
+    if (tree && itemId) {
+      console.log('[ItemDetailPage] Searching for item:', itemId);
+      console.log('[ItemDetailPage] Tree items:', tree.items);
+      console.log('[ItemDetailPage] Tree modules:', tree.modules);
+      
+      const findItem = (): BookItem | null => {
+        // Search in book-level items first
+        if (tree.items && Array.isArray(tree.items)) {
+          console.log('[ItemDetailPage] Searching in book items:', tree.items.length);
+          const found = tree.items.find((i: BookItem) => i.id === itemId);
+          if (found) {
+            console.log('[ItemDetailPage] Found in book items:', found);
+            return found;
+          }
+        }
+        
+        // Search in modules
+        const searchInModules = (modules: any[]): BookItem | null => {
+          for (const mod of modules) {
+            if (mod.items && Array.isArray(mod.items)) {
+              console.log('[ItemDetailPage] Searching in module items:', mod.title, mod.items.length);
+              const found = mod.items.find((i: BookItem) => i.id === itemId);
+              if (found) {
+                console.log('[ItemDetailPage] Found in module items:', found);
+                return found;
+              }
+            }
+            if (mod.children && mod.children.length > 0) {
+              const found = searchInModules(mod.children);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        
+        const found = searchInModules(tree.modules);
+        if (found) return found;
+        
+        console.log('[ItemDetailPage] Item not found');
+        return null;
+      };
+
+      const foundItem = findItem();
+      if (foundItem) {
+        setItem(foundItem);
+      }
+    }
+  }, [tree, itemId]);
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const getStatusConfig = () => {
+    switch (currentPhase) {
+      case "menghafal":
+        return {
+          label: "Menghafal",
+          color: "text-blue-400",
+          bg: "bg-blue-500/10",
+          border: "border-blue-500/20",
+          icon: Brain,
+          description: "Mulai menghafal item ini untuk pertama kali",
+        };
+      case "interval":
+        return {
+          label: "Interval",
+          color: "text-amber-400",
+          bg: "bg-amber-500/10",
+          border: "border-amber-500/20",
+          icon: Clock,
+          description: "Item sedang dalam masa interval review",
+        };
+      case "terjaga":
+        return {
+          label: "Terjaga",
+          color: "text-emerald-400",
+          bg: "bg-emerald-500/10",
+          border: "border-emerald-500/20",
+          icon: CheckCircle2,
+          description: "Item telah selesai dan terjaga",
+        };
+      case "graduate":
+        return {
+          label: "Graduate",
+          color: "text-purple-400",
+          bg: "bg-purple-500/10",
+          border: "border-purple-500/20",
+          icon: Target,
+          description: "Item telah lulus dari sistem review",
+        };
+      default:
+        return {
+          label: "Unknown",
+          color: "text-gray-400",
+          bg: "bg-gray-500/10",
+          border: "border-gray-500/20",
+          icon: Brain,
+          description: "",
+        };
+    }
+  };
+
+  const statusConfig = getStatusConfig();
+  const StatusIcon = statusConfig.icon;
+
+  return (
+    <div className="min-h-screen bg-[#090A0F] text-white font-primary selection:bg-blue-500/30">
+      {/* Ambient background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-blue-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <div
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        onClick={() => setIsSidebarOpen(false)}
+      />
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Top nav */}
+        <div className="flex items-center gap-3 mb-8">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2.5 rounded-2xl border border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all duration-300 backdrop-blur-xl shadow-lg text-gray-400 hover:text-white"
+          >
+            <LayoutList className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/15 text-gray-400 hover:text-white transition-all duration-300 text-sm font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Kembali</span>
+          </button>
+        </div>
+
+        {/* Loading */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-40 gap-4">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+              </div>
+              <div className="absolute inset-0 bg-blue-500/10 rounded-3xl blur-xl animate-pulse" />
+            </div>
+            <p className="text-gray-500 text-sm animate-pulse">
+              Memuat detail item...
+            </p>
+          </div>
+        )}
+
+        {/* Error */}
+        {!loading && error && (
+          <div className="flex flex-col items-center justify-center py-40 gap-4">
+            <div className="w-16 h-16 rounded-3xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-rose-400" />
+            </div>
+            <p className="text-rose-400 text-sm font-medium">{error}</p>
+            <button
+              onClick={() => bookId && fetchBookTree(bookId)}
+              className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-gray-300 hover:text-white transition"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        )}
+
+        {/* Not Found */}
+        {!loading && !error && !item && tree && (
+          <div className="flex flex-col items-center justify-center py-40 gap-4">
+            <div className="w-16 h-16 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-amber-400" />
+            </div>
+            <p className="text-amber-400 text-sm font-medium">Item tidak ditemukan</p>
+            <button
+              onClick={() => window.history.back()}
+              className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-gray-300 hover:text-white transition"
+            >
+              Kembali
+            </button>
+          </div>
+        )}
+
+        {/* Item Detail Content */}
+        {!loading && !error && item && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Hero Card */}
+            <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#0E1420] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)]">
+              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-blue-500/40 to-transparent" />
+
+              <div className="px-8 sm:px-10 py-8">
+                {/* Status Badge */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusConfig.bg} border ${statusConfig.border} backdrop-blur-xl`}>
+                    <StatusIcon className={`w-4 h-4 ${statusConfig.color}`} />
+                    <span className={`text-xs font-bold tracking-widest uppercase ${statusConfig.color}`}>
+                      {statusConfig.label}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Flame className="w-4 h-4 text-amber-400" />
+                    <span className="text-amber-400 font-bold">{item.review_count ?? 0}x</span>
+                    <span>review</span>
+                  </div>
+                </div>
+
+                {/* Item Title */}
+                <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight mb-6">
+                  {item.title}
+                </h1>
+
+                {/* Question & Answer */}
+                <div className="space-y-4">
+                  {/* Question */}
+                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="w-5 h-5 text-blue-400" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Pertanyaan</span>
+                    </div>
+                    <p className="text-lg text-white leading-relaxed">{item.content}</p>
+                  </div>
+
+                  {/* Answer */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Lock className="w-5 h-5 text-emerald-400" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Jawaban</span>
+                    </div>
+                    <p className="text-lg text-emerald-100 leading-relaxed">{item.answer}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-amber-500/10 to-transparent border border-amber-500/15 p-5 text-center">
+                <Flame className="w-6 h-6 text-amber-400 mx-auto mb-2" />
+                <div className="text-2xl font-black text-amber-400 mb-1">{item.review_count ?? 0}x</div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Total Review</div>
+              </div>
+              
+              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-500/10 to-transparent border border-blue-500/15 p-5 text-center">
+                <Sparkles className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                <div className="text-2xl font-black text-blue-400 mb-1">{item.order}</div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Urutan</div>
+              </div>
+              
+              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500/10 to-transparent border border-emerald-500/15 p-5 text-center sm:col-span-1">
+                <Calendar className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+                <div className="text-lg font-black text-emerald-400 mb-1">{formatDate(item.created_at)}</div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Dibuat</div>
+              </div>
+            </div>
+
+            {/* Action Section - Hafalan Stages */}
+            <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#0E1420]">
+              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/30 to-transparent" />
+              
+              <div className="px-8 py-7 border-b border-white/5">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
+                  <Brain className="w-5 h-5 text-emerald-400" />
+                  Tahapan Hafalan
+                </h2>
+                <p className="text-gray-500 text-sm mt-1">{statusConfig.description}</p>
+              </div>
+
+              <div className="p-8">
+                {/* Progress Steps */}
+                <div className="flex items-center justify-between mb-8 relative">
+                  {/* Progress Line */}
+                  <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-700">
+                    <div 
+                      className="h-full bg-linear-to-r from-emerald-500 to-cyan-500 transition-all duration-500"
+                      style={{ 
+                        width: currentPhase === "menghafal" ? "0%" : 
+                               currentPhase === "interval" ? "33%" : 
+                               currentPhase === "terjaga" ? "66%" : "100%" 
+                      }}
+                    />
+                  </div>
+
+                  {/* Steps */}
+                  {[
+                    { key: "menghafal", label: "Mulai", icon: Play },
+                    { key: "interval", label: "Interval", icon: Clock },
+                    { key: "terjaga", label: "Terjaga", icon: CheckCircle2 },
+                    { key: "graduate", label: "Lulus", icon: Target },
+                  ].map((step) => {
+                    const isActive = currentPhase === step.key;
+                    const isCompleted = 
+                      (step.key === "menghafal" && ["interval", "terjaga", "graduate"].includes(currentPhase)) ||
+                      (step.key === "interval" && ["terjaga", "graduate"].includes(currentPhase)) ||
+                      (step.key === "terjaga" && currentPhase === "graduate");
+                    
+                    return (
+                      <div key={step.key} className="relative z-10 flex flex-col items-center gap-2">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                          isActive 
+                            ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30" 
+                            : isCompleted
+                            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                            : "bg-gray-800 border-gray-600 text-gray-500"
+                        }`}>
+                          <step.icon className="w-5 h-5" />
+                        </div>
+                        <span className={`text-xs font-bold uppercase tracking-wider ${
+                          isActive ? "text-emerald-400" : isCompleted ? "text-emerald-400/70" : "text-gray-600"
+                        }`}>
+                          {step.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Action Button */}
+                {currentPhase === "menghafal" && (
+                  <button
+                    onClick={() => setIsStartModalOpen(true)}
+                    className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-base transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                  >
+                    <Play className="w-5 h-5 fill-current" />
+                    Mulai Menghafal
+                  </button>
+                )}
+
+                {currentPhase !== "menghafal" && (
+                  <div className="text-center p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                    <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
+                    <p className="text-emerald-100 font-medium mb-1">Item sedang dalam proses hafalan</p>
+                    <p className="text-emerald-400/70 text-sm">Terus pertahankan hafalanmu!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Start Hafalan Modal */}
+      {isStartModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/75 backdrop-blur-md"
+            onClick={() => setIsStartModalOpen(false)}
+          />
+          <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
+            <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-emerald-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
+            <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden p-8">
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
+                  <Brain className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Mulai Menghafal?</h3>
+                <p className="text-gray-400 text-sm mb-6">
+                  Apakah Anda yakin ingin memulai menghafal item ini? Setelah dimulai, item akan masuk ke sistem interval review.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIsStartModalOpen(false)}
+                    className="flex-1 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={() => {
+                      // TODO: Implement start hafalan logic
+                      setIsStartModalOpen(false);
+                    }}
+                    className="flex-1 px-5 py-3 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                  >
+                    Ya, Mulai
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

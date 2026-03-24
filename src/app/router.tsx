@@ -21,6 +21,7 @@ import { GlobalLibraryPage } from "@/pages/personal/GlobalLibraryPage";
 import { ShareBooksPage } from "@/pages/personal/ShareBooksPage";
 import { BookDetailPage } from "@/pages/personal/BookDetailPage";
 import { ModuleDetailPage } from "@/pages/personal/ModuleDetailPage";
+import { ItemDetailPage } from "@/pages/personal/ItemDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
               { path: "/dashboard/pribadi/share", element: <ShareBooksPage /> },
               { path: "/dashboard/pribadi/book/:id", element: <BookDetailPage /> },
               { path: "/dashboard/pribadi/book/:bookId/module/:moduleId", element: <ModuleDetailPage /> },
+              { path: "/dashboard/pribadi/book/:bookId/item/:itemId", element: <ItemDetailPage /> },
               { path: "/dashboard/kelas", element: <ComingSoonRoomPage /> },
               // Status-based item pages
               {

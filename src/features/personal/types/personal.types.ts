@@ -185,3 +185,29 @@ export interface CreateItemResponse {
   timestamp: string;
   path: string;
 }
+
+export interface ItemDetail {
+  item_id: string;
+  source_type: string;
+  status: string;
+  content_ref: string;
+  estimated_review_seconds: number;
+  interval_days: number;
+  interval_next_review_at: string;
+  next_review_at: string;
+  stability: number;
+  difficulty: number;
+  review_count: number;
+  book_title: string;
+  book_item_title: string;
+  question: string;
+  answer: string;
+}
+
+export interface GetItemDetailResponse {
+  status: number;
+  message: string;
+  data: ItemDetail;
+  timestamp: string;
+  path: string;
+}
