@@ -2,7 +2,6 @@ import { Sidebar } from "@/components/ui/Sidebar";
 import { useState, useEffect } from "react";
 import {
   Menu,
-  UserCircle,
   Loader2,
   Share2,
   ArrowLeft,
@@ -90,11 +89,6 @@ export const ShareBooksDashboard = () => {
             <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#131824]/80 border border-emerald-500/20 text-xs text-emerald-400 font-bold backdrop-blur-xl shadow-lg shadow-emerald-500/5 select-none transition-all hover:bg-[#1A2235]">
               <BookOpen className="w-4 h-4" />
               <span>{totalBooks} Karya Pribadi</span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-linear-to-tr from-emerald-600 to-teal-600 p-[2px] cursor-pointer hover:scale-105 transition-transform shadow-lg">
-              <div className="w-full h-full bg-[#0A0D14] rounded-full flex items-center justify-center border border-black/50 overflow-hidden">
-                <UserCircle className="w-6 h-6 text-gray-300" />
-              </div>
             </div>
           </div>
         </div>

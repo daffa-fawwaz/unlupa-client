@@ -897,7 +897,7 @@ export const ModuleDetailPage = () => {
             {module.children && module.children.length > 0 && (
               <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#0E1420]">
                 <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-indigo-500/30 to-transparent" />
-                <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between">
+                <div className="px-8 py-6 border-b border-white/5 flex flex-col md:flex-row items-center justify-between">
                   <h2 className="text-base font-bold text-white flex items-center gap-2.5">
                     <Layers className="w-4 h-4 text-indigo-400" />
                     Sub-Modul
@@ -907,7 +907,7 @@ export const ModuleDetailPage = () => {
                   </h2>
                   <button
                     onClick={() => setIsAddSubModuleModalOpen(true)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-all"
+                    className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     Tambah Sub-Modul
@@ -987,7 +987,7 @@ export const ModuleDetailPage = () => {
             <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#0E1420]">
               <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/30 to-transparent" />
 
-              <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between">
+              <div className="px-8 py-6 border-b border-white/5 flex flex-col md:flex-row items-center justify-between">
                 <h2 className="text-base font-bold text-white flex items-center gap-2.5">
                   <FileText className="w-4 h-4 text-emerald-400" />
                   Item Hafalan
@@ -999,7 +999,7 @@ export const ModuleDetailPage = () => {
                 </h2>
                 <button
                   onClick={() => setIsAddItemModalOpen(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-all"
+                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-all"
                 >
                   <Plus className="w-4 h-4" />
                   Tambah Item

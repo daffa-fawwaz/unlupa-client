@@ -29,7 +29,10 @@ import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { useCreateItem } from "@/features/personal/hooks/useCreateItem";
-import type { Module, BookItem } from "@/features/personal/types/personal.types";
+import type {
+  Module,
+  BookItem,
+} from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
 /* Add Module Form Modal                                                */
@@ -552,7 +555,11 @@ interface AddContentModalProps {
   onSelectItem: () => void;
 }
 
-const AddContentModal = ({ onClose, onSelectModule, onSelectItem }: AddContentModalProps) => {
+const AddContentModal = ({
+  onClose,
+  onSelectModule,
+  onSelectItem,
+}: AddContentModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -709,8 +716,6 @@ const ModuleCard = ({
           </div>
           <span className="text-base font-mono font-bold text-blue-400 leading-none">
             {itemCount}
-
-            
           </span>
         </div>
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
@@ -732,13 +737,7 @@ const ModuleCard = ({
 /* ------------------------------------------------------------------ */
 /* Item Card - Grid Display                                             */
 /* ------------------------------------------------------------------ */
-const ItemCard = ({
-  item,
-  bookId,
-}: {
-  item: BookItem;
-  bookId: string;
-}) => {
+const ItemCard = ({ item, bookId }: { item: BookItem; bookId: string }) => {
   const navigate = useNavigate();
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("id-ID", {
@@ -750,7 +749,9 @@ const ItemCard = ({
 
   return (
     <button
-      onClick={() => navigate(`/dashboard/pribadi/book/${bookId}/item/${item.id}`)}
+      onClick={() =>
+        navigate(`/dashboard/pribadi/book/${bookId}/item/${item.id}`)
+      }
       className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-[2rem] p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/30 hover:shadow-2xl hover:shadow-emerald-500/10 min-h-60 flex flex-col overflow-hidden text-left"
     >
       {/* Background Gradient/Glow */}
@@ -836,7 +837,9 @@ export const BookDetailPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Modal flow: null | "picker" | "module" | "item"
-  const [modalStep, setModalStep] = useState<null | "picker" | "module" | "item">(null);
+  const [modalStep, setModalStep] = useState<
+    null | "picker" | "module" | "item"
+  >(null);
 
   useEffect(() => {
     if (id) {
@@ -1019,7 +1022,6 @@ export const BookDetailPage = () => {
                   </div>
                 </div>
 
-
                 <div className="absolute top-5 right-5">
                   <button className="w-9 h-9 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-all duration-300">
                     <BookOpen className="w-4 h-4" />
@@ -1098,7 +1100,7 @@ export const BookDetailPage = () => {
               <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-blue-500/30 to-transparent" />
 
               {/* Section header */}
-              <div className="px-8 py-7 border-b border-white/5 flex items-center justify-between">
+              <div className="px-8 py-7 border-b border-white/5 flex flex-col md:flex-row items-center justify-between">
                 <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
                   <Layers className="w-5 h-5 text-blue-400" />
                   Modul & Konten
@@ -1110,7 +1112,7 @@ export const BookDetailPage = () => {
                 </h2>
                 <button
                   onClick={() => setModalStep("picker")}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/50 hover:bg-blue-500/20 text-blue-400 text-sm font-medium transition-all duration-300"
+                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/50 hover:bg-blue-500/20 text-blue-400 text-sm font-medium transition-all duration-300"
                 >
                   <Plus className="w-4 h-4" />
                   Tambah
@@ -1163,11 +1165,7 @@ export const BookDetailPage = () => {
                         .slice()
                         .sort((a, b) => a.order - b.order)
                         .map((item) => (
-                          <ItemCard
-                            key={item.id}
-                            item={item}
-                            bookId={id!}
-                          />
+                          <ItemCard key={item.id} item={item} bookId={id!} />
                         ))}
                     </div>
                   </div>
