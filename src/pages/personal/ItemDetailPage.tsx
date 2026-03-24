@@ -13,7 +13,6 @@ import {
   Target,
   CheckCircle2,
   Play,
-  Sparkles,
   Clock,
   PenSquare,
   Trash2,
@@ -23,6 +22,9 @@ import { Sidebar } from "@/components/ui/Sidebar";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EditItemModal } from "@/features/personal/components/EditItemModal";
 import { useDeleteItem } from "@/features/personal/hooks/useDeleteItem";
+import { useStartItemPhase } from "@/features/personal/hooks/useStartItemPhase";
+import { useStartIntervalPhase } from "@/features/personal/hooks/useStartIntervalPhase";
+import { useActivateFsrsPhase } from "@/features/personal/hooks/useActivateFsrsPhase";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import type { BookItem, CreatedItem } from "@/features/personal/types/personal.types";
 
@@ -34,13 +36,15 @@ export const ItemDetailPage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
-  const [currentPhase] = useState<"menghafal" | "interval" | "terjaga" | "graduate">("menghafal");
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { tree, loading, error, fetchBookTree } = useBookTree();
   const { deleteItem: deleteItemFn } = useDeleteItem();
+  const { startPhase, loading: isStarting } = useStartItemPhase();
+  const { startInterval, loading: isStartingInterval } = useStartIntervalPhase();
+  const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
 
   useEffect(() => {
     if (bookId && !tree) {
@@ -50,29 +54,21 @@ export const ItemDetailPage = () => {
 
   useEffect(() => {
     if (tree && itemId) {
-      console.log('[ItemDetailPage] Searching for item:', itemId);
-      console.log('[ItemDetailPage] Tree items:', tree.items);
-      console.log('[ItemDetailPage] Tree modules:', tree.modules);
-      
       const findItem = (): BookItem | null => {
         // Search in book-level items first
         if (tree.items && Array.isArray(tree.items)) {
-          console.log('[ItemDetailPage] Searching in book items:', tree.items.length);
           const found = tree.items.find((i: BookItem) => i.id === itemId);
           if (found) {
-            console.log('[ItemDetailPage] Found in book items:', found);
             return found;
           }
         }
-        
+
         // Search in modules
         const searchInModules = (modules: any[]): BookItem | null => {
           for (const mod of modules) {
             if (mod.items && Array.isArray(mod.items)) {
-              console.log('[ItemDetailPage] Searching in module items:', mod.title, mod.items.length);
               const found = mod.items.find((i: BookItem) => i.id === itemId);
               if (found) {
-                console.log('[ItemDetailPage] Found in module items:', found);
                 return found;
               }
             }
@@ -83,11 +79,10 @@ export const ItemDetailPage = () => {
           }
           return null;
         };
-        
+
         const found = searchInModules(tree.modules);
         if (found) return found;
-        
-        console.log('[ItemDetailPage] Item not found');
+
         return null;
       };
 
@@ -102,6 +97,7 @@ export const ItemDetailPage = () => {
     setItem({
       ...updatedItem,
       review_count: 0,
+      status: (updatedItem as any).status || 'belum_mulai',
     });
   };
 
@@ -117,6 +113,49 @@ export const ItemDetailPage = () => {
     }
   };
 
+  const handleStartPhase = async () => {
+    if (!bookId || !itemId) return;
+    try {
+      const result = await startPhase(bookId, itemId);
+      setItem({
+        ...result,
+        review_count: 0,
+        status: (result as any).status || 'menghafal',
+      });
+      setIsStartModalOpen(false);
+    } catch (err) {
+      // Error is already handled by the hook
+    }
+  };
+
+  const handleStartIntervalPhase = async () => {
+    if (!bookId || !itemId) return;
+    try {
+      const result = await startInterval(bookId, itemId);
+      setItem({
+        ...result,
+        review_count: 0,
+        status: (result as any).status || 'interval',
+      });
+    } catch (err) {
+      // Error is already handled by the hook
+    }
+  };
+
+  const handleActivateFsrsPhase = async () => {
+    if (!bookId || !itemId) return;
+    try {
+      const result = await activateFsrs(bookId, itemId);
+      setItem({
+        ...result,
+        review_count: 0,
+        status: (result as any).status || 'fsrs_active',
+      });
+    } catch (err) {
+      // Error is already handled by the hook
+    }
+  };
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("id-ID", {
       day: "numeric",
@@ -125,52 +164,75 @@ export const ItemDetailPage = () => {
     });
   };
 
+  const getItemStatus = () => {
+    return item?.status || 'belum_mulai';
+  };
+
   const getStatusConfig = () => {
-    switch (currentPhase) {
-      case "menghafal":
+    const status = getItemStatus();
+    
+    switch (status) {
+      case 'menghafal':
         return {
           label: "Menghafal",
           color: "text-blue-400",
           bg: "bg-blue-500/10",
           border: "border-blue-500/20",
           icon: Brain,
-          description: "Mulai menghafal item ini untuk pertama kali",
+          description: "Item sedang dalam tahap menghafal",
+          buttonText: "Mulai Latihan Interval",
+          buttonAction: handleStartIntervalPhase,
+          isLoading: isStartingInterval,
         };
-      case "interval":
+      case 'interval':
         return {
-          label: "Interval",
+          label: "Latihan Interval",
           color: "text-amber-400",
           bg: "bg-amber-500/10",
           border: "border-amber-500/20",
           icon: Clock,
-          description: "Item sedang dalam masa interval review",
+          description: "Item sedang dalam masa latihan interval",
+          buttonText: "Mulai Ujian Interval",
+          buttonAction: handleActivateFsrsPhase,
+          isLoading: isActivatingFsrs,
         };
-      case "terjaga":
+      case 'fsrs_active':
         return {
-          label: "Terjaga",
-          color: "text-emerald-400",
-          bg: "bg-emerald-500/10",
-          border: "border-emerald-500/20",
-          icon: CheckCircle2,
-          description: "Item telah selesai dan terjaga",
-        };
-      case "graduate":
-        return {
-          label: "Graduate",
+          label: "Ujian Interval",
           color: "text-purple-400",
           bg: "bg-purple-500/10",
           border: "border-purple-500/20",
           icon: Target,
+          description: "Item sedang dalam ujian interval (FSRS aktif)",
+          buttonText: "Ujian Interval Aktif",
+          buttonAction: null,
+          isDisabled: true,
+          isLoading: false,
+        };
+      case 'graduate':
+        return {
+          label: "Graduate",
+          color: "text-emerald-400",
+          bg: "bg-emerald-500/10",
+          border: "border-emerald-500/20",
+          icon: CheckCircle2,
           description: "Item telah lulus dari sistem review",
+          buttonText: "Lulus",
+          buttonAction: null,
+          isDisabled: true,
+          isLoading: false,
         };
       default:
         return {
-          label: "Unknown",
+          label: "Belum Mulai",
           color: "text-gray-400",
           bg: "bg-gray-500/10",
           border: "border-gray-500/20",
           icon: Brain,
-          description: "",
+          description: "Mulai menghafal item ini untuk pertama kali",
+          buttonText: "Mulai Menghafal",
+          buttonAction: () => setIsStartModalOpen(true),
+          isLoading: isStarting,
         };
     }
   };
@@ -316,11 +378,11 @@ export const ItemDetailPage = () => {
                 <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Total Review</div>
               </div>
 
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-500/10 to-transparent border border-blue-500/15 p-5 text-center">
+              {/* <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-500/10 to-transparent border border-blue-500/15 p-5 text-center">
                 <Sparkles className="w-6 h-6 text-blue-400 mx-auto mb-2" />
                 <div className="text-2xl font-black text-blue-400 mb-1">{item.order}</div>
                 <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Urutan</div>
-              </div>
+              </div> */}
 
               <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500/10 to-transparent border border-emerald-500/15 p-5 text-center sm:col-span-1">
                 <Calendar className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
@@ -350,79 +412,139 @@ export const ItemDetailPage = () => {
             {/* Action Section - Hafalan Stages */}
             <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#0E1420]">
               <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/30 to-transparent" />
-              
-              <div className="px-8 py-7 border-b border-white/5">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
+
+              <div className="px-6 sm:px-8 py-6 sm:py-7 border-b border-white/5">
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2.5">
                   <Brain className="w-5 h-5 text-emerald-400" />
                   Tahapan Hafalan
                 </h2>
-                <p className="text-gray-500 text-sm mt-1">{statusConfig.description}</p>
+                <p className="text-gray-500 text-xs sm:text-sm mt-1">{statusConfig.description}</p>
               </div>
 
-              <div className="p-8">
-                {/* Progress Steps */}
-                <div className="flex items-center justify-between mb-8 relative">
-                  {/* Progress Line */}
-                  <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-700">
-                    <div 
-                      className="h-full bg-linear-to-r from-emerald-500 to-cyan-500 transition-all duration-500"
-                      style={{ 
-                        width: currentPhase === "menghafal" ? "0%" : 
-                               currentPhase === "interval" ? "33%" : 
-                               currentPhase === "terjaga" ? "66%" : "100%" 
-                      }}
-                    />
+              <div className="p-4 sm:p-8">
+                {/* Progress Steps - Mobile: Horizontal Scroll, Desktop: Flex */}
+                <div className="mb-6 sm:mb-8">
+                  {/* Desktop View - Hidden on Mobile */}
+                  <div className="hidden sm:block relative">
+                    <div className="flex items-center justify-between mb-8 relative">
+                      {/* Progress Line */}
+                      <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-700">
+                        <div
+                          className="h-full bg-linear-to-r from-emerald-500 to-cyan-500 transition-all duration-500"
+                          style={{
+                            width: getItemStatus() === 'belum_mulai' ? "0%" :
+                                   getItemStatus() === 'menghafal' ? "25%" :
+                                   getItemStatus() === 'interval' ? "50%" :
+                                   getItemStatus() === 'fsrs_active' ? "75%" : "100%"
+                          }}
+                        />
+                      </div>
+
+                      {/* Steps */}
+                      {[
+                        { key: 'belum_mulai', label: "Mulai", icon: Play },
+                        { key: 'menghafal', label: "Menghafal", icon: Brain },
+                        { key: 'interval', label: "Interval", icon: Clock },
+                        { key: 'fsrs_active', label: "Ujian", icon: Target },
+                        { key: 'graduate', label: "Lulus", icon: CheckCircle2 },
+                      ].map((step) => {
+                        const status = getItemStatus();
+                        const phases = ['belum_mulai', 'menghafal', 'interval', 'fsrs_active', 'graduate'];
+                        const currentIndex = phases.indexOf(status);
+                        const stepIndex = phases.indexOf(step.key);
+
+                        const isActive = status === step.key;
+                        const isCompleted = currentIndex > stepIndex;
+
+                        return (
+                          <div key={step.key} className="relative z-10 flex flex-col items-center gap-2">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                              isActive
+                                ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30"
+                                : isCompleted
+                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                : "bg-gray-800 border-gray-600 text-gray-500"
+                            }`}>
+                              <step.icon className="w-5 h-5" />
+                            </div>
+                            <span className={`text-xs font-bold uppercase tracking-wider ${
+                              isActive ? "text-emerald-400" : isCompleted ? "text-emerald-400/70" : "text-gray-600"
+                            }`}>
+                              {step.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
 
-                  {/* Steps */}
-                  {[
-                    { key: "menghafal", label: "Mulai", icon: Play },
-                    { key: "interval", label: "Interval", icon: Clock },
-                    { key: "terjaga", label: "Terjaga", icon: CheckCircle2 },
-                    { key: "graduate", label: "Lulus", icon: Target },
-                  ].map((step) => {
-                    const isActive = currentPhase === step.key;
-                    const isCompleted = 
-                      (step.key === "menghafal" && ["interval", "terjaga", "graduate"].includes(currentPhase)) ||
-                      (step.key === "interval" && ["terjaga", "graduate"].includes(currentPhase)) ||
-                      (step.key === "terjaga" && currentPhase === "graduate");
-                    
-                    return (
-                      <div key={step.key} className="relative z-10 flex flex-col items-center gap-2">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                          isActive 
-                            ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30" 
-                            : isCompleted
-                            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                            : "bg-gray-800 border-gray-600 text-gray-500"
-                        }`}>
-                          <step.icon className="w-5 h-5" />
-                        </div>
-                        <span className={`text-xs font-bold uppercase tracking-wider ${
-                          isActive ? "text-emerald-400" : isCompleted ? "text-emerald-400/70" : "text-gray-600"
-                        }`}>
-                          {step.label}
-                        </span>
-                      </div>
-                    );
-                  })}
+                  {/* Mobile View - Horizontal Scroll */}
+                  <div className="sm:hidden overflow-x-auto pb-4">
+                    <div className="flex items-start gap-4 min-w-max px-2">
+                      {[
+                        { key: 'belum_mulai', label: "Mulai", icon: Play },
+                        { key: 'menghafal', label: "Menghafal", icon: Brain },
+                        { key: 'interval', label: "Interval", icon: Clock },
+                        { key: 'fsrs_active', label: "Ujian", icon: Target },
+                        { key: 'graduate', label: "Lulus", icon: CheckCircle2 },
+                      ].map((step, idx, arr) => {
+                        const status = getItemStatus();
+                        const phases = ['belum_mulai', 'menghafal', 'interval', 'fsrs_active', 'graduate'];
+                        const currentIndex = phases.indexOf(status);
+                        const stepIndex = phases.indexOf(step.key);
+
+                        const isActive = status === step.key;
+                        const isCompleted = currentIndex > stepIndex;
+
+                        return (
+                          <div key={step.key} className="flex flex-col items-center gap-2 min-w-[60px]">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                              isActive
+                                ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30"
+                                : isCompleted
+                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                : "bg-gray-800 border-gray-600 text-gray-500"
+                            }`}>
+                              <step.icon className="w-4 h-4" />
+                            </div>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${
+                              isActive ? "text-emerald-400" : isCompleted ? "text-emerald-400/70" : "text-gray-600"
+                            }`}>
+                              {step.label}
+                            </span>
+                            {/* Connector Line */}
+                            {idx < arr.length - 1 && (
+                              <div className="absolute top-14 left-10 w-8 h-0.5 bg-gray-700 -z-10">
+                                {isCompleted || (isActive && idx < currentIndex) ? (
+                                  <div className="h-full bg-emerald-500 w-full" />
+                                ) : null}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Action Button */}
-                {currentPhase === "menghafal" && (
+                {statusConfig.buttonAction && !statusConfig.isDisabled ? (
                   <button
-                    onClick={() => setIsStartModalOpen(true)}
-                    className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-base transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                    onClick={statusConfig.buttonAction}
+                    disabled={statusConfig.isLoading}
+                    className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-base transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    <Play className="w-5 h-5 fill-current" />
-                    Mulai Menghafal
+                    {statusConfig.isLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Play className="w-5 h-5 fill-current" />
+                    )}
+                    {statusConfig.isLoading ? "Memproses..." : statusConfig.buttonText}
                   </button>
-                )}
-
-                {currentPhase !== "menghafal" && (
+                ) : (
                   <div className="text-center p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                     <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
-                    <p className="text-emerald-100 font-medium mb-1">Item sedang dalam proses hafalan</p>
+                    <p className="text-emerald-100 font-medium mb-1">{statusConfig.buttonText}</p>
                     <p className="text-emerald-400/70 text-sm">Terus pertahankan hafalanmu!</p>
                   </div>
                 )}
@@ -434,37 +556,43 @@ export const ItemDetailPage = () => {
 
       {/* Start Hafalan Modal */}
       {isStartModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
           <div
             className="absolute inset-0 bg-black/75 backdrop-blur-md"
             onClick={() => setIsStartModalOpen(false)}
           />
           <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
             <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-emerald-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
-            <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden p-8">
+            <div className="relative rounded-[2.5rem] sm:rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
               <div className="text-center">
-                <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
-                  <Brain className="w-8 h-8 text-emerald-400" />
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
+                  <Brain className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-400" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Mulai Menghafal?</h3>
-                <p className="text-gray-400 text-sm mb-6">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Mulai Menghafal?</h3>
+                <p className="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed">
                   Apakah Anda yakin ingin memulai menghafal item ini? Setelah dimulai, item akan masuk ke sistem interval review.
                 </p>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={() => setIsStartModalOpen(false)}
-                    className="flex-1 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition"
+                    disabled={isStarting}
+                    className="flex-1 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition disabled:opacity-50 cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
-                    onClick={() => {
-                      // TODO: Implement start hafalan logic
-                      setIsStartModalOpen(false);
-                    }}
-                    className="flex-1 px-5 py-3 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                    onClick={handleStartPhase}
+                    disabled={isStarting}
+                    className="flex-1 px-5 py-3 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    Ya, Mulai
+                    {isStarting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Memproses...
+                      </>
+                    ) : (
+                      "Ya, Mulai"
+                    )}
                   </button>
                 </div>
               </div>

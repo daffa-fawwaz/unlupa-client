@@ -22,6 +22,9 @@ import type {
   UpdateItemPayload,
   UpdateItemResponse,
   DeleteItemResponse,
+  StartItemPhaseResponse,
+  StartIntervalPhaseResponse,
+  ActivateFsrsPhaseResponse,
 } from "../types/personal.types";
 
 export const personalService = {
@@ -120,6 +123,30 @@ export const personalService = {
 
   async deleteItem(itemId: string): Promise<DeleteItemResponse> {
     const response = await api.delete(`/api/v1/books/items/${itemId}`);
+    return response.data;
+  },
+
+  async startItemPhase(
+    bookId: string,
+    itemId: string,
+  ): Promise<StartItemPhaseResponse> {
+    const response = await api.post(`/api/v1/books/${bookId}/items/${itemId}/start`);
+    return response.data;
+  },
+
+  async startIntervalPhase(
+    bookId: string,
+    itemId: string,
+  ): Promise<StartIntervalPhaseResponse> {
+    const response = await api.post(`/api/v1/books/${bookId}/items/${itemId}/start-interval`);
+    return response.data;
+  },
+
+  async activateFsrsPhase(
+    bookId: string,
+    itemId: string,
+  ): Promise<ActivateFsrsPhaseResponse> {
+    const response = await api.post(`/api/v1/books/${bookId}/items/${itemId}/activate-fsrs`);
     return response.data;
   },
 };

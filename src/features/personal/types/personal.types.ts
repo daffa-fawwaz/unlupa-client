@@ -77,6 +77,7 @@ export interface BookItem {
   order: number;
   estimated_review_seconds: number;
   review_count: number;
+  status: 'belum_mulai' | 'menghafal' | 'interval' | 'fsrs_active' | 'graduate';
   created_at: string;
   updated_at: string;
 }
@@ -263,6 +264,30 @@ export interface UpdateItemResponse {
 export interface DeleteItemResponse {
   status: number;
   message: string;
+  timestamp: string;
+  path: string;
+}
+
+export interface StartItemPhaseResponse {
+  status: number;
+  message: string;
+  data: CreatedItem;
+  timestamp: string;
+  path: string;
+}
+
+export interface StartIntervalPhaseResponse {
+  status: number;
+  message: string;
+  data: CreatedItem;
+  timestamp: string;
+  path: string;
+}
+
+export interface ActivateFsrsPhaseResponse {
+  status: number;
+  message: string;
+  data: CreatedItem;
   timestamp: string;
   path: string;
 }

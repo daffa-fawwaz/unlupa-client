@@ -61,30 +61,30 @@ export const ConfirmModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-999 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-999 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="bg-slate-900 border border-white/10 rounded-xl p-6 max-w-sm w-full shadow-2xl space-y-4 animate-slideUp"
+        className="bg-slate-900 border border-white/10 rounded-xl p-5 sm:p-6 max-w-sm w-full shadow-2xl space-y-4 animate-slideUp mx-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`flex items-center gap-3 ${styles.iconColor}`}>
-          {Icon && <Icon className="w-6 h-6" />}
-          <h3 className="font-serif font-bold text-lg text-white">{title}</h3>
+          {Icon && <Icon className="w-5 h-5 sm:w-6 sm:h-6" />}
+          <h3 className="font-serif font-bold text-base sm:text-lg text-white">{title}</h3>
         </div>
 
-        <p className="text-gray-400 text-sm">{message}</p>
+        <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">{message}</p>
 
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-medium transition cursor-pointer"
+            className="w-full sm:flex-1 px-4 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-medium transition cursor-pointer"
           >
             {cancelText}
           </button>
           <button
             onClick={handleConfirm}
-            className={`flex-1 px-4 py-2 rounded-lg ${styles.buttonBg} ${styles.buttonText} text-sm font-medium border ${styles.buttonBorder} transition cursor-pointer`}
+            className={`w-full sm:flex-1 px-4 py-2.5 rounded-lg ${styles.buttonBg} ${styles.buttonText} text-sm font-medium border ${styles.buttonBorder} transition cursor-pointer`}
           >
             {confirmText}
           </button>
