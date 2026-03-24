@@ -96,7 +96,7 @@ export const BookCard = ({ book, onClick, onEdit, onDelete }: BookCardProps) => 
                   className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-200 hover:text-white hover:bg-blue-500/20 transition-colors text-left"
                 >
                   <Edit2 className="w-4 h-4 text-blue-400" />
-                  <span>Edit Kitab</span>
+                  <span>Edit Buku</span>
                 </button>
                 <div className="w-full h-px bg-white/5" />
                 <button
@@ -104,7 +104,7 @@ export const BookCard = ({ book, onClick, onEdit, onDelete }: BookCardProps) => 
                   className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors text-left"
                 >
                   <Trash2 className="w-4 h-4" />
-                  <span>Hapus Kitab</span>
+                  <span>Hapus Buku</span>
                 </button>
               </div>
             )}

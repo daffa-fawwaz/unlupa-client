@@ -7,7 +7,6 @@ import {
   CheckCircle,
   CheckCircle2,
   Clock,
-  Edit2,
   FileText,
   Globe,
   ImageOff,
@@ -23,8 +22,7 @@ import {
   Hash,
   AlignLeft,
   Sparkles,
-  Eye,
-  Timer,
+  Flame,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
@@ -633,6 +631,8 @@ const AddContentModal = ({ onClose, onSelectModule, onSelectItem }: AddContentMo
 /* ------------------------------------------------------------------ */
 /* Module Card                                                          */
 /* ------------------------------------------------------------------ */
+/* Module Card - Grid Display                                           */
+/* ------------------------------------------------------------------ */
 const ModuleCard = ({
   module,
   onClick,
@@ -640,33 +640,92 @@ const ModuleCard = ({
   module: Module;
   bookId: string;
   onClick: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    className="w-full group flex items-center gap-4 p-5 rounded-2xl bg-white/3 hover:bg-white/7 border border-white/5 hover:border-blue-500/30 transition-all duration-300 text-left hover:-translate-y-0.5 hover:shadow-[0_8px_20px_-8px_rgba(59,130,246,0.2)]"
-  >
-    {/* Order badge */}
-    <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500/20 transition-colors">
-      <span className="text-sm font-black text-blue-400">{module.order}</span>
-    </div>
+}) => {
+  const itemCount = module.items?.length ?? 0;
+  const childCount = module.children?.length ?? 0;
 
-    {/* Info */}
-    <div className="flex-1 min-w-0">
-      <p className="font-semibold text-white text-sm leading-snug mb-0.5 truncate group-hover:text-blue-100 transition-colors">
-        {module.title}
-      </p>
-      {module.description && (
-        <p className="text-xs text-gray-500 truncate">{module.description}</p>
-      )}
-    </div>
+  return (
+    <button
+      onClick={onClick}
+      className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-[2rem] p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/10 min-h-60 flex flex-col overflow-hidden"
+    >
+      {/* Background Gradient/Glow */}
+      <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-    {/* Item count */}
-    <div className="flex items-center gap-2 text-xs text-gray-600 shrink-0">
-      <span>{module.items?.length ?? 0} item</span>
-      <ChevronRight className="w-4 h-4 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
-    </div>
-  </button>
-);
+      {/* Decorative Icon Background */}
+      <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-500 transform group-hover:scale-125 group-hover:-rotate-12 pointer-events-none">
+        <Layers className="w-40 h-40 text-white" />
+      </div>
+
+      {/* Large Order Number Watermark */}
+      <div className="absolute top-2 right-4 text-7xl font-serif font-bold text-white/3 group-hover:text-blue-500/5 transition-colors duration-500 pointer-events-none select-none">
+        {module.order}
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 mb-4">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+              {module.title}
+            </h3>
+            <p className="text-gray-500 text-xs font-medium tracking-wide">
+              MODUL
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Description */}
+      <div className="relative z-10 flex-1 mb-4">
+        {module.description ? (
+          <div className="p-3 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+            <div className="flex items-center gap-2 mb-2">
+              <AlignLeft className="w-3 h-3 text-gray-500" />
+              <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+                Deskripsi
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
+              {module.description}
+            </p>
+          </div>
+        ) : (
+          <div className="p-3 rounded-xl bg-white/2 border border-dashed border-white/5 flex items-center justify-center h-full">
+            <p className="text-xs text-gray-600 italic">Tidak ada deskripsi</p>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto pt-4 border-t border-white/5">
+        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <FileText className="w-3 h-3 text-blue-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+              Item
+            </span>
+          </div>
+          <span className="text-base font-mono font-bold text-blue-400 leading-none">
+            {itemCount}
+          </span>
+        </div>
+        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Layers className="w-3 h-3 text-purple-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+              Sub-modul
+            </span>
+          </div>
+          <span className="text-base font-mono font-bold text-purple-400 leading-none">
+            {childCount}
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+};
 
 /* ------------------------------------------------------------------ */
 /* Item Card - Grid Display                                             */
@@ -676,77 +735,82 @@ const ItemCard = ({
 }: {
   item: BookItem;
 }) => {
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   return (
-    <div className="group relative overflow-hidden rounded-3xl bg-[#0E1420] border border-white/5 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_-12px_rgba(16,185,129,0.2)]">
-      {/* Decorative gradient top */}
-      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/40 to-transparent" />
-      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-[60px] rounded-full pointer-events-none" />
+    <div className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-[2rem] p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/30 hover:shadow-2xl hover:shadow-emerald-500/10 min-h-60 flex flex-col overflow-hidden">
+      {/* Background Gradient/Glow */}
+      <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-linear-to-br from-emerald-500/10 via-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      <div className="relative p-5">
-        {/* Header: Order + Type badge */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-xl">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-400">
-              Item {item.order}
-            </span>
-          </div>
-          {item.estimated_review_seconds > 0 && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-              <Timer className="w-3 h-3 text-gray-500" />
-              <span className="text-[10px] font-bold text-gray-400">
-                {item.estimated_review_seconds}s
-              </span>
-            </div>
-          )}
-        </div>
+      {/* Decorative Icon Background */}
+      <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-500 transform group-hover:scale-125 group-hover:-rotate-12 pointer-events-none">
+        <FileText className="w-40 h-40 text-white" />
+      </div>
 
-        {/* Title with highlight */}
-        <div className="relative mb-3">
-          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <div className="relative p-3 rounded-xl bg-linear-to-r from-emerald-500/10 via-transparent to-cyan-500/10 border border-emerald-500/20 group-hover:border-emerald-500/40 transition-colors duration-300">
-            <h3 className="text-base font-black text-white leading-snug text-center bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-400 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300">
+      {/* Large Order Number Watermark */}
+      <div className="absolute top-2 right-4 text-7xl font-serif font-bold text-white/3 group-hover:text-emerald-500/5 transition-colors duration-500 pointer-events-none select-none">
+        {item.order}
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 mb-4">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2">
               {item.title}
             </h3>
+            <p className="text-gray-500 text-xs font-medium tracking-wide">
+              Item Hafalan
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Content preview */}
-        <div className="mb-4 p-3 rounded-xl bg-white/3 border border-white/5">
+      {/* Content Preview */}
+      <div className="relative z-10 flex-1 mb-4">
+        <div className="p-3 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
           <div className="flex items-center gap-2 mb-2">
-            <FileText className="w-3.5 h-3.5 text-gray-500" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+            <FileText className="w-3 h-3 text-gray-500" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
               Pertanyaan
             </span>
           </div>
-          <p className="text-sm text-gray-300 leading-relaxed line-clamp-2">
+          <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">
             {item.content}
           </p>
         </div>
+      </div>
 
-        {/* Hidden answer teaser */}
-        <div className="relative p-3 rounded-xl bg-gradient-to-br from-amber-500/5 to-orange-500/5 border border-amber-500/10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0E1420] via-transparent to-transparent opacity-60" />
-          <div className="flex items-center gap-2 mb-2 relative">
-            <Lock className="w-3.5 h-3.5 text-amber-500/50" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/70">
-              Jawaban
+      {/* Footer */}
+      <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto pt-4 border-t border-white/5">
+        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Flame className="w-3 h-3 text-amber-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+              Review
             </span>
           </div>
-          <div className="relative flex items-center gap-2">
-            <div className="flex-1 h-px bg-gradient-to-r from-amber-500/20 to-transparent" />
-            <Eye className="w-3.5 h-3.5 text-amber-500/30" />
-            <div className="flex-1 h-px bg-gradient-to-l from-amber-500/20 to-transparent" />
-          </div>
-          <p className="text-xs text-amber-400/30 text-center mt-2 blur-[2px] select-none">
-            {item.answer}
-          </p>
+          <span className="text-base font-mono font-bold text-amber-400 leading-none">
+            {item.review_count ?? 0}x
+          </span>
         </div>
-
-        {/* Footer action hint */}
-        <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-center gap-2 text-xs text-gray-500 group-hover:text-emerald-400/70 transition-colors">
-          <Eye className="w-3.5 h-3.5" />
-          <span className="font-medium">Klik untuk melihat detail</span>
+        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Calendar className="w-3 h-3 text-blue-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+              Dibuat
+            </span>
+          </div>
+          <span className="text-xs font-medium text-blue-400 leading-none">
+            {formatDate(item.created_at)}
+          </span>
         </div>
       </div>
     </div>
@@ -947,10 +1011,10 @@ export const BookDetailPage = () => {
                   </div>
                 </div>
 
-                {/* Edit button */}
+
                 <div className="absolute top-5 right-5">
                   <button className="w-9 h-9 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-all duration-300">
-                    <Edit2 className="w-4 h-4" />
+                    <BookOpen className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -1054,7 +1118,7 @@ export const BookDetailPage = () => {
                       Modul ({modules.length})
                     </h3>
                   </div>
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {modules
                       .slice()
                       .sort((a, b) => a.order - b.order)

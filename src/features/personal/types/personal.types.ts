@@ -76,6 +76,7 @@ export interface BookItem {
   answer: string;
   order: number;
   estimated_review_seconds: number;
+  review_count: number;
   created_at: string;
   updated_at: string;
 }
