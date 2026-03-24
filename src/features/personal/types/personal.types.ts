@@ -211,3 +211,34 @@ export interface GetItemDetailResponse {
   timestamp: string;
   path: string;
 }
+
+export interface CreateModuleItemPayload {
+  book_id: string;
+  title: string;
+  content: string;
+  answer: string;
+  order: number;
+  estimate_value: number;
+  estimate_unit: string;
+}
+
+export interface CreatedModuleItem {
+  id: string;
+  book_id: string;
+  module_id: string;
+  title: string;
+  content: string;
+  answer: string;
+  order: number;
+  estimated_review_seconds: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateModuleItemResponse {
+  status: number;
+  message: string;
+  data: CreatedModuleItem;
+  timestamp: string;
+  path: string;
+}

@@ -17,6 +17,8 @@ import type {
   CreateItemPayload,
   CreateItemResponse,
   GetItemDetailResponse,
+  CreateModuleItemPayload,
+  CreateModuleItemResponse,
 } from "../types/personal.types";
 
 export const personalService = {
@@ -66,6 +68,14 @@ export const personalService = {
     payload: CreateItemPayload,
   ): Promise<CreateItemResponse> {
     const response = await api.post(`/api/v1/books/${bookId}/items`, payload);
+    return response.data;
+  },
+
+  async createModuleItem(
+    moduleId: string,
+    payload: CreateModuleItemPayload,
+  ): Promise<CreateModuleItemResponse> {
+    const response = await api.post(`/api/v1/books/modules/${moduleId}/items`, payload);
     return response.data;
   },
 
