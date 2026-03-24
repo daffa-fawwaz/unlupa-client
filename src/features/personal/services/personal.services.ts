@@ -19,6 +19,9 @@ import type {
   GetItemDetailResponse,
   CreateModuleItemPayload,
   CreateModuleItemResponse,
+  UpdateItemPayload,
+  UpdateItemResponse,
+  DeleteItemResponse,
 } from "../types/personal.types";
 
 export const personalService = {
@@ -104,6 +107,19 @@ export const personalService = {
 
   async requestPublishBook(id: string): Promise<RequestPublishBookResponse> {
     const response = await api.post(`/api/v1/books/${id}/request-publish`);
+    return response.data;
+  },
+
+  async updateItem(
+    itemId: string,
+    data: UpdateItemPayload,
+  ): Promise<UpdateItemResponse> {
+    const response = await api.put(`/api/v1/books/items/${itemId}`, data);
+    return response.data;
+  },
+
+  async deleteItem(itemId: string): Promise<DeleteItemResponse> {
+    const response = await api.delete(`/api/v1/books/items/${itemId}`);
     return response.data;
   },
 };

@@ -242,3 +242,27 @@ export interface CreateModuleItemResponse {
   timestamp: string;
   path: string;
 }
+
+export interface UpdateItemPayload {
+  title: string;
+  content: string;
+  answer: string;
+  order: number;
+  estimate_value: number;
+  estimate_unit: string;
+}
+
+export interface UpdateItemResponse {
+  status: number;
+  message: string;
+  data: CreatedItem;
+  timestamp: string;
+  path: string;
+}
+
+export interface DeleteItemResponse {
+  status: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}

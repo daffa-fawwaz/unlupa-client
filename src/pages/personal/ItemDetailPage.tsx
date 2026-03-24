@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
   LayoutList,
@@ -15,22 +15,32 @@ import {
   Play,
   Sparkles,
   Clock,
+  PenSquare,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { EditItemModal } from "@/features/personal/components/EditItemModal";
+import { useDeleteItem } from "@/features/personal/hooks/useDeleteItem";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
-import type { BookItem } from "@/features/personal/types/personal.types";
+import type { BookItem, CreatedItem } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
 /* Item Detail Page (for Book Items)                                    */
 /* ------------------------------------------------------------------ */
 export const ItemDetailPage = () => {
   const { itemId, bookId } = useParams<{ itemId: string; bookId: string }>();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
   const [currentPhase] = useState<"menghafal" | "interval" | "terjaga" | "graduate">("menghafal");
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { tree, loading, error, fetchBookTree } = useBookTree();
+  const { deleteItem: deleteItemFn } = useDeleteItem();
 
   useEffect(() => {
     if (bookId && !tree) {
@@ -87,6 +97,25 @@ export const ItemDetailPage = () => {
       }
     }
   }, [tree, itemId]);
+
+  const handleEditSuccess = (updatedItem: CreatedItem) => {
+    setItem({
+      ...updatedItem,
+      review_count: 0,
+    });
+  };
+
+  const handleDeleteSuccess = async () => {
+    try {
+      if (!itemId) return;
+      await deleteItemFn(itemId);
+      setIsDeleteModalOpen(false);
+      // Navigate back to the previous page
+      navigate(-1);
+    } catch (err) {
+      // Error is already handled by the hook
+    }
+  };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("id-ID", {
@@ -286,18 +315,36 @@ export const ItemDetailPage = () => {
                 <div className="text-2xl font-black text-amber-400 mb-1">{item.review_count ?? 0}x</div>
                 <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Total Review</div>
               </div>
-              
+
               <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-500/10 to-transparent border border-blue-500/15 p-5 text-center">
                 <Sparkles className="w-6 h-6 text-blue-400 mx-auto mb-2" />
                 <div className="text-2xl font-black text-blue-400 mb-1">{item.order}</div>
                 <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Urutan</div>
               </div>
-              
+
               <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500/10 to-transparent border border-emerald-500/15 p-5 text-center sm:col-span-1">
                 <Calendar className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
                 <div className="text-lg font-black text-emerald-400 mb-1">{formatDate(item.created_at)}</div>
                 <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Dibuat</div>
               </div>
+            </div>
+
+            {/* Action Buttons - Edit & Delete */}
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-base transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+              >
+                <PenSquare className="w-5 h-5 fill-current" />
+                Edit Item
+              </button>
+              <button
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-linear-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-base transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(244,63,94,0.3)]"
+              >
+                <Trash2 className="w-5 h-5 fill-current" />
+                Hapus Item
+              </button>
             </div>
 
             {/* Action Section - Hafalan Stages */}
@@ -425,6 +472,29 @@ export const ItemDetailPage = () => {
           </div>
         </div>
       )}
+
+      {/* Edit Item Modal */}
+      {isEditModalOpen && item && (
+        <EditItemModal
+          isOpen={isEditModalOpen}
+          item={item}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={handleEditSuccess}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteSuccess}
+        title="Hapus Item?"
+        message="Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan dan item akan dihapus secara permanen."
+        confirmText="Ya, Hapus"
+        cancelText="Batal"
+        icon={AlertTriangle}
+        variant="danger"
+      />
     </div>
   );
 };
