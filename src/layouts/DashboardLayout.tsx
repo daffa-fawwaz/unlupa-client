@@ -1,5 +1,5 @@
 import { Sidebar } from "@/components/ui/Sidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet } from "react-router";
 
 export interface DashboardContextType {
@@ -11,6 +11,17 @@ export const DashboardLayout = () => {
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
+
+  useEffect(() => {
+    console.log('[DashboardLayout] MOUNTED');
+    return () => {
+      console.log('[DashboardLayout] UNMOUNTED');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('[DashboardLayout] isSidebarOpen changed:', isSidebarOpen);
+  }, [isSidebarOpen]);
 
   return (
     <>

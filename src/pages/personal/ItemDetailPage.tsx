@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
@@ -17,6 +17,9 @@ import {
   PenSquare,
   Trash2,
   AlertTriangle,
+  CalendarDays,
+  ChevronRight,
+  X,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
@@ -29,6 +32,149 @@ import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import type { BookItem, CreatedItem } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
+/* Interval Modal Content                                               */
+/* ------------------------------------------------------------------ */
+interface IntervalModalContentProps {
+  isOpen: boolean;
+  onClose: () => void;
+  itemTitle: string;
+  onSubmit: (intervalDays: number) => Promise<void>;
+}
+
+const IntervalModalContent = ({
+  isOpen,
+  onClose,
+  itemTitle,
+  onSubmit,
+}: IntervalModalContentProps) => {
+  const [intervalDays, setIntervalDays] = useState<number>(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
+    if (intervalDays < 1) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      await onSubmit(intervalDays);
+      // Reset after close animation
+      setTimeout(() => setIntervalDays(1), 300);
+    } catch (err: any) {
+      setError(err?.message || "Gagal memulai interval");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  // Preset pilihan hari yang umum
+  const PRESETS = [1, 3, 7, 14, 30];
+
+  return (
+    <>
+      {/* Header */}
+      <div className="p-6 border-b border-white/5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-amber-500/20 text-amber-500">
+            <CalendarDays className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-white">Mulai Latihan Interval</h2>
+            <p className="text-xs text-gray-400 truncate max-w-[180px]">
+              {itemTitle}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Body */}
+      <div className="p-6 space-y-6">
+        {/* Tampilan angka hari yang dipilih */}
+        <div className="text-center">
+          <span className="text-6xl font-mono font-bold text-white">
+            {intervalDays}
+          </span>
+          <p className="text-sm text-gray-400 mt-1">hari sekali review</p>
+        </div>
+
+        {/* Preset buttons — UX shortcut */}
+        <div>
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block">
+            Pilih cepat
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {PRESETS.map((preset) => (
+              <button
+                key={preset}
+                onClick={() => setIntervalDays(preset)}
+                className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${
+                  intervalDays === preset
+                    ? "bg-amber-500/20 border-amber-500/50 text-amber-400"
+                    : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10"
+                }`}
+              >
+                {preset}h
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Input manual — untuk nilai kustom */}
+        <div>
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block">
+            Atau masukkan manual
+          </label>
+          <input
+            type="number"
+            min={1}
+            max={365}
+            value={intervalDays}
+            onChange={(e) =>
+              setIntervalDays(Math.max(1, parseInt(e.target.value) || 1))
+            }
+            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-lg font-mono focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 transition-all"
+          />
+        </div>
+
+        {/* Error message */}
+        {error && (
+          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
+            <p className="text-rose-400 text-sm text-center">{error}</p>
+          </div>
+        )}
+
+        {/* Submit button */}
+        <button
+          onClick={handleSubmit}
+          disabled={loading || intervalDays < 1}
+          className="w-full py-4 rounded-xl bg-linear-to-r from-amber-500 to-orange-600 text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Memulai...</span>
+            </>
+          ) : (
+            <>
+              <span>Mulai Interval</span>
+              <ChevronRight className="w-5 h-5" />
+            </>
+          )}
+        </button>
+      </div>
+    </>
+  );
+};
+
+/* ------------------------------------------------------------------ */
 /* Item Detail Page (for Book Items)                                    */
 /* ------------------------------------------------------------------ */
 export const ItemDetailPage = () => {
@@ -37,11 +183,49 @@ export const ItemDetailPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
+  const [isIntervalModalOpen, setIsIntervalModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { tree, loading, error, fetchBookTree } = useBookTree();
-  const { deleteItem: deleteItemFn } = useDeleteItem();
+  console.log('[COMPONENT RENDER] ItemDetailPage rendered with:', { itemId, bookId, itemStatus: item?.status });
+
+  // Track mount/unmount
+  useEffect(() => {
+    console.log('🟢 [COMPONENT MOUNT] ItemDetailPage MOUNTED at', new Date().toISOString());
+    return () => {
+      console.log('🔴 [COMPONENT UNMOUNT] ItemDetailPage UNMOUNTED at', new Date().toISOString());
+    };
+  }, []);
+
+  // Track URL changes
+  useEffect(() => {
+    console.log('🔗 [URL WATCH] Current URL:', window.location.href);
+  }, []);
+
+  // Track modal state changes with timestamps
+  const prevModalState = useRef(isStartModalOpen);
+  useEffect(() => {
+    if (prevModalState.current !== isStartModalOpen) {
+      console.log('🚪 [MODAL STATE] isStartModalOpen changed:', prevModalState.current, '→', isStartModalOpen, 'at', new Date().toISOString());
+      prevModalState.current = isStartModalOpen;
+    }
+  }, [isStartModalOpen]);
+
+  // Track item state changes
+  const prevItemStatus = useRef(item?.status);
+  useEffect(() => {
+    if (prevItemStatus.current !== item?.status) {
+      console.log('📝 [ITEM STATUS] Changed:', prevItemStatus.current, '→', item?.status, 'at', new Date().toISOString());
+      prevItemStatus.current = item?.status;
+    }
+  }, [item?.status]);
+
+  const { tree, loading, error, fetchBookTree, removeItemFromTree } = useBookTree();
+  const { deleteItem: deleteItemFn } = useDeleteItem({
+    onBookTreeUpdate: (bid, deletedItemId) => {
+      removeItemFromTree(bid, deletedItemId);
+    },
+  });
   const { startPhase, loading: isStarting } = useStartItemPhase();
   const { startInterval, loading: isStartingInterval } = useStartIntervalPhase();
   const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
@@ -52,6 +236,8 @@ export const ItemDetailPage = () => {
     }
   }, [bookId, tree, fetchBookTree]);
 
+  // Set item data from tree (single source of truth)
+  // IMPORTANT: Also check localStorage for persisted optimistic updates
   useEffect(() => {
     if (tree && itemId) {
       const findItem = (): BookItem | null => {
@@ -88,10 +274,40 @@ export const ItemDetailPage = () => {
 
       const foundItem = findItem();
       if (foundItem) {
-        setItem(foundItem);
+        // Check localStorage for persisted status (from optimistic update)
+        const storageKey = `item-status-${itemId}`;
+        const persistedStatus = localStorage.getItem(storageKey);
+        const treeStatus = (foundItem as any).status;
+        
+        // Priority:
+        // 1. Persisted status from localStorage (optimistic update)
+        // 2. Status from tree (if backend has updated)
+        // 3. Fallback to 'belum_mulai'
+        const finalStatus = persistedStatus || treeStatus || 'belum_mulai';
+        
+        console.log('[DIAGNOSTIC 1] Status resolution:', {
+          persistedStatus,
+          treeStatus,
+          finalStatus
+        });
+        
+        // Save to localStorage for next time
+        if (finalStatus !== 'belum_mulai') {
+          localStorage.setItem(storageKey, finalStatus);
+        }
+        
+        setItem({
+          ...foundItem,
+          status: finalStatus as BookItem['status'],
+        });
       }
     }
   }, [tree, itemId]);
+
+  // Watch item state changes (for debugging)
+  useEffect(() => {
+    console.log('[ITEM STATE] Current status:', item?.status);
+  }, [item]);
 
   const handleEditSuccess = (updatedItem: CreatedItem) => {
     setItem({
@@ -102,14 +318,35 @@ export const ItemDetailPage = () => {
   };
 
   const handleDeleteSuccess = async () => {
+    if (!itemId) {
+      console.error('[handleDeleteSuccess] No itemId provided!');
+      return;
+    }
+
+    console.log('[handleDeleteSuccess] === DELETE DEBUG ===');
+    console.log('[handleDeleteSuccess] URL param itemId:', itemId);
+    console.log('[handleDeleteSuccess] Current item.id:', item?.id);
+    console.log('[handleDeleteSuccess] Will delete with ID:', itemId);
+    console.log('[handleDeleteSuccess] Endpoint: DELETE /api/v1/books/items/' + itemId);
+
     try {
-      if (!itemId) return;
-      await deleteItemFn(itemId);
+      // Delete endpoint: DELETE /books/items/:book_item_id
+      await deleteItemFn(itemId, bookId || undefined);
+      console.log('[handleDeleteSuccess] Delete SUCCESS!');
       setIsDeleteModalOpen(false);
+
+      // Clear localStorage for this item
+      localStorage.removeItem(`item-real-id-${itemId}`);
+      localStorage.removeItem(`item-status-${itemId}`);
+
       // Navigate back to the previous page
       navigate(-1);
-    } catch (err) {
-      // Error is already handled by the hook
+    } catch (err: any) {
+      console.error('[handleDeleteSuccess] DELETE FAILED!');
+      console.error('[handleDeleteSuccess] Error:', err);
+      console.error('[handleDeleteSuccess] Error response:', err?.response?.data);
+      console.error('[handleDeleteSuccess] Error status:', err?.response?.status);
+      console.error('[handleDeleteSuccess] Error message:', err?.response?.data?.message);
     }
   };
 
@@ -117,41 +354,128 @@ export const ItemDetailPage = () => {
     if (!bookId || !itemId) return;
     try {
       const result = await startPhase(bookId, itemId);
-      setItem({
-        ...result,
-        review_count: 0,
-        status: (result as any).status || 'menghafal',
+      console.log('[handleStartPhase RESULT]', typeof result, JSON.stringify(result, null, 2));
+      console.log('[handleStartPhase] result.status:', (result as any)?.status);
+      console.log('[handleStartPhase] result.data?.status:', (result as any)?.data?.status);
+      
+      // Optimistic update - API response contains updated status
+      const newStatus = (result as any).status || 'menghafal';
+      
+      // IMPORTANT: Save the item_id from response for interval API
+      const item_id = (result as any).item_id;
+      if (item_id) {
+        localStorage.setItem(`item-real-id-${itemId}`, item_id);
+        console.log('[handleStartPhase] Saved item_id to localStorage:', item_id);
+      }
+      
+      // Save to localStorage for persistence across remounts
+      localStorage.setItem(`item-status-${itemId}`, newStatus);
+      console.log('[handleStartPhase] Saved to localStorage:', newStatus);
+      
+      setItem((prev) => {
+        console.log('[SETITEM CALLBACK] prev.status:', prev?.status, 'newStatus:', newStatus);
+        return prev ? {
+          ...prev,
+          ...result,
+          status: newStatus,
+        } : null;
       });
+      
       setIsStartModalOpen(false);
+      
+      // Don't refetch tree - it will overwrite the optimistic update with stale data
+      // Tree sync happens naturally when user navigates back to list page
     } catch (err) {
+      console.error('[handleStartPhase ERROR]', err);
       // Error is already handled by the hook
     }
   };
 
-  const handleStartIntervalPhase = async () => {
+  const handleStartIntervalPhase = () => {
+    // Open modal instead of directly calling API
+    setIsIntervalModalOpen(true);
+  };
+
+  const handleIntervalSubmit = async (intervalDays: number) => {
     if (!bookId || !itemId) return;
+    
+    // Get the real item_id from localStorage (saved from start API response)
+    const realItemId = localStorage.getItem(`item-real-id-${itemId}`);
+    const itemIdToUse = realItemId || itemId;
+    
+    console.log('[handleIntervalSubmit] Starting with:', { 
+      bookId, 
+      itemId: itemIdToUse, 
+      intervalDays,
+      usingRealId: !!realItemId 
+    });
     try {
-      const result = await startInterval(bookId, itemId);
-      setItem({
-        ...result,
-        review_count: 0,
-        status: (result as any).status || 'interval',
+      const result = await startInterval(bookId, itemIdToUse, intervalDays);
+      console.log('[handleIntervalSubmit] API Result:', JSON.stringify(result, null, 2));
+      
+      const newStatus = (result as any).status || 'interval';
+      console.log('[handleIntervalSubmit] New status:', newStatus);
+      
+      // Save to localStorage for persistence across remounts
+      localStorage.setItem(`item-status-${itemId}`, newStatus);
+      console.log('[handleIntervalSubmit] Saved to localStorage:', newStatus);
+      
+      // Optimistic update
+      setItem((prev) => {
+        console.log('[SETITEM CALLBACK] prev.status:', prev?.status, 'newStatus:', newStatus);
+        return prev ? {
+          ...prev,
+          ...result,
+          status: newStatus,
+        } : null;
       });
-    } catch (err) {
-      // Error is already handled by the hook
+      
+      setIsIntervalModalOpen(false);
+      console.log('[handleIntervalSubmit] Phase changed successfully');
+    } catch (err: any) {
+      console.error('[handleIntervalSubmit] ERROR:', err);
+      console.error('[handleIntervalSubmit] Error response:', err?.response?.data);
     }
   };
 
   const handleActivateFsrsPhase = async () => {
     if (!bookId || !itemId) return;
+    
+    // Get the real item_id from localStorage (saved from start API response)
+    const realItemId = localStorage.getItem(`item-real-id-${itemId}`);
+    const itemIdToUse = realItemId || itemId;
+    
+    console.log('[handleActivateFsrsPhase] Starting with:', { 
+      bookId, 
+      itemId: itemIdToUse,
+      usingRealId: !!realItemId 
+    });
     try {
-      const result = await activateFsrs(bookId, itemId);
-      setItem({
-        ...result,
-        review_count: 0,
-        status: (result as any).status || 'fsrs_active',
+      const result = await activateFsrs(bookId, itemIdToUse);
+      console.log('[handleActivateFsrsPhase] API Result:', JSON.stringify(result, null, 2));
+      
+      const newStatus = (result as any).status || 'fsrs_active';
+      console.log('[handleActivateFsrsPhase] New status:', newStatus);
+      
+      // Save to localStorage for persistence across remounts
+      localStorage.setItem(`item-status-${itemId}`, newStatus);
+      console.log('[handleActivateFsrsPhase] Saved to localStorage:', newStatus);
+      
+      // Optimistic update
+      setItem((prev) => {
+        console.log('[SETITEM CALLBACK] prev.status:', prev?.status, 'newStatus:', newStatus);
+        return prev ? {
+          ...prev,
+          ...result,
+          status: newStatus,
+        } : null;
       });
-    } catch (err) {
+      
+      // Don't refetch tree - avoid overwriting optimistic update
+      console.log('[handleActivateFsrsPhase] Phase changed successfully');
+    } catch (err: any) {
+      console.error('[handleActivateFsrsPhase] ERROR:', err);
+      console.error('[handleActivateFsrsPhase] Error response:', err?.response?.data);
       // Error is already handled by the hook
     }
   };
@@ -170,7 +494,7 @@ export const ItemDetailPage = () => {
 
   const getStatusConfig = () => {
     const status = getItemStatus();
-    
+
     switch (status) {
       case 'menghafal':
         return {
@@ -528,26 +852,31 @@ export const ItemDetailPage = () => {
                 </div>
 
                 {/* Action Button */}
-                {statusConfig.buttonAction && !statusConfig.isDisabled ? (
-                  <button
-                    onClick={statusConfig.buttonAction}
-                    disabled={statusConfig.isLoading}
-                    className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-base transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {statusConfig.isLoading ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <Play className="w-5 h-5 fill-current" />
-                    )}
-                    {statusConfig.isLoading ? "Memproses..." : statusConfig.buttonText}
-                  </button>
-                ) : (
-                  <div className="text-center p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-                    <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
-                    <p className="text-emerald-100 font-medium mb-1">{statusConfig.buttonText}</p>
-                    <p className="text-emerald-400/70 text-sm">Terus pertahankan hafalanmu!</p>
-                  </div>
-                )}
+                {(() => {
+                  if (statusConfig.buttonAction && !statusConfig.isDisabled) {
+                    return (
+                      <button
+                        onClick={statusConfig.buttonAction}
+                        disabled={statusConfig.isLoading}
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-base transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      >
+                        {statusConfig.isLoading ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Play className="w-5 h-5 fill-current" />
+                        )}
+                        {statusConfig.isLoading ? "Memproses..." : statusConfig.buttonText}
+                      </button>
+                    );
+                  }
+                  return (
+                    <div className="text-center p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                      <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
+                      <p className="text-emerald-100 font-medium mb-1">{statusConfig.buttonText}</p>
+                      <p className="text-emerald-400/70 text-sm">Terus pertahankan hafalanmu!</p>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -597,6 +926,24 @@ export const ItemDetailPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Start Interval Modal */}
+      {isIntervalModalOpen && item && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setIsIntervalModalOpen(false)}
+          />
+          <div className="relative w-full max-w-sm bg-[#0F1218] border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <IntervalModalContent
+              isOpen={isIntervalModalOpen}
+              onClose={() => setIsIntervalModalOpen(false)}
+              itemTitle={item.title}
+              onSubmit={handleIntervalSubmit}
+            />
           </div>
         </div>
       )}

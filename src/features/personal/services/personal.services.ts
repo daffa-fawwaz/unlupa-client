@@ -25,6 +25,12 @@ import type {
   StartItemPhaseResponse,
   StartIntervalPhaseResponse,
   ActivateFsrsPhaseResponse,
+  BookDailyGenerateResponse,
+  BookDailyTasksResponse,
+  ReviewIntervalPayload,
+  ReviewIntervalResponse,
+  ReviewFsrsPayload,
+  ReviewFsrsResponse,
 } from "../types/personal.types";
 
 export const personalService = {
@@ -135,18 +141,51 @@ export const personalService = {
   },
 
   async startIntervalPhase(
-    bookId: string,
+    _bookId: string,
     itemId: string,
+    intervalDays: number,
   ): Promise<StartIntervalPhaseResponse> {
-    const response = await api.post(`/api/v1/books/${bookId}/items/${itemId}/start-interval`);
+    const response = await api.post(`/api/v1/items/${itemId}/start-interval`, {
+      interval_days: intervalDays,
+    });
     return response.data;
   },
 
   async activateFsrsPhase(
-    bookId: string,
+    _bookId: string,
     itemId: string,
   ): Promise<ActivateFsrsPhaseResponse> {
-    const response = await api.post(`/api/v1/books/${bookId}/items/${itemId}/activate-fsrs`);
+    const response = await api.post(`/api/v1/items/${itemId}/activate-fsrs`);
+    return response.data;
+  },
+
+  // Daily Review (Books) API methods
+  async generateDailyBooks(): Promise<BookDailyGenerateResponse> {
+    const response = await api.post("/api/v1/daily/generate");
+    return response.data;
+  },
+
+  async getDailyBooks(): Promise<BookDailyTasksResponse> {
+    const response = await api.get("/api/v1/daily");
+    return response.data;
+  },
+
+  async reviewIntervalBook(
+    itemId: string,
+    payload: ReviewIntervalPayload,
+  ): Promise<ReviewIntervalResponse> {
+    const response = await api.post(
+      `/api/v1/items/${itemId}/review-interval`,
+      payload,
+    );
+    return response.data;
+  },
+
+  async reviewFsrsBook(
+    itemId: string,
+    payload: ReviewFsrsPayload,
+  ): Promise<ReviewFsrsResponse> {
+    const response = await api.post(`/api/v1/items/${itemId}/review`, payload);
     return response.data;
   },
 };

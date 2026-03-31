@@ -295,7 +295,24 @@ const AddItemModal = ({
   onSuccess,
   nextOrder,
 }: AddItemModalProps) => {
-  const { createItem, loading } = useCreateItem();
+  const { addItemToTree } = useBookTree();
+  const { createItem, loading } = useCreateItem({
+    onBookTreeUpdate: (bid, newItem) => {
+      addItemToTree(bid, {
+        id: newItem.id,
+        book_id: newItem.book_id,
+        title: newItem.title,
+        content: newItem.content,
+        answer: newItem.answer,
+        order: newItem.order,
+        estimated_review_seconds: newItem.estimated_review_seconds,
+        review_count: 0,
+        status: 'belum_mulai',
+        created_at: newItem.created_at,
+        updated_at: newItem.updated_at,
+      });
+    },
+  });
   const [form, setForm] = useState({
     title: "",
     content: "",
@@ -853,7 +870,8 @@ export const BookDetailPage = () => {
   };
 
   const handleItemCreated = () => {
-    if (id) fetchBookTree(id);
+    // Item will be automatically added to tree by useCreateItem hook
+    // No need to refetch
   };
 
   const formatDate = (dateStr: string) =>

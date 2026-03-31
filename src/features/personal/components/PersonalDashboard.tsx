@@ -20,6 +20,7 @@ import { BookCard } from "./BookCard";
 import { CreateBookModal } from "./CreateBookModal";
 import { EditBookModal } from "./EditBookModal";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { BookDailyReviewSection } from "./BookDailyReviewSection";
 import type { Book } from "../types/personal.types";
 
 export const PersonalDashboard = () => {
@@ -144,6 +145,9 @@ export const PersonalDashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* === DAILY REVIEW SECTION (BOOKS ONLY) === */}
+        <BookDailyReviewSection />
 
         {/* === MAIN ACTION BUTTONS (Bento Grid Style) === */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16 relative z-10">

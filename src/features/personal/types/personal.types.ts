@@ -291,3 +291,73 @@ export interface ActivateFsrsPhaseResponse {
   timestamp: string;
   path: string;
 }
+
+// Daily Review Types (Books)
+export interface BookDailyGenerateResponse {
+  count: number;
+  task_date: string;
+}
+
+export interface BookDailyTask {
+  item_id: string;
+  source: string;
+  state: string;
+  task_date: string;
+  content_ref: string;
+  status?: string;
+  book_title?: string;
+  book_item_title?: string;
+}
+
+export type BookDailyTasksResponse = BookDailyTask[];
+
+export interface BookDailyReviewEstimate {
+  item_id: string;
+  content_ref: string;
+  status: string;
+  estimatedReviewSeconds: number;
+  book_title?: string;
+  book_item_title?: string;
+}
+
+export interface BookDailyReviewGroup {
+  book_id: string;
+  book_title: string;
+  itemCount: number;
+  totalEstimatedSeconds: number;
+  totalEstimatedMinutes: number;
+  items: BookDailyReviewEstimate[];
+}
+
+export interface ReviewIntervalPayload {
+  rating: 1 | 2 | 3;
+}
+
+export interface ReviewFsrsPayload {
+  rating: 1 | 2 | 3 | 4;
+}
+
+export interface ReviewIntervalResponse {
+  status: number;
+  message: string;
+  data: {
+    item_id: string;
+    status: string;
+    rating: number;
+    rating_label: string;
+    interval_days: number;
+    interval_next_review_at: string;
+    review_count: number;
+    content_ref: string;
+  };
+  timestamp: string;
+  path: string;
+}
+
+export interface ReviewFsrsResponse {
+  status: number;
+  message: string;
+  data: Record<string, unknown>;
+  timestamp?: string;
+  path?: string;
+}

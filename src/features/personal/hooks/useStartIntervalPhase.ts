@@ -9,11 +9,12 @@ export const useStartIntervalPhase = () => {
   const startInterval = async (
     bookId: string,
     itemId: string,
+    intervalDays: number,
   ): Promise<CreatedItem> => {
     setLoading(true);
     setError(null);
     try {
-      const response = await personalService.startIntervalPhase(bookId, itemId);
+      const response = await personalService.startIntervalPhase(bookId, itemId, intervalDays);
       return response.data;
     } catch (err: any) {
       const msg =
