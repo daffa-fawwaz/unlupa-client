@@ -9,8 +9,10 @@ import {
   ImageOff,
   CalendarPlus,
   Hourglass,
+  Eye,
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router";
 import { usePendingBooks } from "@/features/dashboard/admin/hooks/usePendingBooks";
 import { useApproveBook } from "@/features/dashboard/admin/hooks/useApproveBook";
 import { useRejectBook } from "@/features/dashboard/admin/hooks/useRejectBook";
@@ -39,6 +41,7 @@ const formatDate = (dateStr: string) => {
 };
 
 export const PublishedBooksRequestPage = () => {
+  const navigate = useNavigate();
   const { data, getPendingBooks } = usePendingBooks();
   const { approveBook } = useApproveBook();
   const { rejectBook } = useRejectBook();
@@ -195,6 +198,13 @@ export const PublishedBooksRequestPage = () => {
         if (item.status === "pending") {
           return (
             <div className="flex justify-end gap-2">
+              <button
+                onClick={() => navigate(`/dashboard/book-requests/${item.id}`)}
+                className="p-2 rounded-lg bg-violet-500/10 text-violet-400 hover:bg-violet-500 hover:text-white transition"
+                title="Lihat Detail Buku"
+              >
+                <Eye className="w-4 h-4" />
+              </button>
               <button
                 onClick={() =>
                   handleOpenModal("approve", item.id, item.title)

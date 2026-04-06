@@ -12,6 +12,7 @@ import { NotFoundPage } from "@/pages/404/NotFoundPage";
 import { TeacherRequestPage } from "@/features/dashboard/admin/pages/TeacherRequestPage";
 import { UserListPage } from "@/features/dashboard/admin/pages/UserListPage";
 import { PublishedBooksRequestPage } from "@/features/dashboard/admin/pages/PublishedBooksRequestPage";
+import { AdminBookDetailPage } from "@/features/dashboard/admin/pages/AdminBookDetailPage";
 import { AlquranPage } from "@/pages/alquran/AlquranPage";
 import { ComingSoonRoomPage } from "@/pages/dashboard/ComingSoonRoomPage";
 import { StatusItemsByJuzPage } from "@/features/alquran/pages/StatusItemsByJuzPage";
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
                   {
                     path: "/dashboard/book-requests",
                     element: <PublishedBooksRequestPage />,
+                  },
+                  {
+                    path: "/dashboard/book-requests/:id",
+                    element: <AdminBookDetailPage />,
                   },
                 ],
               },
