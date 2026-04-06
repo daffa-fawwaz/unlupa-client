@@ -13,14 +13,10 @@ export const useItemDetail = (itemId?: string) => {
     setLoading(true);
     setError(null);
     try {
-      console.log('[useItemDetail] Fetching item detail for:', itemId);
       const response = await personalService.getItemDetail(itemId);
-      console.log('[useItemDetail] Item detail response:', response.data);
       setItemDetail(response.data);
     } catch (err: any) {
-      console.error('[useItemDetail] Error fetching item detail:', err?.response?.data);
-      // Don't set error state - just log it and continue
-      // We'll use tree data as fallback
+      // Error logged silently - using tree data as fallback
     } finally {
       setLoading(false);
     }

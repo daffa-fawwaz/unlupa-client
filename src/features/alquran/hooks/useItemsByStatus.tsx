@@ -21,10 +21,8 @@ export const useItemsByStatus = ({
     setError(null);
     try {
       const response = await alquranService.getItemsByStatus(status);
-      console.log("hook response:", response); 
       setData(response);
     } catch (err) {
-      console.log("hook error:", err); 
       const message = axios.isAxiosError(err)
         ? (err.response?.data?.message ?? "Failed to fetch items")
         : "Failed to fetch items";

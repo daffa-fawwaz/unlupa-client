@@ -104,14 +104,11 @@ export const BookDailyReviewFlashcardModal = ({
       if (!task?.item_id) return;
 
       try {
-        console.log("[BookDailyReviewFlashcardModal] Fetching item detail for:", task.item_id);
         const response = await personalService.getItemDetail(task.item_id);
         const itemDetail = response.data;
-        
-        console.log("[BookDailyReviewFlashcardModal] Item detail response:", itemDetail);
-        
+
         setItemStatus(itemDetail.status || "unknown");
-        
+
         if (itemDetail.question && itemDetail.answer) {
           setItemContent(itemDetail.question);
           setItemAnswer(itemDetail.answer);
@@ -120,7 +117,6 @@ export const BookDailyReviewFlashcardModal = ({
           setItemAnswer("Jawaban tidak tersedia");
         }
       } catch (error) {
-        console.error("[BookDailyReviewFlashcardModal] Failed to fetch item detail:", error);
         setItemStatus("unknown");
         setItemContent("Pertanyaan tidak tersedia");
         setItemAnswer("Jawaban tidak tersedia");
@@ -172,14 +168,9 @@ export const BookDailyReviewFlashcardModal = ({
     setShowConfirmModal(false);
 
     try {
-      console.log("[BookDailyReviewFlashcardModal] Starting review process");
-      console.log("[BookDailyReviewFlashcardModal] Using item_id from daily task:", task.item_id);
-      console.log("[BookDailyReviewFlashcardModal] Selected feedback:", selectedFeedback.header, "with rating:", selectedFeedback.payloadValue);
-
       let response: ReviewIntervalResponse | ReviewFsrsResponse;
 
       if (useFsrsReview) {
-        console.log("[BookDailyReviewFlashcardModal] Using FSRS review");
         response = await reviewFsrs(
           task.item_id,
           { rating: selectedFeedback.payloadValue as 1 | 2 | 3 | 4 },
@@ -194,17 +185,14 @@ export const BookDailyReviewFlashcardModal = ({
         }
       } else {
         const intervalRating = Math.min(selectedFeedback.payloadValue, 3) as 1 | 2 | 3;
-        console.log("[BookDailyReviewFlashcardModal] Using Interval review with rating:", intervalRating);
-        
+
         response = await reviewInterval(task.item_id, { rating: intervalRating });
-        
+
         const intervalData = (response as ReviewIntervalResponse).data;
         if (intervalData && intervalData.interval_next_review_at) {
           setNextReviewDate(formatDate(intervalData.interval_next_review_at));
           setNextIntervalDays(intervalData.interval_days || 1);
         }
-        
-        console.log("[BookDailyReviewFlashcardModal] Review response:", response);
       }
 
       await onReviewed(response);
@@ -221,7 +209,6 @@ export const BookDailyReviewFlashcardModal = ({
 
       setShowSuccessModal(true);
     } catch (err) {
-      console.error("[BookDailyReviewFlashcardModal] Review failed:", err);
       setSubmittingButtonId(null);
     } finally {
       setSelectedFeedback(null);

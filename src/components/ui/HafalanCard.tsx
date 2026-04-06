@@ -55,7 +55,6 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
     }
   };
 
-  console.log("item:", item);
   return (
     <div
       onClick={onClick}

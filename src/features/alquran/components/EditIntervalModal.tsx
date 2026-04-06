@@ -24,7 +24,6 @@ export const EditIntervalModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      console.log("[EditIntervalModal] Opening with currentIntervalDays:", currentIntervalDays);
       setIntervalDays(currentIntervalDays);
       setError(null);
     }
@@ -44,13 +43,10 @@ export const EditIntervalModal = ({
         interval_days: intervalDays,
       };
 
-      console.log("[EditIntervalModal] Submitting interval_days:", intervalDays, "for itemId:", itemId);
       const response = await alquranService.editIntervalDays(itemId, payload);
-      console.log("[EditIntervalModal] Response:", response);
       onSuccess(response.data);
       onClose();
     } catch (err: unknown) {
-      console.error("[EditIntervalModal] Error:", err);
       const message =
         (err as any)?.response?.data?.message || "Gagal mengupdate interval";
       setError(message);

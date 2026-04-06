@@ -18,8 +18,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       setAuth: (user: LoginUser, token: string) => {
-        console.log("SET AUTH DIPANGGIL:", user, token);
-
         set({
           user,
           token,

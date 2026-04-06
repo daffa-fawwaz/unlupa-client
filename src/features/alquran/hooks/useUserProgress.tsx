@@ -14,7 +14,6 @@ export const useUserProgress = () => {
       setCompletedJuz(response.data.completed_juz || []);
     } catch (err: unknown) {
       // Fallback to localStorage if API fails
-      console.log("API not available, using localStorage fallback");
       const saved = localStorage.getItem("alquran:completedJuz");
       if (saved) {
         try {
@@ -41,7 +40,6 @@ export const useUserProgress = () => {
       return true;
     } catch (err: unknown) {
       // Fallback to localStorage if API fails
-      console.log("API not available, saving to localStorage fallback");
       localStorage.setItem("alquran:completedJuz", JSON.stringify(newCompletedJuz));
       setCompletedJuz(newCompletedJuz);
       return true; // Return true even on API error because localStorage worked

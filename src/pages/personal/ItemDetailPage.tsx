@@ -187,38 +187,10 @@ export const ItemDetailPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  console.log('[COMPONENT RENDER] ItemDetailPage rendered with:', { itemId, bookId, itemStatus: item?.status });
-
   // Track mount/unmount
   useEffect(() => {
-    console.log('🟢 [COMPONENT MOUNT] ItemDetailPage MOUNTED at', new Date().toISOString());
-    return () => {
-      console.log('🔴 [COMPONENT UNMOUNT] ItemDetailPage UNMOUNTED at', new Date().toISOString());
-    };
+    return () => {};
   }, []);
-
-  // Track URL changes
-  useEffect(() => {
-    console.log('🔗 [URL WATCH] Current URL:', window.location.href);
-  }, []);
-
-  // Track modal state changes with timestamps
-  const prevModalState = useRef(isStartModalOpen);
-  useEffect(() => {
-    if (prevModalState.current !== isStartModalOpen) {
-      console.log('🚪 [MODAL STATE] isStartModalOpen changed:', prevModalState.current, '→', isStartModalOpen, 'at', new Date().toISOString());
-      prevModalState.current = isStartModalOpen;
-    }
-  }, [isStartModalOpen]);
-
-  // Track item state changes
-  const prevItemStatus = useRef(item?.status);
-  useEffect(() => {
-    if (prevItemStatus.current !== item?.status) {
-      console.log('📝 [ITEM STATUS] Changed:', prevItemStatus.current, '→', item?.status, 'at', new Date().toISOString());
-      prevItemStatus.current = item?.status;
-    }
-  }, [item?.status]);
 
   const { tree, loading, error, fetchBookTree, removeItemFromTree } = useBookTree();
   const { deleteItem: deleteItemFn } = useDeleteItem({
@@ -284,13 +256,7 @@ export const ItemDetailPage = () => {
         // 2. Status from tree (if backend has updated)
         // 3. Fallback to 'belum_mulai'
         const finalStatus = persistedStatus || treeStatus || 'belum_mulai';
-        
-        console.log('[DIAGNOSTIC 1] Status resolution:', {
-          persistedStatus,
-          treeStatus,
-          finalStatus
-        });
-        
+
         // Save to localStorage for next time
         if (finalStatus !== 'belum_mulai') {
           localStorage.setItem(storageKey, finalStatus);
@@ -304,11 +270,6 @@ export const ItemDetailPage = () => {
     }
   }, [tree, itemId]);
 
-  // Watch item state changes (for debugging)
-  useEffect(() => {
-    console.log('[ITEM STATE] Current status:', item?.status);
-  }, [item]);
-
   const handleEditSuccess = (updatedItem: CreatedItem) => {
     setItem({
       ...updatedItem,
@@ -319,20 +280,12 @@ export const ItemDetailPage = () => {
 
   const handleDeleteSuccess = async () => {
     if (!itemId) {
-      console.error('[handleDeleteSuccess] No itemId provided!');
       return;
     }
-
-    console.log('[handleDeleteSuccess] === DELETE DEBUG ===');
-    console.log('[handleDeleteSuccess] URL param itemId:', itemId);
-    console.log('[handleDeleteSuccess] Current item.id:', item?.id);
-    console.log('[handleDeleteSuccess] Will delete with ID:', itemId);
-    console.log('[handleDeleteSuccess] Endpoint: DELETE /api/v1/books/items/' + itemId);
 
     try {
       // Delete endpoint: DELETE /books/items/:book_item_id
       await deleteItemFn(itemId, bookId || undefined);
-      console.log('[handleDeleteSuccess] Delete SUCCESS!');
       setIsDeleteModalOpen(false);
 
       // Clear localStorage for this item
@@ -342,11 +295,7 @@ export const ItemDetailPage = () => {
       // Navigate back to the previous page
       navigate(-1);
     } catch (err: any) {
-      console.error('[handleDeleteSuccess] DELETE FAILED!');
-      console.error('[handleDeleteSuccess] Error:', err);
-      console.error('[handleDeleteSuccess] Error response:', err?.response?.data);
-      console.error('[handleDeleteSuccess] Error status:', err?.response?.status);
-      console.error('[handleDeleteSuccess] Error message:', err?.response?.data?.message);
+      // Error handled silently - user sees error message in UI
     }
   };
 
@@ -354,26 +303,20 @@ export const ItemDetailPage = () => {
     if (!bookId || !itemId) return;
     try {
       const result = await startPhase(bookId, itemId);
-      console.log('[handleStartPhase RESULT]', typeof result, JSON.stringify(result, null, 2));
-      console.log('[handleStartPhase] result.status:', (result as any)?.status);
-      console.log('[handleStartPhase] result.data?.status:', (result as any)?.data?.status);
-      
+
       // Optimistic update - API response contains updated status
       const newStatus = (result as any).status || 'menghafal';
-      
+
       // IMPORTANT: Save the item_id from response for interval API
       const item_id = (result as any).item_id;
       if (item_id) {
         localStorage.setItem(`item-real-id-${itemId}`, item_id);
-        console.log('[handleStartPhase] Saved item_id to localStorage:', item_id);
       }
-      
+
       // Save to localStorage for persistence across remounts
       localStorage.setItem(`item-status-${itemId}`, newStatus);
-      console.log('[handleStartPhase] Saved to localStorage:', newStatus);
-      
+
       setItem((prev) => {
-        console.log('[SETITEM CALLBACK] prev.status:', prev?.status, 'newStatus:', newStatus);
         return prev ? {
           ...prev,
           ...result,
@@ -386,7 +329,6 @@ export const ItemDetailPage = () => {
       // Don't refetch tree - it will overwrite the optimistic update with stale data
       // Tree sync happens naturally when user navigates back to list page
     } catch (err) {
-      console.error('[handleStartPhase ERROR]', err);
       // Error is already handled by the hook
     }
   };
@@ -398,84 +340,60 @@ export const ItemDetailPage = () => {
 
   const handleIntervalSubmit = async (intervalDays: number) => {
     if (!bookId || !itemId) return;
-    
+
     // Get the real item_id from localStorage (saved from start API response)
     const realItemId = localStorage.getItem(`item-real-id-${itemId}`);
     const itemIdToUse = realItemId || itemId;
-    
-    console.log('[handleIntervalSubmit] Starting with:', { 
-      bookId, 
-      itemId: itemIdToUse, 
-      intervalDays,
-      usingRealId: !!realItemId 
-    });
+
     try {
       const result = await startInterval(bookId, itemIdToUse, intervalDays);
-      console.log('[handleIntervalSubmit] API Result:', JSON.stringify(result, null, 2));
-      
+
       const newStatus = (result as any).status || 'interval';
-      console.log('[handleIntervalSubmit] New status:', newStatus);
-      
+
       // Save to localStorage for persistence across remounts
       localStorage.setItem(`item-status-${itemId}`, newStatus);
-      console.log('[handleIntervalSubmit] Saved to localStorage:', newStatus);
-      
+
       // Optimistic update
       setItem((prev) => {
-        console.log('[SETITEM CALLBACK] prev.status:', prev?.status, 'newStatus:', newStatus);
         return prev ? {
           ...prev,
           ...result,
           status: newStatus,
         } : null;
       });
-      
+
       setIsIntervalModalOpen(false);
-      console.log('[handleIntervalSubmit] Phase changed successfully');
     } catch (err: any) {
-      console.error('[handleIntervalSubmit] ERROR:', err);
-      console.error('[handleIntervalSubmit] Error response:', err?.response?.data);
+      // Error handled by the hook
     }
   };
 
   const handleActivateFsrsPhase = async () => {
     if (!bookId || !itemId) return;
-    
+
     // Get the real item_id from localStorage (saved from start API response)
     const realItemId = localStorage.getItem(`item-real-id-${itemId}`);
     const itemIdToUse = realItemId || itemId;
-    
-    console.log('[handleActivateFsrsPhase] Starting with:', { 
-      bookId, 
-      itemId: itemIdToUse,
-      usingRealId: !!realItemId 
-    });
+
     try {
       const result = await activateFsrs(bookId, itemIdToUse);
-      console.log('[handleActivateFsrsPhase] API Result:', JSON.stringify(result, null, 2));
-      
+
       const newStatus = (result as any).status || 'fsrs_active';
-      console.log('[handleActivateFsrsPhase] New status:', newStatus);
-      
+
       // Save to localStorage for persistence across remounts
       localStorage.setItem(`item-status-${itemId}`, newStatus);
-      console.log('[handleActivateFsrsPhase] Saved to localStorage:', newStatus);
-      
+
       // Optimistic update
       setItem((prev) => {
-        console.log('[SETITEM CALLBACK] prev.status:', prev?.status, 'newStatus:', newStatus);
         return prev ? {
           ...prev,
           ...result,
           status: newStatus,
         } : null;
       });
-      
+
       // Don't refetch tree - avoid overwriting optimistic update
-      console.log('[handleActivateFsrsPhase] Phase changed successfully');
     } catch (err: any) {
-      console.error('[handleActivateFsrsPhase] ERROR:', err);
-      console.error('[handleActivateFsrsPhase] Error response:', err?.response?.data);
       // Error is already handled by the hook
     }
   };

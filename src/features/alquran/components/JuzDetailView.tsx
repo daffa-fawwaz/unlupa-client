@@ -70,13 +70,8 @@ export const JuzDetailView = ({
   const nextReviewMap = useMemo(() => {
     const map: Record<string, string | undefined> = {};
     for (const d of [fsrsData, intervalData]) {
-      console.log("d:", d);
-      console.log("d.data:", d?.data);
-      console.log("fsrsData:", fsrsData);
-      console.log("fsrsData.data[0]:", fsrsData?.data?.[0]);
       if (!d?.data) continue;
       for (const item of d.data) {
-        console.log("raw item:", item);
         if (item.interval_next_review_at) {
           map[item.item_id] = item.interval_next_review_at;
         } else {
@@ -86,8 +81,6 @@ export const JuzDetailView = ({
     }
     return map;
   }, [fsrsData, intervalData]);
-
-  console.log("nextReviewMap:", nextReviewMap);
 
   const juzData = useMemo(() => {
     if (!data?.data?.groups) return null;
@@ -131,9 +124,7 @@ export const JuzDetailView = ({
   };
 
   const handleToggleCompleted = async () => {
-    console.log("Toggle clicked! Juz:", juzIndex, "Current completed:", completedJuz);
     const success = await toggleJuzCompleted(juzIndex, !isJuzCompleted);
-    console.log("Toggle result:", success);
     // Refresh dashboard
     window.dispatchEvent(new Event("alquran:completedJuz-updated"));
   };

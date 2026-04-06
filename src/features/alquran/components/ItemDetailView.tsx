@@ -66,36 +66,27 @@ export const ItemDetailView = ({
   });
 
   const refreshItemData = useCallback(async () => {
-    console.log("[ItemDetailView] Refreshing item data for:", itemIdRef.current);
     try {
       const [fsrsResponse, intervalResponse] = await Promise.all([
         alquranService.getItemsByStatus("fsrs_active"),
         alquranService.getItemsByStatus("interval"),
       ]);
 
-      console.log("[ItemDetailView] FSRS Response:", fsrsResponse);
-      console.log("[ItemDetailView] Interval Response:", intervalResponse);
-
       const allItems = [...fsrsResponse.data, ...intervalResponse.data];
       const foundItem = allItems.find(
         (item) => item.item_id === itemIdRef.current
       );
 
-      console.log("[ItemDetailView] Found item:", foundItem);
-
       if (foundItem) {
-        console.log("[ItemDetailView] Found item, old next_review_at:", currentItem.next_review_at, "new next_review_at:", foundItem.next_review_at);
         setCurrentItem({
           ...foundItem,
           next_review_at: foundItem.next_review_at ?? currentItem.next_review_at,
           review_count: foundItem.review_count ?? currentItem.review_count,
           interval_days: foundItem.interval_days ?? currentItem.interval_days,
         });
-      } else {
-        console.log("[ItemDetailView] Item not found in refresh");
       }
     } catch (error) {
-      console.error("[ItemDetailView] Failed to refresh item data:", error);
+      // Error handled silently
     }
   }, [currentItem.next_review_at, currentItem.review_count, currentItem.interval_days]);
 
@@ -115,15 +106,12 @@ export const ItemDetailView = ({
 
   useEffect(() => {
     const handleReviewComplete = (event: CustomEvent<{ itemId: string; delay?: number }>) => {
-      console.log("[ItemDetailView] Received review complete event:", event.detail.itemId, "current item:", itemIdRef.current);
       if (event.detail.itemId === itemIdRef.current) {
-        console.log("[ItemDetailView] Item ID matches, triggering refresh");
-        
         // Clear any pending refresh
         if (refreshTimeoutRef.current) {
           window.clearTimeout(refreshTimeoutRef.current);
         }
-        
+
         // Delay refresh to ensure server has updated the data
         const delay = event.detail.delay ?? 500;
         refreshTimeoutRef.current = window.setTimeout(() => {
@@ -153,9 +141,6 @@ export const ItemDetailView = ({
   };
 
   const handleActionClick = async () => {
-    console.log("handleActionClick called, phase:", phase);
-    console.log("config.href:", config?.href);
-
     switch (phase) {
       case "menghafal":
         transitionTo("interval_start");
@@ -167,12 +152,11 @@ export const ItemDetailView = ({
       case "terjaga":
       case "graduate":
         if (config.href) {
-          console.log("Navigating to:", config.href);
           window.location.href = config.href;
         }
         break;
       default:
-        console.log("default case, phase:", phase);
+        break;
     }
   };
 
@@ -192,7 +176,6 @@ export const ItemDetailView = ({
   };
 
   const handleEditSuccess = (updatedData: { ContentRef: string; NextReviewAt: string | null; ReviewCount: number; IntervalDays: number }) => {
-    console.log("[ItemDetailView] handleEditSuccess called with:", updatedData);
     // Update currentItem directly with API response data
     setCurrentItem((prev) => {
       const newItem = {
@@ -202,10 +185,9 @@ export const ItemDetailView = ({
         review_count: updatedData.ReviewCount,
         interval_days: updatedData.IntervalDays,
       };
-      console.log("[ItemDetailView] Updated currentItem to:", newItem);
       return newItem;
     });
-    
+
     // Show success modal
     setSuccessMessage({
       title: "Item Berhasil Diedit",

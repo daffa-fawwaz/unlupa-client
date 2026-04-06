@@ -91,7 +91,6 @@ export const DailyReviewFlashcardModal = ({
   >(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [itemData, setItemData] = useState<ItemByStatus | null>(null);
-  console.log("itemData:", itemData);
   const {
     reviewFsrs,
     loading: loadingFsrs,
@@ -122,7 +121,7 @@ export const DailyReviewFlashcardModal = ({
           setItemData(foundItem);
         }
       } catch (error) {
-        console.error("Failed to fetch item data:", error);
+        // Error handled silently
       }
     };
 
@@ -192,8 +191,7 @@ export const DailyReviewFlashcardModal = ({
       }
 
       await onReviewed(response);
-      
-      console.log("[DailyReviewFlashcardModal] Review completed, dispatching event for item:", task.item_id, "useFsrsReview:", useFsrsReview);
+
       // Dispatch event to notify other components that item was reviewed
       // For fsrs_active, use longer delay to ensure server has updated
       window.dispatchEvent(
