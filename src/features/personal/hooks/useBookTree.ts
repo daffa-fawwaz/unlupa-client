@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { personalService } from "@/features/personal/services/personal.services";
-import type { BookTree, BookItem } from "@/features/personal/types/personal.types";
+import type { BookTree, BookItem, Module } from "@/features/personal/types/personal.types";
 
 // Cache for book trees to avoid refetching
 const bookTreeCache = new Map<string, BookTree>();
@@ -11,9 +11,9 @@ export const useBookTree = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBookTree = useCallback(async (bookId: string): Promise<BookTree | null> => {
-    // Return from cache if available
-    if (bookTreeCache.has(bookId)) {
+  const fetchBookTree = useCallback(async (bookId: string, forceRefresh = false): Promise<BookTree | null> => {
+    // Return from cache if available and not forcing refresh
+    if (!forceRefresh && bookTreeCache.has(bookId)) {
       const cached = bookTreeCache.get(bookId) || null;
       setTree(cached);
       return cached;
@@ -65,16 +65,13 @@ export const useBookTree = () => {
   }, [fetchBookTree]);
 
   const getItemFromTree = useCallback((itemId: string): BookItem | null => {
-    // First, try to find which book this item belongs to
     const bookId = itemToBookMap.get(itemId);
     if (bookId) {
       const bookTree = bookTreeCache.get(bookId);
       if (bookTree) {
-        // Search in book items
         const foundItem = bookTree.items.find(item => item.id === itemId);
         if (foundItem) return foundItem;
         
-        // Search in modules
         const searchInModules = (modules: BookTree['modules']): BookItem | null => {
           for (const module of modules) {
             if (module.items) {
@@ -115,6 +112,68 @@ export const useBookTree = () => {
     }
   }, []);
 
+  // Add a new module to the tree state immediately (optimistic update)
+  const addModuleToTree = useCallback((bookId: string, newModule: Module) => {
+    const cached = bookTreeCache.get(bookId);
+    if (cached) {
+      const updatedTree: BookTree = {
+        ...cached,
+        modules: [...cached.modules, newModule],
+      };
+      bookTreeCache.set(bookId, updatedTree);
+      setTree(updatedTree);
+    }
+  }, []);
+
+  // Add an item to a specific module in the tree (optimistic update)
+  const addItemToModule = useCallback((bookId: string, moduleId: string, newItem: BookItem) => {
+    const cached = bookTreeCache.get(bookId);
+    if (cached) {
+      const updateModules = (modules: Module[]): Module[] =>
+        modules.map((m) => {
+          if (m.id === moduleId) {
+            return { ...m, items: [...(m.items ?? []), newItem] };
+          }
+          if (m.children?.length) {
+            return { ...m, children: updateModules(m.children) };
+          }
+          return m;
+        });
+
+      const updatedTree: BookTree = {
+        ...cached,
+        modules: updateModules(cached.modules),
+      };
+      bookTreeCache.set(bookId, updatedTree);
+      setTree(updatedTree);
+      itemToBookMap.set(newItem.id, bookId);
+    }
+  }, []);
+
+  // Add a child module to a parent module in the tree (optimistic update)
+  const addChildModuleToTree = useCallback((bookId: string, parentId: string, newModule: Module) => {
+    const cached = bookTreeCache.get(bookId);
+    if (cached) {
+      const updateModules = (modules: Module[]): Module[] =>
+        modules.map((m) => {
+          if (m.id === parentId) {
+            return { ...m, children: [...(m.children ?? []), newModule] };
+          }
+          if (m.children?.length) {
+            return { ...m, children: updateModules(m.children) };
+          }
+          return m;
+        });
+
+      const updatedTree: BookTree = {
+        ...cached,
+        modules: updateModules(cached.modules),
+      };
+      bookTreeCache.set(bookId, updatedTree);
+      setTree(updatedTree);
+    }
+  }, []);
+
   const removeItemFromTree = useCallback((bookId: string, itemId: string) => {
     const cached = bookTreeCache.get(bookId);
     if (cached) {
@@ -128,5 +187,5 @@ export const useBookTree = () => {
     }
   }, []);
 
-  return { tree, getBookTree, getItemFromTree, fetchBookTree, clearCache, addItemToTree, removeItemFromTree, loading, error };
+  return { tree, getBookTree, getItemFromTree, fetchBookTree, clearCache, addItemToTree, addModuleToTree, addItemToModule, addChildModuleToTree, removeItemFromTree, loading, error };
 };

@@ -40,14 +40,14 @@ import type {
 interface AddModuleModalProps {
   bookId: string;
   onClose: () => void;
-  onSuccess: () => void;
+  onCreated: (module: import("@/features/personal/types/personal.types").CreatedModule) => void;
   nextOrder: number;
 }
 
 const AddModuleModal = ({
   bookId,
   onClose,
-  onSuccess,
+  onCreated,
   nextOrder,
 }: AddModuleModalProps) => {
   const { createModule, loading } = useCreateModule();
@@ -64,12 +64,13 @@ const AddModuleModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createModule(bookId, {
+      const created = await createModule(bookId, {
         title: form.title.trim(),
         description: form.description.trim(),
         order: form.order,
         parent_id: null,
       });
+      onCreated(created);
       setResultState("success");
     } catch (err: any) {
       setErrorMsg(err.message ?? "Terjadi kesalahan.");
@@ -78,7 +79,6 @@ const AddModuleModal = ({
   };
 
   const handleSuccessClose = () => {
-    onSuccess();
     onClose();
   };
 
@@ -285,34 +285,17 @@ const AddModuleModal = ({
 interface AddItemModalProps {
   bookId: string;
   onClose: () => void;
-  onSuccess: () => void;
+  onCreated: (item: import("@/features/personal/types/personal.types").CreatedItem) => void;
   nextOrder: number;
 }
 
 const AddItemModal = ({
   bookId,
   onClose,
-  onSuccess,
+  onCreated,
   nextOrder,
 }: AddItemModalProps) => {
-  const { addItemToTree } = useBookTree();
-  const { createItem, loading } = useCreateItem({
-    onBookTreeUpdate: (bid, newItem) => {
-      addItemToTree(bid, {
-        id: newItem.id,
-        book_id: newItem.book_id,
-        title: newItem.title,
-        content: newItem.content,
-        answer: newItem.answer,
-        order: newItem.order,
-        estimated_review_seconds: newItem.estimated_review_seconds,
-        review_count: 0,
-        status: 'belum_mulai',
-        created_at: newItem.created_at,
-        updated_at: newItem.updated_at,
-      });
-    },
-  });
+  const { createItem, loading } = useCreateItem();
   const [form, setForm] = useState({
     title: "",
     content: "",
@@ -332,12 +315,13 @@ const AddItemModal = ({
       return;
     }
     try {
-      await createItem(bookId, {
+      const created = await createItem(bookId, {
         title: form.title.trim(),
         content: form.content.trim(),
         answer: form.answer.trim(),
         order: form.order,
       });
+      onCreated(created);
       setResultState("success");
     } catch (err: any) {
       setErrorMsg(err.message ?? "Terjadi kesalahan.");
@@ -346,7 +330,6 @@ const AddItemModal = ({
   };
 
   const handleSuccessClose = () => {
-    onSuccess();
     onClose();
   };
 
@@ -850,7 +833,7 @@ export const BookDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { book, loading, error, fetchBookDetail } = useBookDetail();
-  const { tree, fetchBookTree } = useBookTree();
+  const { tree, fetchBookTree, addModuleToTree, addItemToTree } = useBookTree();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Modal flow: null | "picker" | "module" | "item"
@@ -865,13 +848,33 @@ export const BookDetailPage = () => {
     }
   }, [id, fetchBookDetail, fetchBookTree]);
 
-  const handleModuleCreated = () => {
-    if (id) fetchBookTree(id);
+  const handleModuleCreated = (created: import("@/features/personal/types/personal.types").CreatedModule) => {
+    // Optimistic update: langsung tambah ke tree tanpa refetch
+    addModuleToTree(id!, {
+      id: created.id,
+      title: created.title,
+      description: created.description,
+      order: created.order,
+      items: [],
+      children: [],
+    });
   };
 
-  const handleItemCreated = () => {
-    // Item will be automatically added to tree by useCreateItem hook
-    // No need to refetch
+  const handleItemCreated = (created: import("@/features/personal/types/personal.types").CreatedItem) => {
+    // Optimistic update: langsung tambah ke tree tanpa refetch
+    addItemToTree(id!, {
+      id: created.id,
+      book_id: created.book_id,
+      title: created.title,
+      content: created.content,
+      answer: created.answer,
+      order: created.order,
+      estimated_review_seconds: created.estimated_review_seconds,
+      review_count: 0,
+      status: 'belum_mulai',
+      created_at: created.created_at,
+      updated_at: created.updated_at,
+    });
   };
 
   const formatDate = (dateStr: string) =>
@@ -1234,7 +1237,7 @@ export const BookDetailPage = () => {
           bookId={id}
           nextOrder={nextOrder}
           onClose={() => setModalStep(null)}
-          onSuccess={handleModuleCreated}
+          onCreated={handleModuleCreated}
         />
       )}
 
@@ -1243,7 +1246,7 @@ export const BookDetailPage = () => {
           bookId={id}
           nextOrder={nextOrder}
           onClose={() => setModalStep(null)}
-          onSuccess={handleItemCreated}
+          onCreated={handleItemCreated}
         />
       )}
     </div>

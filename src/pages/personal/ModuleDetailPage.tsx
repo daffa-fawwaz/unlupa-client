@@ -36,7 +36,7 @@ interface AddItemToModuleModalProps {
   bookId: string;
   moduleId: string;
   onClose: () => void;
-  onSuccess: () => void;
+  onCreated: (item: import("@/features/personal/types/personal.types").CreatedModuleItem) => void;
   nextOrder: number;
 }
 
@@ -44,7 +44,7 @@ const AddItemToModuleModal = ({
   bookId,
   moduleId,
   onClose,
-  onSuccess,
+  onCreated,
   nextOrder,
 }: AddItemToModuleModalProps) => {
   const { createModuleItem, loading } = useCreateModuleItem();
@@ -69,7 +69,7 @@ const AddItemToModuleModal = ({
       return;
     }
     try {
-      await createModuleItem(moduleId, {
+      const created = await createModuleItem(moduleId, {
         book_id: bookId,
         title: form.title.trim(),
         content: form.content.trim(),
@@ -78,6 +78,7 @@ const AddItemToModuleModal = ({
         estimate_value: form.estimate_value,
         estimate_unit: form.estimate_unit,
       });
+      onCreated(created);
       setResultState("success");
     } catch (err: any) {
       setErrorMsg(err.message ?? "Terjadi kesalahan.");
@@ -86,7 +87,6 @@ const AddItemToModuleModal = ({
   };
 
   const handleSuccessClose = () => {
-    onSuccess();
     onClose();
   };
 
@@ -406,7 +406,7 @@ interface AddSubModuleModalProps {
   bookId: string;
   parentId: string;
   onClose: () => void;
-  onSuccess: () => void;
+  onCreated: (module: import("@/features/personal/types/personal.types").CreatedModule) => void;
   nextOrder: number;
 }
 
@@ -414,7 +414,7 @@ const AddSubModuleModal = ({
   bookId,
   parentId,
   onClose,
-  onSuccess,
+  onCreated,
   nextOrder,
 }: AddSubModuleModalProps) => {
   const { createModule, loading } = useCreateModule();
@@ -436,12 +436,13 @@ const AddSubModuleModal = ({
       return;
     }
     try {
-      await createModule(bookId, {
+      const created = await createModule(bookId, {
         title: form.title.trim(),
         description: form.description.trim(),
         order: form.order,
         parent_id: parentId,
       });
+      onCreated(created);
       setResultState("success");
     } catch (err: any) {
       setErrorMsg(err.message ?? "Terjadi kesalahan.");
@@ -450,7 +451,6 @@ const AddSubModuleModal = ({
   };
 
   const handleSuccessClose = () => {
-    onSuccess();
     onClose();
   };
 
@@ -660,7 +660,7 @@ export const ModuleDetailPage = () => {
     moduleId: string;
   }>();
   const navigate = useNavigate();
-  const { tree, loading, error, fetchBookTree } = useBookTree();
+  const { tree, loading, error, fetchBookTree, addItemToModule, addChildModuleToTree } = useBookTree();
   const { deleteModule } = useDeleteModule();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -688,15 +688,34 @@ export const ModuleDetailPage = () => {
   const items = module?.items ?? [];
 
   const handleEditSuccess = () => {
-    if (bookId) fetchBookTree(bookId);
+    if (bookId) fetchBookTree(bookId, true); // force refresh setelah edit
   };
 
-  const handleAddItemSuccess = () => {
-    if (bookId) fetchBookTree(bookId);
+  const handleAddItemSuccess = (created: import("@/features/personal/types/personal.types").CreatedModuleItem) => {
+    addItemToModule(bookId!, moduleId!, {
+      id: created.id,
+      book_id: created.book_id,
+      title: created.title,
+      content: created.content,
+      answer: created.answer,
+      order: created.order,
+      estimated_review_seconds: created.estimated_review_seconds,
+      review_count: 0,
+      status: 'belum_mulai',
+      created_at: created.created_at,
+      updated_at: created.updated_at,
+    });
   };
 
-  const handleAddSubModuleSuccess = () => {
-    if (bookId) fetchBookTree(bookId);
+  const handleAddSubModuleSuccess = (created: import("@/features/personal/types/personal.types").CreatedModule) => {
+    addChildModuleToTree(bookId!, moduleId!, {
+      id: created.id,
+      title: created.title,
+      description: created.description,
+      order: created.order,
+      items: [],
+      children: [],
+    });
   };
 
   const handleDelete = async () => {
@@ -1059,7 +1078,7 @@ export const ModuleDetailPage = () => {
           bookId={bookId!}
           moduleId={moduleId!}
           onClose={() => setIsAddItemModalOpen(false)}
-          onSuccess={handleAddItemSuccess}
+          onCreated={handleAddItemSuccess}
           nextOrder={(items?.length ?? 0) + 1}
         />
       )}
@@ -1070,7 +1089,7 @@ export const ModuleDetailPage = () => {
           bookId={bookId!}
           parentId={moduleId!}
           onClose={() => setIsAddSubModuleModalOpen(false)}
-          onSuccess={handleAddSubModuleSuccess}
+          onCreated={handleAddSubModuleSuccess}
           nextOrder={(module.children?.length ?? 0) + 1}
         />
       )}
