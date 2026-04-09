@@ -41,6 +41,7 @@ export const ItemDetailPage = () => {
   const [item, setItem] = useState<BookItem | null>(null);
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
   const [isIntervalModalOpen, setIsIntervalModalOpen] = useState(false);
+  const [isActivateFsrsModalOpen, setIsActivateFsrsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -54,7 +55,7 @@ export const ItemDetailPage = () => {
   const { startPhase, loading: isStarting } = useStartItemPhase();
   const { startInterval, loading: isStartingInterval } =
     useStartIntervalPhase();
-  const { activateFsrs } = useActivateFsrsPhase();
+  const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
 
   useEffect(() => {
     if (bookId && !tree) {
@@ -196,11 +197,6 @@ export const ItemDetailPage = () => {
     }
   };
 
-  const handleStartIntervalPhase = () => {
-    // Open modal instead of directly calling API
-    setIsIntervalModalOpen(true);
-  };
-
   const handleIntervalSubmit = async (intervalDays: number) => {
     if (!bookId || !itemId) return;
 
@@ -234,12 +230,9 @@ export const ItemDetailPage = () => {
     }
   };
 
-  // TODO: Wire this to UI when FSRS manual activation is needed
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _handleActivateFsrsPhase = async () => {
+  const handleActivateFsrsPhase = async () => {
     if (!bookId || !itemId) return;
 
-    // Get the real item_id from localStorage (saved from start API response)
     const realItemId = localStorage.getItem(`item-real-id-${itemId}`);
     const itemIdToUse = realItemId || itemId;
 
@@ -248,19 +241,15 @@ export const ItemDetailPage = () => {
       const resultObj = result as unknown as Record<string, unknown>;
       const newStatus = (resultObj.status as string) || "fsrs_active";
 
-      // Save to localStorage for persistence across remounts
       localStorage.setItem(`item-status-${itemId}`, newStatus);
 
-      // Optimistic update
       setItem((prev) =>
         prev
-          ? {
-              ...prev,
-              ...result,
-              status: newStatus as BookItem["status"],
-            }
+          ? { ...prev, ...result, status: newStatus as BookItem["status"] }
           : null,
       );
+
+      setIsActivateFsrsModalOpen(false);
     } catch (err: unknown) {
       const error = err as { response?: { data?: unknown } };
       console.error("[handleActivateFsrsPhase] ERROR:", error?.response?.data);
@@ -298,8 +287,8 @@ export const ItemDetailPage = () => {
           icon: Brain,
           description: "Item sedang dalam tahap menghafal",
           buttonText: "Mulai Ujian Interval",
-          buttonAction: handleStartIntervalPhase,
-          isLoading: isStartingInterval,
+          buttonAction: () => setIsActivateFsrsModalOpen(true),
+          isLoading: isActivatingFsrs,
         };
       case "fsrs_active":
         return {
@@ -563,7 +552,7 @@ export const ItemDetailPage = () => {
                                 : getNormalizedStatus() === "menghafal"
                                   ? "35%"
                                     : getNormalizedStatus() === "fsrs_active"
-                                      ? "75%"
+                                      ? "65%"
                                       : "100%",
                           }}
                         />
@@ -785,6 +774,19 @@ export const ItemDetailPage = () => {
           isLoading={isStartingInterval}
         />
       )}
+
+      {/* Activate FSRS Confirm Modal */}
+      <ConfirmModal
+        isOpen={isActivateFsrsModalOpen}
+        onClose={() => setIsActivateFsrsModalOpen(false)}
+        onConfirm={handleActivateFsrsPhase}
+        title="Mulai Ujian Interval?"
+        message="Apakah Anda yakin ingin memulai ujian interval? Item akan masuk ke sistem FSRS untuk review terjadwal."
+        confirmText="Ya, Mulai"
+        cancelText="Tidak"
+        icon={Target}
+        variant="info"
+      />
 
 
       {/* Edit Item Modal */}
