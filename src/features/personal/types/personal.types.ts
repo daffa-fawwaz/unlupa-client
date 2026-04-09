@@ -77,7 +77,7 @@ export interface BookItem {
   order: number;
   estimated_review_seconds: number;
   review_count: number;
-  status: 'belum_mulai' | 'menghafal' | 'interval' | 'fsrs_active' | 'graduate';
+  status: 'belum_mulai' | 'start' | 'menghafal' | 'interval' | 'fsrs_active' | 'graduate';
   created_at: string;
   updated_at: string;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
@@ -13,166 +13,23 @@ import {
   Target,
   CheckCircle2,
   Play,
-  Clock,
   PenSquare,
   Trash2,
   AlertTriangle,
-  CalendarDays,
-  ChevronRight,
-  X,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EditItemModal } from "@/features/personal/components/EditItemModal";
+import { IntervalModal } from "@/features/personal/components/IntervalModal";
 import { useDeleteItem } from "@/features/personal/hooks/useDeleteItem";
 import { useStartItemPhase } from "@/features/personal/hooks/useStartItemPhase";
 import { useStartIntervalPhase } from "@/features/personal/hooks/useStartIntervalPhase";
 import { useActivateFsrsPhase } from "@/features/personal/hooks/useActivateFsrsPhase";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
-import type { BookItem, CreatedItem } from "@/features/personal/types/personal.types";
-
-/* ------------------------------------------------------------------ */
-/* Interval Modal Content                                               */
-/* ------------------------------------------------------------------ */
-interface IntervalModalContentProps {
-  isOpen: boolean;
-  onClose: () => void;
-  itemTitle: string;
-  onSubmit: (intervalDays: number) => Promise<void>;
-}
-
-const IntervalModalContent = ({
-  isOpen,
-  onClose,
-  itemTitle,
-  onSubmit,
-}: IntervalModalContentProps) => {
-  const [intervalDays, setIntervalDays] = useState<number>(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async () => {
-    if (intervalDays < 1) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      await onSubmit(intervalDays);
-      // Reset after close animation
-      setTimeout(() => setIntervalDays(1), 300);
-    } catch (err: any) {
-      setError(err?.message || "Gagal memulai interval");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  // Preset pilihan hari yang umum
-  const PRESETS = [1, 3, 7, 14, 30];
-
-  return (
-    <>
-      {/* Header */}
-      <div className="p-6 border-b border-white/5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-amber-500/20 text-amber-500">
-            <CalendarDays className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-bold text-white">Mulai Latihan Interval</h2>
-            <p className="text-xs text-gray-400 truncate max-w-[180px]">
-              {itemTitle}
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Body */}
-      <div className="p-6 space-y-6">
-        {/* Tampilan angka hari yang dipilih */}
-        <div className="text-center">
-          <span className="text-6xl font-mono font-bold text-white">
-            {intervalDays}
-          </span>
-          <p className="text-sm text-gray-400 mt-1">hari sekali review</p>
-        </div>
-
-        {/* Preset buttons — UX shortcut */}
-        <div>
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block">
-            Pilih cepat
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {PRESETS.map((preset) => (
-              <button
-                key={preset}
-                onClick={() => setIntervalDays(preset)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${
-                  intervalDays === preset
-                    ? "bg-amber-500/20 border-amber-500/50 text-amber-400"
-                    : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10"
-                }`}
-              >
-                {preset}h
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Input manual — untuk nilai kustom */}
-        <div>
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block">
-            Atau masukkan manual
-          </label>
-          <input
-            type="number"
-            min={1}
-            max={365}
-            value={intervalDays}
-            onChange={(e) =>
-              setIntervalDays(Math.max(1, parseInt(e.target.value) || 1))
-            }
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-lg font-mono focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 transition-all"
-          />
-        </div>
-
-        {/* Error message */}
-        {error && (
-          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20">
-            <p className="text-rose-400 text-sm text-center">{error}</p>
-          </div>
-        )}
-
-        {/* Submit button */}
-        <button
-          onClick={handleSubmit}
-          disabled={loading || intervalDays < 1}
-          className="w-full py-4 rounded-xl bg-linear-to-r from-amber-500 to-orange-600 text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Memulai...</span>
-            </>
-          ) : (
-            <>
-              <span>Mulai Interval</span>
-              <ChevronRight className="w-5 h-5" />
-            </>
-          )}
-        </button>
-      </div>
-    </>
-  );
-};
+import type {
+  BookItem,
+  CreatedItem,
+} from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
 /* Item Detail Page (for Book Items)                                    */
@@ -187,20 +44,17 @@ export const ItemDetailPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  // Track mount/unmount
-  useEffect(() => {
-    return () => {};
-  }, []);
-
-  const { tree, loading, error, fetchBookTree, removeItemFromTree } = useBookTree();
+  const { tree, loading, error, fetchBookTree, removeItemFromTree } =
+    useBookTree();
   const { deleteItem: deleteItemFn } = useDeleteItem({
     onBookTreeUpdate: (bid, deletedItemId) => {
       removeItemFromTree(bid, deletedItemId);
     },
   });
   const { startPhase, loading: isStarting } = useStartItemPhase();
-  const { startInterval, loading: isStartingInterval } = useStartIntervalPhase();
-  const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
+  const { startInterval, loading: isStartingInterval } =
+    useStartIntervalPhase();
+  const { activateFsrs } = useActivateFsrsPhase();
 
   useEffect(() => {
     if (bookId && !tree) {
@@ -208,83 +62,91 @@ export const ItemDetailPage = () => {
     }
   }, [bookId, tree, fetchBookTree]);
 
-  // Set item data from tree (single source of truth)
-  // IMPORTANT: Also check localStorage for persisted optimistic updates
+  // Sync item data from tree and localStorage
+  // NOTE: This effect synchronizes component state with external data sources
+  // (tree data and localStorage), which is a valid use case for useEffect.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    if (tree && itemId) {
-      const findItem = (): BookItem | null => {
-        // Search in book-level items first
-        if (tree.items && Array.isArray(tree.items)) {
-          const found = tree.items.find((i: BookItem) => i.id === itemId);
-          if (found) {
-            return found;
+    if (!tree || !itemId) {
+      setItem(null);
+      return;
+    }
+
+    const findItem = (): BookItem | null => {
+      // Search in book-level items first
+      if (tree.items && Array.isArray(tree.items)) {
+        const found = tree.items.find((i: BookItem) => i.id === itemId);
+        if (found) {
+          return found;
+        }
+      }
+
+      // Search in modules
+      const searchInModules = (
+        modules: Array<Record<string, unknown>>,
+      ): BookItem | null => {
+        for (const mod of modules) {
+          if (mod.items && Array.isArray(mod.items)) {
+            const found = mod.items.find((i: BookItem) => i.id === itemId);
+            if (found) {
+              return found;
+            }
+          }
+          if (mod.children && Array.isArray(mod.children) && mod.children.length > 0) {
+            const found = searchInModules(mod.children as Array<Record<string, unknown>>);
+            if (found) return found;
           }
         }
-
-        // Search in modules
-        const searchInModules = (modules: any[]): BookItem | null => {
-          for (const mod of modules) {
-            if (mod.items && Array.isArray(mod.items)) {
-              const found = mod.items.find((i: BookItem) => i.id === itemId);
-              if (found) {
-                return found;
-              }
-            }
-            if (mod.children && mod.children.length > 0) {
-              const found = searchInModules(mod.children);
-              if (found) return found;
-            }
-          }
-          return null;
-        };
-
-        const found = searchInModules(tree.modules);
-        if (found) return found;
-
         return null;
       };
 
-      const foundItem = findItem();
-      if (foundItem) {
-        // Check localStorage for persisted status (from optimistic update)
-        const storageKey = `item-status-${itemId}`;
-        const persistedStatus = localStorage.getItem(storageKey);
-        const treeStatus = (foundItem as any).status;
-        
-        // Priority:
-        // 1. Persisted status from localStorage (optimistic update)
-        // 2. Status from tree (if backend has updated)
-        // 3. Fallback to 'belum_mulai'
-        const finalStatus = persistedStatus || treeStatus || 'belum_mulai';
+      const found = searchInModules(tree.modules as unknown as Array<Record<string, unknown>>);
+      if (found) return found;
 
-        // Save to localStorage for next time
-        if (finalStatus !== 'belum_mulai') {
-          localStorage.setItem(storageKey, finalStatus);
-        }
-        
-        setItem({
-          ...foundItem,
-          status: finalStatus as BookItem['status'],
-        });
-      }
+      return null;
+    };
+
+    const foundItem = findItem();
+    if (!foundItem) {
+      setItem(null);
+      return;
     }
+
+    // Check localStorage for persisted status (from optimistic update)
+    const storageKey = `item-status-${itemId}`;
+    const persistedStatus = localStorage.getItem(storageKey);
+    const treeStatus = (foundItem as unknown as Record<string, unknown>).status as string | undefined;
+
+    // Priority:
+    // 1. Persisted status from localStorage (optimistic update)
+    // 2. Status from tree (if backend has updated)
+    // 3. Fallback to 'belum_mulai'
+    const finalStatus = persistedStatus || treeStatus || "belum_mulai";
+
+    // Save to localStorage for next time
+    if (finalStatus !== "belum_mulai") {
+      localStorage.setItem(storageKey, finalStatus);
+    }
+
+    setItem({
+      ...foundItem,
+      status: finalStatus as BookItem["status"],
+    });
   }, [tree, itemId]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleEditSuccess = (updatedItem: CreatedItem) => {
     setItem({
       ...updatedItem,
       review_count: 0,
-      status: (updatedItem as any).status || 'belum_mulai',
+      status: (updatedItem as unknown as Record<string, unknown>).status as BookItem["status"] || "belum_mulai",
     });
   };
 
   const handleDeleteSuccess = async () => {
-    if (!itemId) {
-      return;
-    }
+    if (!itemId) return;
 
     try {
-      // Delete endpoint: DELETE /books/items/:book_item_id
       await deleteItemFn(itemId, bookId || undefined);
       setIsDeleteModalOpen(false);
 
@@ -294,8 +156,9 @@ export const ItemDetailPage = () => {
 
       // Navigate back to the previous page
       navigate(-1);
-    } catch (err: any) {
-      // Error handled silently - user sees error message in UI
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string }; status?: number } };
+      console.error("[handleDeleteSuccess] Error:", error?.response?.data?.message);
     }
   };
 
@@ -305,10 +168,11 @@ export const ItemDetailPage = () => {
       const result = await startPhase(bookId, itemId);
 
       // Optimistic update - API response contains updated status
-      const newStatus = (result as any).status || 'menghafal';
+      const resultObj = result as unknown as Record<string, unknown>;
+      const newStatus = (resultObj.status as string) || "menghafal";
 
       // IMPORTANT: Save the item_id from response for interval API
-      const item_id = (result as any).item_id;
+      const item_id = resultObj.item_id as string | undefined;
       if (item_id) {
         localStorage.setItem(`item-real-id-${itemId}`, item_id);
       }
@@ -316,20 +180,19 @@ export const ItemDetailPage = () => {
       // Save to localStorage for persistence across remounts
       localStorage.setItem(`item-status-${itemId}`, newStatus);
 
-      setItem((prev) => {
-        return prev ? {
-          ...prev,
-          ...result,
-          status: newStatus,
-        } : null;
-      });
-      
+      setItem((prev) =>
+        prev
+          ? {
+              ...prev,
+              ...result,
+              status: newStatus as BookItem["status"],
+            }
+          : null,
+      );
+
       setIsStartModalOpen(false);
-      
-      // Don't refetch tree - it will overwrite the optimistic update with stale data
-      // Tree sync happens naturally when user navigates back to list page
-    } catch (err) {
-      // Error is already handled by the hook
+    } catch (err: unknown) {
+      console.error("[handleStartPhase ERROR]", err);
     }
   };
 
@@ -347,28 +210,33 @@ export const ItemDetailPage = () => {
 
     try {
       const result = await startInterval(bookId, itemIdToUse, intervalDays);
-
-      const newStatus = (result as any).status || 'interval';
+      const resultObj = result as unknown as Record<string, unknown>;
+      const newStatus = (resultObj.status as string) || "interval";
 
       // Save to localStorage for persistence across remounts
       localStorage.setItem(`item-status-${itemId}`, newStatus);
 
       // Optimistic update
-      setItem((prev) => {
-        return prev ? {
-          ...prev,
-          ...result,
-          status: newStatus,
-        } : null;
-      });
+      setItem((prev) =>
+        prev
+          ? {
+              ...prev,
+              ...result,
+              status: newStatus as BookItem["status"],
+            }
+          : null,
+      );
 
       setIsIntervalModalOpen(false);
-    } catch (err: any) {
-      // Error handled by the hook
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: unknown } };
+      console.error("[handleIntervalSubmit] ERROR:", error?.response?.data);
     }
   };
 
-  const handleActivateFsrsPhase = async () => {
+  // TODO: Wire this to UI when FSRS manual activation is needed
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _handleActivateFsrsPhase = async () => {
     if (!bookId || !itemId) return;
 
     // Get the real item_id from localStorage (saved from start API response)
@@ -377,24 +245,25 @@ export const ItemDetailPage = () => {
 
     try {
       const result = await activateFsrs(bookId, itemIdToUse);
-
-      const newStatus = (result as any).status || 'fsrs_active';
+      const resultObj = result as unknown as Record<string, unknown>;
+      const newStatus = (resultObj.status as string) || "fsrs_active";
 
       // Save to localStorage for persistence across remounts
       localStorage.setItem(`item-status-${itemId}`, newStatus);
 
       // Optimistic update
-      setItem((prev) => {
-        return prev ? {
-          ...prev,
-          ...result,
-          status: newStatus,
-        } : null;
-      });
-
-      // Don't refetch tree - avoid overwriting optimistic update
-    } catch (err: any) {
-      // Error is already handled by the hook
+      setItem((prev) =>
+        prev
+          ? {
+              ...prev,
+              ...result,
+              status: newStatus as BookItem["status"],
+            }
+          : null,
+      );
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: unknown } };
+      console.error("[handleActivateFsrsPhase] ERROR:", error?.response?.data);
     }
   };
 
@@ -407,14 +276,20 @@ export const ItemDetailPage = () => {
   };
 
   const getItemStatus = () => {
-    return item?.status || 'belum_mulai';
+    return item?.status || "belum_mulai";
+  };
+
+  // Normalize 'start' → 'menghafal' for display purposes
+  const getNormalizedStatus = () => {
+    const s = getItemStatus();
+    return s === "start" ? "menghafal" : s;
   };
 
   const getStatusConfig = () => {
-    const status = getItemStatus();
+    const status = getNormalizedStatus();
 
     switch (status) {
-      case 'menghafal':
+      case "menghafal":
         return {
           label: "Menghafal",
           color: "text-blue-400",
@@ -422,23 +297,11 @@ export const ItemDetailPage = () => {
           border: "border-blue-500/20",
           icon: Brain,
           description: "Item sedang dalam tahap menghafal",
-          buttonText: "Mulai Latihan Interval",
+          buttonText: "Mulai Ujian Interval",
           buttonAction: handleStartIntervalPhase,
           isLoading: isStartingInterval,
         };
-      case 'interval':
-        return {
-          label: "Latihan Interval",
-          color: "text-amber-400",
-          bg: "bg-amber-500/10",
-          border: "border-amber-500/20",
-          icon: Clock,
-          description: "Item sedang dalam masa latihan interval",
-          buttonText: "Mulai Ujian Interval",
-          buttonAction: handleActivateFsrsPhase,
-          isLoading: isActivatingFsrs,
-        };
-      case 'fsrs_active':
+      case "fsrs_active":
         return {
           label: "Ujian Interval",
           color: "text-purple-400",
@@ -451,7 +314,7 @@ export const ItemDetailPage = () => {
           isDisabled: true,
           isLoading: false,
         };
-      case 'graduate':
+      case "graduate":
         return {
           label: "Graduate",
           color: "text-emerald-400",
@@ -551,7 +414,9 @@ export const ItemDetailPage = () => {
             <div className="w-16 h-16 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
               <AlertCircle className="w-8 h-8 text-amber-400" />
             </div>
-            <p className="text-amber-400 text-sm font-medium">Item tidak ditemukan</p>
+            <p className="text-amber-400 text-sm font-medium">
+              Item tidak ditemukan
+            </p>
             <button
               onClick={() => window.history.back()}
               className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-gray-300 hover:text-white transition"
@@ -571,15 +436,21 @@ export const ItemDetailPage = () => {
               <div className="px-8 sm:px-10 py-8">
                 {/* Status Badge */}
                 <div className="flex items-center justify-between mb-6">
-                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusConfig.bg} border ${statusConfig.border} backdrop-blur-xl`}>
+                  <div
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusConfig.bg} border ${statusConfig.border} backdrop-blur-xl`}
+                  >
                     <StatusIcon className={`w-4 h-4 ${statusConfig.color}`} />
-                    <span className={`text-xs font-bold tracking-widest uppercase ${statusConfig.color}`}>
+                    <span
+                      className={`text-xs font-bold tracking-widest uppercase ${statusConfig.color}`}
+                    >
                       {statusConfig.label}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <Flame className="w-4 h-4 text-amber-400" />
-                    <span className="text-amber-400 font-bold">{item.review_count ?? 0}x</span>
+                    <span className="text-amber-400 font-bold">
+                      {item.review_count ?? 0}x
+                    </span>
                     <span>review</span>
                   </div>
                 </div>
@@ -595,18 +466,26 @@ export const ItemDetailPage = () => {
                   <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
                     <div className="flex items-center gap-2 mb-3">
                       <FileText className="w-5 h-5 text-blue-400" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Pertanyaan</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Pertanyaan
+                      </span>
                     </div>
-                    <p className="text-lg text-white leading-relaxed">{item.content}</p>
+                    <p className="text-lg text-white leading-relaxed">
+                      {item.content}
+                    </p>
                   </div>
 
                   {/* Answer */}
                   <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20">
                     <div className="flex items-center gap-2 mb-3">
                       <Lock className="w-5 h-5 text-emerald-400" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Jawaban</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                        Jawaban
+                      </span>
                     </div>
-                    <p className="text-lg text-emerald-100 leading-relaxed">{item.answer}</p>
+                    <p className="text-lg text-emerald-100 leading-relaxed">
+                      {item.answer}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -616,20 +495,22 @@ export const ItemDetailPage = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-amber-500/10 to-transparent border border-amber-500/15 p-5 text-center">
                 <Flame className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                <div className="text-2xl font-black text-amber-400 mb-1">{item.review_count ?? 0}x</div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Total Review</div>
+                <div className="text-2xl font-black text-amber-400 mb-1">
+                  {item.review_count ?? 0}x
+                </div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  Total Review
+                </div>
               </div>
-
-              {/* <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-500/10 to-transparent border border-blue-500/15 p-5 text-center">
-                <Sparkles className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                <div className="text-2xl font-black text-blue-400 mb-1">{item.order}</div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Urutan</div>
-              </div> */}
 
               <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500/10 to-transparent border border-emerald-500/15 p-5 text-center sm:col-span-1">
                 <Calendar className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
-                <div className="text-lg font-black text-emerald-400 mb-1">{formatDate(item.created_at)}</div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">Dibuat</div>
+                <div className="text-lg font-black text-emerald-400 mb-1">
+                  {formatDate(item.created_at)}
+                </div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  Dibuat
+                </div>
               </div>
             </div>
 
@@ -660,7 +541,9 @@ export const ItemDetailPage = () => {
                   <Brain className="w-5 h-5 text-emerald-400" />
                   Tahapan Hafalan
                 </h2>
-                <p className="text-gray-500 text-xs sm:text-sm mt-1">{statusConfig.description}</p>
+                <p className="text-gray-500 text-xs sm:text-sm mt-1">
+                  {statusConfig.description}
+                </p>
               </div>
 
               <div className="p-4 sm:p-8">
@@ -674,24 +557,32 @@ export const ItemDetailPage = () => {
                         <div
                           className="h-full bg-linear-to-r from-emerald-500 to-cyan-500 transition-all duration-500"
                           style={{
-                            width: getItemStatus() === 'belum_mulai' ? "0%" :
-                                   getItemStatus() === 'menghafal' ? "25%" :
-                                   getItemStatus() === 'interval' ? "50%" :
-                                   getItemStatus() === 'fsrs_active' ? "75%" : "100%"
+                            width:
+                              getNormalizedStatus() === "belum_mulai"
+                                ? "0%"
+                                : getNormalizedStatus() === "menghafal"
+                                  ? "35%"
+                                    : getNormalizedStatus() === "fsrs_active"
+                                      ? "75%"
+                                      : "100%",
                           }}
                         />
                       </div>
 
                       {/* Steps */}
                       {[
-                        { key: 'belum_mulai', label: "Mulai", icon: Play },
-                        { key: 'menghafal', label: "Menghafal", icon: Brain },
-                        { key: 'interval', label: "Interval", icon: Clock },
-                        { key: 'fsrs_active', label: "Ujian", icon: Target },
-                        { key: 'graduate', label: "Lulus", icon: CheckCircle2 },
+                        { key: "belum_mulai", label: "Mulai", icon: Play },
+                        { key: "menghafal", label: "Menghafal", icon: Brain },
+                        { key: "fsrs_active", label: "Ujian", icon: Target },
+                        { key: "graduate", label: "Lulus", icon: CheckCircle2 },
                       ].map((step) => {
-                        const status = getItemStatus();
-                        const phases = ['belum_mulai', 'menghafal', 'interval', 'fsrs_active', 'graduate'];
+                        const status = getNormalizedStatus();
+                        const phases = [
+                          "belum_mulai",
+                          "menghafal",
+                          "fsrs_active",
+                          "graduate",
+                        ];
                         const currentIndex = phases.indexOf(status);
                         const stepIndex = phases.indexOf(step.key);
 
@@ -699,19 +590,30 @@ export const ItemDetailPage = () => {
                         const isCompleted = currentIndex > stepIndex;
 
                         return (
-                          <div key={step.key} className="relative z-10 flex flex-col items-center gap-2">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                              isActive
-                                ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30"
-                                : isCompleted
-                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                                : "bg-gray-800 border-gray-600 text-gray-500"
-                            }`}>
+                          <div
+                            key={step.key}
+                            className="relative z-10 flex flex-col items-center gap-2"
+                          >
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                                isActive
+                                  ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30"
+                                  : isCompleted
+                                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                    : "bg-gray-800 border-gray-600 text-gray-500"
+                              }`}
+                            >
                               <step.icon className="w-5 h-5" />
                             </div>
-                            <span className={`text-xs font-bold uppercase tracking-wider ${
-                              isActive ? "text-emerald-400" : isCompleted ? "text-emerald-400/70" : "text-gray-600"
-                            }`}>
+                            <span
+                              className={`text-xs font-bold uppercase tracking-wider ${
+                                isActive
+                                  ? "text-emerald-400"
+                                  : isCompleted
+                                    ? "text-emerald-400/70"
+                                    : "text-gray-600"
+                              }`}
+                            >
                               {step.label}
                             </span>
                           </div>
@@ -724,14 +626,18 @@ export const ItemDetailPage = () => {
                   <div className="sm:hidden overflow-x-auto pb-4">
                     <div className="flex items-start gap-4 min-w-max px-2">
                       {[
-                        { key: 'belum_mulai', label: "Mulai", icon: Play },
-                        { key: 'menghafal', label: "Menghafal", icon: Brain },
-                        { key: 'interval', label: "Interval", icon: Clock },
-                        { key: 'fsrs_active', label: "Ujian", icon: Target },
-                        { key: 'graduate', label: "Lulus", icon: CheckCircle2 },
+                        { key: "belum_mulai", label: "Mulai", icon: Play },
+                        { key: "menghafal", label: "Menghafal", icon: Brain },
+                        { key: "fsrs_active", label: "Ujian", icon: Target },
+                        { key: "graduate", label: "Lulus", icon: CheckCircle2 },
                       ].map((step, idx, arr) => {
-                        const status = getItemStatus();
-                        const phases = ['belum_mulai', 'menghafal', 'interval', 'fsrs_active', 'graduate'];
+                        const status = getNormalizedStatus();
+                        const phases = [
+                          "belum_mulai",
+                          "menghafal",
+                          "fsrs_active",
+                          "graduate",
+                        ];
                         const currentIndex = phases.indexOf(status);
                         const stepIndex = phases.indexOf(step.key);
 
@@ -739,25 +645,37 @@ export const ItemDetailPage = () => {
                         const isCompleted = currentIndex > stepIndex;
 
                         return (
-                          <div key={step.key} className="flex flex-col items-center gap-2 min-w-[60px]">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                              isActive
-                                ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30"
-                                : isCompleted
-                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                                : "bg-gray-800 border-gray-600 text-gray-500"
-                            }`}>
+                          <div
+                            key={step.key}
+                            className="flex flex-col items-center gap-2 min-w-[60px]"
+                          >
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                                isActive
+                                  ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30"
+                                  : isCompleted
+                                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                    : "bg-gray-800 border-gray-600 text-gray-500"
+                              }`}
+                            >
                               <step.icon className="w-4 h-4" />
                             </div>
-                            <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${
-                              isActive ? "text-emerald-400" : isCompleted ? "text-emerald-400/70" : "text-gray-600"
-                            }`}>
+                            <span
+                              className={`text-[10px] font-bold uppercase tracking-wider text-center ${
+                                isActive
+                                  ? "text-emerald-400"
+                                  : isCompleted
+                                    ? "text-emerald-400/70"
+                                    : "text-gray-600"
+                              }`}
+                            >
                               {step.label}
                             </span>
                             {/* Connector Line */}
                             {idx < arr.length - 1 && (
                               <div className="absolute top-14 left-10 w-8 h-0.5 bg-gray-700 -z-10">
-                                {isCompleted || (isActive && idx < currentIndex) ? (
+                                {isCompleted ||
+                                (isActive && idx < currentIndex) ? (
                                   <div className="h-full bg-emerald-500 w-full" />
                                 ) : null}
                               </div>
@@ -783,15 +701,21 @@ export const ItemDetailPage = () => {
                         ) : (
                           <Play className="w-5 h-5 fill-current" />
                         )}
-                        {statusConfig.isLoading ? "Memproses..." : statusConfig.buttonText}
+                        {statusConfig.isLoading
+                          ? "Memproses..."
+                          : statusConfig.buttonText}
                       </button>
                     );
                   }
                   return (
                     <div className="text-center p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                       <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
-                      <p className="text-emerald-100 font-medium mb-1">{statusConfig.buttonText}</p>
-                      <p className="text-emerald-400/70 text-sm">Terus pertahankan hafalanmu!</p>
+                      <p className="text-emerald-100 font-medium mb-1">
+                        {statusConfig.buttonText}
+                      </p>
+                      <p className="text-emerald-400/70 text-sm">
+                        Terus pertahankan hafalanmu!
+                      </p>
                     </div>
                   );
                 })()}
@@ -815,9 +739,12 @@ export const ItemDetailPage = () => {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
                   <Brain className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-400" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Mulai Menghafal?</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
+                  Mulai Menghafal?
+                </h3>
                 <p className="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed">
-                  Apakah Anda yakin ingin memulai menghafal item ini? Setelah dimulai, item akan masuk ke sistem interval review.
+                  Apakah Anda yakin ingin memulai menghafal item ini? Setelah
+                  dimulai, item akan masuk ke sistem interval review.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
@@ -848,23 +775,17 @@ export const ItemDetailPage = () => {
         </div>
       )}
 
-      {/* Start Interval Modal */}
+      {/* Interval Modal */}
       {isIntervalModalOpen && item && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-            onClick={() => setIsIntervalModalOpen(false)}
-          />
-          <div className="relative w-full max-w-sm bg-[#0F1218] border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <IntervalModalContent
-              isOpen={isIntervalModalOpen}
-              onClose={() => setIsIntervalModalOpen(false)}
-              itemTitle={item.title}
-              onSubmit={handleIntervalSubmit}
-            />
-          </div>
-        </div>
+        <IntervalModal
+          isOpen={isIntervalModalOpen}
+          onClose={() => setIsIntervalModalOpen(false)}
+          itemTitle={item.title}
+          onSubmit={handleIntervalSubmit}
+          isLoading={isStartingInterval}
+        />
       )}
+
 
       {/* Edit Item Modal */}
       {isEditModalOpen && item && (
