@@ -444,11 +444,6 @@ export const ItemDetailPage = () => {
                   </div>
                 </div>
 
-                {/* Item Title */}
-                <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight mb-6">
-                  {item.title}
-                </h1>
-
                 {/* Question & Answer */}
                 <div className="space-y-4">
                   {/* Question */}
@@ -481,7 +476,7 @@ export const ItemDetailPage = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-amber-500/10 to-transparent border border-amber-500/15 p-5 text-center">
                 <Flame className="w-6 h-6 text-amber-400 mx-auto mb-2" />
                 <div className="text-2xl font-black text-amber-400 mb-1">
@@ -613,7 +608,7 @@ export const ItemDetailPage = () => {
 
                   {/* Mobile View - Horizontal Scroll */}
                   <div className="sm:hidden overflow-x-auto pb-4">
-                    <div className="flex items-start gap-4 min-w-max px-2">
+                    <div className="flex items-start gap-4 min-w-max px-2 pt-2">
                       {[
                         { key: "belum_mulai", label: "Mulai", icon: Play },
                         { key: "menghafal", label: "Menghafal", icon: Brain },
@@ -639,12 +634,12 @@ export const ItemDetailPage = () => {
                             className="flex flex-col items-center gap-2 min-w-[60px]"
                           >
                             <div
-                              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                              className={`rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                                 isActive
-                                  ? "bg-emerald-500 border-emerald-400 text-white scale-110 shadow-lg shadow-emerald-500/30"
+                                  ? "w-11 h-11 bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/30"
                                   : isCompleted
-                                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                                    : "bg-gray-800 border-gray-600 text-gray-500"
+                                    ? "w-10 h-10 bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                    : "w-10 h-10 bg-gray-800 border-gray-600 text-gray-500"
                               }`}
                             >
                               <step.icon className="w-4 h-4" />
