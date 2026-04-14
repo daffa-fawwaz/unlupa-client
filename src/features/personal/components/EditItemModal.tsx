@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, AlertCircle, FileText, Lock, Type, ListOrdered, Clock } from "lucide-react";
+import { X, Loader2, AlertCircle, FileText, Lock, ListOrdered, Clock } from "lucide-react";
 import { useUpdateItem } from "@/features/personal/hooks/useUpdateItem";
 import type { BookItem, UpdateItemPayload, CreatedItem } from "@/features/personal/types/personal.types";
 
@@ -56,8 +56,8 @@ export const EditItemModal = ({
     e.preventDefault();
     setError(null);
 
-    if (!formData.title.trim()) {
-      setError("Judul wajib diisi");
+    if (!formData.content.trim()) {
+      setError("Pertanyaan wajib diisi");
       return;
     }
 
@@ -65,8 +65,8 @@ export const EditItemModal = ({
       const response = await updateItem(item.id, formData);
       onSuccess(response);
       onClose();
-    } catch (err: any) {
-      setError(err.message || "Gagal memperbarui item");
+    } catch (err: unknown) {
+      setError((err as Error).message || "Gagal memperbarui item");
     }
   };
 
@@ -108,27 +108,6 @@ export const EditItemModal = ({
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-6 sm:px-8 py-6 space-y-5">
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
-                Judul
-              </label>
-              <div className="relative">
-                <div className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-500">
-                  <Type className="w-5 h-5" />
-                </div>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm sm:text-base"
-                  placeholder="Masukkan judul"
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
             {/* Content (Question) */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">

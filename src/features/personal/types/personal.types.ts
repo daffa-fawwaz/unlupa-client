@@ -361,3 +361,20 @@ export interface ReviewFsrsResponse {
   timestamp?: string;
   path?: string;
 }
+
+// Parent-grouped review types
+export type ParentType = "book" | "module" | "submodule";
+
+export interface ReviewQueueItem {
+  item_id: string;
+  task: BookDailyTask;
+}
+
+export interface ParentGroup {
+  parent_id: string;
+  parent_type: ParentType;
+  parent_title: string;
+  book_id: string;
+  book_title: string;
+  items: ReviewQueueItem[];
+}
