@@ -12,6 +12,8 @@ export const BookItemCard = ({ item, bookId }: BookItemCardProps) => {
   const navigate = useNavigate();
   const detail = useItemDetailCached(item.id);
   const nextReviewAt = detail?.next_review_at || detail?.interval_next_review_at;
+  const reviewCount = detail?.review_count ?? item.review_count ?? 0;
+  const stability = detail?.stability ?? item.stability;
 
   return (
     <button
@@ -55,7 +57,7 @@ export const BookItemCard = ({ item, bookId }: BookItemCardProps) => {
             <Flame className="w-3 h-3 text-amber-400" />
             <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Review</span>
           </div>
-          <span className="text-base font-mono font-bold text-amber-400 leading-none">{item.review_count ?? 0}x</span>
+          <span className="text-base font-mono font-bold text-amber-400 leading-none">{reviewCount}x</span>
         </div>
 
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
@@ -64,8 +66,8 @@ export const BookItemCard = ({ item, bookId }: BookItemCardProps) => {
             <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Stabilitas</span>
           </div>
           <span className="text-xs font-bold text-purple-400 leading-none">
-            {item.stability != null && !isNaN(parseFloat(String(item.stability)))
-              ? Math.round(parseFloat(String(item.stability)))
+            {stability != null && !isNaN(parseFloat(String(stability)))
+              ? Math.round(parseFloat(String(stability)))
               : "—"}
           </span>
         </div>
