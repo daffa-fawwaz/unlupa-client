@@ -159,6 +159,16 @@ export const personalService = {
     return response.data;
   },
 
+  async deactivateItem(itemId: string): Promise<ActivateFsrsPhaseResponse> {
+    const response = await api.post(`/api/v1/items/${itemId}/deactivate`);
+    return response.data;
+  },
+
+  async reactivateItem(itemId: string): Promise<ActivateFsrsPhaseResponse> {
+    const response = await api.post(`/api/v1/items/${itemId}/reactivate`);
+    return response.data;
+  },
+
   // Daily Review (Books) API methods
   async generateDailyBooks(): Promise<BookDailyGenerateResponse> {
     const response = await api.post("/api/v1/daily/generate");

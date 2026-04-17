@@ -43,6 +43,8 @@ export const ItemDetailPage = () => {
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
   const [isIntervalModalOpen, setIsIntervalModalOpen] = useState(false);
   const [isActivateFsrsModalOpen, setIsActivateFsrsModalOpen] = useState(false);
+  const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
+  const [isReactivateModalOpen, setIsReactivateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
@@ -270,6 +272,34 @@ export const ItemDetailPage = () => {
     }
   };
 
+  const handleDeactivate = async () => {
+    if (!itemId) return;
+    const realItemId = localStorage.getItem(`item-real-id-${itemId}`) || itemId;
+    try {
+      await personalService.deactivateItem(realItemId);
+      const newStatus = "inactive";
+      localStorage.setItem(`item-status-${itemId}`, newStatus);
+      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
+      setIsDeactivateModalOpen(false);
+    } catch (err: unknown) {
+      console.error("[handleDeactivate] ERROR:", err);
+    }
+  };
+
+  const handleReactivate = async () => {
+    if (!itemId) return;
+    const realItemId = localStorage.getItem(`item-real-id-${itemId}`) || itemId;
+    try {
+      await personalService.reactivateItem(realItemId);
+      const newStatus = "fsrs_active";
+      localStorage.setItem(`item-status-${itemId}`, newStatus);
+      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
+      setIsReactivateModalOpen(false);
+    } catch (err: unknown) {
+      console.error("[handleReactivate] ERROR:", err);
+    }
+  };
+
  
 
   const getItemStatus = () => {
@@ -306,22 +336,23 @@ export const ItemDetailPage = () => {
           border: "border-purple-500/20",
           icon: Target,
           description: "Item sedang dalam ujian interval (FSRS aktif)",
-          buttonText: "Ujian Interval Aktif",
-          buttonAction: null,
-          isDisabled: true,
+          buttonText: "Luluskan Item Ini",
+          buttonAction: () => setIsDeactivateModalOpen(true),
+          isDisabled: false,
           isLoading: false,
         };
       case "graduate":
+      case "inactive":
         return {
-          label: "Graduate",
+          label: "Lulus",
           color: "text-emerald-400",
           bg: "bg-emerald-500/10",
           border: "border-emerald-500/20",
           icon: CheckCircle2,
           description: "Item telah lulus dari sistem review",
-          buttonText: "Lulus",
-          buttonAction: null,
-          isDisabled: true,
+          buttonText: "Aktifkan Kembali",
+          buttonAction: () => setIsReactivateModalOpen(true),
+          isDisabled: false,
           isLoading: false,
         };
       default:
@@ -517,6 +548,21 @@ export const ItemDetailPage = () => {
                 </p>
               </div>
 
+              {/* Graduated banner */}
+              {(getNormalizedStatus() === "inactive" || getNormalizedStatus() === "graduate") && (
+                <div className="mx-4 sm:mx-8 mt-6 rounded-2xl overflow-hidden border border-emerald-500/30 bg-linear-to-br from-emerald-500/10 to-cyan-500/5">
+                  <div className="px-5 py-4 flex items-center gap-4">
+                    <div className="text-3xl">🎓</div>
+                    <div>
+                      <p className="text-emerald-300 font-black text-base">Item Ini Sudah Lulus!</p>
+                      <p className="text-emerald-400/60 text-xs mt-0.5">
+                        Hafalan kamu untuk item ini sudah sangat kuat. Pertahankan terus!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="p-4 sm:p-8">
                 {/* Progress Steps - Mobile: Horizontal Scroll, Desktop: Flex */}
                 <div className="mb-6 sm:mb-8">
@@ -593,9 +639,9 @@ export const ItemDetailPage = () => {
                     </div>
                   </div>
 
-                  {/* Mobile View - Horizontal Scroll */}
-                  <div className="sm:hidden overflow-x-auto pb-4">
-                    <div className="flex items-start gap-4 min-w-max px-2 pt-2">
+                  {/* Mobile View */}
+                  <div className="sm:hidden">
+                    <div className="flex items-start justify-center gap-4 flex-wrap pt-2">
                       {[
                         { key: "belum_mulai", label: "Mulai", icon: Play },
                         { key: "menghafal", label: "Menghafal", icon: Brain },
@@ -621,12 +667,12 @@ export const ItemDetailPage = () => {
                             className="flex flex-col items-center gap-2 min-w-[60px]"
                           >
                             <div
-                              className={`rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                                 isActive
-                                  ? "w-11 h-11 bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/30"
+                                  ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/30"
                                   : isCompleted
-                                    ? "w-10 h-10 bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                                    : "w-10 h-10 bg-gray-800 border-gray-600 text-gray-500"
+                                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                                    : "bg-gray-800 border-gray-600 text-gray-500"
                               }`}
                             >
                               <step.icon className="w-4 h-4" />
@@ -766,6 +812,32 @@ export const ItemDetailPage = () => {
         message="Apakah Anda yakin ingin memulai ujian interval? Item akan masuk ke sistem FSRS untuk review terjadwal."
         confirmText="Ya, Mulai"
         cancelText="Tidak"
+        icon={Target}
+        variant="info"
+      />
+
+      {/* Deactivate (Graduate) Confirm Modal */}
+      <ConfirmModal
+        isOpen={isDeactivateModalOpen}
+        onClose={() => setIsDeactivateModalOpen(false)}
+        onConfirm={handleDeactivate}
+        title="Luluskan Item Ini?"
+        message="Item akan ditandai sebagai lulus dan tidak akan muncul di review harian. Anda bisa mengaktifkannya kembali kapan saja."
+        confirmText="Ya, Luluskan"
+        cancelText="Batal"
+        icon={CheckCircle2}
+        variant="success"
+      />
+
+      {/* Reactivate Confirm Modal */}
+      <ConfirmModal
+        isOpen={isReactivateModalOpen}
+        onClose={() => setIsReactivateModalOpen(false)}
+        onConfirm={handleReactivate}
+        title="Aktifkan Kembali?"
+        message="Item akan dikembalikan ke fase ujian interval dan akan muncul kembali di review harian."
+        confirmText="Ya, Aktifkan"
+        cancelText="Batal"
         icon={Target}
         variant="info"
       />
