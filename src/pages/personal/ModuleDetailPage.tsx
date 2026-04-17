@@ -30,6 +30,7 @@ import { useCreateModuleItem } from "@/features/personal/hooks/useCreateModuleIt
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { EditModuleModal } from "@/features/personal/components/EditModuleModal";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
+import { invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
 import type { Module, BookItem } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
@@ -641,6 +642,8 @@ export const ModuleDetailPage = () => {
     try {
       await deleteModule(moduleId);
       setIsDeleteModalOpen(false);
+      // Invalidate tree cache so BookDetailPage shows updated modules
+      if (bookId) invalidateBookTreeCache(bookId);
       navigate(`/dashboard/pribadi/book/${bookId}`);
     } catch {
       // Error is handled by the hook and will be shown via toast/notification
