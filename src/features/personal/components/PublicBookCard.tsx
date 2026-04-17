@@ -73,10 +73,6 @@ export const PublicBookCard = ({ book, onImport }: PublicBookCardProps) => {
               <Calendar className="w-3.5 h-3.5 text-gray-400" />
               <span>{formattedDate}</span>
             </div>
-            
-            <div className="flex items-center gap-1 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-               0 User
-            </div>
           </div>
 
           <button 
