@@ -947,7 +947,7 @@ export const ModuleDetailPage = () => {
               </div>
 
               {items.length > 0 ? (
-                <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-3 sm:p-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {items.map((item: BookItem) => (
                     <BookItemCard
                       key={item.id}

@@ -570,7 +570,7 @@ const ModuleCard = ({
   return (
     <button
       onClick={onClick}
-      className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-[2rem] p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/10 min-h-60 flex flex-col overflow-hidden"
+      className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-2xl sm:rounded-[2rem] p-3 sm:p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/10 flex flex-col overflow-hidden"
     >
       {/* Background Gradient/Glow */}
       <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
@@ -590,7 +590,7 @@ const ModuleCard = ({
       <div className="relative z-10 mb-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+            <h3 className="text-sm sm:text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
               {module.title}
             </h3>
             <p className="text-gray-500 text-xs font-medium tracking-wide">
@@ -973,7 +973,7 @@ export const BookDetailPage = () => {
                       Modul ({modules.length})
                     </h3>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {modules
                       .slice()
                       .sort((a, b) => a.order - b.order)
@@ -1005,7 +1005,7 @@ export const BookDetailPage = () => {
                     </div>
                   </div>
                   <div className="p-8 pt-2">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       {items
                         .slice()
                         .sort((a, b) => a.order - b.order)
