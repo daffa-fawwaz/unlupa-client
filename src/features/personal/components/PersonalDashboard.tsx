@@ -95,20 +95,20 @@ export const PersonalDashboard = () => {
           </p>
 
           {/* Quick Action Strip */}
-          <div className="flex flex-wrap items-stretch gap-4 md:gap-0 p-2 rounded-[2rem] bg-[#111620]/60 border border-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden">
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-stretch sm:gap-0 p-2 rounded-[2rem] bg-[#111620]/60 border border-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl pointer-events-none" />
 
             {/* Buat Materi */}
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="group flex items-center gap-4 flex-1 min-w-[180px] px-6 py-4 rounded-[1.5rem] hover:bg-blue-500/10 transition-all duration-300 text-left"
+              className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-[1.5rem] hover:bg-blue-500/10 transition-all duration-300 text-center sm:text-left"
             >
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all shrink-0">
-                <Plus className="w-6 h-6" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all shrink-0">
+                <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <div className="text-base font-black text-white group-hover:text-blue-300 transition-colors">Buat Materi</div>
-                <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Buat buku baru dari nol</div>
+                <div className="text-xs sm:text-base font-black text-white group-hover:text-blue-300 transition-colors leading-tight">Buat Materi</div>
+                <div className="hidden sm:block text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Buat buku baru dari nol</div>
               </div>
             </button>
 
@@ -117,14 +117,14 @@ export const PersonalDashboard = () => {
             {/* Bagikan Karya */}
             <Link
               to="/dashboard/pribadi/share"
-              className="group flex items-center gap-4 flex-1 min-w-[180px] px-6 py-4 rounded-[1.5rem] hover:bg-emerald-500/10 transition-all duration-300 decoration-transparent"
+              className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-[1.5rem] hover:bg-emerald-500/10 transition-all duration-300 decoration-transparent text-center sm:text-left"
             >
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all shrink-0">
-                <Share2 className="w-6 h-6" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all shrink-0">
+                <Share2 className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <div className="text-base font-black text-white group-hover:text-emerald-300 transition-colors">Bagikan Karya</div>
-                <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Publikasikan ke komunitas</div>
+                <div className="text-xs sm:text-base font-black text-white group-hover:text-emerald-300 transition-colors leading-tight">Bagikan Karya</div>
+                <div className="hidden sm:block text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Publikasikan ke komunitas</div>
               </div>
             </Link>
 
@@ -133,24 +133,53 @@ export const PersonalDashboard = () => {
             {/* Import Katalog */}
             <Link
               to="/dashboard/pribadi/explore"
-              className="group flex items-center gap-4 flex-1 min-w-[180px] px-6 py-4 rounded-[1.5rem] hover:bg-purple-500/10 transition-all duration-300 decoration-transparent"
+              className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-[1.5rem] hover:bg-purple-500/10 transition-all duration-300 decoration-transparent text-center sm:text-left"
             >
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all shrink-0">
-                <Download className="w-6 h-6" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all shrink-0">
+                <Download className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <div className="text-base font-black text-white group-hover:text-purple-300 transition-colors">Impor Katalog</div>
-                <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Salin materi dari perpustakaan</div>
+                <div className="text-xs sm:text-base font-black text-white group-hover:text-purple-300 transition-colors leading-tight">Impor Katalog</div>
+                <div className="hidden sm:block text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Salin materi dari perpustakaan</div>
               </div>
             </Link>
           </div>
+        </div>
+
+        {/* === QUICK NAVIGATION === */}
+        <div className="grid grid-cols-2 gap-3 mb-8">
+          <a
+            href="#karya-mandiri"
+            className="group flex flex-col md:flex-row items-center gap-3 px-4 py-3.5 rounded-2xl bg-white/5 hover:bg-blue-500/10 border border-white/8 hover:border-blue-500/30 transition-all duration-300"
+          >
+            <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Files className="w-4 h-4 text-blue-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-white text-sm font-bold leading-tight group-hover:text-blue-300 transition-colors">Karya Mandiri</p>
+              <p className="text-gray-500 text-xs mt-0.5 truncate hidden md:block">Buku buatan kamu</p>
+            </div>
+          </a>
+
+          <a
+            href="#perpustakaan-global"
+            className="group flex flex-col md:flex-row items-center gap-3 px-4 py-3.5 rounded-2xl bg-white/5 hover:bg-purple-500/10 border border-white/8 hover:border-purple-500/30 transition-all duration-300"
+          >
+            <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Library className="w-4 h-4 text-purple-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-white text-sm font-bold leading-tight group-hover:text-purple-300 transition-colors">Katalog Impor</p>
+              <p className="text-gray-500 text-xs mt-0.5 truncate hidden md:block">Koleksi dari komunitas</p>
+            </div>
+          </a>
         </div>
 
         {/* === DAILY REVIEW SECTION (BOOKS ONLY) === */}
         <BookDailyReviewSection />
 
         {/* === SECTION 1: KARYA MANDIRI === */}
-        <div className="mb-20">
+        <div className="mb-20" id="karya-mandiri">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div className="max-w-2xl">
               <div className="flex items-center gap-3 mb-2">
@@ -221,7 +250,7 @@ export const PersonalDashboard = () => {
         </div>
 
         {/* === SECTION 2: KOLEKSI PERPUSTAKAAN DUNIA === */}
-        <div className="mb-10">
+        <div className="mb-10" id="perpustakaan-global">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div className="max-w-2xl">
               <div className="flex items-center gap-3 mb-2">
