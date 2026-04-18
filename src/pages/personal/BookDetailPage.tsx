@@ -1,41 +1,35 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
+  AlertCircle,
+  AlignLeft,
   ArrowLeft,
   BookOpen,
   Calendar,
-  CalendarClock,
   CheckCircle,
   CheckCircle2,
   Clock,
   FileText,
   Globe,
+  Hash,
   ImageOff,
   Layers,
   LayoutList,
   ListPlus,
   Loader2,
-  AlertCircle,
   Lock,
   Plus,
+  Sparkles,
   X,
   ChevronRight,
-  Hash,
-  AlignLeft,
-  Sparkles,
-  Flame,
-  Brain,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
-import { useCreateItem } from "@/features/personal/hooks/useCreateItem";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
-import type {
-  Module,
-  BookItem,
-} from "@/features/personal/types/personal.types";
+import { AddItemModal } from "@/features/personal/components/AddItemModal";
+import type { Module } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
 /* Add Module Form Modal                                                */
@@ -271,186 +265,6 @@ const AddModuleModal = ({
                         Buat Modul
                       </>
                     )}
-                  </button>
-                </div>
-              </form>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ------------------------------------------------------------------ */
-/* Add Item Modal (Add Hafalan without Module)                          */
-/* ------------------------------------------------------------------ */
-interface AddItemModalProps {
-  bookId: string;
-  onClose: () => void;
-  onCreated: (item: import("@/features/personal/types/personal.types").CreatedItem) => void;
-  nextOrder: number;
-}
-
-const AddItemModal = ({
-  bookId,
-  onClose,
-  onCreated,
-  nextOrder,
-}: AddItemModalProps) => {
-  const { createItem, loading } = useCreateItem();
-  const [form, setForm] = useState({
-    title: "",
-    content: "",
-    answer: "",
-    order: nextOrder,
-    estimate_value: 5,
-    estimate_unit: "minutes",
-  });
-  const [resultState, setResultState] = useState<"idle" | "success" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.content.trim() || !form.answer.trim()) {
-      setErrorMsg("Pertanyaan dan jawaban wajib diisi.");
-      setResultState("error");
-      return;
-    }
-    try {
-      const created = await createItem(bookId, {
-        title: form.title.trim(),
-        content: form.content.trim(),
-        answer: form.answer.trim(),
-        order: form.order,
-        estimate_value: form.estimate_value,
-        estimate_unit: form.estimate_unit,
-      });
-      onCreated(created);
-      setResultState("success");
-    } catch (err: unknown) {
-      setErrorMsg((err as Error).message ?? "Terjadi kesalahan.");
-      setResultState("error");
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/75 backdrop-blur-md"
-        onClick={resultState === "idle" ? onClose : undefined}
-      />
-      <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
-        <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-emerald-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
-        <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
-
-          {/* Success */}
-          {resultState === "success" && (
-            <div className="p-10 flex flex-col items-center text-center gap-5">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-[2rem] bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                  <CheckCircle className="w-10 h-10 text-emerald-400" />
-                </div>
-                <div className="absolute inset-0 bg-emerald-500/10 rounded-[2rem] blur-2xl" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">Item Berhasil Dibuat!</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">Item hafalan telah berhasil ditambahkan ke buku ini.</p>
-              </div>
-              <button onClick={onClose} className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                Lihat Item
-              </button>
-            </div>
-          )}
-
-          {/* Error */}
-          {resultState === "error" && (
-            <div className="p-10 flex flex-col items-center text-center gap-5">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-[2rem] bg-rose-500/15 border border-rose-500/30 flex items-center justify-center">
-                  <AlertCircle className="w-10 h-10 text-rose-400" />
-                </div>
-                <div className="absolute inset-0 bg-rose-500/10 rounded-[2rem] blur-2xl" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">Gagal Membuat Item</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{errorMsg}</p>
-              </div>
-              <div className="flex gap-3">
-                <button onClick={() => setResultState("idle")} className="px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm transition">Coba Lagi</button>
-                <button onClick={onClose} className="px-6 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-medium text-sm transition">Tutup</button>
-              </div>
-            </div>
-          )}
-
-          {/* Form */}
-          {resultState === "idle" && (
-            <>
-              <div className="relative px-8 pt-8 pb-6 border-b border-white/5">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none" />
-                <button onClick={onClose} className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition">
-                  <X className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <h2 className="text-xl font-bold text-white tracking-tight">Tambah Item Hafalan</h2>
-                </div>
-                <p className="text-sm text-gray-500 mt-1">Tambahkan unit hafalan langsung tanpa modul.</p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="p-8 space-y-5">
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                    <AlignLeft className="w-3.5 h-3.5" />Pertanyaan / Konten
-                  </label>
-                  <textarea rows={3} required placeholder="cth. Apa Nama Buku Ini?" value={form.content}
-                    onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none" />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                    <Lock className="w-3.5 h-3.5" />Jawaban
-                  </label>
-                  <textarea rows={3} required placeholder="cth. Tentang Kamu" value={form.answer}
-                    onChange={(e) => setForm((f) => ({ ...f, answer: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none" />
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                      <Hash className="w-3.5 h-3.5" />Estimasi
-                    </label>
-                    <div className="flex gap-2">
-                      <input type="number" min={1} required value={form.estimate_value}
-                        onChange={(e) => setForm((f) => ({ ...f, estimate_value: parseInt(e.target.value) || 1 }))}
-                        className="w-20 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors" />
-                      <select value={form.estimate_unit}
-                        onChange={(e) => setForm((f) => ({ ...f, estimate_unit: e.target.value }))}
-                        className="px-3 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors">
-                        <option value="seconds" className="bg-[#0E1420]">Detik</option>
-                        <option value="minutes" className="bg-[#0E1420]">Menit</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                      <Hash className="w-3.5 h-3.5" />Urutan
-                    </label>
-                    <input type="number" min={1} required value={form.order}
-                      onChange={(e) => setForm((f) => ({ ...f, order: parseInt(e.target.value) || 1 }))}
-                      className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors" />
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-2">
-                  <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition">Batal</button>
-                  <button type="submit" disabled={loading || !form.content.trim()}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                    {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Menyimpan...</> : <><Plus className="w-4 h-4" />Buat Item</>}
                   </button>
                 </div>
               </form>
@@ -902,7 +716,7 @@ export const BookDetailPage = () => {
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {[
                 {
                   label: "Total Item",
@@ -917,18 +731,11 @@ export const BookDetailPage = () => {
                   color: "text-purple-400",
                   bg: "from-purple-500/10",
                   border: "border-purple-500/15",
-                },
-                {
-                  label: "Selesai",
-                  value: "0%",
-                  color: "text-emerald-400",
-                  bg: "from-emerald-500/10",
-                  border: "border-emerald-500/15",
-                },
+                }
               ].map((s) => (
                 <div
                   key={s.label}
-                  className={`relative overflow-hidden rounded-2xl bg-linear-to-br ${s.bg} to-transparent border ${s.border} p-5 text-center`}
+                  className={`relative  overflow-hidden rounded-2xl bg-linear-to-br ${s.bg} to-transparent border ${s.border} p-5 text-center`}
                 >
                   <div className={`text-3xl font-black ${s.color} mb-1`}>
                     {s.value}
@@ -1070,7 +877,7 @@ export const BookDetailPage = () => {
           bookId={id}
           nextOrder={nextOrder}
           onClose={() => setModalStep(null)}
-          onCreated={handleItemCreated}
+          onCreated={(item) => handleItemCreated(item as import("@/features/personal/types/personal.types").CreatedItem)}
         />
       )}
     </div>

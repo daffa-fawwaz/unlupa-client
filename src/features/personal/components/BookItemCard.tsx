@@ -24,11 +24,6 @@ export const BookItemCard = ({ item, bookId }: BookItemCardProps) => {
       <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
       <div className="absolute inset-0 bg-linear-to-br from-emerald-500/10 via-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {/* Decorative order number */}
-      <div className="absolute top-1 right-2 text-4xl sm:text-7xl font-serif font-bold text-white/3 pointer-events-none select-none">
-        {item.order}
-      </div>
-
       {/* Question */}
       <div className="relative z-10 mb-2 sm:mb-4">
         <h3 className="text-sm sm:text-xl font-bold text-white group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2 leading-snug">
