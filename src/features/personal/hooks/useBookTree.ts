@@ -6,6 +6,38 @@ import type { BookTree, BookItem, Module } from "@/features/personal/types/perso
 const bookTreeCache = new Map<string, BookTree>();
 const itemToBookMap = new Map<string, string>(); // itemId -> bookId
 
+// Expose cache invalidation globally so review flow can clear stale data
+export const invalidateBookTreeCache = (bookId?: string) => {
+  if (bookId) {
+    bookTreeCache.delete(bookId);
+  } else {
+    bookTreeCache.clear();
+  }
+};
+
+// Update review_count for a specific item in the cache
+export const updateItemReviewCountInCache = (bookId: string, itemId: string, reviewCount: number) => {
+  const cached = bookTreeCache.get(bookId);
+  if (!cached) return;
+
+  const updateItems = (items: BookItem[]) =>
+    items.map((i) => i.id === itemId ? { ...i, review_count: reviewCount } : i);
+
+  const updateModules = (modules: Module[]): Module[] =>
+    modules.map((m) => ({
+      ...m,
+      items: m.items ? updateItems(m.items) : m.items,
+      children: m.children?.length ? updateModules(m.children) : m.children,
+    }));
+
+  const updated: BookTree = {
+    ...cached,
+    items: updateItems(cached.items),
+    modules: updateModules(cached.modules),
+  };
+  bookTreeCache.set(bookId, updated);
+};
+
 export const useBookTree = () => {
   const [tree, setTree] = useState<BookTree | null>(null);
   const [loading, setLoading] = useState(false);

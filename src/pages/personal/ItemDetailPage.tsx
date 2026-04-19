@@ -8,7 +8,6 @@ import {
   FileText,
   Lock,
   Flame,
-  Calendar,
   Brain,
   Target,
   CheckCircle2,
@@ -16,8 +15,6 @@ import {
   PenSquare,
   Trash2,
   AlertTriangle,
-  CalendarClock,
-  Zap,
 } from "lucide-react";
 import { personalService } from "@/features/personal/services/personal.services";
 import type { ItemDetail } from "@/features/personal/types/personal.types";
@@ -273,13 +270,7 @@ export const ItemDetailPage = () => {
     }
   };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
+ 
 
   const getItemStatus = () => {
     return item?.status || "belum_mulai";
@@ -492,54 +483,7 @@ export const ItemDetailPage = () => {
               </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-amber-500/10 to-transparent border border-amber-500/15 p-5 text-center">
-                <Flame className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-                <div className="text-2xl font-black text-amber-400 mb-1">
-                  {item.review_count ?? 0}x
-                </div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
-                  Total Review
-                </div>
-              </div>
-
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500/10 to-transparent border border-emerald-500/15 p-5 text-center">
-                <Calendar className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
-                <div className="text-lg font-black text-emerald-400 mb-1">
-                  {formatDate(item.created_at)}
-                </div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
-                  Dibuat
-                </div>
-              </div>
-
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-cyan-500/10 to-transparent border border-cyan-500/15 p-5 text-center">
-                <CalendarClock className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
-                <div className="text-sm font-black text-cyan-400 mb-1 leading-tight">
-                  {itemDetail?.next_review_at
-                    ? formatDate(itemDetail.next_review_at)
-                    : itemDetail?.interval_next_review_at
-                      ? formatDate(itemDetail.interval_next_review_at)
-                      : "—"}
-                </div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
-                  Review Berikutnya
-                </div>
-              </div>
-
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-purple-500/10 to-transparent border border-purple-500/15 p-5 text-center">
-                <Zap className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-                <div className="text-2xl font-black text-purple-400 mb-1">
-                  {itemDetail?.stability != null
-                    ? itemDetail.stability.toFixed(1)
-                    : "—"}
-                </div>
-                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
-                  Stabilitas
-                </div>
-              </div>
-            </div>
+           
 
             {/* Action Buttons - Edit & Delete */}
             <div className="grid grid-cols-2 gap-4">

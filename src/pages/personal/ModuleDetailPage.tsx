@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
   BookOpen,
+  CalendarClock,
   ChevronRight,
   Edit2,
   FileText,
@@ -18,7 +19,8 @@ import {
   AlignLeft,
   Lock,
   Flame,
-  Calendar,
+  Brain,
+  Clock,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
@@ -26,6 +28,7 @@ import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useDeleteModule } from "@/features/personal/hooks/useDeleteModule";
 import { useCreateModuleItem } from "@/features/personal/hooks/useCreateModuleItem";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
+import { useItemDetailCached } from "@/features/personal/hooks/useItemDetailCached";
 import { EditModuleModal } from "@/features/personal/components/EditModuleModal";
 import type { Module, BookItem } from "@/features/personal/types/personal.types";
 
@@ -325,13 +328,8 @@ const ItemCard = ({
   bookId: string;
 }) => {
   const navigate = useNavigate();
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
+  const detail = useItemDetailCached(item.id);
+  const nextReviewAt = detail?.next_review_at || detail?.interval_next_review_at;
 
   return (
     <button
@@ -380,27 +378,45 @@ const ItemCard = ({
       </div>
 
       {/* Footer */}
-      <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto pt-4 border-t border-white/5">
+      <div className="relative z-10 grid grid-cols-3 gap-2 mt-auto pt-4 border-t border-white/5">
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
           <div className="flex items-center gap-1.5 mb-1">
             <Flame className="w-3 h-3 text-amber-400" />
-            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
-              Review
-            </span>
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Review</span>
           </div>
-          <span className="text-base font-mono font-bold text-amber-400 leading-none">
-            {item.review_count ?? 0}x
+          <span className="text-base font-mono font-bold text-amber-400 leading-none">{item.review_count ?? 0}x</span>
+        </div>
+        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Brain className="w-3 h-3 text-purple-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Stabilitas</span>
+          </div>
+          <span className="text-xs font-bold text-purple-400 leading-none">
+            {item.stability != null && !isNaN(parseFloat(String(item.stability)))
+              ? Math.round(parseFloat(String(item.stability)))
+              : "—"}
           </span>
         </div>
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
           <div className="flex items-center gap-1.5 mb-1">
-            <Calendar className="w-3 h-3 text-blue-400" />
-            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
-              Dibuat
-            </span>
+            <Clock className="w-3 h-3 text-cyan-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Estimasi</span>
+          </div>
+          <span className="text-xs font-medium text-cyan-400 leading-none">
+            {item.estimated_review_seconds >= 60
+              ? `${Math.round(item.estimated_review_seconds / 60)} mnt`
+              : `${item.estimated_review_seconds}d`}
+          </span>
+        </div>
+        <div className="col-span-3 flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <CalendarClock className="w-3 h-3 text-blue-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Next Review</span>
           </div>
           <span className="text-xs font-medium text-blue-400 leading-none">
-            {formatDate(item.created_at)}
+            {nextReviewAt
+              ? new Date(nextReviewAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
+              : "—"}
           </span>
         </div>
       </div>

@@ -14,6 +14,7 @@ import { useParentGroupedReview } from "@/features/personal/hooks/useParentGroup
 import { BookDailyReviewFlashcardModal } from "@/features/personal/components/BookDailyReviewFlashcardModal";
 import { personalService } from "@/features/personal/services/personal.services";
 import { getTodayDateKey, getReviewedIdsForTaskDate } from "@/features/personal/utils/bookReviewUtils";
+import { invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
 import type { BookDailyTask, ParentGroup } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
@@ -112,6 +113,9 @@ export const BookDailyReviewSection = () => {
     if (reviewedId && !reviewedIds.includes(reviewedId)) {
       localStorage.setItem(storageKey, JSON.stringify([...reviewedIds, reviewedId]));
     }
+
+    // Invalidate tree cache so review_count & stability are fresh on next page visit
+    invalidateBookTreeCache(activeGroup.book_id);
 
     setReviewedVersion((v) => v + 1);
 

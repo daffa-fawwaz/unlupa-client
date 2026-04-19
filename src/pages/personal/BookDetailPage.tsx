@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BookOpen,
   Calendar,
+  CalendarClock,
   CheckCircle,
   CheckCircle2,
   Clock,
@@ -23,12 +24,14 @@ import {
   AlignLeft,
   Sparkles,
   Flame,
+  Brain,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { useCreateItem } from "@/features/personal/hooks/useCreateItem";
+import { useItemDetailCached } from "@/features/personal/hooks/useItemDetailCached";
 import type {
   Module,
   BookItem,
@@ -178,7 +181,7 @@ const AddModuleModal = ({
                   </h2>
                 </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  Buat bab atau bagian baru untuk mengelompokkan item hafalan.
+                  Buat bab atau bagian baru untuk mengelompokkan .
                 </p>
               </div>
 
@@ -304,9 +307,7 @@ const AddItemModal = ({
     estimate_value: 5,
     estimate_unit: "minutes",
   });
-  const [resultState, setResultState] = useState<"idle" | "success" | "error">(
-    "idle",
-  );
+  const [resultState, setResultState] = useState<"idle" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -333,22 +334,17 @@ const AddItemModal = ({
     }
   };
 
-  const handleSuccessClose = () => {
-    onClose();
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/75 backdrop-blur-md"
         onClick={resultState === "idle" ? onClose : undefined}
       />
-
       <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
         <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-emerald-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
-
         <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
-          {/* ---- Success State ---- */}
+
+          {/* Success */}
           {resultState === "success" && (
             <div className="p-10 flex flex-col items-center text-center gap-5">
               <div className="relative">
@@ -358,23 +354,16 @@ const AddItemModal = ({
                 <div className="absolute inset-0 bg-emerald-500/10 rounded-[2rem] blur-2xl" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Item Berhasil Dibuat!
-                </h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Item hafalan telah berhasil ditambahkan ke buku ini.
-                </p>
+                <h3 className="text-xl font-bold text-white mb-2">Item Berhasil Dibuat!</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Item hafalan telah berhasil ditambahkan ke buku ini.</p>
               </div>
-              <button
-                onClick={handleSuccessClose}
-                className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-              >
+              <button onClick={onClose} className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                 Lihat Item
               </button>
             </div>
           )}
 
-          {/* ---- Error State ---- */}
+          {/* Error */}
           {resultState === "error" && (
             <div className="p-10 flex flex-col items-center text-center gap-5">
               <div className="relative">
@@ -384,121 +373,64 @@ const AddItemModal = ({
                 <div className="absolute inset-0 bg-rose-500/10 rounded-[2rem] blur-2xl" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Gagal Membuat Item
-                </h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  {errorMsg}
-                </p>
+                <h3 className="text-xl font-bold text-white mb-2">Gagal Membuat Item</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{errorMsg}</p>
               </div>
               <div className="flex gap-3">
-                <button
-                  onClick={() => setResultState("idle")}
-                  className="px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm transition"
-                >
-                  Coba Lagi
-                </button>
-                <button
-                  onClick={onClose}
-                  className="px-6 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-medium text-sm transition"
-                >
-                  Tutup
-                </button>
+                <button onClick={() => setResultState("idle")} className="px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm transition">Coba Lagi</button>
+                <button onClick={onClose} className="px-6 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-medium text-sm transition">Tutup</button>
               </div>
             </div>
           )}
 
-          {/* ---- Form State ---- */}
+          {/* Form */}
           {resultState === "idle" && (
             <>
-              {/* Header */}
               <div className="relative px-8 pt-8 pb-6 border-b border-white/5">
                 <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none" />
-                <button
-                  onClick={onClose}
-                  className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition"
-                >
+                <button onClick={onClose} className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition">
                   <X className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
                     <FileText className="w-5 h-5 text-emerald-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-white tracking-tight">
-                    Tambah Item Hafalan
-                  </h2>
+                  <h2 className="text-xl font-bold text-white tracking-tight">Tambah Item Hafalan</h2>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
-                  Tambahkan unit hafalan langsung tanpa modul.
-                </p>
+                <p className="text-sm text-gray-500 mt-1">Tambahkan unit hafalan langsung tanpa modul.</p>
               </div>
 
-              {/* Form */}
               <form onSubmit={handleSubmit} className="p-8 space-y-5">
-                {/* Content */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                    <AlignLeft className="w-3.5 h-3.5" />
-                    Pertanyaan / Konten
+                    <AlignLeft className="w-3.5 h-3.5" />Pertanyaan / Konten
                   </label>
-                  <textarea
-                    rows={3}
-                    required
-                    placeholder="cth. Apa Nama Buku Ini?"
-                    value={form.content}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, content: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
-                  />
+                  <textarea rows={3} required placeholder="cth. Apa Nama Buku Ini?" value={form.content}
+                    onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none" />
                 </div>
 
-                {/* Answer */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                    <Lock className="w-3.5 h-3.5" />
-                    Jawaban
+                    <Lock className="w-3.5 h-3.5" />Jawaban
                   </label>
-                  <textarea
-                    rows={3}
-                    required
-                    placeholder="cth. Tentang Kamu"
-                    value={form.answer}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, answer: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
-                  />
+                  <textarea rows={3} required placeholder="cth. Tentang Kamu" value={form.answer}
+                    onChange={(e) => setForm((f) => ({ ...f, answer: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none" />
                 </div>
 
-                {/* Estimasi and Order */}
                 <div className="flex gap-4">
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                      <Hash className="w-3.5 h-3.5" />
-                      Estimasi
+                      <Hash className="w-3.5 h-3.5" />Estimasi
                     </label>
                     <div className="flex gap-2">
-                      <input
-                        type="number"
-                        min={1}
-                        required
-                        value={form.estimate_value}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            estimate_value: parseInt(e.target.value) || 1,
-                          }))
-                        }
-                        className="w-20 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
-                      />
-                      <select
-                        value={form.estimate_unit}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, estimate_unit: e.target.value }))
-                        }
-                        className="px-3 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
-                      >
+                      <input type="number" min={1} required value={form.estimate_value}
+                        onChange={(e) => setForm((f) => ({ ...f, estimate_value: parseInt(e.target.value) || 1 }))}
+                        className="w-20 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors" />
+                      <select value={form.estimate_unit}
+                        onChange={(e) => setForm((f) => ({ ...f, estimate_unit: e.target.value }))}
+                        className="px-3 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors">
                         <option value="seconds" className="bg-[#0E1420]">Detik</option>
                         <option value="minutes" className="bg-[#0E1420]">Menit</option>
                       </select>
@@ -506,50 +438,19 @@ const AddItemModal = ({
                   </div>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                      <Hash className="w-3.5 h-3.5" />
-                      Urutan
+                      <Hash className="w-3.5 h-3.5" />Urutan
                     </label>
-                    <input
-                      type="number"
-                      min={1}
-                      required
-                      value={form.order}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          order: parseInt(e.target.value) || 1,
-                        }))
-                      }
-                      className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
-                    />
+                    <input type="number" min={1} required value={form.order}
+                      onChange={(e) => setForm((f) => ({ ...f, order: parseInt(e.target.value) || 1 }))}
+                      className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors" />
                   </div>
                 </div>
 
-                {/* Actions */}
                 <div className="flex justify-end gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading || !form.content.trim()}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Menyimpan...
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4" />
-                        Buat Item
-                      </>
-                    )}
+                  <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition">Batal</button>
+                  <button type="submit" disabled={loading || !form.content.trim()}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                    {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Menyimpan...</> : <><Plus className="w-4 h-4" />Buat Item</>}
                   </button>
                 </div>
               </form>
@@ -620,7 +521,7 @@ const AddContentModal = ({
                   Tambah Modul
                 </h3>
                 <p className="text-xs text-gray-500 leading-relaxed">
-                  Kelompokkan item hafalan menjadi bab atau bagian terstruktur.
+                  Kelompokkan  menjadi bab atau bagian terstruktur.
                 </p>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
@@ -754,13 +655,8 @@ const ModuleCard = ({
 /* ------------------------------------------------------------------ */
 const ItemCard = ({ item, bookId }: { item: BookItem; bookId: string }) => {
   const navigate = useNavigate();
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
+  const detail = useItemDetailCached(item.id);
+  const nextReviewAt = detail?.next_review_at || detail?.interval_next_review_at;
 
   return (
     <button
@@ -791,7 +687,7 @@ const ItemCard = ({ item, bookId }: { item: BookItem; bookId: string }) => {
               {item.title}
             </h3>
             <p className="text-gray-500 text-xs font-medium tracking-wide">
-              Item Hafalan
+              
             </p>
           </div>
         </div>
@@ -817,23 +713,41 @@ const ItemCard = ({ item, bookId }: { item: BookItem; bookId: string }) => {
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
           <div className="flex items-center gap-1.5 mb-1">
             <Flame className="w-3 h-3 text-amber-400" />
-            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
-              Review
-            </span>
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Review</span>
           </div>
-          <span className="text-base font-mono font-bold text-amber-400 leading-none">
-            {item.review_count ?? 0}x
+          <span className="text-base font-mono font-bold text-amber-400 leading-none">{item.review_count ?? 0}x</span>
+        </div>
+        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Brain className="w-3 h-3 text-purple-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Stabilitas</span>
+          </div>
+          <span className="text-xs font-bold text-purple-400 leading-none">
+            {item.stability != null && !isNaN(parseFloat(String(item.stability)))
+              ? Math.round(parseFloat(String(item.stability)))
+              : "—"}
           </span>
         </div>
         <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
           <div className="flex items-center gap-1.5 mb-1">
-            <Calendar className="w-3 h-3 text-blue-400" />
-            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
-              Dibuat
-            </span>
+            <Clock className="w-3 h-3 text-cyan-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Estimasi</span>
+          </div>
+          <span className="text-xs font-medium text-cyan-400 leading-none">
+            {item.estimated_review_seconds >= 60
+              ? `${Math.round(item.estimated_review_seconds / 60)} mnt`
+              : `${item.estimated_review_seconds}d`}
+          </span>
+        </div>
+        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="flex items-center gap-1.5 mb-1">
+            <CalendarClock className="w-3 h-3 text-blue-400" />
+            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Next Review</span>
           </div>
           <span className="text-xs font-medium text-blue-400 leading-none">
-            {formatDate(item.created_at)}
+            {nextReviewAt
+              ? new Date(nextReviewAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
+              : "—"}
           </span>
         </div>
       </div>
@@ -1191,7 +1105,7 @@ export const BookDetailPage = () => {
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-emerald-400" />
                       <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                        Item Hafalan ({items.length})
+                         Item ({items.length})
                       </h3>
                     </div>
                   </div>
