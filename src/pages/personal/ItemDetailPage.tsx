@@ -16,7 +16,11 @@ import {
   PenSquare,
   Trash2,
   AlertTriangle,
+  CalendarClock,
+  Zap,
 } from "lucide-react";
+import { personalService } from "@/features/personal/services/personal.services";
+import type { ItemDetail } from "@/features/personal/types/personal.types";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { EditItemModal } from "@/features/personal/components/EditItemModal";
@@ -44,6 +48,7 @@ export const ItemDetailPage = () => {
   const [isActivateFsrsModalOpen, setIsActivateFsrsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
 
   const { tree, loading, error, fetchBookTree, removeItemFromTree } =
     useBookTree();
@@ -56,6 +61,18 @@ export const ItemDetailPage = () => {
   const { startInterval, loading: isStartingInterval } =
     useStartIntervalPhase();
   const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
+
+  // Fetch item detail (next review, stability, etc.) for reviewable items
+  useEffect(() => {
+    if (!item || !itemId) return;
+    const reviewableStatuses = ["interval", "fsrs_active", "graduate"];
+    if (!reviewableStatuses.includes(item.status)) return;
+
+    const realItemId = localStorage.getItem(`item-real-id-${itemId}`) || itemId;
+    personalService.getItemDetail(realItemId)
+      .then((res) => setItemDetail(res.data))
+      .catch(() => setItemDetail(null));
+  }, [item, itemId]);
 
   useEffect(() => {
     if (bookId && !tree) {
@@ -460,7 +477,7 @@ export const ItemDetailPage = () => {
                   </div>
 
                   {/* Answer */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20">
+                  <div className="p-5 rounded-2xl bg-linear-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20">
                     <div className="flex items-center gap-2 mb-3">
                       <Lock className="w-5 h-5 text-emerald-400" />
                       <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
@@ -476,7 +493,7 @@ export const ItemDetailPage = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-amber-500/10 to-transparent border border-amber-500/15 p-5 text-center">
                 <Flame className="w-6 h-6 text-amber-400 mx-auto mb-2" />
                 <div className="text-2xl font-black text-amber-400 mb-1">
@@ -487,13 +504,39 @@ export const ItemDetailPage = () => {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500/10 to-transparent border border-emerald-500/15 p-5 text-center sm:col-span-1">
+              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500/10 to-transparent border border-emerald-500/15 p-5 text-center">
                 <Calendar className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
                 <div className="text-lg font-black text-emerald-400 mb-1">
                   {formatDate(item.created_at)}
                 </div>
                 <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
                   Dibuat
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-cyan-500/10 to-transparent border border-cyan-500/15 p-5 text-center">
+                <CalendarClock className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
+                <div className="text-sm font-black text-cyan-400 mb-1 leading-tight">
+                  {itemDetail?.next_review_at
+                    ? formatDate(itemDetail.next_review_at)
+                    : itemDetail?.interval_next_review_at
+                      ? formatDate(itemDetail.interval_next_review_at)
+                      : "—"}
+                </div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  Review Berikutnya
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-purple-500/10 to-transparent border border-purple-500/15 p-5 text-center">
+                <Zap className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                <div className="text-2xl font-black text-purple-400 mb-1">
+                  {itemDetail?.stability != null
+                    ? itemDetail.stability.toFixed(1)
+                    : "—"}
+                </div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  Stabilitas
                 </div>
               </div>
             </div>

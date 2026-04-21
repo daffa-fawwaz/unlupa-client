@@ -217,9 +217,11 @@ export const BookDailyReviewFlashcardModal = ({
           style={{ width: "200%" }}
         >
           {/* FRONT — Question */}
-          <div className="w-1/2 h-full flex flex-col bg-[#090A0F] overflow-y-auto">
+          <div className="w-1/2 h-full flex flex-col bg-[#090A0F]">
             <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_20%_20%,rgba(20,184,166,0.4),transparent_50%)]" />
-            <div className="flex-1 flex flex-col justify-center px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
+
+            {/* Scrollable content area */}
+            <div className="flex-1 overflow-y-auto scrollbar-hide px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center">
                   <Brain className="w-5 h-5 text-cyan-400" />
@@ -240,14 +242,14 @@ export const BookDailyReviewFlashcardModal = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 text-sm text-gray-500 mb-8">
+              <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
                 <CalendarDays className="w-4 h-4" />
                 <span>{task.task_date}</span>
               </div>
             </div>
 
             {/* Sticky flip button */}
-            <div className="px-4 sm:px-8 md:px-16 pb-6 max-w-3xl mx-auto w-full shrink-0">
+            <div className="px-4 sm:px-8 md:px-16 pb-6 pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-white/5 bg-[#090A0F]">
               <button
                 onClick={() => setIsFlipped(true)}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 font-bold text-base hover:bg-cyan-500/25 transition-colors"
