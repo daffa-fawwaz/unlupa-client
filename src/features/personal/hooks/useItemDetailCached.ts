@@ -2,29 +2,25 @@ import { useState, useEffect } from "react";
 import { personalService } from "../services/personal.services";
 import type { ItemDetail } from "../types/personal.types";
 
+// Module-level cache — persists across renders within a session, cleared on page reload
 const cache = new Map<string, ItemDetail>();
 
 export const useItemDetailCached = (bookItemId: string) => {
-  // Use the real item_id from localStorage if available (set during start phase)
-  const realItemId = localStorage.getItem(`item-real-id-${bookItemId}`) || bookItemId;
-
-  const [detail, setDetail] = useState<ItemDetail | null>(
-    cache.get(realItemId) ?? null,
-  );
+  const [detail, setDetail] = useState<ItemDetail | null>(cache.get(bookItemId) ?? null);
 
   useEffect(() => {
-    if (!realItemId) return;
-    if (cache.has(realItemId)) {
-      setDetail(cache.get(realItemId)!);
+    if (!bookItemId) return;
+    if (cache.has(bookItemId)) {
+      setDetail(cache.get(bookItemId)!);
       return;
     }
 
     let cancelled = false;
     personalService
-      .getItemDetail(realItemId)
+      .getItemDetail(bookItemId)
       .then((res) => {
         if (cancelled) return;
-        cache.set(realItemId, res.data);
+        cache.set(bookItemId, res.data);
         setDetail(res.data);
       })
       .catch(() => {
@@ -34,7 +30,7 @@ export const useItemDetailCached = (bookItemId: string) => {
     return () => {
       cancelled = true;
     };
-  }, [realItemId]);
+  }, [bookItemId]);
 
   return detail;
 };
@@ -42,8 +38,6 @@ export const useItemDetailCached = (bookItemId: string) => {
 export const invalidateItemDetailCache = (bookItemId?: string) => {
   if (bookItemId) {
     cache.delete(bookItemId);
-    const realId = localStorage.getItem(`item-real-id-${bookItemId}`);
-    if (realId) cache.delete(realId);
   } else {
     cache.clear();
   }

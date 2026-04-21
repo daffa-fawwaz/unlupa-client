@@ -14,6 +14,7 @@ export const useGetDailyBooks = () => {
     try {
       const response = await personalService.getDailyBooks();
       setData(response);
+      return response;
     } catch (err: unknown) {
       const message = isAxiosError(err)
         ? (err.response?.data as { message?: string } | undefined)?.message ||

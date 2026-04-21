@@ -26,7 +26,7 @@ import { useDeleteItem } from "@/features/personal/hooks/useDeleteItem";
 import { useStartItemPhase } from "@/features/personal/hooks/useStartItemPhase";
 import { useStartIntervalPhase } from "@/features/personal/hooks/useStartIntervalPhase";
 import { useActivateFsrsPhase } from "@/features/personal/hooks/useActivateFsrsPhase";
-import { useBookTree } from "@/features/personal/hooks/useBookTree";
+import { useBookTree, invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
 import type {
   BookItem,
   CreatedItem,
@@ -40,6 +40,7 @@ export const ItemDetailPage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
+  const [realItemId, setRealItemId] = useState<string | null>(null); // item_id from API (for interval/fsrs calls)
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
   const [isIntervalModalOpen, setIsIntervalModalOpen] = useState(false);
   const [isActivateFsrsModalOpen, setIsActivateFsrsModalOpen] = useState(false);
@@ -64,14 +65,14 @@ export const ItemDetailPage = () => {
   // Fetch item detail (next review, stability, etc.) for reviewable items
   useEffect(() => {
     if (!item || !itemId) return;
-    const reviewableStatuses = ["interval", "fsrs_active", "graduate"];
+    const reviewableStatuses = ["interval", "fsrs_active", "graduate", "inactive"];
     if (!reviewableStatuses.includes(item.status)) return;
 
-    const realItemId = localStorage.getItem(`item-real-id-${itemId}`) || itemId;
-    personalService.getItemDetail(realItemId)
+    const idToUse = realItemId || itemId;
+    personalService.getItemDetail(idToUse)
       .then((res) => setItemDetail(res.data))
       .catch(() => setItemDetail(null));
-  }, [item, itemId]);
+  }, [item, itemId, realItemId]);
 
   useEffect(() => {
     if (bookId && !tree) {
@@ -129,21 +130,9 @@ export const ItemDetailPage = () => {
       return;
     }
 
-    // Check localStorage for persisted status (from optimistic update)
-    const storageKey = `item-status-${itemId}`;
-    const persistedStatus = localStorage.getItem(storageKey);
+    // Use status directly from tree — API is source of truth
     const treeStatus = (foundItem as unknown as Record<string, unknown>).status as string | undefined;
-
-    // Priority:
-    // 1. Persisted status from localStorage (optimistic update)
-    // 2. Status from tree (if backend has updated)
-    // 3. Fallback to 'belum_mulai'
-    const finalStatus = persistedStatus || treeStatus || "belum_mulai";
-
-    // Save to localStorage for next time
-    if (finalStatus !== "belum_mulai") {
-      localStorage.setItem(storageKey, finalStatus);
-    }
+    const finalStatus = treeStatus || "belum_mulai";
 
     setItem({
       ...foundItem,
@@ -166,12 +155,6 @@ export const ItemDetailPage = () => {
     try {
       await deleteItemFn(itemId, bookId || undefined);
       setIsDeleteModalOpen(false);
-
-      // Clear localStorage for this item
-      localStorage.removeItem(`item-real-id-${itemId}`);
-      localStorage.removeItem(`item-status-${itemId}`);
-
-      // Navigate back to the previous page
       navigate(-1);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string }; status?: number } };
@@ -183,30 +166,17 @@ export const ItemDetailPage = () => {
     if (!bookId || !itemId) return;
     try {
       const result = await startPhase(bookId, itemId);
-
-      // Optimistic update - API response contains updated status
       const resultObj = result as unknown as Record<string, unknown>;
       const newStatus = (resultObj.status as string) || "menghafal";
 
-      // IMPORTANT: Save the item_id from response for interval API
-      const item_id = resultObj.item_id as string | undefined;
-      if (item_id) {
-        localStorage.setItem(`item-real-id-${itemId}`, item_id);
-      }
+      // Save the real item_id in component state for subsequent API calls
+      const apiItemId = resultObj.item_id as string | undefined;
+      if (apiItemId) setRealItemId(apiItemId);
 
-      // Save to localStorage for persistence across remounts
-      localStorage.setItem(`item-status-${itemId}`, newStatus);
+      // Invalidate tree cache so status is fresh on next fetch
+      if (bookId) invalidateBookTreeCache(bookId);
 
-      setItem((prev) =>
-        prev
-          ? {
-              ...prev,
-              ...result,
-              status: newStatus as BookItem["status"],
-            }
-          : null,
-      );
-
+      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
       setIsStartModalOpen(false);
     } catch (err: unknown) {
       console.error("[handleStartPhase ERROR]", err);
@@ -215,30 +185,13 @@ export const ItemDetailPage = () => {
 
   const handleIntervalSubmit = async (intervalDays: number) => {
     if (!bookId || !itemId) return;
-
-    // Get the real item_id from localStorage (saved from start API response)
-    const realItemId = localStorage.getItem(`item-real-id-${itemId}`);
     const itemIdToUse = realItemId || itemId;
-
     try {
       const result = await startInterval(bookId, itemIdToUse, intervalDays);
       const resultObj = result as unknown as Record<string, unknown>;
       const newStatus = (resultObj.status as string) || "interval";
-
-      // Save to localStorage for persistence across remounts
-      localStorage.setItem(`item-status-${itemId}`, newStatus);
-
-      // Optimistic update
-      setItem((prev) =>
-        prev
-          ? {
-              ...prev,
-              ...result,
-              status: newStatus as BookItem["status"],
-            }
-          : null,
-      );
-
+      if (bookId) invalidateBookTreeCache(bookId);
+      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
       setIsIntervalModalOpen(false);
     } catch (err: unknown) {
       const error = err as { response?: { data?: unknown } };
@@ -248,23 +201,13 @@ export const ItemDetailPage = () => {
 
   const handleActivateFsrsPhase = async () => {
     if (!bookId || !itemId) return;
-
-    const realItemId = localStorage.getItem(`item-real-id-${itemId}`);
     const itemIdToUse = realItemId || itemId;
-
     try {
       const result = await activateFsrs(bookId, itemIdToUse);
       const resultObj = result as unknown as Record<string, unknown>;
       const newStatus = (resultObj.status as string) || "fsrs_active";
-
-      localStorage.setItem(`item-status-${itemId}`, newStatus);
-
-      setItem((prev) =>
-        prev
-          ? { ...prev, ...result, status: newStatus as BookItem["status"] }
-          : null,
-      );
-
+      if (bookId) invalidateBookTreeCache(bookId);
+      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
       setIsActivateFsrsModalOpen(false);
     } catch (err: unknown) {
       const error = err as { response?: { data?: unknown } };
@@ -274,12 +217,11 @@ export const ItemDetailPage = () => {
 
   const handleDeactivate = async () => {
     if (!itemId) return;
-    const realItemId = localStorage.getItem(`item-real-id-${itemId}`) || itemId;
+    const itemIdToUse = realItemId || itemId;
     try {
-      await personalService.deactivateItem(realItemId);
-      const newStatus = "inactive";
-      localStorage.setItem(`item-status-${itemId}`, newStatus);
-      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
+      await personalService.deactivateItem(itemIdToUse);
+      if (bookId) invalidateBookTreeCache(bookId);
+      setItem((prev) => prev ? { ...prev, status: "inactive" as BookItem["status"] } : null);
       setIsDeactivateModalOpen(false);
     } catch (err: unknown) {
       console.error("[handleDeactivate] ERROR:", err);
@@ -288,12 +230,11 @@ export const ItemDetailPage = () => {
 
   const handleReactivate = async () => {
     if (!itemId) return;
-    const realItemId = localStorage.getItem(`item-real-id-${itemId}`) || itemId;
+    const itemIdToUse = realItemId || itemId;
     try {
-      await personalService.reactivateItem(realItemId);
-      const newStatus = "fsrs_active";
-      localStorage.setItem(`item-status-${itemId}`, newStatus);
-      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
+      await personalService.reactivateItem(itemIdToUse);
+      if (bookId) invalidateBookTreeCache(bookId);
+      setItem((prev) => prev ? { ...prev, status: "fsrs_active" as BookItem["status"] } : null);
       setIsReactivateModalOpen(false);
     } catch (err: unknown) {
       console.error("[handleReactivate] ERROR:", err);

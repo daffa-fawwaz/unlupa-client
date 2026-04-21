@@ -13,13 +13,9 @@ import { useGetDailyBooks } from "@/features/personal/hooks/useGetDailyBooks";
 import { useParentGroupedReview } from "@/features/personal/hooks/useParentGroupedReview";
 import { BookDailyReviewFlashcardModal } from "@/features/personal/components/BookDailyReviewFlashcardModal";
 import { personalService } from "@/features/personal/services/personal.services";
-import { getTodayDateKey, getReviewedIdsForTaskDate } from "@/features/personal/utils/bookReviewUtils";
 import { invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
 import type { BookDailyTask, ParentGroup } from "@/features/personal/types/personal.types";
 
-/* ------------------------------------------------------------------ */
-/* Helpers                                                              */
-/* ------------------------------------------------------------------ */
 const ParentIcon = ({ type }: { type: ParentGroup["parent_type"] }) => {
   if (type === "submodule") return <Layers className="w-6 h-6 text-purple-400" />;
   if (type === "module") return <FolderOpen className="w-6 h-6 text-purple-400" />;
@@ -29,13 +25,9 @@ const ParentIcon = ({ type }: { type: ParentGroup["parent_type"] }) => {
 const formatEstimate = (seconds: number): string => {
   if (seconds <= 0) return "—";
   if (seconds < 60) return `${seconds}d`;
-  const mins = Math.round(seconds / 60);
-  return `${mins} mnt`;
+  return `${Math.round(seconds / 60)} mnt`;
 };
 
-/* ------------------------------------------------------------------ */
-/* Main Section                                                         */
-/* ------------------------------------------------------------------ */
 export const BookDailyReviewSection = () => {
   const { getDaily, data: dailyTasks } = useGetDailyBooks();
   const { loading, groups, buildGroups } = useParentGroupedReview();
@@ -43,13 +35,24 @@ export const BookDailyReviewSection = () => {
   const [activeGroup, setActiveGroup] = useState<ParentGroup | null>(null);
   const [queueIndex, setQueueIndex] = useState(0);
   const [isFlashcardOpen, setIsFlashcardOpen] = useState(false);
-  const [reviewedVersion, setReviewedVersion] = useState(0);
+  // Track reviewed item IDs in component state (session-only, cleared on reload)
+  // This is intentional: on reload, fresh data comes from API
+  const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const init = async () => {
       try {
         await personalService.generateDailyBooks();
-        await getDaily();
+        const tasks = await getDaily();
+        // Pre-populate reviewed IDs from API state field
+        if (Array.isArray(tasks)) {
+          const completed = new Set(
+            tasks
+              .filter((t) => t.state === "completed")
+              .map((t) => t.item_id),
+          );
+          setReviewedIds(completed);
+        }
       } catch {
         // silent
       }
@@ -57,9 +60,7 @@ export const BookDailyReviewSection = () => {
     void init();
 
     const onGenerated = () => void init();
-    const onVisible = () => {
-      if (document.visibilityState === "visible") void init();
-    };
+    const onVisible = () => { if (document.visibilityState === "visible") void init(); };
 
     window.addEventListener("books:daily-generated", onGenerated);
     document.addEventListener("visibilitychange", onVisible);
@@ -71,23 +72,24 @@ export const BookDailyReviewSection = () => {
 
   useEffect(() => {
     if (dailyTasks && dailyTasks.length > 0) {
+      // Also sync reviewed IDs from API data
+      const completed = new Set(
+        dailyTasks.filter((t) => t.state === "completed").map((t) => t.item_id),
+      );
+      setReviewedIds(completed);
       void buildGroups(dailyTasks);
     }
   }, [dailyTasks, buildGroups]);
 
   const filteredGroups = useMemo(() => {
-    const todayKey = getTodayDateKey();
-    const reviewedIds = getReviewedIdsForTaskDate(todayKey);
-
     return groups
       .map((g) => {
-        const items = g.items.filter((qi) => !reviewedIds.includes(qi.item_id));
+        const items = g.items.filter((qi) => !reviewedIds.has(qi.item_id));
         const totalEstimatedSeconds = items.reduce((s, qi) => s + qi.estimatedSeconds, 0);
         return { ...g, items, totalEstimatedSeconds };
       })
       .filter((g) => g.items.length > 0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groups, reviewedVersion]);
+  }, [groups, reviewedIds]);
 
   const totalItems = filteredGroups.reduce((s, g) => s + g.items.length, 0);
 
@@ -105,34 +107,29 @@ export const BookDailyReviewSection = () => {
   const handleReviewed = async () => {
     if (!activeGroup) return;
 
-    const todayKey = getTodayDateKey();
-    const storageKey = `books:daily-reviewed:${todayKey}`;
-    const reviewedIds = getReviewedIdsForTaskDate(todayKey);
     const reviewedId = activeGroup.items[queueIndex]?.item_id;
 
-    if (reviewedId && !reviewedIds.includes(reviewedId)) {
-      localStorage.setItem(storageKey, JSON.stringify([...reviewedIds, reviewedId]));
+    // Mark as reviewed in component state
+    if (reviewedId) {
+      setReviewedIds((prev) => new Set([...prev, reviewedId]));
     }
 
-    // Invalidate tree cache so review_count & stability are fresh on next page visit
+    // Invalidate tree cache so review_count & stability are fresh
     invalidateBookTreeCache(activeGroup.book_id);
 
-    setReviewedVersion((v) => v + 1);
+    // Find next unreviewed item
+    const updatedReviewed = new Set([...reviewedIds, reviewedId ?? ""]);
+    const remaining = activeGroup.items.filter((qi) => !updatedReviewed.has(qi.item_id));
 
-    const nextIndex = queueIndex + 1;
-    const remainingItems = activeGroup.items.filter(
-      (qi) => !getReviewedIdsForTaskDate(todayKey).includes(qi.item_id),
-    );
-
-    if (remainingItems.length > 0) {
-      const nextItem = remainingItems[0];
-      const nextIdx = activeGroup.items.findIndex((qi) => qi.item_id === nextItem.item_id);
-      setQueueIndex(nextIdx >= 0 ? nextIdx : nextIndex);
+    if (remaining.length > 0) {
+      const nextIdx = activeGroup.items.findIndex((qi) => qi.item_id === remaining[0].item_id);
+      setQueueIndex(nextIdx >= 0 ? nextIdx : queueIndex + 1);
     } else {
       setIsFlashcardOpen(false);
       setActiveGroup(null);
     }
 
+    // Refresh from API to get updated states
     await getDaily();
   };
 
@@ -150,7 +147,6 @@ export const BookDailyReviewSection = () => {
         <div className="h-1 w-full bg-linear-to-r from-purple-400 via-pink-400 to-purple-400" />
 
         <div className="p-6 md:p-8">
-          {/* Header */}
           <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-white/5 pb-6">
             <div className="w-16 h-16 rounded-xl bg-linear-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/30 shrink-0 transform -rotate-3">
               <Flame className="w-8 h-8 text-white animate-pulse" />
@@ -172,12 +168,8 @@ export const BookDailyReviewSection = () => {
             </div>
           </div>
 
-          {/* Loading */}
-          {loading && (
-            <p className="text-sm text-gray-400 animate-pulse">Memuat target harian...</p>
-          )}
+          {loading && <p className="text-sm text-gray-400 animate-pulse">Memuat target harian...</p>}
 
-          {/* Empty state */}
           {!loading && filteredGroups.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
@@ -188,7 +180,6 @@ export const BookDailyReviewSection = () => {
             </div>
           )}
 
-          {/* Group Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
             {filteredGroups.map((group, index) => (
               <div
@@ -197,9 +188,7 @@ export const BookDailyReviewSection = () => {
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="absolute inset-0 bg-linear-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 pointer-events-none" />
-
                 <div className="relative z-10 p-5">
-                  {/* Title row */}
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
                       <ParentIcon type={group.parent_type} />
@@ -209,30 +198,21 @@ export const BookDailyReviewSection = () => {
                         {group.parent_title}
                       </h3>
                       {group.parent_type !== "book" && (
-                        <p className="text-gray-500 text-xs truncate mt-0.5">
-                          {group.book_title}
-                        </p>
+                        <p className="text-gray-500 text-xs truncate mt-0.5">{group.book_title}</p>
                       )}
                     </div>
                   </div>
-
-                  {/* Footer row */}
                   <div className="flex items-center justify-between pt-4 border-t border-white/10 gap-3">
-                    {/* Left: item count + estimate */}
                     <div className="flex flex-col gap-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse shrink-0" />
-                        <span className="text-purple-300 font-bold text-sm">
-                          {group.items.length} item
-                        </span>
+                        <span className="text-purple-300 font-bold text-sm">{group.items.length} item</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-gray-500 text-xs">
                         <Clock className="w-3.5 h-3.5 shrink-0" />
                         <span>~{formatEstimate(group.totalEstimatedSeconds)}</span>
                       </div>
                     </div>
-
-                    {/* Right: Gas Review button */}
                     <button
                       onClick={() => openGroup(group)}
                       className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-500 hover:bg-purple-400 text-[#0B0E14] font-bold text-xs transition-all shrink-0 shadow-md shadow-purple-500/20"
@@ -248,7 +228,6 @@ export const BookDailyReviewSection = () => {
         </div>
       </div>
 
-      {/* Flashcard Modal */}
       {isFlashcardOpen && currentTask && activeGroup && (
         <BookDailyReviewFlashcardModal
           key={`${currentTask.item_id}-${queueIndex}`}

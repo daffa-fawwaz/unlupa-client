@@ -113,9 +113,8 @@ export const useParentGroupedReview = () => {
 
           // Try to find item in tree for status & estimate
           const treeItem = tree ? findItemInTree(tree, parsed.itemId) : null;
-          // Priority: localStorage (optimistic) > tree > task.status
-          const localStatus = localStorage.getItem(`item-status-${parsed.itemId}`);
-          const itemStatus = (localStatus ?? treeItem?.status ?? task.status ?? "").toLowerCase();
+          // Use tree status first, then task status — API is source of truth
+          const itemStatus = (treeItem?.status ?? task.status ?? "").toLowerCase();
           // Only show items that are in a reviewable phase
           const reviewableStatuses = ["interval", "fsrs_active", "graduate"];
           if (!reviewableStatuses.includes(itemStatus)) continue;

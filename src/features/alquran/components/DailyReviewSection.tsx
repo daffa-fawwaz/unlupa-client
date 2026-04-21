@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Flame, Star, Clock, BookOpen, Play, CheckCircle2 } from "lucide-react";
 import { useDailyReviewEstimate, type JuzReviewEstimate } from "@/features/alquran/hooks/useDailyReviewEstimate";
 import type { DailyTask, MyItemDetail } from "@/features/alquran/types/quran.types";
@@ -8,28 +8,10 @@ import { alquranService } from "../services/alquran.services";
 /* ------------------------------------------------------------------ */
 /* Helpers                                                              */
 /* ------------------------------------------------------------------ */
-const getTodayDateKey = () => {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-};
-
-const getReviewedStorageKey = (taskDate: string) => `alquran:daily-reviewed:${taskDate}`;
-
-const getReviewedIds = (taskDate: string): string[] => {
-  try {
-    const raw = localStorage.getItem(getReviewedStorageKey(taskDate));
-    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
-    return Array.isArray(parsed) ? parsed.filter((v) => typeof v === "string") : [];
-  } catch {
-    return [];
-  }
-};
-
 const formatEstimate = (seconds: number): string => {
   if (seconds <= 0) return "—";
   if (seconds < 60) return `${seconds}d`;
-  const mins = Math.round(seconds / 60);
-  return `${mins} mnt`;
+  return `${Math.round(seconds / 60)} mnt`;
 };
 
 /* ------------------------------------------------------------------ */
@@ -39,7 +21,7 @@ export const DailyReviewSection = () => {
   const { loading, juzEstimates, refetch: refetchEstimates } = useDailyReviewEstimate();
 
   const [itemStatusMap, setItemStatusMap] = useState<Map<string, string>>(new Map());
-  const [reviewedVersion, setReviewedVersion] = useState(0);
+  const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
 
   // Flashcard queue state
   const [activeJuz, setActiveJuz] = useState<JuzReviewEstimate | null>(null);
@@ -61,10 +43,24 @@ export const DailyReviewSection = () => {
     }
   }, []);
 
+  // Fetch daily tasks to get completed state from API
+  const refreshDailyState = useCallback(async () => {
+    try {
+      const response = await alquranService.getDaily();
+      const completed = new Set(
+        response.filter((t) => t.state === "completed").map((t) => t.item_id),
+      );
+      setReviewedIds(completed);
+    } catch {
+      // silent
+    }
+  }, []);
+
   useEffect(() => {
     const init = () => {
       void refetchEstimates();
       void refreshStatuses();
+      void refreshDailyState();
     };
     init();
 
@@ -77,22 +73,18 @@ export const DailyReviewSection = () => {
       window.removeEventListener("alquran:daily-generated", onGenerated);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [refetchEstimates, refreshStatuses]);
+  }, [refetchEstimates, refreshStatuses, refreshDailyState]);
 
-  // Filter reviewed items
+  // Filter reviewed items using component state (sourced from API)
   const filteredJuzGroups = useMemo(() => {
-    const todayKey = getTodayDateKey();
-    const reviewedIds = getReviewedIds(todayKey);
-
     return juzEstimates
       .map((juz) => {
-        const items = juz.items.filter((item) => !reviewedIds.includes(item.item_id));
+        const items = juz.items.filter((item) => !reviewedIds.has(item.item_id));
         const totalEstimatedSeconds = items.reduce((s, i) => s + (i.estimatedReviewSeconds || 0), 0);
         return { ...juz, items, itemCount: items.length, totalEstimatedSeconds };
       })
       .filter((juz) => juz.itemCount > 0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [juzEstimates, reviewedVersion]);
+  }, [juzEstimates, reviewedIds]);
 
   const totalItems = filteredJuzGroups.reduce((s, j) => s + j.itemCount, 0);
 
@@ -121,22 +113,16 @@ export const DailyReviewSection = () => {
   const handleReviewed = async () => {
     if (!activeJuz) return;
 
-    const todayKey = getTodayDateKey();
-    const reviewedIds = getReviewedIds(todayKey);
     const reviewedId = activeJuz.items[queueIndex]?.item_id;
 
-    if (reviewedId && !reviewedIds.includes(reviewedId)) {
-      localStorage.setItem(
-        getReviewedStorageKey(todayKey),
-        JSON.stringify([...reviewedIds, reviewedId]),
-      );
+    // Mark as reviewed in component state
+    if (reviewedId) {
+      setReviewedIds((prev) => new Set([...prev, reviewedId]));
     }
 
-    setReviewedVersion((v) => v + 1);
-
-    // Advance to next unreviewed item
-    const updatedReviewedIds = getReviewedIds(todayKey);
-    const remaining = activeJuz.items.filter((qi) => !updatedReviewedIds.includes(qi.item_id));
+    // Find next unreviewed item
+    const updatedReviewed = new Set([...reviewedIds, reviewedId ?? ""]);
+    const remaining = activeJuz.items.filter((qi) => !updatedReviewed.has(qi.item_id));
 
     if (remaining.length > 0) {
       const nextIdx = activeJuz.items.findIndex((qi) => qi.item_id === remaining[0].item_id);
