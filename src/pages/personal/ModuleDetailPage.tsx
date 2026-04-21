@@ -52,7 +52,7 @@ const AddSubModuleModal = ({
   const [form, setForm] = useState({
     title: "",
     description: "",
-    order: nextOrder,
+    orderStr: String(nextOrder),
   });
   const [resultState, setResultState] = useState<"idle" | "success" | "error">(
     "idle",
@@ -66,11 +66,12 @@ const AddSubModuleModal = ({
       setResultState("error");
       return;
     }
+    const order = Math.max(1, parseInt(form.orderStr) || 1);
     try {
       const created = await createModule(bookId, {
         title: form.title.trim(),
         description: form.description.trim(),
-        order: form.order,
+        order,
         parent_id: parentId,
       });
       onCreated(created);
@@ -234,12 +235,11 @@ const AddSubModuleModal = ({
                   <input
                     type="number"
                     min={1}
-                    required
-                    value={form.order}
+                    value={form.orderStr}
                     onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        order: parseInt(e.target.value) || 1,
+                        orderStr: e.target.value,
                       }))
                     }
                     className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:outline-none text-white text-sm transition-colors"

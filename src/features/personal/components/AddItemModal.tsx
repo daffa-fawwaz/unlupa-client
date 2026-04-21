@@ -39,8 +39,8 @@ export const AddItemModal = ({
   const [form, setForm] = useState({
     content: "",
     answer: "",
-    order: nextOrder,
-    estimate_value: 5,
+    orderStr: String(nextOrder),
+    estimateStr: "5",
     estimate_unit: "minutes",
   });
   const [resultState, setResultState] = useState<"idle" | "success" | "error">("idle");
@@ -53,6 +53,8 @@ export const AddItemModal = ({
       setResultState("error");
       return;
     }
+    const order = Math.max(1, parseInt(form.orderStr) || 1);
+    const estimate_value = Math.max(1, parseInt(form.estimateStr) || 1);
     try {
       let created: CreatedItem | CreatedModuleItem;
       if (moduleId) {
@@ -61,8 +63,8 @@ export const AddItemModal = ({
           title: "",
           content: form.content.trim(),
           answer: form.answer.trim(),
-          order: form.order,
-          estimate_value: form.estimate_value,
+          order,
+          estimate_value,
           estimate_unit: form.estimate_unit,
         });
       } else {
@@ -70,8 +72,8 @@ export const AddItemModal = ({
           title: "",
           content: form.content.trim(),
           answer: form.answer.trim(),
-          order: form.order,
-          estimate_value: form.estimate_value,
+          order,
+          estimate_value,
           estimate_unit: form.estimate_unit,
         });
       }
@@ -204,21 +206,20 @@ export const AddItemModal = ({
                     <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
                       <Hash className="w-3.5 h-3.5" />Estimasi Waktu Review
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                       <input
                         type="number"
                         min={1}
-                        required
-                        value={form.estimate_value}
+                        value={form.estimateStr}
                         onChange={(e) =>
-                          setForm((f) => ({ ...f, estimate_value: parseInt(e.target.value) || 1 }))
+                          setForm((f) => ({ ...f, estimateStr: e.target.value }))
                         }
-                        className="w-20 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                        className="w-24 shrink-0 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
                       />
                       <select
                         value={form.estimate_unit}
                         onChange={(e) => setForm((f) => ({ ...f, estimate_unit: e.target.value }))}
-                        className="p-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                        className="flex-1 px-3 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
                       >
                         <option value="seconds" className="bg-[#0E1420]">Detik</option>
                         <option value="minutes" className="bg-[#0E1420]">Menit</option>
@@ -233,10 +234,9 @@ export const AddItemModal = ({
                     <input
                       type="number"
                       min={1}
-                      required
-                      value={form.order}
+                      value={form.orderStr}
                       onChange={(e) =>
-                        setForm((f) => ({ ...f, order: parseInt(e.target.value) || 1 }))
+                        setForm((f) => ({ ...f, orderStr: e.target.value }))
                       }
                       className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
                     />

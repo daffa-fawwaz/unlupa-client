@@ -51,7 +51,7 @@ const AddModuleModal = ({
   const [form, setForm] = useState({
     title: "",
     description: "",
-    order: nextOrder,
+    orderStr: String(nextOrder),
   });
   const [resultState, setResultState] = useState<"idle" | "success" | "error">(
     "idle",
@@ -60,17 +60,18 @@ const AddModuleModal = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const order = Math.max(1, parseInt(form.orderStr) || 1);
     try {
       const created = await createModule(bookId, {
         title: form.title.trim(),
         description: form.description.trim(),
-        order: form.order,
+        order,
         parent_id: null,
       });
       onCreated(created);
       setResultState("success");
-    } catch (err: any) {
-      setErrorMsg(err.message ?? "Terjadi kesalahan.");
+    } catch (err: unknown) {
+      setErrorMsg((err as Error).message ?? "Terjadi kesalahan.");
       setResultState("error");
     }
   };
@@ -228,12 +229,11 @@ const AddModuleModal = ({
                   <input
                     type="number"
                     min={1}
-                    required
-                    value={form.order}
+                    value={form.orderStr}
                     onChange={(e) =>
                       setForm((f) => ({
                         ...f,
-                        order: parseInt(e.target.value) || 1,
+                        orderStr: e.target.value,
                       }))
                     }
                     className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500/50 focus:outline-none text-white text-sm transition-colors"
