@@ -301,6 +301,8 @@ const AddItemModal = ({
     content: "",
     answer: "",
     order: nextOrder,
+    estimate_value: 5,
+    estimate_unit: "minutes",
   });
   const [resultState, setResultState] = useState<"idle" | "success" | "error">(
     "idle",
@@ -309,8 +311,8 @@ const AddItemModal = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title.trim() || !form.content.trim() || !form.answer.trim()) {
-      setErrorMsg("Semua field wajib diisi.");
+    if (!form.content.trim() || !form.answer.trim()) {
+      setErrorMsg("Pertanyaan dan jawaban wajib diisi.");
       setResultState("error");
       return;
     }
@@ -320,11 +322,13 @@ const AddItemModal = ({
         content: form.content.trim(),
         answer: form.answer.trim(),
         order: form.order,
+        estimate_value: form.estimate_value,
+        estimate_unit: form.estimate_unit,
       });
       onCreated(created);
       setResultState("success");
-    } catch (err: any) {
-      setErrorMsg(err.message ?? "Terjadi kesalahan.");
+    } catch (err: unknown) {
+      setErrorMsg((err as Error).message ?? "Terjadi kesalahan.");
       setResultState("error");
     }
   };
@@ -358,11 +362,7 @@ const AddItemModal = ({
                   Item Berhasil Dibuat!
                 </h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  Item hafalan{" "}
-                  <span className="text-white font-semibold">
-                    "{form.title}"
-                  </span>{" "}
-                  telah berhasil ditambahkan ke buku ini.
+                  Item hafalan telah berhasil ditambahkan ke buku ini.
                 </p>
               </div>
               <button
@@ -435,24 +435,6 @@ const AddItemModal = ({
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="p-8 space-y-5">
-                {/* Title */}
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                    <FileText className="w-3.5 h-3.5" />
-                    Judul Item
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="cth. Data Buku"
-                    value={form.title}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, title: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors"
-                  />
-                </div>
-
                 {/* Content */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
@@ -489,25 +471,58 @@ const AddItemModal = ({
                   />
                 </div>
 
-                {/* Order */}
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                    <Hash className="w-3.5 h-3.5" />
-                    Urutan
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    required
-                    value={form.order}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        order: parseInt(e.target.value) || 1,
-                      }))
-                    }
-                    className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
-                  />
+                {/* Estimasi and Order */}
+                <div className="flex gap-4">
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                      <Hash className="w-3.5 h-3.5" />
+                      Estimasi
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        min={1}
+                        required
+                        value={form.estimate_value}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            estimate_value: parseInt(e.target.value) || 1,
+                          }))
+                        }
+                        className="w-20 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                      />
+                      <select
+                        value={form.estimate_unit}
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, estimate_unit: e.target.value }))
+                        }
+                        className="px-3 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                      >
+                        <option value="seconds" className="bg-[#0E1420]">Detik</option>
+                        <option value="minutes" className="bg-[#0E1420]">Menit</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                      <Hash className="w-3.5 h-3.5" />
+                      Urutan
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      required
+                      value={form.order}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          order: parseInt(e.target.value) || 1,
+                        }))
+                      }
+                      className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                    />
+                  </div>
                 </div>
 
                 {/* Actions */}
@@ -521,7 +536,7 @@ const AddItemModal = ({
                   </button>
                   <button
                     type="submit"
-                    disabled={loading || !form.title.trim()}
+                    disabled={loading || !form.content.trim()}
                     className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                   >
                     {loading ? (

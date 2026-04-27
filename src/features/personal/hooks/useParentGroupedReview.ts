@@ -3,11 +3,31 @@ import { personalService } from "@/features/personal/services/personal.services"
 import { parseBookContentRef } from "@/features/personal/utils/bookReviewUtils";
 import type {
   BookDailyTask,
+  BookItem,
   BookTree,
   Module,
   ParentGroup,
   ReviewQueueItem,
 } from "@/features/personal/types/personal.types";
+
+function findItemInTree(tree: BookTree, itemId: string): BookItem | null {
+  if (tree.items?.length) {
+    const found = tree.items.find((i) => i.id === itemId);
+    if (found) return found;
+  }
+  const searchModules = (modules: Module[]): BookItem | null => {
+    for (const mod of modules) {
+      const found = mod.items?.find((i) => i.id === itemId);
+      if (found) return found;
+      if (mod.children?.length) {
+        const deep = searchModules(mod.children);
+        if (deep) return deep;
+      }
+    }
+    return null;
+  };
+  return searchModules(tree.modules ?? []);
+}
 
 function findParent(
   tree: BookTree,
@@ -16,7 +36,6 @@ function findParent(
   if (tree.items?.some((i) => i.id === itemId)) {
     return { parentId: tree.book_id, parentTitle: tree.title, parentType: "book" };
   }
-
   const searchModules = (
     modules: Module[],
     depth: number,
@@ -36,7 +55,6 @@ function findParent(
     }
     return null;
   };
-
   return searchModules(tree.modules ?? [], 0);
 }
 
@@ -55,7 +73,7 @@ export const useParentGroupedReview = () => {
     setError(null);
 
     try {
-      // Deduplicate by item_id — keep only one task per item
+      // Deduplicate by item_id
       const seen = new Set<string>();
       const uniqueTasks: BookDailyTask[] = [];
       for (const task of tasks) {
@@ -93,6 +111,16 @@ export const useParentGroupedReview = () => {
           const parsed = parseBookContentRef(task.content_ref);
           if (!parsed) continue;
 
+          // Try to find item in tree for status & estimate
+          const treeItem = tree ? findItemInTree(tree, parsed.itemId) : null;
+          // Use tree status first, then task status, then assume reviewable if unknown
+          const itemStatus = (treeItem?.status ?? task.status ?? "interval").toLowerCase();
+          // Only skip items that are clearly not in a review phase
+          const nonReviewableStatuses = ["belum_mulai", "start", "menghafal"];
+          if (nonReviewableStatuses.includes(itemStatus)) continue;
+
+          const estimatedSeconds = treeItem?.estimated_review_seconds ?? 30;
+
           let parentId = bookId;
           let parentTitle = bookTitle;
           let parentType: "book" | "module" | "submodule" = "book";
@@ -106,10 +134,16 @@ export const useParentGroupedReview = () => {
             }
           }
 
-          const queueItem: ReviewQueueItem = { item_id: parsed.itemId, task };
+          const queueItem: ReviewQueueItem = {
+            item_id: parsed.itemId,
+            task,
+            estimatedSeconds,
+          };
 
           if (parentMap.has(parentId)) {
-            parentMap.get(parentId)!.items.push(queueItem);
+            const g = parentMap.get(parentId)!;
+            g.items.push(queueItem);
+            g.totalEstimatedSeconds += estimatedSeconds;
           } else {
             parentMap.set(parentId, {
               parent_id: parentId,
@@ -118,6 +152,7 @@ export const useParentGroupedReview = () => {
               book_id: bookId,
               book_title: bookTitle,
               items: [queueItem],
+              totalEstimatedSeconds: estimatedSeconds,
             });
           }
         }

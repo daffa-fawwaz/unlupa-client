@@ -165,6 +165,8 @@ export interface CreateItemPayload {
   content: string;
   answer: string;
   order: number;
+  estimate_value?: number;
+  estimate_unit?: string;
 }
 
 export interface CreatedItem {
@@ -368,6 +370,7 @@ export type ParentType = "book" | "module" | "submodule";
 export interface ReviewQueueItem {
   item_id: string;
   task: BookDailyTask;
+  estimatedSeconds: number;
 }
 
 export interface ParentGroup {
@@ -377,4 +380,5 @@ export interface ParentGroup {
   book_id: string;
   book_title: string;
   items: ReviewQueueItem[];
+  totalEstimatedSeconds: number;
 }
