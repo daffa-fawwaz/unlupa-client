@@ -9,10 +9,6 @@ import {
   Plus,
   Library,
   Loader2,
-  TrendingUp,
-  Clock,
-  Award,
-  ArrowRight,
 } from "lucide-react";
 import { useBooks } from "../hooks/useBooks";
 import { Link, useNavigate } from "react-router";
@@ -98,143 +94,60 @@ export const PersonalDashboard = () => {
             maksimal.
           </p>
 
-          {/* Quick Stats Strip */}
-          <div className="flex flex-wrap items-center gap-4 md:gap-8 p-6 rounded-[2rem] bg-[#111620]/60 border border-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden">
+          {/* Quick Action Strip */}
+          <div className="flex flex-wrap items-stretch gap-4 md:gap-0 p-2 rounded-[2rem] bg-[#111620]/60 border border-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl pointer-events-none" />
 
-            <div className="flex items-center gap-4 flex-1 min-w-[200px]">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
-                <TrendingUp className="w-6 h-6" />
+            {/* Buat Materi */}
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="group flex items-center gap-4 flex-1 min-w-[180px] px-6 py-4 rounded-[1.5rem] hover:bg-blue-500/10 transition-all duration-300 text-left"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all shrink-0">
+                <Plus className="w-6 h-6" />
               </div>
               <div>
-                <div className="text-2xl font-black text-white">0</div>
-                <div className="text-xs font-bold tracking-widest uppercase text-gray-500">
-                  Aktivitas Hari Ini
-                </div>
+                <div className="text-base font-black text-white group-hover:text-blue-300 transition-colors">Buat Materi</div>
+                <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Buat buku baru dari nol</div>
               </div>
-            </div>
+            </button>
 
-            <div className="hidden md:block w-px h-12 bg-white/10" />
+            <div className="hidden md:block w-px my-3 bg-white/10" />
 
-            <div className="flex items-center gap-4 flex-1 min-w-[200px]">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400">
-                <Clock className="w-6 h-6" />
+            {/* Bagikan Karya */}
+            <Link
+              to="/dashboard/pribadi/share"
+              className="group flex items-center gap-4 flex-1 min-w-[180px] px-6 py-4 rounded-[1.5rem] hover:bg-emerald-500/10 transition-all duration-300 decoration-transparent"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all shrink-0">
+                <Share2 className="w-6 h-6" />
               </div>
               <div>
-                <div className="text-2xl font-black text-white">
-                  0<span className="text-base text-gray-500 ml-1">menit</span>
-                </div>
-                <div className="text-xs font-bold tracking-widest uppercase text-gray-500">
-                  Waktu Belajar
-                </div>
+                <div className="text-base font-black text-white group-hover:text-emerald-300 transition-colors">Bagikan Karya</div>
+                <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Publikasikan ke komunitas</div>
               </div>
-            </div>
+            </Link>
 
-            <div className="hidden lg:block w-px h-12 bg-white/10" />
+            <div className="hidden lg:block w-px my-3 bg-white/10" />
 
-            <div className="flex items-center gap-4 flex-1 min-w-[200px]">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 text-amber-400">
-                <Award className="w-6 h-6" />
+            {/* Import Katalog */}
+            <Link
+              to="/dashboard/pribadi/explore"
+              className="group flex items-center gap-4 flex-1 min-w-[180px] px-6 py-4 rounded-[1.5rem] hover:bg-purple-500/10 transition-all duration-300 decoration-transparent"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all shrink-0">
+                <Download className="w-6 h-6" />
               </div>
               <div>
-                <div className="text-2xl font-black text-white">Pemula</div>
-                <div className="text-xs font-bold tracking-widest uppercase text-gray-500">
-                  Level Saat Ini
-                </div>
+                <div className="text-base font-black text-white group-hover:text-purple-300 transition-colors">Impor Katalog</div>
+                <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">Salin materi dari perpustakaan</div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
 
         {/* === DAILY REVIEW SECTION (BOOKS ONLY) === */}
         <BookDailyReviewSection />
-
-        {/* === MAIN ACTION BUTTONS (Bento Grid Style) === */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16 relative z-10">
-          {/* Action 1: Buat Materi */}
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-blue-500/20 hover:border-blue-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(59,130,246,0.3)] hover:-translate-y-1"
-          >
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
-            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-2xl rounded-full group-hover:bg-blue-500/20 transition-all duration-700" />
-
-            <div className="flex justify-between items-start relative z-10 w-full mb-6">
-              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-blue-500 to-cyan-500 p-px shadow-lg group-hover:scale-110 transition-transform duration-500">
-                <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
-                  <Plus className="w-6 h-6 text-blue-400 group-hover:text-white transition-colors" />
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
-            </div>
-
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold text-white mb-2 tracking-wide group-hover:text-blue-50 transition-colors">
-                Buat Materi LKS
-              </h3>
-              <p className="text-sm text-gray-500 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
-                Tulis dan racik kurikulum sistematis dari nol untuk target
-                hafalan pribadi.
-              </p>
-            </div>
-          </button>
-
-          {/* Action 2: Bagikan Kitab */}
-          <Link
-            to="/dashboard/pribadi/share"
-            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-emerald-500/20 hover:border-emerald-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.2)] hover:-translate-y-1 decoration-transparent"
-          >
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
-            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-2xl rounded-full group-hover:bg-emerald-500/20 transition-all duration-700" />
-
-            <div className="flex justify-between items-start relative z-10 w-full mb-6">
-              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-emerald-500 to-teal-500 p-px shadow-lg group-hover:scale-110 transition-transform duration-500">
-                <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
-                  <Share2 className="w-6 h-6 text-emerald-400 group-hover:text-white transition-colors" />
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
-            </div>
-
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold text-white mb-2 tracking-wide group-hover:text-emerald-50 transition-colors">
-                Bagikan Karya
-              </h3>
-              <p className="text-sm text-gray-500 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
-                Jadikan karya Anda amal jariyah dengan mempublikasikannya ke
-                seluruh umat.
-              </p>
-            </div>
-          </Link>
-
-          {/* Action 3: Import Kitab */}
-          <Link
-            to="/dashboard/pribadi/explore"
-            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-linear-to-b from-[#161D29] to-[#0D121A] border border-purple-500/20 hover:border-purple-400/50 transition-all duration-500 p-8 text-left min-h-[220px] flex flex-col justify-between hover:shadow-[0_20px_40px_-15px_rgba(168,85,247,0.2)] hover:-translate-y-1 decoration-transparent"
-          >
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
-            <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/10 blur-2xl rounded-full group-hover:bg-purple-500/20 transition-all duration-700" />
-
-            <div className="flex justify-between items-start relative z-10 w-full mb-6">
-              <div className="w-14 h-14 rounded-[1.5rem] bg-linear-to-br from-purple-500 to-pink-500 p-px shadow-lg group-hover:scale-110 transition-transform duration-500">
-                <div className="w-full h-full rounded-[1.4rem] bg-[#111824] flex items-center justify-center group-hover:bg-transparent transition-colors duration-500">
-                  <Download className="w-6 h-6 text-purple-400 group-hover:text-white transition-colors" />
-                </div>
-              </div>
-              <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
-            </div>
-
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold text-white mb-2 tracking-wide group-hover:text-purple-50 transition-colors">
-                Impor dari Katalog
-              </h3>
-              <p className="text-sm text-gray-500 leading-relaxed font-light group-hover:text-gray-300 transition-colors">
-                Salin paket materi siap saji milik para guru & kontributor dari
-                perpustakaan.
-              </p>
-            </div>
-          </Link>
-        </div>
 
         {/* === SECTION 1: KARYA MANDIRI === */}
         <div className="mb-20">
