@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
@@ -26,7 +26,8 @@ import { useDeleteItem } from "@/features/personal/hooks/useDeleteItem";
 import { useStartItemPhase } from "@/features/personal/hooks/useStartItemPhase";
 import { useStartIntervalPhase } from "@/features/personal/hooks/useStartIntervalPhase";
 import { useActivateFsrsPhase } from "@/features/personal/hooks/useActivateFsrsPhase";
-import { useBookTree, invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
+import { useBookTree, invalidateBookTreeCache, updateItemStatusInCache } from "@/features/personal/hooks/useBookTree";
+import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
 import type {
   BookItem,
   CreatedItem,
@@ -40,7 +41,14 @@ export const ItemDetailPage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
-  const [realItemId, setRealItemId] = useState<string | null>(null); // item_id from API (for interval/fsrs calls)
+  const [realItemId, setRealItemId] = useState<string | null>(
+    // Persist across navigation within same session using sessionStorage
+    itemId ? sessionStorage.getItem(`real-item-id-${itemId}`) : null
+  );
+  // Track if we have a pending optimistic status update that shouldn't be overwritten by tree sync
+  const pendingStatusRef = useRef<BookItem["status"] | null>(null);
+  // Track the last status confirmed by the API
+  const apiStatusRef = useRef<BookItem["status"] | null>(null);
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
   const [isIntervalModalOpen, setIsIntervalModalOpen] = useState(false);
   const [isActivateFsrsModalOpen, setIsActivateFsrsModalOpen] = useState(false);
@@ -58,88 +66,65 @@ export const ItemDetailPage = () => {
     },
   });
   const { startPhase, loading: isStarting } = useStartItemPhase();
-  const { startInterval, loading: isStartingInterval } =
-    useStartIntervalPhase();
+  const { startInterval, loading: isStartingInterval } = useStartIntervalPhase();
   const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
+  const { fetchStatusMap } = useBookItemStatusMap();
 
-  // Fetch item detail (next review, stability, etc.) for reviewable items
+  // Load item: fetch tree for content, fetch statusMap for status
   useEffect(() => {
-    if (!item || !itemId) return;
-    const reviewableStatuses = ["interval", "fsrs_active", "graduate", "inactive"];
-    if (!reviewableStatuses.includes(item.status)) return;
+    if (!bookId || !itemId) return;
 
-    const idToUse = realItemId || itemId;
-    personalService.getItemDetail(idToUse)
-      .then((res) => setItemDetail(res.data))
-      .catch(() => setItemDetail(null));
-  }, [item, itemId, realItemId]);
+    const load = async () => {
+      // Fetch tree (for item content/answer/etc) and status map in parallel
+      const [treeResult, statusMap] = await Promise.all([
+        fetchBookTree(bookId).catch(() => null),
+        fetchStatusMap().catch(() => new Map()),
+      ]);
 
-  useEffect(() => {
-    if (bookId && !tree) {
-      void fetchBookTree(bookId);
-    }
-  }, [bookId, tree, fetchBookTree]);
+      if (!treeResult) return;
 
-  // Sync item data from tree and localStorage
-  // NOTE: This effect synchronizes component state with external data sources
-  // (tree data and localStorage), which is a valid use case for useEffect.
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    if (!tree || !itemId) {
-      setItem(null);
-      return;
-    }
-
-    const findItem = (): BookItem | null => {
-      // Search in book-level items first
-      if (tree.items && Array.isArray(tree.items)) {
-        const found = tree.items.find((i: BookItem) => i.id === itemId);
-        if (found) {
-          return found;
-        }
-      }
-
-      // Search in modules
-      const searchInModules = (
-        modules: Array<Record<string, unknown>>,
-      ): BookItem | null => {
-        for (const mod of modules) {
-          if (mod.items && Array.isArray(mod.items)) {
-            const found = mod.items.find((i: BookItem) => i.id === itemId);
-            if (found) {
-              return found;
-            }
-          }
-          if (mod.children && Array.isArray(mod.children) && mod.children.length > 0) {
-            const found = searchInModules(mod.children as Array<Record<string, unknown>>);
+      // Find item in tree
+      const findInTree = (t: typeof treeResult): BookItem | null => {
+        const inItems = t.items?.find((i) => i.id === itemId);
+        if (inItems) return inItems;
+        const searchMods = (mods: typeof t.modules): BookItem | null => {
+          for (const m of mods) {
+            const found = m.items?.find((i) => i.id === itemId);
             if (found) return found;
+            if (m.children?.length) { const d = searchMods(m.children); if (d) return d; }
           }
-        }
-        return null;
+          return null;
+        };
+        return searchMods(t.modules);
       };
 
-      const found = searchInModules(tree.modules as unknown as Array<Record<string, unknown>>);
-      if (found) return found;
+      const foundItem = findInTree(treeResult);
+      if (!foundItem) return;
 
-      return null;
+      // Get status from API (authoritative) — tree doesn't include status
+      const contentRef = contentRefForItem(bookId, itemId);
+      const entry = statusMap.get(contentRef);
+      const finalStatus = (entry?.status ?? "belum_mulai") as BookItem["status"];
+
+      if (entry?.item_id) {
+        setRealItemId(entry.item_id);
+        sessionStorage.setItem(`real-item-id-${itemId}`, entry.item_id);
+      }
+
+      setItem({ ...foundItem, status: finalStatus });
     };
 
-    const foundItem = findItem();
-    if (!foundItem) {
-      setItem(null);
-      return;
-    }
+    void load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookId, itemId]);
 
-    // Use status directly from tree — API is source of truth
-    const treeStatus = (foundItem as unknown as Record<string, unknown>).status as string | undefined;
-    const finalStatus = treeStatus || "belum_mulai";
-
-    setItem({
-      ...foundItem,
-      status: finalStatus as BookItem["status"],
-    });
-  }, [tree, itemId]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+  // Fetch item detail (next review, stability) when realItemId is known
+  useEffect(() => {
+    if (!realItemId) return;
+    personalService.getItemDetail(realItemId)
+      .then((res) => setItemDetail(res.data))
+      .catch(() => setItemDetail(null));
+  }, [realItemId]);
 
   const handleEditSuccess = (updatedItem: CreatedItem) => {
     setItem({
@@ -155,6 +140,8 @@ export const ItemDetailPage = () => {
     try {
       await deleteItemFn(itemId, bookId || undefined);
       setIsDeleteModalOpen(false);
+      sessionStorage.removeItem(`real-item-id-${itemId}`);
+      sessionStorage.removeItem(`item-status-${itemId}`);
       navigate(-1);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string }; status?: number } };
@@ -166,16 +153,15 @@ export const ItemDetailPage = () => {
     if (!bookId || !itemId) return;
     try {
       const result = await startPhase(bookId, itemId);
-      const resultObj = result as unknown as Record<string, unknown>;
-      const newStatus = (resultObj.status as string) || "menghafal";
-
-      // Save the real item_id in component state for subsequent API calls
-      const apiItemId = resultObj.item_id as string | undefined;
-      if (apiItemId) setRealItemId(apiItemId);
-
-      // Invalidate tree cache so status is fresh on next fetch
-      if (bookId) invalidateBookTreeCache(bookId);
-
+      // result.item_id is the Item state ID needed for interval/fsrs calls
+      if (result.item_id) {
+        setRealItemId(result.item_id);
+        sessionStorage.setItem(`real-item-id-${itemId}`, result.item_id);
+      }
+      const newStatus = result.status || "menghafal";
+      pendingStatusRef.current = newStatus as BookItem["status"];
+      apiStatusRef.current = newStatus as BookItem["status"];
+      sessionStorage.setItem(`item-status-${itemId}`, newStatus);
       setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
       setIsStartModalOpen(false);
     } catch (err: unknown) {
@@ -185,13 +171,17 @@ export const ItemDetailPage = () => {
 
   const handleIntervalSubmit = async (intervalDays: number) => {
     if (!bookId || !itemId) return;
-    const itemIdToUse = realItemId || itemId;
+    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    if (!itemIdToUse) {
+      console.error("[handleIntervalSubmit] No real item_id available");
+      return;
+    }
     try {
-      const result = await startInterval(bookId, itemIdToUse, intervalDays);
-      const resultObj = result as unknown as Record<string, unknown>;
-      const newStatus = (resultObj.status as string) || "interval";
-      if (bookId) invalidateBookTreeCache(bookId);
-      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
+      await startInterval(bookId, itemIdToUse, intervalDays);
+      pendingStatusRef.current = "interval";
+      apiStatusRef.current = "interval";
+      sessionStorage.setItem(`item-status-${itemId}`, "interval");
+      setItem((prev) => prev ? { ...prev, status: "interval" } : null);
       setIsIntervalModalOpen(false);
     } catch (err: unknown) {
       const error = err as { response?: { data?: unknown } };
@@ -201,13 +191,17 @@ export const ItemDetailPage = () => {
 
   const handleActivateFsrsPhase = async () => {
     if (!bookId || !itemId) return;
-    const itemIdToUse = realItemId || itemId;
+    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    if (!itemIdToUse) {
+      console.error("[handleActivateFsrsPhase] No real item_id available");
+      return;
+    }
     try {
-      const result = await activateFsrs(bookId, itemIdToUse);
-      const resultObj = result as unknown as Record<string, unknown>;
-      const newStatus = (resultObj.status as string) || "fsrs_active";
-      if (bookId) invalidateBookTreeCache(bookId);
-      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
+      await activateFsrs(bookId, itemIdToUse);
+      pendingStatusRef.current = "fsrs_active";
+      apiStatusRef.current = "fsrs_active";
+      sessionStorage.setItem(`item-status-${itemId}`, "fsrs_active");
+      setItem((prev) => prev ? { ...prev, status: "fsrs_active" } : null);
       setIsActivateFsrsModalOpen(false);
     } catch (err: unknown) {
       const error = err as { response?: { data?: unknown } };
@@ -217,11 +211,17 @@ export const ItemDetailPage = () => {
 
   const handleDeactivate = async () => {
     if (!itemId) return;
-    const itemIdToUse = realItemId || itemId;
+    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    if (!itemIdToUse) {
+      console.error("[handleDeactivate] No real item_id available");
+      return;
+    }
     try {
       await personalService.deactivateItem(itemIdToUse);
-      if (bookId) invalidateBookTreeCache(bookId);
-      setItem((prev) => prev ? { ...prev, status: "inactive" as BookItem["status"] } : null);
+      pendingStatusRef.current = "inactive";
+      apiStatusRef.current = "inactive";
+      sessionStorage.setItem(`item-status-${itemId}`, "inactive");
+      setItem((prev) => prev ? { ...prev, status: "inactive" } : null);
       setIsDeactivateModalOpen(false);
     } catch (err: unknown) {
       console.error("[handleDeactivate] ERROR:", err);
@@ -230,11 +230,17 @@ export const ItemDetailPage = () => {
 
   const handleReactivate = async () => {
     if (!itemId) return;
-    const itemIdToUse = realItemId || itemId;
+    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    if (!itemIdToUse) {
+      console.error("[handleReactivate] No real item_id available");
+      return;
+    }
     try {
       await personalService.reactivateItem(itemIdToUse);
-      if (bookId) invalidateBookTreeCache(bookId);
-      setItem((prev) => prev ? { ...prev, status: "fsrs_active" as BookItem["status"] } : null);
+      pendingStatusRef.current = "fsrs_active";
+      apiStatusRef.current = "fsrs_active";
+      sessionStorage.setItem(`item-status-${itemId}`, "fsrs_active");
+      setItem((prev) => prev ? { ...prev, status: "fsrs_active" } : null);
       setIsReactivateModalOpen(false);
     } catch (err: unknown) {
       console.error("[handleReactivate] ERROR:", err);
@@ -434,7 +440,7 @@ export const ItemDetailPage = () => {
                         Pertanyaan
                       </span>
                     </div>
-                    <p className="text-lg text-white leading-relaxed">
+                    <p className="text-lg text-white leading-relaxed whitespace-pre-wrap">
                       {item.content}
                     </p>
                   </div>
@@ -447,7 +453,7 @@ export const ItemDetailPage = () => {
                         Jawaban
                       </span>
                     </div>
-                    <p className="text-lg text-emerald-100 leading-relaxed">
+                    <p className="text-lg text-emerald-100 leading-relaxed whitespace-pre-wrap">
                       {item.answer}
                     </p>
                   </div>

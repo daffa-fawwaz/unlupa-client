@@ -217,6 +217,14 @@ export interface GetItemDetailResponse {
   path: string;
 }
 
+export interface GetItemsByStatusResponse {
+  status: number;
+  message: string;
+  data: ItemDetail[];
+  timestamp: string;
+  path: string;
+}
+
 export interface CreateModuleItemPayload {
   book_id: string;
   title: string;

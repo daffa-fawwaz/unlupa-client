@@ -38,6 +38,28 @@ export const updateItemReviewCountInCache = (bookId: string, itemId: string, rev
   bookTreeCache.set(bookId, updated);
 };
 
+// Update status for a specific item in the cache (optimistic update)
+export const updateItemStatusInCache = (bookId: string, itemId: string, status: BookItem["status"]) => {
+  const cached = bookTreeCache.get(bookId);
+  if (!cached) return;
+
+  const updateItems = (items: BookItem[]) =>
+    items.map((i) => i.id === itemId ? { ...i, status } : i);
+
+  const updateModules = (modules: Module[]): Module[] =>
+    modules.map((m) => ({
+      ...m,
+      items: m.items ? updateItems(m.items) : m.items,
+      children: m.children?.length ? updateModules(m.children) : m.children,
+    }));
+
+  bookTreeCache.set(bookId, {
+    ...cached,
+    items: updateItems(cached.items),
+    modules: updateModules(cached.modules),
+  });
+};
+
 export const useBookTree = () => {
   const [tree, setTree] = useState<BookTree | null>(null);
   const [loading, setLoading] = useState(false);

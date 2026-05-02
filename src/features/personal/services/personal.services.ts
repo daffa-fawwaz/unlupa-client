@@ -17,6 +17,7 @@ import type {
   CreateItemPayload,
   CreateItemResponse,
   GetItemDetailResponse,
+  GetItemsByStatusResponse,
   CreateModuleItemPayload,
   CreateModuleItemResponse,
   UpdateItemPayload,
@@ -196,6 +197,11 @@ export const personalService = {
     payload: ReviewFsrsPayload,
   ): Promise<ReviewFsrsResponse> {
     const response = await api.post(`/api/v1/items/${itemId}/review`, payload);
+    return response.data;
+  },
+
+  async getItemsByStatus(status: string): Promise<GetItemsByStatusResponse> {
+    const response = await api.get(`/api/v1/items`, { params: { status } });
     return response.data;
   },
 };

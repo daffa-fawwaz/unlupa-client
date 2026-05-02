@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { personalService } from "../services/personal.services";
-import type { CreatedItem } from "../types/personal.types";
+
+export interface StartPhaseResult {
+  item_id: string;
+  book_item_id: string;
+  status: string;
+}
 
 export const useStartItemPhase = () => {
   const [loading, setLoading] = useState(false);
@@ -9,15 +14,18 @@ export const useStartItemPhase = () => {
   const startPhase = async (
     bookId: string,
     itemId: string,
-  ): Promise<CreatedItem> => {
+  ): Promise<StartPhaseResult> => {
     setLoading(true);
     setError(null);
     try {
       const response = await personalService.startItemPhase(bookId, itemId);
-      return response.data;
-    } catch (err: any) {
+      // response.data is StartMemorizationResult from backend
+      return response.data as unknown as StartPhaseResult;
+    } catch (err: unknown) {
       const msg =
-        err?.response?.data?.message ?? err.message ?? "Gagal memulai fase.";
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        (err as Error).message ??
+        "Gagal memulai fase.";
       setError(msg);
       throw new Error(msg);
     } finally {
