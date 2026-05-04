@@ -40,8 +40,8 @@ export const AddItemModal = ({
     content: "",
     answer: "",
     orderStr: String(nextOrder),
-    estimateStr: "5",
-    estimate_unit: "minutes",
+    estimateStr: "30",
+    estimate_unit: "seconds",
   });
   const [resultState, setResultState] = useState<"idle" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
