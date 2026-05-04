@@ -3,6 +3,7 @@ import {
   AlertCircle,
   AlignLeft,
   CheckCircle,
+  Clock,
   FileText,
   Hash,
   Loader2,
@@ -25,6 +26,31 @@ interface AddItemModalProps {
   nextOrder: number;
 }
 
+// Slider config: 1–120 detik, step 5
+const SECONDS_MIN = 5;
+const SECONDS_MAX = 120;
+const SECONDS_STEP = 5;
+
+// Slider config: 1–30 menit, step 1
+const MINUTES_MIN = 1;
+const MINUTES_MAX = 30;
+const MINUTES_STEP = 1;
+
+function formatEstimateLabel(value: number, unit: string): string {
+  if (unit === "seconds") {
+    return `${value} detik`;
+  }
+  return `${value} menit`;
+}
+
+const INITIAL_FORM = (nextOrder: number) => ({
+  content: "",
+  answer: "",
+  orderStr: String(nextOrder),
+  estimateValue: 30,
+  estimate_unit: "seconds",
+});
+
 export const AddItemModal = ({
   bookId,
   moduleId,
@@ -36,15 +62,20 @@ export const AddItemModal = ({
   const { createModuleItem, loading: loadingModule } = useCreateModuleItem();
   const loading = moduleId ? loadingModule : loadingItem;
 
-  const [form, setForm] = useState({
-    content: "",
-    answer: "",
-    orderStr: String(nextOrder),
-    estimateStr: "30",
-    estimate_unit: "seconds",
-  });
+  const [form, setForm] = useState(INITIAL_FORM(nextOrder));
   const [resultState, setResultState] = useState<"idle" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  const sliderMin = form.estimate_unit === "seconds" ? SECONDS_MIN : MINUTES_MIN;
+  const sliderMax = form.estimate_unit === "seconds" ? SECONDS_MAX : MINUTES_MAX;
+  const sliderStep = form.estimate_unit === "seconds" ? SECONDS_STEP : MINUTES_STEP;
+  const sliderPercent = ((form.estimateValue - sliderMin) / (sliderMax - sliderMin)) * 100;
+
+  const handleUnitChange = (unit: string) => {
+    // Reset to sensible default when switching unit
+    const defaultValue = unit === "seconds" ? 30 : 5;
+    setForm((f) => ({ ...f, estimate_unit: unit, estimateValue: defaultValue }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +85,7 @@ export const AddItemModal = ({
       return;
     }
     const order = Math.max(1, parseInt(form.orderStr) || 1);
-    const estimate_value = Math.max(1, parseInt(form.estimateStr) || 1);
+    const estimate_value = form.estimateValue;
     try {
       let created: CreatedItem | CreatedModuleItem;
       if (moduleId) {
@@ -85,6 +116,11 @@ export const AddItemModal = ({
     }
   };
 
+  const handleCreateAnother = () => {
+    setForm(INITIAL_FORM(nextOrder));
+    setResultState("idle");
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -107,12 +143,21 @@ export const AddItemModal = ({
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">Item Berhasil Dibuat!</h3>
               </div>
-              <button
-                onClick={onClose}
-                className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-              >
-                Lihat Item
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCreateAnother}
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95"
+                >
+                  <Plus className="w-4 h-4" />
+                  Buat Item Lagi
+                </button>
+                <button
+                  onClick={onClose}
+                  className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                >
+                  Lihat Item
+                </button>
+              </div>
             </div>
           )}
 
@@ -201,46 +246,81 @@ export const AddItemModal = ({
                   />
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  <div className="space-y-2">
+                {/* Estimasi Waktu Review — Slider */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                      <Hash className="w-3.5 h-3.5" />Estimasi Waktu Review
+                      <Clock className="w-3.5 h-3.5" />Estimasi Waktu Review
                     </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        min={1}
-                        value={form.estimateStr}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, estimateStr: e.target.value }))
-                        }
-                        className="w-24 shrink-0 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
-                      />
-                      <select
-                        value={form.estimate_unit}
-                        onChange={(e) => setForm((f) => ({ ...f, estimate_unit: e.target.value }))}
-                        className="flex-1 px-3 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
-                      >
-                        <option value="seconds" className="bg-[#0E1420]">Detik</option>
-                        <option value="minutes" className="bg-[#0E1420]">Menit</option>
-                      </select>
-                    </div>
+                    <span className="text-sm font-bold text-white tabular-nums">
+                      {formatEstimateLabel(form.estimateValue, form.estimate_unit)}
+                    </span>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                      <Hash className="w-3.5 h-3.5" />Urutan
-                    </label>
+                  {/* Unit toggle */}
+                  <div className="flex gap-2">
+                    {["seconds", "minutes"].map((unit) => (
+                      <button
+                        key={unit}
+                        type="button"
+                        onClick={() => handleUnitChange(unit)}
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                          form.estimate_unit === unit
+                            ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400"
+                            : "bg-white/5 border border-white/10 text-gray-500 hover:text-gray-300 hover:bg-white/8"
+                        }`}
+                      >
+                        {unit === "seconds" ? "Detik" : "Menit"}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Slider */}
+                  <div className="relative pt-1">
+                    <div className="relative h-2 rounded-full bg-white/10">
+                      <div
+                        className="absolute left-0 top-0 h-full rounded-full bg-linear-to-r from-emerald-500 to-cyan-500 transition-all"
+                        style={{ width: `${sliderPercent}%` }}
+                      />
+                    </div>
                     <input
-                      type="number"
-                      min={1}
-                      value={form.orderStr}
+                      type="range"
+                      min={sliderMin}
+                      max={sliderMax}
+                      step={sliderStep}
+                      value={form.estimateValue}
                       onChange={(e) =>
-                        setForm((f) => ({ ...f, orderStr: e.target.value }))
+                        setForm((f) => ({ ...f, estimateValue: Number(e.target.value) }))
                       }
-                      className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    {/* Thumb visual */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-lg border-2 border-emerald-400 transition-all pointer-events-none"
+                      style={{ left: `calc(${sliderPercent}% - 10px)` }}
                     />
                   </div>
+
+                  {/* Min / Max labels */}
+                  <div className="flex justify-between text-[10px] text-gray-600 font-medium">
+                    <span>{formatEstimateLabel(sliderMin, form.estimate_unit)}</span>
+                    <span>{formatEstimateLabel(sliderMax, form.estimate_unit)}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    <Hash className="w-3.5 h-3.5" />Urutan
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={form.orderStr}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, orderStr: e.target.value }))
+                    }
+                    className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                  />
                 </div>
 
                 <div className="flex justify-end gap-3 pt-2">
