@@ -217,10 +217,28 @@ export interface GetItemDetailResponse {
   path: string;
 }
 
+// Raw Item entity returned by GET /items?status=X
+// Go's entities.Item has no JSON tags so fields are PascalCase.
+// Status "fsrs_active" is serialized as "ujian" by MarshalJSON.
+export interface RawItemEntity {
+  ID: string;
+  OwnerID: string;
+  SourceType: string;
+  ContentRef: string;
+  Status: string; // "menghafal" | "interval" | "ujian" (fsrs_active) | "graduate" | "inactive" | "start"
+  IntervalDays: number;
+  Stability: number;
+  Difficulty: number;
+  ReviewCount: number;
+  EstimatedReviewSeconds: number;
+  NextReviewAt: string | null;
+  CreatedAt: string;
+}
+
 export interface GetItemsByStatusResponse {
   status: number;
   message: string;
-  data: ItemDetail[];
+  data: RawItemEntity[];
   timestamp: string;
   path: string;
 }

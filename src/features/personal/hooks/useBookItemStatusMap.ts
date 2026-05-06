@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { personalService } from "../services/personal.services";
-import type { ItemDetail } from "../types/personal.types";
+import type { RawItemEntity } from "../types/personal.types";
 
 // Maps content_ref → { status, item_id }
 export type ItemStatusEntry = { status: string; item_id: string };
@@ -10,7 +10,15 @@ export type ItemStatusMap = Map<string, ItemStatusEntry>;
 export const contentRefForItem = (bookId: string, bookItemId: string) =>
   `book:${bookId}:item:${bookItemId}`;
 
+// All statuses that create an Item entity in the DB.
+// "belum_mulai" items don't have an Item entity yet — they're just BookItems.
 const REVIEWABLE_STATUSES = ["menghafal", "interval", "fsrs_active", "graduate", "inactive", "start"];
+
+// The Go backend's MarshalJSON converts "fsrs_active" → "ujian" in JSON output.
+// Normalize it back so the frontend always works with "fsrs_active".
+function normalizeStatus(status: string): string {
+  return status === "ujian" ? "fsrs_active" : status;
+}
 
 export const useBookItemStatusMap = () => {
   const [statusMap, setStatusMap] = useState<ItemStatusMap>(new Map());
@@ -27,10 +35,13 @@ export const useBookItemStatusMap = () => {
       const map: ItemStatusMap = new Map();
       results.forEach((result) => {
         if (result.status === "fulfilled") {
-          result.value.data.forEach((item: ItemDetail) => {
-            map.set(item.content_ref, {
-              status: item.status,
-              item_id: item.item_id,
+          // API returns entities.Item (Go struct) with PascalCase fields and no JSON tags.
+          // Fields: ID, ContentRef, Status (may be "ujian" for fsrs_active)
+          result.value.data.forEach((item: RawItemEntity) => {
+            if (!item.ContentRef) return;
+            map.set(item.ContentRef, {
+              status: normalizeStatus(item.Status),
+              item_id: item.ID,
             });
           });
         }
