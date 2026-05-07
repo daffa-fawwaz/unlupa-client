@@ -21,12 +21,14 @@ export const BookCard = ({ book, onClick, onEdit, onDelete }: BookCardProps) => 
     day: "numeric",
   });
 
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const toggleMenu = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!menuOpen && btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect();
       setMenuPos({
-        top: rect.bottom + window.scrollY + 6,
+        top: rect.bottom + 6,
         right: window.innerWidth - rect.right,
       });
     }
@@ -45,12 +47,22 @@ export const BookCard = ({ book, onClick, onEdit, onDelete }: BookCardProps) => 
     onDelete?.(book);
   };
 
-  // Close on outside click
+  // Close on outside click — use mousedown so it fires before the click
+  // event that opened the menu has finished bubbling, preventing instant close.
   useEffect(() => {
     if (!menuOpen) return;
-    const handler = () => setMenuOpen(false);
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
+    const handler = (e: MouseEvent) => {
+      if (btnRef.current?.contains(e.target as Node)) return;
+      if (menuRef.current?.contains(e.target as Node)) return;
+      setMenuOpen(false);
+    };
+    const id = setTimeout(() => {
+      document.addEventListener("click", handler, true);
+    }, 0);
+    return () => {
+      clearTimeout(id);
+      document.removeEventListener("click", handler, true);
+    };
   }, [menuOpen]);
 
   return (
@@ -79,8 +91,9 @@ export const BookCard = ({ book, onClick, onEdit, onDelete }: BookCardProps) => 
       {/* Dropdown via portal — never clipped */}
       {menuOpen && createPortal(
         <div
-          className="fixed w-44 bg-[#161D26]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.8)] overflow-hidden z-9999 animate-in fade-in zoom-in-95 duration-200"
-          style={{ top: menuPos.top, right: menuPos.right }}
+          ref={menuRef}
+          className="fixed w-44 bg-[#161D26]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.8)] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          style={{ top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
           onClick={(e) => e.stopPropagation()}
         >
           <button

@@ -10,6 +10,9 @@ export default {
         muted: "#F3F4F6",
         textMain: "#111827",
       },
+      zIndex: {
+        "9999": "9999",
+      },
     },
   },
   plugins: [],

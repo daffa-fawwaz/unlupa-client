@@ -35,6 +35,7 @@ export const PersonalDashboard = () => {
   const totalMateri = books.length;
 
   return (
+    <>
     <div className="min-h-screen relative bg-[#090A0F] rounded-3xl overflow-hidden selection:bg-blue-500/30">
       {/* --- Dynamic Background Atmosphere --- */}
       <div className="absolute top-0 inset-x-0 h-[500px] bg-linear-to-b from-blue-900/10 via-[#090A0F] to-transparent pointer-events-none" />
@@ -299,38 +300,38 @@ export const PersonalDashboard = () => {
         </div>
       </div>
 
-      {/* Create Book Modal */}
-      {isCreateModalOpen && (
-        <CreateBookModal
-          onClose={() => setIsCreateModalOpen(false)}
-          onSuccess={() => fetchBooks()}
-        />
-      )}
-
-      {/* Edit Book Modal */}
-      {editingBook && (
-        <EditBookModal
-          book={editingBook}
-          onClose={() => setEditingBook(null)}
-          onSuccess={() => fetchBooks()}
-        />
-      )}
-
-      {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={!!bookToDelete}
-        onClose={() => setBookToDelete(null)}
-        onConfirm={async () => {
-          if (bookToDelete) {
-            await deleteBook(bookToDelete.id);
-            setBookToDelete(null);
-          }
-        }}
-        title="Hapus Kitab?"
-        message={`Apakah Anda yakin ingin menghapus kitab "${bookToDelete?.title}" secara permanen? Semua data di dalamnya akan hilang.`}
-        confirmText="Hapus Permanen"
-        variant="danger"
-      />
     </div>
+
+    {/* Modals — outside overflow-hidden div so they render full-screen */}
+    {isCreateModalOpen && (
+      <CreateBookModal
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => fetchBooks()}
+      />
+    )}
+
+    {editingBook && (
+      <EditBookModal
+        book={editingBook}
+        onClose={() => setEditingBook(null)}
+        onSuccess={() => fetchBooks()}
+      />
+    )}
+
+    <ConfirmModal
+      isOpen={!!bookToDelete}
+      onClose={() => setBookToDelete(null)}
+      onConfirm={async () => {
+        if (bookToDelete) {
+          await deleteBook(bookToDelete.id);
+          setBookToDelete(null);
+        }
+      }}
+      title="Hapus Kitab?"
+      message={`Apakah Anda yakin ingin menghapus kitab "${bookToDelete?.title}" secara permanen? Semua data di dalamnya akan hilang.`}
+      confirmText="Hapus Permanen"
+      variant="danger"
+    />
+    </>
   );
 };

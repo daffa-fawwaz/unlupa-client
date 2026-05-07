@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Loader2, BookOpen, FileText, Image as ImageIcon, Save } from "lucide-react";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useBooks } from "../hooks/useBooks";
@@ -48,8 +49,8 @@ export const EditBookModal = ({ book, onClose, onSuccess }: EditBookModalProps) 
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+  return createPortal(
+    <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300" style={{ zIndex: 9999 }}>
       <div className="w-full max-w-[550px] bg-[rgba(10,12,15,0.95)] border border-blue-500/30 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] relative overflow-hidden">
         {/* Decorative background blurs */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -157,6 +158,7 @@ export const EditBookModal = ({ book, onClose, onSuccess }: EditBookModalProps) 
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

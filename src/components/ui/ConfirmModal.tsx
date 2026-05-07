@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import type { LucideIcon } from "lucide-react";
 
 interface ConfirmModalProps {
@@ -56,12 +57,12 @@ export const ConfirmModal = ({
 
   const handleConfirm = () => {
     onConfirm();
-    // Note: Parent component will handle closing the modal after async operations complete
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-999 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
+      style={{ zIndex: 9999 }}
       onClick={onClose}
     >
       <div
@@ -90,6 +91,7 @@ export const ConfirmModal = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
