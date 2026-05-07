@@ -86,7 +86,7 @@ export const PersonalDashboard = () => {
           <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-5 tracking-tight drop-shadow-lg leading-tight">
             Ruang{" "}
             <span className="bg-clip-text text-transparent bg-linear-to-r from-blue-400 via-cyan-300 to-emerald-400">
-              Pribadi.
+              Pribadi
             </span>
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl leading-relaxed font-light mb-8">
