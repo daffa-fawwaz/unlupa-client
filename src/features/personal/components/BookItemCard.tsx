@@ -30,7 +30,7 @@ export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) =>
 
       {/* Question */}
       <div className="relative z-10 mb-2 sm:mb-4">
-        <h3 className="text-sm sm:text-xl font-bold text-white group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2 leading-snug">
+        <h3 className="text-sm sm:text-xl font-bold text-white group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2 leading-snug whitespace-pre-wrap">
           {item.content}
         </h3>
       </div>
@@ -42,7 +42,7 @@ export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) =>
             <FileText className="w-3 h-3 text-gray-500" />
             <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Jawaban</span>
           </div>
-          <p className="text-sm text-gray-400 leading-relaxed line-clamp-3">{item.answer}</p>
+          <p className="text-sm text-gray-400 leading-relaxed line-clamp-3 whitespace-pre-wrap">{item.answer}</p>
         </div>
       </div>
 

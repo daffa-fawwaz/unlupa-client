@@ -381,6 +381,7 @@ export const TeacherRequestPage = () => {
           title="Recent Applications"
           columns={teacherRequestColumns}
           data={filteredData}
+          getRowKey={(item) => item.id}
           renderCell={(column, item, index) =>
             renderTeacherRequestCell(column, item, index)
           }

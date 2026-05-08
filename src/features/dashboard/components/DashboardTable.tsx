@@ -7,6 +7,7 @@ interface DashboardTableProps<T> {
   data: T[] | null;
   columns: TableColumn[];
   renderCell: (column: TableColumn, item: T, index: number) => ReactNode;
+  getRowKey: (item: T) => string;
   title: string;
 }
 
@@ -14,6 +15,7 @@ export const DashboardTable = <T,>({
   data,
   columns,
   renderCell,
+  getRowKey,
   title,
 }: DashboardTableProps<T>) => {
   return (
@@ -33,7 +35,7 @@ export const DashboardTable = <T,>({
               <tbody className="divide-y divide-white/5">
                 {data.map((item, index) => (
                   <DashboardTableRow
-                    key={index}
+                    key={getRowKey(item)}
                     item={item}
                     index={index}
                     columns={columns}
@@ -63,7 +65,7 @@ export const DashboardTable = <T,>({
         ) : (
           data?.map((item, index) => (
             <div
-              key={index}
+              key={getRowKey(item)}
               className="glass-panel p-4 rounded-xl border border-white/5 space-y-4"
             >
               {columns.map((column) => (

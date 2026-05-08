@@ -257,7 +257,7 @@ export const TeacherDashboardPage = () => {
               <div className="space-y-3">
                 {dailyTasks.slice(0, 5).map((task: any, idx: number) => (
                   <div
-                    key={idx}
+                    key={task.item_id ?? task.id ?? `${task.item_name}-${task.due_date}`}
                     className="p-3 rounded-lg bg-white/5 border border-white/5 hover:border-amber-500/30 transition"
                   >
                     <p className="text-sm text-white font-medium truncate">
@@ -295,7 +295,7 @@ export const TeacherDashboardPage = () => {
             <div className="space-y-4">
               {recentActivities.map((activity, idx) => (
                 <div
-                  key={idx}
+                  key={`${activity.type}-${activity.title}`}
                   className="group flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition cursor-pointer"
                 >
                   <div

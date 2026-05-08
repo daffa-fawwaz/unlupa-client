@@ -243,7 +243,7 @@ export const BookDailyReviewSection = () => {
 
       {isFlashcardOpen && currentTask && activeGroup && (
         <BookDailyReviewFlashcardModal
-          key={`${currentTask.item_id}-${queueIndex}`}
+          key={currentTask.item_id}
           isOpen={isFlashcardOpen}
           task={currentTask}
           queuePosition={queueIndex + 1}

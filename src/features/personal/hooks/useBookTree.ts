@@ -6,6 +6,19 @@ import type { BookTree, BookItem, Module } from "@/features/personal/types/perso
 const bookTreeCache = new Map<string, BookTree>();
 const itemToBookMap = new Map<string, string>(); // itemId -> bookId
 
+const byOrder = <T extends { order: number }>(a: T, b: T) => a.order - b.order;
+
+const appendUniqueById = <T extends { id: string; order: number }>(
+  items: T[] | null | undefined,
+  nextItem: T,
+) => {
+  const list = items ?? [];
+  if (list.some((item) => item.id === nextItem.id)) {
+    return list.map((item) => (item.id === nextItem.id ? nextItem : item)).sort(byOrder);
+  }
+  return [...list, nextItem].sort(byOrder);
+};
+
 // Expose cache invalidation globally so review flow can clear stale data
 export const invalidateBookTreeCache = (bookId?: string) => {
   if (bookId) {
@@ -158,7 +171,7 @@ export const useBookTree = () => {
     if (cached) {
       const updatedTree: BookTree = {
         ...cached,
-        items: [...cached.items, newItem],
+        items: appendUniqueById(cached.items, newItem),
       };
       bookTreeCache.set(bookId, updatedTree);
       setTree(updatedTree);
@@ -172,7 +185,7 @@ export const useBookTree = () => {
     if (cached) {
       const updatedTree: BookTree = {
         ...cached,
-        modules: [...cached.modules, newModule],
+        modules: appendUniqueById(cached.modules, newModule),
       };
       bookTreeCache.set(bookId, updatedTree);
       setTree(updatedTree);
@@ -186,7 +199,7 @@ export const useBookTree = () => {
       const updateModules = (modules: Module[]): Module[] =>
         modules.map((m) => {
           if (m.id === moduleId) {
-            return { ...m, items: [...(m.items ?? []), newItem] };
+            return { ...m, items: appendUniqueById(m.items, newItem) };
           }
           if (m.children?.length) {
             return { ...m, children: updateModules(m.children) };
@@ -211,7 +224,7 @@ export const useBookTree = () => {
       const updateModules = (modules: Module[]): Module[] =>
         modules.map((m) => {
           if (m.id === parentId) {
-            return { ...m, children: [...(m.children ?? []), newModule] };
+            return { ...m, children: appendUniqueById(m.children, newModule) };
           }
           if (m.children?.length) {
             return { ...m, children: updateModules(m.children) };

@@ -358,7 +358,7 @@ export const AddHafalanModal = ({
                   <div className="flex flex-col gap-2 max-h-[36vh] sm:max-h-[40vh] overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
                     {parsedSurahs.map((surah, idx) => (
                       <button
-                        key={idx}
+                        key={`${surah.name}-${surah.start}-${surah.end}`}
                         onClick={() => setSelectedSurahIndex(idx)}
                         className={clsx(
                           "w-full p-4 rounded-xl border text-left transition-all flex items-center justify-between shrink-0",

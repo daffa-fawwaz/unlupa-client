@@ -425,6 +425,7 @@ export const UserListPage = () => {
           title="All Users"
           columns={userColumns}
           data={filteredData}
+          getRowKey={(item) => item.id}
           renderCell={(column, item, index) =>
             renderUserCell(column, item, index)
           }

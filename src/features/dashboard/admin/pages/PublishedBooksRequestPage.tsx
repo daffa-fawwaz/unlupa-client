@@ -363,6 +363,7 @@ export const PublishedBooksRequestPage = () => {
           title="Book Publish Requests"
           columns={pendingBookColumns}
           data={data}
+          getRowKey={(item) => item.id}
           renderCell={(column, item, index) =>
             renderBookCell(column, item, index)
           }

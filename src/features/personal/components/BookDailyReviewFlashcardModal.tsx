@@ -236,7 +236,7 @@ export const BookDailyReviewFlashcardModal = ({
                   <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center shrink-0 mt-0.5">
                     <Lightbulb className="w-4 h-4 text-cyan-400" />
                   </div>
-                  <p className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-snug wrap-break-word">
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-snug whitespace-pre-wrap wrap-break-word">
                     {itemContent}
                   </p>
                 </div>
@@ -282,7 +282,7 @@ export const BookDailyReviewFlashcardModal = ({
               </div>
 
               <div className="p-5 sm:p-6 rounded-2xl border border-emerald-300/20 bg-emerald-400/8 mb-6">
-                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-relaxed wrap-break-word">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-relaxed whitespace-pre-wrap wrap-break-word">
                   {itemAnswer}
                 </p>
               </div>

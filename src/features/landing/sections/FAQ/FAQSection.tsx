@@ -152,7 +152,7 @@ export const FAQSection = () => {
       >
         {faqs.map((faq, index) => (
           <div
-            key={index}
+            key={faq.question}
             className={`faq-item accent-${faq.group} ${
               activeIndex === index ? "active" : ""
             }`}
