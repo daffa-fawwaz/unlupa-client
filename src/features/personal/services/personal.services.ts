@@ -172,12 +172,16 @@ export const personalService = {
 
   // Daily Review (Books) API methods
   async generateDailyBooks(): Promise<BookDailyGenerateResponse> {
-    const response = await api.post("/api/v1/daily/generate");
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const response = await api.post(`/api/v1/daily/generate?date=${dateStr}`);
     return response.data;
   },
 
   async getDailyBooks(): Promise<BookDailyTasksResponse> {
-    const response = await api.get("/api/v1/daily");
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const response = await api.get(`/api/v1/daily?date=${dateStr}`);
     return response.data;
   },
 

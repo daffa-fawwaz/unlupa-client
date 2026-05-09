@@ -29,6 +29,7 @@ import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
+import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
 import type { Module } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
@@ -472,6 +473,7 @@ export const BookDetailPage = () => {
   const navigate = useNavigate();
   const { book, loading, error, fetchBookDetail } = useBookDetail();
   const { tree, fetchBookTree, addModuleToTree, addItemToTree } = useBookTree();
+  const { statusMap, fetchStatusMap } = useBookItemStatusMap();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Modal flow: null | "picker" | "module" | "item"
@@ -483,8 +485,9 @@ export const BookDetailPage = () => {
     if (id) {
       fetchBookDetail(id);
       fetchBookTree(id);
+      void fetchStatusMap();
     }
-  }, [id, fetchBookDetail, fetchBookTree]);
+  }, [id, fetchBookDetail, fetchBookTree, fetchStatusMap]);
 
   const handleModuleCreated = (created: import("@/features/personal/types/personal.types").CreatedModule) => {
     // Optimistic update: langsung tambah ke tree tanpa refetch
@@ -817,7 +820,12 @@ export const BookDetailPage = () => {
                         .slice()
                         .sort((a, b) => a.order - b.order)
                         .map((item) => (
-                          <BookItemCard key={item.id} item={item} bookId={id!} />
+                          <BookItemCard
+                            key={item.id}
+                            item={item}
+                            bookId={id!}
+                            realItemId={statusMap.get(contentRefForItem(id!, item.id))?.item_id}
+                          />
                         ))}
                     </div>
                   </div>

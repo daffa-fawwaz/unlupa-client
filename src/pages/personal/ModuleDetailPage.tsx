@@ -26,6 +26,7 @@ import { EditModuleModal } from "@/features/personal/components/EditModuleModal"
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
 import { invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
+import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
 import type { Module, BookItem } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
@@ -292,6 +293,7 @@ export const ModuleDetailPage = () => {
   }>();
   const navigate = useNavigate();
   const { tree, loading, error, fetchBookTree, addItemToModule, addChildModuleToTree } = useBookTree();
+  const { statusMap, fetchStatusMap } = useBookItemStatusMap();
   const { deleteModule } = useDeleteModule();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -300,8 +302,11 @@ export const ModuleDetailPage = () => {
   const [isAddSubModuleModalOpen, setIsAddSubModuleModalOpen] = useState(false);
 
   useEffect(() => {
-    if (bookId) fetchBookTree(bookId);
-  }, [bookId, fetchBookTree]);
+    if (bookId) {
+      fetchBookTree(bookId);
+      void fetchStatusMap();
+    }
+  }, [bookId, fetchBookTree, fetchStatusMap]);
 
   // Find the module from tree
   const findModule = (modules: Module[], id: string): Module | null => {
@@ -665,6 +670,7 @@ export const ModuleDetailPage = () => {
                       key={item.id}
                       item={item}
                       bookId={bookId!}
+                      realItemId={statusMap.get(contentRefForItem(bookId!, item.id))?.item_id}
                     />
                   ))}
                 </div>

@@ -6,11 +6,15 @@ import type { BookItem } from "@/features/personal/types/personal.types";
 interface BookItemCardProps {
   item: BookItem;
   bookId: string;
+  /** Real item_id from the `items` table (state ID). If provided, stability &
+   *  next_review_at will be fetched. If omitted the card renders without those stats. */
+  realItemId?: string;
 }
 
-export const BookItemCard = ({ item, bookId }: BookItemCardProps) => {
+export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) => {
   const navigate = useNavigate();
-  const detail = useItemDetailCached(item.id);
+  // Only fetch detail when we have the correct item state ID
+  const detail = useItemDetailCached(realItemId ?? "");
   const nextReviewAt = detail?.next_review_at || detail?.interval_next_review_at;
   const reviewCount = detail?.review_count ?? item.review_count ?? 0;
   const stability = detail?.stability ?? item.stability;
@@ -55,11 +59,11 @@ export const BookItemCard = ({ item, bookId }: BookItemCardProps) => {
         <div className="flex flex-col p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors">
           <div className="flex items-center gap-1 mb-0.5">
             <Brain className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-400" />
-            <span className="text-[0.5rem] sm:text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Stabil</span>
+            <span className="text-[0.5rem] sm:text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">Stability</span>
           </div>
           <span className="text-xs font-bold text-purple-400 leading-none">
             {stability != null && !isNaN(parseFloat(String(stability)))
-              ? Math.round(parseFloat(String(stability)))
+              ? `${Math.round(parseFloat(String(stability)))}`
               : "—"}
           </span>
         </div>

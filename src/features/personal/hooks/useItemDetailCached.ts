@@ -9,6 +9,7 @@ export const useItemDetailCached = (bookItemId: string) => {
   const [detail, setDetail] = useState<ItemDetail | null>(cache.get(bookItemId) ?? null);
 
   useEffect(() => {
+    // Skip if no ID provided (item hasn't started memorization yet)
     if (!bookItemId) return;
     if (cache.has(bookItemId)) {
       setDetail(cache.get(bookItemId)!);

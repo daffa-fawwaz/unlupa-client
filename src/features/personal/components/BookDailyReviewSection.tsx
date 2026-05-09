@@ -48,7 +48,7 @@ export const BookDailyReviewSection = () => {
         if (Array.isArray(tasks)) {
           const completed = new Set(
             tasks
-              .filter((t) => t.state === "completed")
+              .filter((t) => t.state === "done" || t.state === "completed")
               .map((t) => t.item_id),
           );
           setReviewedIds(completed);
@@ -74,7 +74,7 @@ export const BookDailyReviewSection = () => {
     if (dailyTasks && dailyTasks.length > 0) {
       // Also sync reviewed IDs from API data
       const completed = new Set(
-        dailyTasks.filter((t) => t.state === "completed").map((t) => t.item_id),
+        dailyTasks.filter((t) => t.state === "done" || t.state === "completed").map((t) => t.item_id),
       );
       setReviewedIds(completed);
       void buildGroups(dailyTasks);
@@ -109,7 +109,7 @@ export const BookDailyReviewSection = () => {
 
     const reviewedId = activeGroup.items[queueIndex]?.item_id;
 
-    // Mark as reviewed in component state
+    // Mark as reviewed in component state immediately (optimistic)
     if (reviewedId) {
       setReviewedIds((prev) => new Set([...prev, reviewedId]));
     }
@@ -129,8 +129,21 @@ export const BookDailyReviewSection = () => {
       setActiveGroup(null);
     }
 
-    // Refresh from API to get updated states
-    await getDaily();
+    // Re-generate to invalidate server cache, then fetch fresh state
+    try {
+      await personalService.generateDailyBooks();
+      const tasks = await getDaily();
+      if (Array.isArray(tasks)) {
+        const done = new Set(
+          tasks
+            .filter((t) => t.state === "done" || t.state === "completed")
+            .map((t) => t.item_id),
+        );
+        setReviewedIds(done);
+      }
+    } catch {
+      // optimistic update already applied above
+    }
   };
 
   const handleFlashcardClose = () => {

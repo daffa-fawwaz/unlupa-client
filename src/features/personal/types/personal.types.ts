@@ -337,6 +337,7 @@ export interface BookDailyTask {
   status?: string;
   book_title?: string;
   book_item_title?: string;
+  estimated_review_seconds?: number;
 }
 
 export type BookDailyTasksResponse = BookDailyTask[];
