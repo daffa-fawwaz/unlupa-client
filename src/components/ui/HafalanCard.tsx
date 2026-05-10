@@ -119,11 +119,11 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
             {item.next_review_at && (
               <div className="flex items-center gap-2 group-hover:text-gray-400 transition-colors">
                 <Calendar className="w-4 h-4 text-blue-500/50" />
-                <span>
+                <span> 
                   {new Date(item.next_review_at).toLocaleDateString("id-ID", {
                     month: "short",
                     day: "numeric",
-                  })}
+                  })} 
                 </span>
               </div>
             )}

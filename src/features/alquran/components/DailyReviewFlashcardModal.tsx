@@ -63,7 +63,7 @@ const REVIEW_BUTTONS = [
   },
   {
     id: 4 as const,
-    payloadValue: 3 as const,
+    payloadValue: 4 as const,
     header: "Sempurna",
     emoji: "🔥",
     descriptions: ["Reflek", "Tanpa Salah", "Sangat Lancar", "Sempurna"],

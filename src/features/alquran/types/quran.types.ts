@@ -68,6 +68,7 @@ export interface DailyTask {
   content_ref: string;
   juz_index: number;
   status?: string;
+  estimated_review_seconds?: number;
 }
 
 export type DailyTasksResponse = DailyTask[];

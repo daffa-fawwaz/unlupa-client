@@ -1,9 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { alquranService } from "@/features/alquran/services/alquran.services";
-import type { ItemByStatus } from "@/features/alquran/types/quran.types";
+import type { DailyTask } from "@/features/alquran/types/quran.types";
 
-export interface ItemWithEstimate extends ItemByStatus {
+// ItemWithEstimate wraps a DailyTask so status is always accurate
+export interface ItemWithEstimate {
+  item_id: string;
+  content_ref: string;
+  status: string;
   estimatedReviewSeconds: number;
+  // kept for compatibility with any consumers that expect ItemByStatus shape
+  review_count: number;
+  interval_days: number;
+  stability: number;
+  difficulty: number;
+  next_review_at?: string;
+  last_review_at?: string;
+  interval_next_review_at?: string;
 }
 
 export interface JuzReviewEstimate {
@@ -24,49 +36,56 @@ export const useDailyReviewEstimate = () => {
     setLoading(true);
     setError(null);
     try {
-      // Fetch items from both interval and fsrs_active status
-      const [intervalResponse, fsrsResponse] = await Promise.all([
-        alquranService.getItemsByStatus("interval"),
-        alquranService.getItemsByStatus("fsrs_active"),
-      ]);
+      // Always re-generate the daily snapshot first so newly-due items are
+      // included. GenerateToday is idempotent (delete-then-insert) and cheap.
+      try {
+        await alquranService.generateDaily();
+      } catch {
+        // If generate fails (e.g. network), still try to show existing snapshot
+      }
 
-      // Combine all items with their estimated review seconds
-      const allItems: ItemWithEstimate[] = [
-        ...intervalResponse.data.map((item) => ({
-          ...item,
-          estimatedReviewSeconds: item.estimatedReviewSeconds ?? 0,
-        })),
-        ...fsrsResponse.data.map((item) => ({
-          ...item,
-          estimatedReviewSeconds: item.estimatedReviewSeconds ?? 0,
-        })),
-      ];
+      // Use the daily endpoint — it already filters items due today,
+      // includes the correct status for each item, and provides juz_index.
+      const dailyTasks: DailyTask[] = await alquranService.getDaily();
 
-      // Fetch from my-items to get juz info
-      const myItemsResponse = await alquranService.getMyItems("quran");
-      
-      // Build a map of item_id -> juz_index
-      const itemJuzMap = new Map<string, { juz_index: number; juz_id: string }>();
-      myItemsResponse.data.groups.forEach((group) => {
-        group.items.forEach((item) => {
-          itemJuzMap.set(item.item_id, {
-            juz_index: group.juz_index,
-            juz_id: group.juz_id,
-          });
-        });
+      // Only include quran items that are pending review (not yet done)
+      // and have a reviewable status (interval or fsrs_active/graduate).
+      // If status is empty (lookup failed), still include the item — it's in
+      // the daily snapshot so it must be due.
+      const reviewableTasks = dailyTasks.filter((t) => {
+        const s = (t.status ?? "").toLowerCase();
+        const isDone = t.state === "done" || t.state === "completed";
+        if (isDone) return false;
+        // Include if status is reviewable OR if status is unknown (empty)
+        return (
+          s === "" ||
+          s === "interval" ||
+          s === "fsrs_active" ||
+          s === "graduate" ||
+          s === "graduated"
+        );
       });
 
-      // Group items by juz
-      const juzMap = new Map<number, JuzReviewEstimate>();
-      
-      allItems.forEach((item) => {
-        const juzInfo = itemJuzMap.get(item.item_id);
-        if (!juzInfo) return;
+      // We need juz_id — fetch my-items to get juz_id per juz_index
+      const myItemsResponse = await alquranService.getMyItems("quran");
+      const juzIdByIndex = new Map<number, string>();
+      myItemsResponse.data.groups.forEach((group) => {
+        juzIdByIndex.set(group.juz_index, group.juz_id);
+      });
 
-        if (!juzMap.has(juzInfo.juz_index)) {
-          juzMap.set(juzInfo.juz_index, {
-            juz_index: juzInfo.juz_index,
-            juz_id: juzInfo.juz_id,
+      // Group by juz_index
+      const juzMap = new Map<number, JuzReviewEstimate>();
+
+      reviewableTasks.forEach((task) => {
+        const juzIndex = task.juz_index ?? 0;
+        // Use juz_index from the task; if 0 (not found in juz_items), still
+        // include the item under a "Lainnya" bucket with index 0 so it's not lost.
+        // In practice all quran items should have a valid juz_index > 0.
+
+        if (!juzMap.has(juzIndex)) {
+          juzMap.set(juzIndex, {
+            juz_index: juzIndex,
+            juz_id: juzIdByIndex.get(juzIndex) ?? "",
             items: [],
             itemCount: 0,
             totalEstimatedSeconds: 0,
@@ -74,13 +93,25 @@ export const useDailyReviewEstimate = () => {
           });
         }
 
-        const juzEstimate = juzMap.get(juzInfo.juz_index)!;
-        juzEstimate.items.push(item);
-        juzEstimate.itemCount += 1;
-        juzEstimate.totalEstimatedSeconds += item.estimatedReviewSeconds || 0;
+        const estimate = juzMap.get(juzIndex)!;
+        // estimated_review_seconds comes directly from the daily endpoint
+        const estimatedSecs = task.estimated_review_seconds ?? 0;
+
+        estimate.items.push({
+          item_id: task.item_id,
+          content_ref: task.content_ref,
+          // status comes directly from the daily endpoint — always accurate
+          status: task.status ?? "",
+          estimatedReviewSeconds: estimatedSecs,
+          review_count: 0,
+          interval_days: 0,
+          stability: 0,
+          difficulty: 0,
+        });
+        estimate.itemCount += 1;
+        estimate.totalEstimatedSeconds += estimatedSecs;
       });
 
-      // Calculate minutes for each juz
       const estimates = Array.from(juzMap.values()).map((juz) => ({
         ...juz,
         totalEstimatedMinutes: Math.ceil(juz.totalEstimatedSeconds / 60),
@@ -89,7 +120,8 @@ export const useDailyReviewEstimate = () => {
       setJuzEstimates(estimates.sort((a, b) => a.juz_index - b.juz_index));
     } catch (err) {
       const message =
-        (err as any)?.response?.data?.message || "Failed to fetch review estimates";
+        (err as any)?.response?.data?.message ||
+        "Failed to fetch review estimates";
       setError(message);
     } finally {
       setLoading(false);

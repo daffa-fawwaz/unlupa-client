@@ -111,7 +111,13 @@ export const DailyReviewSection = () => {
           task_date: getTodayDateKey(),
           content_ref: activeJuz.items[queueIndex].content_ref,
           juz_index: activeJuz.juz_index,
-          status: itemStatusMap.get(activeJuz.items[queueIndex].item_id) || activeJuz.items[queueIndex].status,
+          // status comes from the daily endpoint via useDailyReviewEstimate,
+          // so it is always the current DB status. itemStatusMap is kept as
+          // a secondary fallback only.
+          status:
+            activeJuz.items[queueIndex].status ||
+            itemStatusMap.get(activeJuz.items[queueIndex].item_id) ||
+            "",
         }
       : null;
 

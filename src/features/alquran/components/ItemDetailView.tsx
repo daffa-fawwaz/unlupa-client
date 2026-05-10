@@ -3,7 +3,6 @@ import type { MyItemDetail } from "@/features/alquran/types/quran.types";
 import { StartIntervalModal } from "@/features/alquran/components/StartIntervalModal";
 import { ItemDetailActionSection } from "@/features/alquran/components/item-detail/ItemDetailActionSection";
 import { ItemDetailHero } from "@/features/alquran/components/item-detail/ItemDetailHero";
-import { ItemDetailStatsGrid } from "@/features/alquran/components/item-detail/ItemDetailStatsGrid";
 import { useActivateFsrs } from "@/features/alquran/hooks/useActivateFsrs";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import { EditItemModal } from "@/features/alquran/components/EditItemModal";
@@ -208,13 +207,6 @@ export const ItemDetailView = ({
         info={info}
         statusStyle={statusStyle}
         onBack={backToJuzDetail}
-      />
-
-      <ItemDetailStatsGrid
-        reviewCount={currentItem.review_count}
-        createdDate={createdDate}
-        info={info}
-        nextReviewAt={currentItem.next_review_at}
       />
 
       <ItemDetailActionSection
