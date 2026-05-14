@@ -23,6 +23,7 @@ import { ShareBooksPage } from "@/pages/personal/ShareBooksPage";
 import { BookDetailPage } from "@/pages/personal/BookDetailPage";
 import { ModuleDetailPage } from "@/pages/personal/ModuleDetailPage";
 import { ItemDetailPage } from "@/pages/personal/ItemDetailPage";
+import { ClassroomCardSandbox } from "@/features/classroom/pages/ClassroomSandbox";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,9 @@ export const router = createBrowserRouter([
         element: <LandingLayout />,
         children: [{ index: true, element: <LandingPage /> }],
       },
+
+      // SANDBOX
+      { path: "/sandbox/classroom", element: <ClassroomCardSandbox /> },
 
       // AUTH
       { path: "/login", element: <LoginPage /> },
@@ -51,11 +55,23 @@ export const router = createBrowserRouter([
               { path: "/dashboard", element: <DashboardShell /> },
               { path: "/dashboard/alquran", element: <AlquranPage /> },
               { path: "/dashboard/pribadi", element: <PersonalPage /> },
-              { path: "/dashboard/pribadi/explore", element: <GlobalLibraryPage /> },
+              {
+                path: "/dashboard/pribadi/explore",
+                element: <GlobalLibraryPage />,
+              },
               { path: "/dashboard/pribadi/share", element: <ShareBooksPage /> },
-              { path: "/dashboard/pribadi/book/:id", element: <BookDetailPage /> },
-              { path: "/dashboard/pribadi/book/:bookId/module/:moduleId", element: <ModuleDetailPage /> },
-              { path: "/dashboard/pribadi/book/:bookId/item/:itemId", element: <ItemDetailPage /> },
+              {
+                path: "/dashboard/pribadi/book/:id",
+                element: <BookDetailPage />,
+              },
+              {
+                path: "/dashboard/pribadi/book/:bookId/module/:moduleId",
+                element: <ModuleDetailPage />,
+              },
+              {
+                path: "/dashboard/pribadi/book/:bookId/item/:itemId",
+                element: <ItemDetailPage />,
+              },
               { path: "/dashboard/kelas", element: <ComingSoonRoomPage /> },
               // Status-based item pages
               {
