@@ -1,4 +1,5 @@
 import { ClassroomCard } from "@/features/classroom/components/ClassroomCard";
+import { CreateClassButton } from "../components/CreateClassButton";
 
 const classroomSamples = [
   {
@@ -60,11 +61,14 @@ export const ClassroomCardSandbox = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+
+        {/* <CreateClassButton />
+
+        <div className="grid grid-cols-1 mt-16 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {classroomSamples.map((classroom) => (
             <ClassroomCard key={classroom.title} {...classroom} />
           ))}
-        </div>
+        </div> */}
       </section>
     </main>
   );
