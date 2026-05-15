@@ -1,6 +1,8 @@
 import { ClassroomCard } from "@/features/classroom/components/ClassroomCard";
 import { CreateClassButton } from "../components/CreateClassButton";
 import { ClassroomSearchInput } from "../components/ClassroomSearchInput";
+import { ClassroomHeader } from "../components/ClassroomHeader";
+import { TabsNavigation } from "../components/TabsNavigation";
 
 const classroomSamples = [
   {
@@ -48,27 +50,34 @@ export const ClassroomCardSandbox = () => {
       </div>
 
       <section className="relative z-10 mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-col gap-3 border-b border-white/5 pb-6">
-          <span className="w-max rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-300">
-            Sandbox
-          </span>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">
-              Preview
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-400">
-              Draft tampilan Komponen Unlupa
-            </p>
-          </div>
-        </div>
+        <ClassroomHeader
+          title="Preview Classroom"
+          subtitle="Draft tampilan komponen classroom UNLUPA untuk header, pencarian, CTA, dan kartu kelas."
+          totalClasses={3}
+          totalStudents={53}
+          totalBooks={6}
+          activeReviews={139}
+        />
 
-        <div className="mt-16">
+        <div className="mt-6">
           <ClassroomSearchInput />
         </div>
 
-        {/* <div className="mt-6">
+        <div className="mt-6 ">
+          <TabsNavigation
+            tabs={[
+              { id: "all", label: "All" },
+              { id: "active", label: "Active" },
+              { id: "draft", label: "Draft" },
+            ]}
+            activeTab="all"
+            onTabChange={(id) => console.log(id)}
+          />
+        </div>
+
+        <div className="mt-6">
           <CreateClassButton />
-        </div> */}
+        </div>
 
 
         <div className="grid grid-cols-1 mt-8 gap-4 md:grid-cols-2 xl:grid-cols-3">
