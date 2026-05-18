@@ -17,7 +17,9 @@ export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) =>
   const detail = useItemDetailCached(realItemId ?? "");
   const nextReviewAt = detail?.next_review_at || detail?.interval_next_review_at;
   const reviewCount = detail?.review_count ?? item.review_count ?? 0;
-  const stability = detail?.stability ?? item.stability;
+  // Prefer stability from the tree response (item prop) since the BE returns it directly.
+  // Fall back to detail fetch only if the tree didn't include it.
+  const stability = item.stability ?? detail?.stability;
 
   return (
     <button
