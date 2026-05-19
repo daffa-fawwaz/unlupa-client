@@ -3,6 +3,9 @@ import { CreateClassButton } from "../components/CreateClassButton";
 import { ClassroomSearchInput } from "../components/ClassroomSearchInput";
 import { ClassroomHeader } from "../components/ClassroomHeader";
 import { TabsNavigation } from "../components/TabsNavigation";
+import { SectionCard } from "../components/SectionCard";
+import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
+import { Book } from "lucide-react";
 
 const classroomSamples = [
   {
@@ -79,13 +82,24 @@ export const ClassroomCardSandbox = () => {
           <CreateClassButton />
         </div>
 
-
         <div className="grid grid-cols-1 mt-8 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {classroomSamples.map((classroom) => (
             <ClassroomCard key={classroom.title} {...classroom} />
           ))}
         </div>
       </section>
+
+      <div className="mt-6">
+        <EmptyStateWrapper
+          icon={Book}
+          title="Classroom"
+          emptyTitle="Classroom"
+          description="Draft tampilan komponen classroom UNLUPA untuk header, pencarian, CTA, dan kartu kelas."
+          buttonText="Create Class"
+          buttonIcon={CreateClassButton}
+          onButtonClick={() => console.log("Create Class")}
+        />
+      </div>
     </main>
   );
 };
