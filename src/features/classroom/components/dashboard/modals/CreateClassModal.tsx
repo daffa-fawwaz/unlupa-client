@@ -60,7 +60,7 @@ export const CreateClassModal = ({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <div
         className="absolute inset-0"
         onClick={!isLoading ? onClose : undefined}

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { PlusCircle, X, Loader2, BookOpen, FileText, Image as ImageIcon } from "lucide-react";
+import {
+  PlusCircle,
+  X,
+  Loader2,
+  BookOpen,
+  FileText,
+  Image as ImageIcon,
+} from "lucide-react";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useBooks } from "../hooks/useBooks";
 
@@ -8,8 +15,11 @@ interface CreateBookModalProps {
   onSuccess?: () => void;
 }
 
-export const CreateBookModal = ({ onClose, onSuccess }: CreateBookModalProps) => {
-  const { createBook, loading } = useBooks(); // We use the createBook logic here directly 
+export const CreateBookModal = ({
+  onClose,
+  onSuccess,
+}: CreateBookModalProps) => {
+  const { createBook, loading } = useBooks(); // We use the createBook logic here directly
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -18,7 +28,9 @@ export const CreateBookModal = ({ onClose, onSuccess }: CreateBookModalProps) =>
     cover_image: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -41,14 +53,18 @@ export const CreateBookModal = ({ onClose, onSuccess }: CreateBookModalProps) =>
       });
       onSuccess?.();
       onClose();
-    } catch (err: any) {
-      setErrorMsg(err.message || "Gagal membuat kitab baru");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("Gagal membuat kitab baru");
+      }
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-[550px] bg-[rgba(10,12,15,0.95)] border border-blue-500/30 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] relative overflow-hidden">
+      <div className="w-full max-w-137.5 bg-[rgba(10,12,15,0.95)] border border-blue-500/30 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] relative overflow-hidden">
         {/* Decorative background blurs */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -59,7 +75,9 @@ export const CreateBookModal = ({ onClose, onSuccess }: CreateBookModalProps) =>
             <div className="w-10 h-10 rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
               <BookOpen className="w-5 h-5 text-blue-400" />
             </div>
-            <h1 className="text-2xl font-bold tracking-wide text-white">Buat Materi</h1>
+            <h1 className="text-2xl font-bold tracking-wide text-white">
+              Buat Materi
+            </h1>
           </div>
           <button
             onClick={onClose}
@@ -69,7 +87,10 @@ export const CreateBookModal = ({ onClose, onSuccess }: CreateBookModalProps) =>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="relative z-10 w-full flex flex-col">
+        <form
+          onSubmit={handleSubmit}
+          className="relative z-10 w-full flex flex-col"
+        >
           {/* Title */}
           <div className="mb-6 w-full">
             <label className="block text-sm font-bold tracking-wide text-blue-400 mb-2 ml-1">

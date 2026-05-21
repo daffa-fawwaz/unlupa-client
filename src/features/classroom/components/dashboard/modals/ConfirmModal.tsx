@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { AlertTriangle, Info, X } from "lucide-react";
 
@@ -25,31 +24,28 @@ export const ConfirmModal = ({
   variant = "warning",
   isLoading = false,
 }: ConfirmModalProps) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!isOpen || !mounted) return null;
+  if (!isOpen) return null;
 
   const styles = {
     danger: {
       icon: <AlertTriangle className="h-6 w-6 text-rose-400" />,
       bgIcon: "bg-rose-500/20 border-rose-500/30",
-      button: "bg-linear-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 shadow-rose-500/25",
+      button:
+        "bg-linear-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 shadow-rose-500/25",
       glow: "bg-rose-500/20",
     },
     warning: {
       icon: <AlertTriangle className="h-6 w-6 text-amber-400" />,
       bgIcon: "bg-amber-500/20 border-amber-500/30",
-      button: "bg-linear-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 shadow-amber-500/25",
+      button:
+        "bg-linear-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 shadow-amber-500/25",
       glow: "bg-amber-500/20",
     },
     info: {
       icon: <Info className="h-6 w-6 text-blue-400" />,
       bgIcon: "bg-blue-500/20 border-blue-500/30",
-      button: "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/25",
+      button:
+        "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-blue-500/25",
       glow: "bg-blue-500/20",
     },
   };
@@ -57,18 +53,19 @@ export const ConfirmModal = ({
   const theme = styles[variant];
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
         onClick={!isLoading ? onClose : undefined}
       />
-      
+
       {/* Modal Container */}
       <div className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-[#121824] shadow-[0_40px_100px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] animate-in fade-in zoom-in-95 duration-300">
-        
         {/* Glow Background */}
-        <div className={`absolute -right-12 -top-12 h-40 w-40 rounded-full blur-[60px] pointer-events-none ${theme.glow}`} />
+        <div
+          className={`absolute -right-12 -top-12 h-40 w-40 rounded-full blur-[60px] pointer-events-none ${theme.glow}`}
+        />
 
         <div className="relative p-6 sm:p-8">
           {/* Close button */}
@@ -81,15 +78,15 @@ export const ConfirmModal = ({
           </button>
 
           <div className="mb-5 flex justify-center">
-            <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border ${theme.bgIcon}`}>
+            <div
+              className={`flex h-14 w-14 items-center justify-center rounded-2xl border ${theme.bgIcon}`}
+            >
               {theme.icon}
             </div>
           </div>
 
           <div className="text-center">
-            <h3 className="mb-2 text-xl font-black text-white">
-              {title}
-            </h3>
+            <h3 className="mb-2 text-xl font-black text-white">{title}</h3>
             <p className="mb-8 text-sm leading-relaxed text-gray-400">
               {description}
             </p>
@@ -114,6 +111,6 @@ export const ConfirmModal = ({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
