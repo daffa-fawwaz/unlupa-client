@@ -92,7 +92,7 @@ export const TeacherRequestPage = () => {
     try {
       await getTeacherRequests();
     } catch (error) {
-      console.error("Error refreshing data:", error);
+      console.error("Terjadi kesalahan saat menyegarkan data");
     } finally {
       // Set timeout agar animasi terlihat (minimal 500ms)
       setTimeout(() => {
@@ -147,7 +147,7 @@ export const TeacherRequestPage = () => {
         handleCloseModal();
       } catch (error) {
         // Jika ada error, modal tetap terbuka dan user bisa coba lagi
-        console.error("Error processing request:", error);
+        console.error("Terjadi kesalahan saat memproses permintaan guru");
       }
     }
   };

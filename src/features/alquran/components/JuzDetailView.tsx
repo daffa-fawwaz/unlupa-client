@@ -38,10 +38,7 @@ export const JuzDetailView = ({
     status: "interval",
   });
   const { activateJuz, deactivateJuz, loading: toggleLoading } = useJuzToggle();
-  const {
-    completedJuz,
-    toggleJuzCompleted,
-  } = useUserProgress();
+  const { completedJuz, toggleJuzCompleted } = useUserProgress();
 
   useEffect(() => {
     getMyItems("quran");
@@ -109,7 +106,7 @@ export const JuzDetailView = ({
       setIsJuzActive(true);
       getMyItems("quran");
     } catch (error) {
-      console.error("Failed to activate Juz:", error);
+      console.error("Gagal mengaktifkan Juz");
     }
   };
 
@@ -119,7 +116,7 @@ export const JuzDetailView = ({
       setIsJuzActive(false);
       getMyItems("quran");
     } catch (error) {
-      console.error("Failed to deactivate Juz:", error);
+      console.error("Gagal menonaktifkan Juz");
     }
   };
 
@@ -266,11 +263,19 @@ export const JuzDetailView = ({
           </div>
         ) : !isJuzActive ? (
           <div className="col-span-full">
-            <HafalanKosong hafalan="Juz" title="Juz Dinonaktifkan" description="Aktifkan Juz ini untuk melihat dan mengelola hafalan Anda" />
+            <HafalanKosong
+              hafalan="Juz"
+              title="Juz Dinonaktifkan"
+              description="Aktifkan Juz ini untuk melihat dan mengelola hafalan Anda"
+            />
           </div>
         ) : juzData && juzData.items.length > 0 ? (
           juzData.items.map((item) => (
-            <HafalanCard key={item.item_id} item={item} onClick={() => onItemClick(item)} />
+            <HafalanCard
+              key={item.item_id}
+              item={item}
+              onClick={() => onItemClick(item)}
+            />
           ))
         ) : (
           <HafalanKosong hafalan="Juz" />

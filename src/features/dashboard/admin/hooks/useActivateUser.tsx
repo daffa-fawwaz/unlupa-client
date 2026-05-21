@@ -12,7 +12,7 @@ export const useActivateUser = () => {
       await userService.activateUser(userId);
     } catch (err) {
       setError("Failed to activate user");
-      console.error(err);
+      console.error("Terjadi kesalahan saat mengaktifkan user");
       throw err;
     } finally {
       setLoading(false);

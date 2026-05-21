@@ -85,7 +85,7 @@ export const AlquranDashboard = ({
       window.dispatchEvent(new Event("alquran:daily-generated"));
     } catch (error) {
       localStorage.removeItem(lockKey);
-      console.error("Failed to generate daily target", error);
+      console.error("Gagal menghasilkan target harian");
     }
   }, []);
 
@@ -120,7 +120,7 @@ export const AlquranDashboard = ({
 
         setStatusCounts(counts);
       } catch (error) {
-        console.error("Failed to fetch status counts:", error);
+        console.error("Gagal mengambil status counts");
       }
     };
 

@@ -263,7 +263,7 @@ export const AddHafalanModal = ({
         setEstimateTime(5);
       }, 300);
     } catch (err) {
-      console.error("Failed to save:", err);
+      console.error("Gagal menyimpan hafalan");
       // Optional: Show error toast here
     }
   };

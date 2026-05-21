@@ -10,7 +10,7 @@ export function useLocalStorage<T>(
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.error(`Error loading ${key} from localStorage:`, error);
+      console.error(`Gagal memuat ${key} dari localStorage`);
       return initialValue;
     }
   });
@@ -25,7 +25,7 @@ export function useLocalStorage<T>(
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
-      console.error(`Error saving ${key} to localStorage:`, error);
+      console.error(`Gagal menyimpan ${key} ke localStorage`);
     }
   };
 

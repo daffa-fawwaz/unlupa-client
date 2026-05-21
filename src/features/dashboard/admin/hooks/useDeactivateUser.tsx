@@ -12,7 +12,7 @@ export const useDeactivateUser = () => {
       await userService.deactivateUser(userId);
     } catch (err) {
       setError("Failed to deactivate user");
-      console.error(err);
+      console.error("Terjadi kesalahan saat menonaktifkan user");
       throw err;
     } finally {
       setLoading(false);

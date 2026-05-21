@@ -15,7 +15,7 @@ export const useUsers = () => {
       setData(response.data);
     } catch (err) {
       setError("Failed to fetch users");
-      console.error(err);
+      console.error("Terjadi kesalahan saat mengambil daftar pengguna");
     } finally {
       setLoading(false);
     }

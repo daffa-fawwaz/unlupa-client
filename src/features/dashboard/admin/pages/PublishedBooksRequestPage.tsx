@@ -102,7 +102,7 @@ export const PublishedBooksRequestPage = () => {
     try {
       await getPendingBooks();
     } catch (error) {
-      console.error("Error refreshing data:", error);
+      console.error("Terjadi kesalahan saat menyegarkan data");
     } finally {
       setTimeout(() => {
         setIsRefreshing(false);
@@ -133,7 +133,7 @@ export const PublishedBooksRequestPage = () => {
         await getPendingBooks();
         handleCloseModal();
       } catch (error) {
-        console.error("Error processing book request:", error);
+        console.error("Terjadi kesalahan saat memproses permintaan buku");
       }
     }
   };
@@ -171,7 +171,9 @@ export const PublishedBooksRequestPage = () => {
               <BookMarked className="w-4 h-4" />
             </div>
             <div>
-              <p className="font-medium text-white line-clamp-1">{item.title}</p>
+              <p className="font-medium text-white line-clamp-1">
+                {item.title}
+              </p>
               <p className="text-xs text-gray-400 mt-0.5">
                 {formatDate(item.created_at)}
               </p>
@@ -206,9 +208,7 @@ export const PublishedBooksRequestPage = () => {
                 <Eye className="w-4 h-4" />
               </button>
               <button
-                onClick={() =>
-                  handleOpenModal("approve", item.id, item.title)
-                }
+                onClick={() => handleOpenModal("approve", item.id, item.title)}
                 className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition"
                 title="Approve Book"
               >
@@ -351,9 +351,13 @@ export const PublishedBooksRequestPage = () => {
               </p>
               <h3 className="text-4xl font-display font-bold text-white">
                 {stats.oldestPendingDays}
-                <span className="text-lg font-normal text-gray-400 ml-1">d</span>
+                <span className="text-lg font-normal text-gray-400 ml-1">
+                  d
+                </span>
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Hari sejak request terlama</p>
+              <p className="text-xs text-gray-500 mt-2">
+                Hari sejak request terlama
+              </p>
             </div>
           </div>
         </div>

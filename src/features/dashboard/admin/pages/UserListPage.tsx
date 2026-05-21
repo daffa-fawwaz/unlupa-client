@@ -113,7 +113,7 @@ export const UserListPage = () => {
     try {
       await getUsers();
     } catch (error) {
-      console.error("Error refreshing data:", error);
+      console.error("Terjadi kesalahan saat menyegarkan data");
     } finally {
       setTimeout(() => {
         setIsRefreshing(false);
@@ -155,7 +155,7 @@ export const UserListPage = () => {
         await getUsers();
         handleCloseModal();
       } catch (error) {
-        console.error("Error processing request:", error);
+        console.error("Terjadi kesalahan saat memproses permintaan pengguna");
       }
     }
   };
@@ -284,10 +284,7 @@ export const UserListPage = () => {
       </div>
 
       {/* Sidebar Integration */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       {/* Overlay for mobile sidebar */}
       <div

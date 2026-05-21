@@ -26,7 +26,7 @@ export const DeactivateJuzModal = ({
       onDeactivated();
       onClose();
     } catch (error) {
-      console.error("Failed to deactivate Juz:", error);
+      console.error("Gagal menonaktifkan Juz");
     }
   };
 
@@ -93,7 +93,9 @@ export const DeactivateJuzModal = ({
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-amber-400 mt-0.5">•</span>
-                    <span>Data hafalan tetap tersimpan dan bisa diaktifkan kembali</span>
+                    <span>
+                      Data hafalan tetap tersimpan dan bisa diaktifkan kembali
+                    </span>
                   </li>
                 </ul>
               </div>

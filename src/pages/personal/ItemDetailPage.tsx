@@ -26,8 +26,15 @@ import { useDeleteItem } from "@/features/personal/hooks/useDeleteItem";
 import { useStartItemPhase } from "@/features/personal/hooks/useStartItemPhase";
 import { useStartIntervalPhase } from "@/features/personal/hooks/useStartIntervalPhase";
 import { useActivateFsrsPhase } from "@/features/personal/hooks/useActivateFsrsPhase";
-import { useBookTree, invalidateBookTreeCache, updateItemStatusInCache } from "@/features/personal/hooks/useBookTree";
-import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
+import {
+  useBookTree,
+  invalidateBookTreeCache,
+  updateItemStatusInCache,
+} from "@/features/personal/hooks/useBookTree";
+import {
+  useBookItemStatusMap,
+  contentRefForItem,
+} from "@/features/personal/hooks/useBookItemStatusMap";
 import type {
   BookItem,
   CreatedItem,
@@ -43,7 +50,7 @@ export const ItemDetailPage = () => {
   const [item, setItem] = useState<BookItem | null>(null);
   const [realItemId, setRealItemId] = useState<string | null>(
     // Persist across navigation within same session using sessionStorage
-    itemId ? sessionStorage.getItem(`real-item-id-${itemId}`) : null
+    itemId ? sessionStorage.getItem(`real-item-id-${itemId}`) : null,
   );
   // Track if we have a pending optimistic status update that shouldn't be overwritten by tree sync
   const pendingStatusRef = useRef<BookItem["status"] | null>(null);
@@ -66,7 +73,8 @@ export const ItemDetailPage = () => {
     },
   });
   const { startPhase, loading: isStarting } = useStartItemPhase();
-  const { startInterval, loading: isStartingInterval } = useStartIntervalPhase();
+  const { startInterval, loading: isStartingInterval } =
+    useStartIntervalPhase();
   const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
   const { fetchStatusMap } = useBookItemStatusMap();
 
@@ -91,7 +99,10 @@ export const ItemDetailPage = () => {
           for (const m of mods) {
             const found = m.items?.find((i) => i.id === itemId);
             if (found) return found;
-            if (m.children?.length) { const d = searchMods(m.children); if (d) return d; }
+            if (m.children?.length) {
+              const d = searchMods(m.children);
+              if (d) return d;
+            }
           }
           return null;
         };
@@ -104,9 +115,11 @@ export const ItemDetailPage = () => {
       // Get status from API (authoritative) — tree doesn't include status
       const contentRef = contentRefForItem(bookId, itemId);
       const entry = statusMap.get(contentRef);
-      
+
       const sessionStatus = sessionStorage.getItem(`item-status-${itemId}`);
-      const finalStatus = (entry?.status ?? sessionStatus ?? "belum_mulai") as BookItem["status"];
+      const finalStatus = (entry?.status ??
+        sessionStatus ??
+        "belum_mulai") as BookItem["status"];
 
       if (entry?.item_id) {
         setRealItemId(entry.item_id);
@@ -117,13 +130,14 @@ export const ItemDetailPage = () => {
     };
 
     void load();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, itemId]);
 
   // Fetch item detail (next review, stability) when realItemId is known
   useEffect(() => {
     if (!realItemId) return;
-    personalService.getItemDetail(realItemId)
+    personalService
+      .getItemDetail(realItemId)
       .then((res) => setItemDetail(res.data))
       .catch(() => setItemDetail(null));
   }, [realItemId]);
@@ -132,7 +146,9 @@ export const ItemDetailPage = () => {
     setItem({
       ...updatedItem,
       review_count: 0,
-      status: (updatedItem as unknown as Record<string, unknown>).status as BookItem["status"] || "belum_mulai",
+      status:
+        ((updatedItem as unknown as Record<string, unknown>)
+          .status as BookItem["status"]) || "belum_mulai",
     });
   };
 
@@ -146,8 +162,10 @@ export const ItemDetailPage = () => {
       sessionStorage.removeItem(`item-status-${itemId}`);
       navigate(-1);
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string }; status?: number } };
-      console.error("[handleDeleteSuccess] Error:", error?.response?.data?.message);
+      // avoid logging raw error objects to prevent leaking internal details
+      console.error(
+        "[handleDeleteSuccess] Terjadi kesalahan saat menghapus item",
+      );
     }
   };
 
@@ -164,16 +182,19 @@ export const ItemDetailPage = () => {
       pendingStatusRef.current = newStatus as BookItem["status"];
       apiStatusRef.current = newStatus as BookItem["status"];
       sessionStorage.setItem(`item-status-${itemId}`, newStatus);
-      setItem((prev) => prev ? { ...prev, status: newStatus as BookItem["status"] } : null);
+      setItem((prev) =>
+        prev ? { ...prev, status: newStatus as BookItem["status"] } : null,
+      );
       setIsStartModalOpen(false);
     } catch (err: unknown) {
-      console.error("[handleStartPhase ERROR]", err);
+      console.error("[handleStartPhase] Terjadi kesalahan saat memulai fase");
     }
   };
 
   const handleIntervalSubmit = async (intervalDays: number) => {
     if (!bookId || !itemId) return;
-    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    const itemIdToUse =
+      realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
     if (!itemIdToUse) {
       console.error("[handleIntervalSubmit] No real item_id available");
       return;
@@ -183,17 +204,19 @@ export const ItemDetailPage = () => {
       pendingStatusRef.current = "interval";
       apiStatusRef.current = "interval";
       sessionStorage.setItem(`item-status-${itemId}`, "interval");
-      setItem((prev) => prev ? { ...prev, status: "interval" } : null);
+      setItem((prev) => (prev ? { ...prev, status: "interval" } : null));
       setIsIntervalModalOpen(false);
     } catch (err: unknown) {
-      const error = err as { response?: { data?: unknown } };
-      console.error("[handleIntervalSubmit] ERROR:", error?.response?.data);
+      console.error(
+        "[handleIntervalSubmit] Terjadi kesalahan saat mengirim interval",
+      );
     }
   };
 
   const handleActivateFsrsPhase = async () => {
     if (!bookId || !itemId) return;
-    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    const itemIdToUse =
+      realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
     if (!itemIdToUse) {
       console.error("[handleActivateFsrsPhase] No real item_id available");
       return;
@@ -203,17 +226,19 @@ export const ItemDetailPage = () => {
       pendingStatusRef.current = "fsrs_active";
       apiStatusRef.current = "fsrs_active";
       sessionStorage.setItem(`item-status-${itemId}`, "fsrs_active");
-      setItem((prev) => prev ? { ...prev, status: "fsrs_active" } : null);
+      setItem((prev) => (prev ? { ...prev, status: "fsrs_active" } : null));
       setIsActivateFsrsModalOpen(false);
     } catch (err: unknown) {
-      const error = err as { response?: { data?: unknown } };
-      console.error("[handleActivateFsrsPhase] ERROR:", error?.response?.data);
+      console.error(
+        "[handleActivateFsrsPhase] Terjadi kesalahan saat mengaktifkan FSRS",
+      );
     }
   };
 
   const handleDeactivate = async () => {
     if (!itemId) return;
-    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    const itemIdToUse =
+      realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
     if (!itemIdToUse) {
       console.error("[handleDeactivate] No real item_id available");
       return;
@@ -223,16 +248,19 @@ export const ItemDetailPage = () => {
       pendingStatusRef.current = "inactive";
       apiStatusRef.current = "inactive";
       sessionStorage.setItem(`item-status-${itemId}`, "inactive");
-      setItem((prev) => prev ? { ...prev, status: "inactive" } : null);
+      setItem((prev) => (prev ? { ...prev, status: "inactive" } : null));
       setIsDeactivateModalOpen(false);
     } catch (err: unknown) {
-      console.error("[handleDeactivate] ERROR:", err);
+      console.error(
+        "[handleDeactivate] Terjadi kesalahan saat menonaktifkan item",
+      );
     }
   };
 
   const handleReactivate = async () => {
     if (!itemId) return;
-    const itemIdToUse = realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
+    const itemIdToUse =
+      realItemId || sessionStorage.getItem(`real-item-id-${itemId}`);
     if (!itemIdToUse) {
       console.error("[handleReactivate] No real item_id available");
       return;
@@ -242,14 +270,14 @@ export const ItemDetailPage = () => {
       pendingStatusRef.current = "fsrs_active";
       apiStatusRef.current = "fsrs_active";
       sessionStorage.setItem(`item-status-${itemId}`, "fsrs_active");
-      setItem((prev) => prev ? { ...prev, status: "fsrs_active" } : null);
+      setItem((prev) => (prev ? { ...prev, status: "fsrs_active" } : null));
       setIsReactivateModalOpen(false);
     } catch (err: unknown) {
-      console.error("[handleReactivate] ERROR:", err);
+      console.error(
+        "[handleReactivate] Terjadi kesalahan saat mengaktifkan kembali item",
+      );
     }
   };
-
- 
 
   const getItemStatus = () => {
     return item?.status || "belum_mulai";
@@ -463,8 +491,6 @@ export const ItemDetailPage = () => {
               </div>
             </div>
 
-           
-
             {/* Action Buttons - Edit & Delete */}
             <div className="grid grid-cols-2 gap-4">
               <button
@@ -498,14 +524,18 @@ export const ItemDetailPage = () => {
               </div>
 
               {/* Graduated banner */}
-              {(getNormalizedStatus() === "inactive" || getNormalizedStatus() === "graduate") && (
+              {(getNormalizedStatus() === "inactive" ||
+                getNormalizedStatus() === "graduate") && (
                 <div className="mx-4 sm:mx-8 mt-6 rounded-2xl overflow-hidden border border-emerald-500/30 bg-linear-to-br from-emerald-500/10 to-cyan-500/5">
                   <div className="px-5 py-4 flex items-center gap-4">
                     <div className="text-3xl">🎓</div>
                     <div>
-                      <p className="text-emerald-300 font-black text-base">Item Ini Sudah Lulus!</p>
+                      <p className="text-emerald-300 font-black text-base">
+                        Item Ini Sudah Lulus!
+                      </p>
                       <p className="text-emerald-400/60 text-xs mt-0.5">
-                        Hafalan kamu untuk item ini sudah sangat kuat. Pertahankan terus!
+                        Hafalan kamu untuk item ini sudah sangat kuat.
+                        Pertahankan terus!
                       </p>
                     </div>
                   </div>
@@ -528,9 +558,9 @@ export const ItemDetailPage = () => {
                                 ? "0%"
                                 : getNormalizedStatus() === "menghafal"
                                   ? "35%"
-                                    : getNormalizedStatus() === "fsrs_active"
-                                      ? "65%"
-                                      : "100%",
+                                  : getNormalizedStatus() === "fsrs_active"
+                                    ? "65%"
+                                    : "100%",
                           }}
                         />
                       </div>
@@ -790,7 +820,6 @@ export const ItemDetailPage = () => {
         icon={Target}
         variant="info"
       />
-
 
       {/* Edit Item Modal */}
       {isEditModalOpen && item && (

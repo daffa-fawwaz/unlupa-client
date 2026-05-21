@@ -90,7 +90,7 @@ export const ClassroomCardSandbox = () => {
               { id: "draft", label: "Draft" },
             ]}
             activeTab="all"
-            onTabChange={(id) => console.log(id)}
+            onTabChange={() => {}}
           />
         </div>
 
@@ -107,8 +107,8 @@ export const ClassroomCardSandbox = () => {
 
       {/* <JoinClassModal
         isOpen={true}
-        onClose={() => console.log("Close")}
-        onJoin={() => console.log("Join")}
+        onClose={() => {}}
+        onJoin={() => {}}
       /> */}
 
       {/* <ConfirmModal
@@ -119,14 +119,14 @@ export const ClassroomCardSandbox = () => {
         cancelText="Batal"
         variant="info"
         isLoading={false}
-        onClose={() => console.log("Close")}
-        onConfirm={() => console.log("Confirm")}
+        onClose={() => {}}
+        onConfirm={() => {}}
       /> */}
 
       {/* <CreateClassModal
         isOpen={true}
-        onClose={() => console.log("Close")}
-        onCreate={() => console.log("Create")}
+        onClose={() => {}}
+        onCreate={() => {}}
       /> */}
 
       {/* <EditClassModal
@@ -139,7 +139,7 @@ export const ClassroomCardSandbox = () => {
         }}
         onClose={() => setIsEditModalOpen(false)}
         onUpdate={(payload) => {
-          console.log("updated class:", payload);
+          // payload handled: update logic executed — logging removed for production
           setIsEditModalOpen(false);
         }}
       /> */}
@@ -152,7 +152,7 @@ export const ClassroomCardSandbox = () => {
           description="Draft tampilan komponen classroom UNLUPA untuk header, pencarian, CTA, dan kartu kelas."
           buttonText="Create Class"
           buttonIcon={CreateClassButton}
-          onButtonClick={() => console.log("Create Class")}
+          onButtonClick={() => {}}
         />
       </div>
     </main>

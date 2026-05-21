@@ -154,7 +154,10 @@ export function useQuranData() {
         // Map ItemStatus to LifecycleStats
         if (item.status === "new" || item.status === "memorizing") {
           stats.menghafal++;
-        } else if (item.status === "consolidation" || item.status === "active") {
+        } else if (
+          item.status === "consolidation" ||
+          item.status === "active"
+        ) {
           stats.murajaah++;
         } else if (item.status === "maintenance") {
           stats.terjaga++;
@@ -181,7 +184,7 @@ export function useQuranData() {
           const pages = end - start + 1;
           totalSafePages += pages;
         } catch (e) {
-          console.error("Error calculating pages:", e);
+          console.error("Gagal menghitung halaman item");
         }
       }
     });

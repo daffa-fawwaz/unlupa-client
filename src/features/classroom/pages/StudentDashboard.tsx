@@ -80,7 +80,7 @@ export const StudentDashboard = () => {
                 buttonIcon={Plus}
                 // Action
                 onButtonClick={() => {
-                  console.log("Cari Kelas");
+                  // Debug log removed for production
                 }}
                 // Optional Styling
                 mainBgColor="bg-[#020817]"
@@ -141,7 +141,7 @@ export const StudentDashboard = () => {
                 buttonIcon={Plus}
                 // Action
                 onButtonClick={() => {
-                  console.log("Cari Kelas");
+                  // Debug log removed for production
                 }}
                 // Optional Styling
                 mainBgColor="bg-[#020817]"
