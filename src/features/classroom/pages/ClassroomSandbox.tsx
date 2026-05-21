@@ -129,6 +129,21 @@ export const ClassroomCardSandbox = () => {
         onCreate={() => console.log("Create")}
       /> */}
 
+      {/* <EditClassModal
+        isOpen={isEditModalOpen}
+        classData={{
+          name: "Kelas Tahsin 101",
+          description: "Deskripsi awal",
+          type: "book",
+          image: "https://example.com/image.jpg",
+        }}
+        onClose={() => setIsEditModalOpen(false)}
+        onUpdate={(payload) => {
+          console.log("updated class:", payload);
+          setIsEditModalOpen(false);
+        }}
+      /> */}
+
       <div className="mt-6">
         <EmptyStateWrapper
           icon={Book}
