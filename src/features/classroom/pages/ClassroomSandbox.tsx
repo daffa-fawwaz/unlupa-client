@@ -7,6 +7,7 @@ import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { Book, BookAlertIcon } from "lucide-react";
 import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
 import { JoinClassModal } from "../components/dashboard/modals/JoinClassModal";
+import { ConfirmModal } from "../components/dashboard/modals/ConfirmModal";
 
 const classroomSamples = [
   {
@@ -111,6 +112,18 @@ export const ClassroomCardSandbox = () => {
         isOpen={true}
         onClose={() => console.log("Close")}
         onJoin={() => console.log("Join")}
+      /> */}
+
+      {/* <ConfirmModal
+        isOpen={true}
+        title="Konfirmasi Bergabung"
+        description="Anda akan bergabung dengan kelas Tahsin & Tajwid Al-Quran. Lanjutkan?"
+        confirmText="Ya, Bergabung"
+        cancelText="Batal"
+        variant="info"
+        isLoading={false}
+        onClose={() => console.log("Close")}
+        onConfirm={() => console.log("Confirm")}
       /> */}
 
       <div className="mt-6">
