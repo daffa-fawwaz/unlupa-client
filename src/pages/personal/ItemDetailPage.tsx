@@ -104,7 +104,9 @@ export const ItemDetailPage = () => {
       // Get status from API (authoritative) — tree doesn't include status
       const contentRef = contentRefForItem(bookId, itemId);
       const entry = statusMap.get(contentRef);
-      const finalStatus = (entry?.status ?? "belum_mulai") as BookItem["status"];
+      
+      const sessionStatus = sessionStorage.getItem(`item-status-${itemId}`);
+      const finalStatus = (entry?.status ?? sessionStatus ?? "belum_mulai") as BookItem["status"];
 
       if (entry?.item_id) {
         setRealItemId(entry.item_id);
