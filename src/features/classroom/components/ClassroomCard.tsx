@@ -1,11 +1,7 @@
 import {
   BookOpen,
-  CalendarClock,
-  ChevronRight,
   GraduationCap,
-  Layers,
   MoreVertical,
-  ShieldCheck,
   Users,
 } from "lucide-react";
 
@@ -19,8 +15,6 @@ export const ClassroomCard = ({
   teacherName,
   memberCount,
   bookCount,
-  activeReviewCount,
-  nextSessionLabel = "Belum dijadwalkan",
   status = "active",
   tone = "blue",
   coverImage,
@@ -32,7 +26,7 @@ export const ClassroomCard = ({
   return (
     <article
       onClick={onClick}
-      className={`group relative flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-linear-to-b from-[#1A2230] to-[#0B0E14] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-500 hover:-translate-y-1 hover:border-white/12 hover:shadow-2xl ${theme.glow} ${onClick ? "cursor-pointer" : ""}`}
+      className={`group relative flex min-h-105 flex-col overflow-hidden rounded-2xl border border-white/5 bg-linear-to-b from-[#1A2230] to-[#0B0E14] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-500 hover:-translate-y-1 hover:border-white/12 hover:shadow-2xl ${theme.glow} ${onClick ? "cursor-pointer" : ""}`}
     >
       <div
         className={`absolute inset-x-0 top-0 z-20 h-1 bg-linear-to-r ${theme.accent}`}
@@ -55,7 +49,7 @@ export const ClassroomCard = ({
             <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-[#111722] to-transparent pointer-events-none" />
             <div className="absolute -right-12 -top-16 h-48 w-48 rounded-full bg-white/8 blur-[70px] pointer-events-none" />
             <div
-              className={`relative flex h-24 w-24 items-center justify-center rounded-[1.75rem] border ${theme.border} ${theme.iconBg} shadow-[0_24px_60px_-30px_rgba(0,0,0,0.9)] transition-transform duration-700 group-hover:scale-105 group-hover:-rotate-2 sm:h-28 sm:w-28`}
+              className={`relative flex h-24 w-24 items-center justify-center rounded-4xl border ${theme.border} ${theme.iconBg} shadow-[0_24px_60px_-30px_rgba(0,0,0,0.9)] transition-transform duration-700 group-hover:scale-105 group-hover:-rotate-2 sm:h-28 sm:w-28`}
             >
               <GraduationCap className={`h-12 w-12 ${theme.text} sm:h-14 sm:w-14`} />
             </div>
@@ -103,16 +97,16 @@ export const ClassroomCard = ({
           </div>
         </div>
 
-        <div className="mb-5">
+        <div className="mb-2">
           <h3 className="mb-2 line-clamp-2 text-xl font-black leading-tight text-white transition-colors group-hover:text-blue-50">
             {title}
           </h3>
-          <p className="line-clamp-2 min-h-[44px] text-sm leading-relaxed text-gray-400">
+          <p className="line-clamp-2 min-h-11 text-sm leading-relaxed text-gray-400">
             {description || "Belum ada deskripsi kelas."}
           </p>
         </div>
 
-        <div className="mb-5 grid grid-cols-3 gap-2">
+        <div className="mb-2 grid grid-cols-2 gap-2">
           <div className="rounded-2xl border border-white/5 bg-white/4 p-3">
             <Users className="mb-2 h-4 w-4 text-gray-500" />
             <p className="text-lg font-black leading-none text-white">
@@ -130,31 +124,6 @@ export const ClassroomCard = ({
             <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
               Kitab
             </p>
-          </div>
-          <div className="rounded-2xl border border-white/5 bg-white/4 p-3">
-            <Layers className="mb-2 h-4 w-4 text-gray-500" />
-            <p className="text-lg font-black leading-none text-white">
-              {activeReviewCount}
-            </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
-              Review
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-auto rounded-2xl border border-white/5 bg-[#0F141D] p-4">
-          <div className="mb-3 flex items-center gap-2 text-xs text-gray-400">
-            <CalendarClock className={`h-4 w-4 ${theme.text}`} />
-            <span className="truncate">{nextSessionLabel}</span>
-          </div>
-          <div className="flex items-center justify-between gap-3 border-t border-white/5 pt-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-              <ShieldCheck className="h-4 w-4 text-emerald-400" />
-              <span>Progress kelas terpantau</span>
-            </div>
-            <ChevronRight
-              className={`h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1 ${theme.text}`}
-            />
           </div>
         </div>
       </div>

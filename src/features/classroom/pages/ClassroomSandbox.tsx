@@ -3,9 +3,9 @@ import { CreateClassButton } from "../components/CreateClassButton";
 import { ClassroomSearchInput } from "../components/ClassroomSearchInput";
 import { ClassroomHeader } from "../components/ClassroomHeader";
 import { TabsNavigation } from "../components/TabsNavigation";
-import { SectionCard } from "../components/SectionCard";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
-import { Book } from "lucide-react";
+import { Book, BookAlertIcon } from "lucide-react";
+import { QuickAccessCard } from "../components/QuickAccessSection";
 
 const classroomSamples = [
   {
@@ -48,8 +48,8 @@ export const ClassroomCardSandbox = () => {
   return (
     <main className="min-h-screen bg-[#090A0F] px-4 py-8 text-white sm:px-6 lg:px-10">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute right-[-12%] top-[-18%] h-[620px] w-[620px] rounded-full bg-blue-500/6 blur-[120px]" />
-        <div className="absolute bottom-[-20%] left-[-14%] h-[520px] w-[520px] rounded-full bg-emerald-500/6 blur-[120px]" />
+        <div className="absolute right-[-12%] top-[-18%] h-155 w-155 rounded-full bg-blue-500/6 blur-[120px]" />
+        <div className="absolute bottom-[-20%] left-[-14%] h-130 w-130 rounded-full bg-emerald-500/6 blur-[120px]" />
       </div>
 
       <section className="relative z-10 mx-auto max-w-6xl">
@@ -64,6 +64,23 @@ export const ClassroomCardSandbox = () => {
 
         <div className="mt-6">
           <ClassroomSearchInput />
+        </div>
+
+        <div className="mt-6 w-full grid grid-cols-2 gap-3">
+          <QuickAccessCard
+            color="blue"
+            description="tes"
+            href="#karya"
+            icon={BookAlertIcon}
+            title="uhuy"
+          />
+          <QuickAccessCard
+            color="blue"
+            description="tes"
+            href="#karya"
+            icon={BookAlertIcon}
+            title="uhuy"
+          />
         </div>
 
         <div className="mt-6 ">
