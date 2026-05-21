@@ -6,6 +6,7 @@ import { TabsNavigation } from "../components/navigation/TabsNavigation";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { Book, BookAlertIcon } from "lucide-react";
 import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
+import { JoinClassModal } from "../components/dashboard/modals/JoinClassModal";
 
 const classroomSamples = [
   {
@@ -105,6 +106,12 @@ export const ClassroomCardSandbox = () => {
           ))}
         </div>
       </section>
+
+      {/* <JoinClassModal
+        isOpen={true}
+        onClose={() => console.log("Close")}
+        onJoin={() => console.log("Join")}
+      /> */}
 
       <div className="mt-6">
         <EmptyStateWrapper
