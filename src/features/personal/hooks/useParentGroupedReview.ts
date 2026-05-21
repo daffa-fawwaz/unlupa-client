@@ -103,15 +103,19 @@ export const useParentGroupedReview = () => {
           tree = res.data;
           bookTitle = tree.title;
         } catch {
-          // fallback: group all under book
+          // If we can't fetch the book (e.g. it was deleted), skip all tasks for it
+          continue;
         }
 
         for (const task of bookTasks) {
           const parsed = parseBookContentRef(task.content_ref);
           if (!parsed) continue;
 
-          // Try to find item in tree for estimate
-          const treeItem = tree ? findItemInTree(tree, parsed.itemId) : null;
+          // Find item in tree to ensure it still exists
+          const treeItem = findItemInTree(tree, parsed.itemId);
+          
+          // If item is not in the tree (deleted), skip it
+          if (!treeItem) continue;
 
           // Use status from API task (authoritative) — tree status is unreliable
           // because BookTree doesn't track review state.
