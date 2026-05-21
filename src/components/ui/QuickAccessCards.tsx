@@ -114,7 +114,7 @@ export const QuickAccessCards = ({
           title: "Kelola Kelas",
           description: "Jadwal & siswa",
           icon: <Users className="w-4 h-4" />,
-          href: "/dashboard/classes",
+          href: "/dashboard/kelas",
           color: "blue" as const,
         },
         {
@@ -140,7 +140,7 @@ export const QuickAccessCards = ({
         title: "Kelola Kelas",
         description: "Semua kelas aktif",
         icon: <Users className="w-4 h-4" />,
-        href: "/dashboard/classes",
+        href: "/dashboard/kelas",
         color: "blue" as const,
       },
       {
