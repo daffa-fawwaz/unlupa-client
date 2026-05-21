@@ -1,5 +1,6 @@
 import { Flame, BookOpen, Inbox } from "lucide-react";
 
+
 export const DailyReviewSection = () => {
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#0B1220]/80 shadow-2xl shadow-slate-900/20">
