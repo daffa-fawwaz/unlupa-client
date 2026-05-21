@@ -1,4 +1,4 @@
-import { ClassroomSearchInput } from "@/features/classroom/components/ClassroomSearchInput";
+import { ClassroomSearchInput } from "@/features/classroom/components/shared/ClassroomSearchInput";
 import type { ElementType, ReactNode } from "react";
 
 interface EmptyStateWrapperProps {

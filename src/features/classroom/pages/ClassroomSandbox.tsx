@@ -1,11 +1,11 @@
-import { ClassroomCard } from "@/features/classroom/components/ClassroomCard";
-import { CreateClassButton } from "../components/CreateClassButton";
-import { ClassroomSearchInput } from "../components/ClassroomSearchInput";
-import { ClassroomHeader } from "../components/ClassroomHeader";
-import { TabsNavigation } from "../components/TabsNavigation";
+import { ClassroomCard } from "@/features/classroom/components/dashboard/ClassroomCard";
+import { CreateClassButton } from "../components/dashboard/CreateClassButton";
+import { ClassroomSearchInput } from "../components/shared/ClassroomSearchInput";
+import { ClassroomHeader } from "../components/dashboard/ClassroomHeader";
+import { TabsNavigation } from "../components/navigation/TabsNavigation";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { Book, BookAlertIcon } from "lucide-react";
-import { QuickAccessCard } from "../components/QuickAccessSection";
+import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
 
 const classroomSamples = [
   {

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/ui/Sidebar";
-import { TopNavigationBar } from "../components/TopNavigationBar";
-import HeaderSection from "../components/HeaderSection";
-import DynamicBackgroundAtmosphere from "../components/DynamicBackgroundAtmosphere";
-import BackgroundAmbience from "../components/BackgroundAmbience";
-import MobileSidebarOverlay from "../components/MobileSidebarOverlay";
-import { ClassroomCard } from "../components/ClassroomCard";
+import { TopNavigationBar } from "../components/navigation/TopNavigationBar";
+import HeaderSection from "../components/shared/HeaderSection";
+import DynamicBackgroundAtmosphere from "../components/shared/DynamicBackgroundAtmosphere";
+import BackgroundAmbience from "../components/shared/BackgroundAmbience";
+import MobileSidebarOverlay from "../components/navigation/MobileSidebarOverlay";
+import { ClassroomCard } from "../components/dashboard/ClassroomCard";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { Plus, School, School2 } from "lucide-react";
-import { QuickAccessCard } from "../components/QuickAccessSection";
+import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
 import { DailyReviewSection } from "@/components/ui/DailyReviewSection";
 
 export const StudentDashboard = () => {
