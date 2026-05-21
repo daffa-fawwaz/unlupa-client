@@ -6,9 +6,6 @@ import { TabsNavigation } from "../components/navigation/TabsNavigation";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { Book, BookAlertIcon } from "lucide-react";
 import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
-import { JoinClassModal } from "../components/dashboard/modals/JoinClassModal";
-import { ConfirmModal } from "../components/dashboard/modals/ConfirmModal";
-
 const classroomSamples = [
   {
     title: "Tahsin & Hafalan Juz 30",
@@ -124,6 +121,12 @@ export const ClassroomCardSandbox = () => {
         isLoading={false}
         onClose={() => console.log("Close")}
         onConfirm={() => console.log("Confirm")}
+      /> */}
+
+      {/* <CreateClassModal
+        isOpen={true}
+        onClose={() => console.log("Close")}
+        onCreate={() => console.log("Create")}
       /> */}
 
       <div className="mt-6">
