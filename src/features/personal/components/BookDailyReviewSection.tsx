@@ -125,8 +125,29 @@ export const BookDailyReviewSection = () => {
       const nextIdx = activeGroup.items.findIndex((qi) => qi.item_id === remaining[0].item_id);
       setQueueIndex(nextIdx >= 0 ? nextIdx : queueIndex + 1);
     } else {
-      setIsFlashcardOpen(false);
-      setActiveGroup(null);
+      const currentGroupIndex = filteredGroups.findIndex(
+        (group) => group.parent_id === activeGroup.parent_id,
+      );
+      const nextGroup = filteredGroups
+        .slice(currentGroupIndex + 1)
+        .map((group) => {
+          const items = group.items.filter((item) => !updatedReviewed.has(item.item_id));
+          const totalEstimatedSeconds = items.reduce(
+            (sum, item) => sum + item.estimatedSeconds,
+            0,
+          );
+          return { ...group, items, totalEstimatedSeconds };
+        })
+        .find((group) => group.items.length > 0);
+
+      if (nextGroup) {
+        setActiveGroup(nextGroup);
+        setQueueIndex(0);
+        setIsFlashcardOpen(true);
+      } else {
+        setIsFlashcardOpen(false);
+        setActiveGroup(null);
+      }
     }
 
     // Re-generate to invalidate server cache, then fetch fresh state

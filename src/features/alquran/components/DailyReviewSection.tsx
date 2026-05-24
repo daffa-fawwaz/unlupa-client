@@ -139,8 +139,29 @@ export const DailyReviewSection = () => {
       const nextIdx = activeJuz.items.findIndex((qi) => qi.item_id === remaining[0].item_id);
       setQueueIndex(nextIdx >= 0 ? nextIdx : queueIndex + 1);
     } else {
-      setIsFlashcardOpen(false);
-      setActiveJuz(null);
+      const currentGroupIndex = filteredJuzGroups.findIndex(
+        (juz) => juz.juz_id === activeJuz.juz_id,
+      );
+      const nextJuz = filteredJuzGroups
+        .slice(currentGroupIndex + 1)
+        .map((juz) => {
+          const items = juz.items.filter((item) => !updatedReviewed.has(item.item_id));
+          const totalEstimatedSeconds = items.reduce(
+            (sum, item) => sum + (item.estimatedReviewSeconds || 0),
+            0,
+          );
+          return { ...juz, items, itemCount: items.length, totalEstimatedSeconds };
+        })
+        .find((juz) => juz.itemCount > 0);
+
+      if (nextJuz) {
+        setActiveJuz(nextJuz);
+        setQueueIndex(0);
+        setIsFlashcardOpen(true);
+      } else {
+        setIsFlashcardOpen(false);
+        setActiveJuz(null);
+      }
     }
 
     void refetchEstimates();
@@ -255,7 +276,7 @@ export const DailyReviewSection = () => {
       {/* Flashcard Modal */}
       {isFlashcardOpen && currentTask && activeJuz && (
         <DailyReviewFlashcardModal
-          key={`${currentTask.item_id}-${queueIndex}`}
+          key={currentTask.item_id}
           isOpen={isFlashcardOpen}
           task={currentTask}
           queuePosition={queueIndex + 1}
