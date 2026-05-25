@@ -14,7 +14,6 @@ import { UserListPage } from "@/features/dashboard/admin/pages/UserListPage";
 import { PublishedBooksRequestPage } from "@/features/dashboard/admin/pages/PublishedBooksRequestPage";
 import { AdminBookDetailPage } from "@/features/dashboard/admin/pages/AdminBookDetailPage";
 import { AlquranPage } from "@/pages/alquran/AlquranPage";
-import { ComingSoonRoomPage } from "@/pages/dashboard/ComingSoonRoomPage";
 import { StatusItemsByJuzPage } from "@/features/alquran/pages/StatusItemsByJuzPage";
 import { StatusItemsView } from "@/features/alquran/pages/StatusItemsView";
 import { PersonalPage } from "@/pages/personal/PersonalPage";

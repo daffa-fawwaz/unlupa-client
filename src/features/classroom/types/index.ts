@@ -1,6 +1,39 @@
+/// CLASSROOM TYPES
+
+export interface ClassItem {
+  id: string;
+  guru_id: string;
+  name: string;
+  description: string;
+  class_code: string;
+  type: "book" | "quran";
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateClassPayload {
+  name: string;
+  description: string;
+  type: "book" | "quran";
+}
+
 /// CLASSROOM CARD
 
-export type ClassroomCardTone = "blue" | "emerald" | "amber" | "violet";
+export type ClassroomCardTone =
+  | "blue"
+  | "emerald"
+  | "amber"
+  | "violet"
+  | "rose"
+  | "indigo"
+  | "teal"
+  | "cyan"
+  | "fuchsia"
+  | "pink"
+  | "yellow"
+  | "lime"
+  | "gray";
 
 export type ClassroomCardProps = {
   title: string;
@@ -8,7 +41,6 @@ export type ClassroomCardProps = {
   teacherName: string;
   memberCount: number;
   bookCount: number;
-  activeReviewCount: number;
   nextSessionLabel?: string;
   status?: "active" | "draft" | "archived";
   tone?: ClassroomCardTone;

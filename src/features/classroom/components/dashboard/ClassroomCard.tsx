@@ -1,9 +1,4 @@
-import {
-  BookOpen,
-  GraduationCap,
-  MoreVertical,
-  Users,
-} from "lucide-react";
+import { BookOpen, GraduationCap, MoreVertical, Users } from "lucide-react";
 
 import type { ClassroomCardProps } from "@/features/classroom/types/index";
 
@@ -51,7 +46,9 @@ export const ClassroomCard = ({
             <div
               className={`relative flex h-24 w-24 items-center justify-center rounded-4xl border ${theme.border} ${theme.iconBg} shadow-[0_24px_60px_-30px_rgba(0,0,0,0.9)] transition-transform duration-700 group-hover:scale-105 group-hover:-rotate-2 sm:h-28 sm:w-28`}
             >
-              <GraduationCap className={`h-12 w-12 ${theme.text} sm:h-14 sm:w-14`} />
+              <GraduationCap
+                className={`h-12 w-12 ${theme.text} sm:h-14 sm:w-14`}
+              />
             </div>
           </div>
         )}
