@@ -1,6 +1,7 @@
-import { BookOpen, ChevronRight, GraduationCap, Plus, Sparkles, Users } from "lucide-react";
+import { BookOpen, GraduationCap, Plus, Sparkles, Users } from "lucide-react";
+import type { CreateClassButtonProps } from "../../types";
 
-export const CreateClassButton = () => {
+export const CreateClassButton = ({ onClick }: CreateClassButtonProps) => {
   return (
     <button className="group relative w-full overflow-hidden rounded-2xl border border-white/5 bg-linear-to-br from-[#172231] via-[#101722] to-[#080B10] p-5 text-left font-sans text-white shadow-[0_24px_70px_-38px_rgba(0,0,0,0.95)] transition-all duration-500 hover:-translate-y-0.5 hover:border-emerald-400/25 hover:shadow-[0_34px_90px_-42px_rgba(16,185,129,0.45)] sm:p-6">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-emerald-500 via-teal-400 to-blue-400" />
@@ -17,7 +18,7 @@ export const CreateClassButton = () => {
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-300">
                 <Sparkles className="h-3 w-3" />
-                Ruang Baru
+                Kelas Baru
               </span>
               <span className="text-xs font-medium text-gray-500">
                 Setup kelas, materi, dan peserta dalam satu alur
@@ -28,7 +29,8 @@ export const CreateClassButton = () => {
               Buat ruang belajar baru
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-400">
-              Mulai kelas dengan modul pilihan, atur kitab yang dipelajari, lalu undang siswa untuk mengikuti review bersama.
+              Mulai kelas dengan modul pilihan, atur kitab yang dipelajari, lalu
+              undang siswa untuk mengikuti review bersama.
             </p>
 
             <div className="mt-5 grid gap-2 sm:grid-cols-3">
@@ -63,9 +65,12 @@ export const CreateClassButton = () => {
               Isi detail kelas
             </p>
           </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-[#06110D] transition-transform duration-500 group-hover:translate-x-1 lg:w-full lg:rounded-xl">
-            <ChevronRight className="h-5 w-5" />
-          </div>
+          <button
+            className="flex hover:scale-105 hover:rotate-2 hover:shadow-[0_20px_50px_-28px_rgba(16,185,129,0.95)] hover:cursor-pointer h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-[#06110D] transition-transform duration-500 group-hover:translate-x-1 lg:w-full lg:rounded-xl"
+            onClick={onClick}
+          >
+            <Plus className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </button>

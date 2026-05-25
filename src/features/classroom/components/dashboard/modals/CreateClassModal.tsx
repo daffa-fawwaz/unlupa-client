@@ -70,7 +70,7 @@ export const CreateClassModal = ({
           type="button"
           onClick={onClose}
           disabled={isLoading}
-          className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-300 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+          className="absolute cursor-pointer right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-300 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Tutup"
         >
           <X className="h-5 w-5" />
@@ -112,7 +112,7 @@ export const CreateClassModal = ({
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Contoh: Kelas Tahsin 101"
+                    placeholder="Contoh: Kelas Bahasa Arab "
                     disabled={isLoading}
                     className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-11 pr-4 text-white placeholder:text-gray-500 outline-none transition focus:border-cyan-400 focus:bg-white/10"
                   />

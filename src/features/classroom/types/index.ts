@@ -48,3 +48,7 @@ export type ClassroomCardProps = {
   onClick?: () => void;
   onMenuClick?: () => void;
 };
+
+export type CreateClassButtonProps = {
+  onClick?: () => void;
+}

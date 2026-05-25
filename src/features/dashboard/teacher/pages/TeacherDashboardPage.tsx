@@ -9,8 +9,14 @@ import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { SectionLoader } from "@/components/ui/SectionLoader";
 import { ClassroomCard } from "@/features/classroom/components/dashboard/ClassroomCard";
-import { useMyClassesTeacher } from "@/features/classroom/hooks/useClassroom";
+import {
+  useCreateClass,
+  useMyClassesTeacher,
+} from "@/features/classroom/hooks/useClassroom";
 import type { ClassroomCardTone } from "@/features/classroom/types";
+import { CreateClassButton } from "@/features/classroom/components/dashboard/CreateClassButton";
+import { CreateClassModal } from "@/features/classroom/components/dashboard/modals/CreateClassModal";
+import { SuccessModal } from "@/components/ui/SuccessModal";
 
 export const TeacherDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -36,6 +42,9 @@ export const TeacherDashboardPage = () => {
 
   // Get initial letter for avatar
   const initialLetter = name.charAt(0).toUpperCase();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const { mutate } = useCreateClass();
 
   return (
     <div className="min-h-screen bg-deep-universe text-white relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
@@ -90,6 +99,32 @@ export const TeacherDashboardPage = () => {
         {/* QUICK ACCESS CARDS */}
         <QuickAccessCards role="teacher" />
 
+        {/* CREATE CLASS BUTTON */}
+        <CreateClassButton onClick={() => setIsCreateModalOpen(true)} />
+
+        <CreateClassModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onCreate={(data) => {
+            mutate(data, {
+              onSuccess: () => {
+                setIsCreateModalOpen(false);
+                setIsSuccessModalOpen(true);
+                setTimeout(() => {
+                  setIsSuccessModalOpen(false);
+                }, 3000);
+              },
+            });
+          }}
+          isLoading={false}
+        />
+
+        <SuccessModal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          title="Kelas berhasil dibuat"
+        />
+
         <EmptyStateWrapper
           description="Buat kelas baru untuk mengelola siswa dan materi"
           emptyTitle="Anda Belum Memiliki Kelas"
@@ -119,7 +154,7 @@ export const TeacherDashboardPage = () => {
                   description={classroom.description}
                   bookCount={12}
                   memberCount={12}
-                  teacherName=""
+                  teacherName="Ulil Albab"
                   coverImage=""
                   tone={tones[index % tones.length]}
                 />
