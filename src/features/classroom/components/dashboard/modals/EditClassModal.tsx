@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
   BookOpen,
@@ -35,12 +35,23 @@ export const EditClassModal = ({
   isLoading = false,
 }: EditClassModalProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [formData, setFormData] = useState(() => ({
+  const [formData, setFormData] = useState({
     name: classData.name,
     description: classData.description,
     type: classData.type,
     image: classData.image ?? "",
-  }));
+  });
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        name: classData.name,
+        description: classData.description,
+        type: classData.type,
+        image: classData.image ?? "",
+      });
+    }
+  }, [isOpen, classData]);
 
   if (!isOpen) return null;
 
