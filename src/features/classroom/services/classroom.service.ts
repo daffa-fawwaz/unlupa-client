@@ -26,4 +26,10 @@ export const classroomService = {
     const response = await api.put(`/api/v1/classes/${classId}`, payload);
     return response.data.data;
   },
+
+  // DELETE CLASS (for teacher)
+  deleteClass: async (classId: string): Promise<ClassItem[]> => {
+    const response = await api.delete(`/api/v1/classes/${classId}`);
+    return response.data.data;
+  },
 };

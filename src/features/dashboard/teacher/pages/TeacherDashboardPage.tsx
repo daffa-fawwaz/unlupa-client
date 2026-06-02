@@ -13,12 +13,14 @@ import {
   useCreateClass,
   useMyClassesTeacher,
   useUpdateClass,
+  useDeleteClass,
 } from "@/features/classroom/hooks/useClassroom";
 import type { ClassItem, ClassroomCardTone } from "@/features/classroom/types";
 import { CreateClassButton } from "@/features/classroom/components/dashboard/CreateClassButton";
 import { CreateClassModal } from "@/features/classroom/components/dashboard/modals/CreateClassModal";
 import { SuccessModal } from "@/components/ui/SuccessModal";
 import { EditClassModal } from "@/features/classroom/components/dashboard/modals/EditClassModal";
+import { ConfirmModal } from "@/features/classroom/components/dashboard/modals/ConfirmModal";
 
 export const TeacherDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -27,6 +29,7 @@ export const TeacherDashboardPage = () => {
     null,
   );
   const { mutate: updateClass, isPending: isUpdating } = useUpdateClass();
+  const { mutate: deleteClass, isPending: isDeleting } = useDeleteClass();
   const { name } = useCurrentUser();
   const { data: classrooms, isLoading, isError, error } = useMyClassesTeacher();
   const tones: ClassroomCardTone[] = [
@@ -55,6 +58,7 @@ export const TeacherDashboardPage = () => {
     title: "",
     description: "",
   });
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { mutate } = useCreateClass();
 
   return (
@@ -141,7 +145,10 @@ export const TeacherDashboardPage = () => {
                     setSelectedClassroom(classroom);
                     setIsEditModalOpen(true);
                   }}
-                  onDelete={() => {}}
+                  onDelete={() => {
+                    setIsDeleteModalOpen(true);
+                    setSelectedClassroom(classroom);
+                  }}
                   key={classroom.id}
                   title={classroom.name}
                   description={classroom.description}
@@ -254,6 +261,56 @@ export const TeacherDashboardPage = () => {
           });
         }}
         isLoading={false}
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        title="Konfirmasi Hapus Kelas"
+        description={`Apakah Anda yakin ingin menghapus kelas "${selectedClassroom?.name ?? ""}"? Tindakan ini tidak dapat dibatalkan.`}
+        variant="danger"
+        isLoading={isDeleting}
+        confirmText="Hapus Kelas"
+        cancelText="Batal"
+        onConfirm={() => {
+          if (!selectedClassroom) return;
+
+          deleteClass(selectedClassroom.id, {
+            onSuccess: () => {
+              setIsDeleteModalOpen(false);
+              setSelectedClassroom(null);
+              setSuccessModal({
+                isOpen: true,
+                title: "Kelas berhasil dihapus",
+                description: "Kelas telah berhasil dihapus dari sistem.",
+              });
+              setTimeout(() => {
+                setSuccessModal((prev) => ({
+                  ...prev,
+                  isOpen: false,
+                }));
+              }, 3000);
+            },
+            onError: () => {
+              setIsDeleteModalOpen(false);
+              setSelectedClassroom(null);
+              setSuccessModal({
+                isOpen: true,
+                title: "Gagal menghapus kelas",
+                description: "Terjadi kesalahan saat menghapus kelas.",
+              });
+              setTimeout(() => {
+                setSuccessModal((prev) => ({
+                  ...prev,
+                  isOpen: false,
+                }));
+              }, 3000);
+            },
+          });
+        }}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedClassroom(null);
+        }}
       />
 
       <SuccessModal

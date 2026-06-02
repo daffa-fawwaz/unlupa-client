@@ -36,3 +36,16 @@ export const useUpdateClass = () => {
     },
   });
 };
+
+// Hook to delete a class (for teacher)
+export const useDeleteClass = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (classId: string) => classroomService.deleteClass(classId),
+    onSuccess: () => {
+      // Invalidate and refetch the classes after deleting a class
+      queryClient.invalidateQueries({ queryKey: ["my-classes-teacher"] });
+    },
+  });
+};
