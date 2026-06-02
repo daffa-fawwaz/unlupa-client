@@ -93,7 +93,6 @@ export const StudentDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                   <ClassroomCard
                     title="Kelas Arabiyah Baina Yadaik"
-                    activeReviewCount={0}
                     memberCount={0}
                     bookCount={0}
                     nextSessionLabel="Sedang Berlangsung"
@@ -103,7 +102,6 @@ export const StudentDashboard = () => {
                   />
                   <ClassroomCard
                     title="Kelas Arabiyah Baina Yadaik"
-                    activeReviewCount={0}
                     memberCount={0}
                     bookCount={0}
                     nextSessionLabel="Sedang Berlangsung"
@@ -113,7 +111,6 @@ export const StudentDashboard = () => {
                   />
                   <ClassroomCard
                     title="Kelas Arabiyah Baina Yadaik"
-                    activeReviewCount={0}
                     memberCount={0}
                     bookCount={0}
                     nextSessionLabel="Sedang Berlangsung"
@@ -154,7 +151,6 @@ export const StudentDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                   <ClassroomCard
                     title="Kelas Arabiyah Baina Yadaik"
-                    activeReviewCount={0}
                     memberCount={0}
                     bookCount={0}
                     nextSessionLabel="Sedang Berlangsung"
@@ -164,7 +160,6 @@ export const StudentDashboard = () => {
                   />
                   <ClassroomCard
                     title="Kelas Arabiyah Baina Yadaik"
-                    activeReviewCount={0}
                     memberCount={0}
                     bookCount={0}
                     nextSessionLabel="Sedang Berlangsung"
@@ -174,7 +169,6 @@ export const StudentDashboard = () => {
                   />
                   <ClassroomCard
                     title="Kelas Arabiyah Baina Yadaik"
-                    activeReviewCount={0}
                     memberCount={0}
                     bookCount={0}
                     nextSessionLabel="Sedang Berlangsung"

@@ -47,6 +47,8 @@ export type ClassroomCardProps = {
   coverImage?: string;
   onClick?: () => void;
   onMenuClick?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 export type CreateClassButtonProps = {

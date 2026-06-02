@@ -6,6 +6,12 @@ import { TabsNavigation } from "../components/navigation/TabsNavigation";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { Book, BookAlertIcon } from "lucide-react";
 import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 const classroomSamples = [
   {
     title: "Tahsin & Hafalan Juz 30",

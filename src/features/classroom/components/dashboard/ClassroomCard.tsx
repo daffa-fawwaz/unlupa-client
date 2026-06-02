@@ -1,8 +1,9 @@
-import { BookOpen, GraduationCap, MoreVertical, Users } from "lucide-react";
+import { BookOpen, GraduationCap, Users } from "lucide-react";
 
 import type { ClassroomCardProps } from "@/features/classroom/types/index";
 
 import { toneStyles, statusLabel } from "@/features/classroom/constants/index";
+import { ClassroomCardMenu } from "./ClassroomCardMenu";
 
 export const ClassroomCard = ({
   title,
@@ -15,6 +16,8 @@ export const ClassroomCard = ({
   coverImage,
   onClick,
   onMenuClick,
+  onEdit,
+  onDelete,
 }: ClassroomCardProps) => {
   const theme = toneStyles[tone];
 
@@ -64,17 +67,7 @@ export const ClassroomCard = ({
           </span>
         </div>
 
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onMenuClick?.();
-          }}
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black/35 text-gray-300 backdrop-blur-md transition hover:bg-white/10 hover:text-white"
-          aria-label="Buka menu kelas"
-        >
-          <MoreVertical className="h-4 w-4" />
-        </button>
+        <ClassroomCardMenu onEdit={onEdit} onDelete={onDelete} />
       </div>
 
       <div className="relative z-10 flex flex-1 flex-col p-5">
