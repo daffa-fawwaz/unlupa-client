@@ -12,14 +12,21 @@ import { ClassroomCard } from "@/features/classroom/components/dashboard/Classro
 import {
   useCreateClass,
   useMyClassesTeacher,
+  useUpdateClass,
 } from "@/features/classroom/hooks/useClassroom";
-import type { ClassroomCardTone } from "@/features/classroom/types";
+import type { ClassItem, ClassroomCardTone } from "@/features/classroom/types";
 import { CreateClassButton } from "@/features/classroom/components/dashboard/CreateClassButton";
 import { CreateClassModal } from "@/features/classroom/components/dashboard/modals/CreateClassModal";
 import { SuccessModal } from "@/components/ui/SuccessModal";
+import { EditClassModal } from "@/features/classroom/components/dashboard/modals/EditClassModal";
 
 export const TeacherDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedClassroom, setSelectedClassroom] = useState<ClassItem | null>(
+    null,
+  );
+  const { mutate: updateClass, isPending: isUpdating } = useUpdateClass();
   const { name } = useCurrentUser();
   const { data: classrooms, isLoading, isError, error } = useMyClassesTeacher();
   const tones: ClassroomCardTone[] = [
@@ -43,7 +50,11 @@ export const TeacherDashboardPage = () => {
   // Get initial letter for avatar
   const initialLetter = name.charAt(0).toUpperCase();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successModal, setSuccessModal] = useState({
+    isOpen: false,
+    title: "",
+    description: "",
+  });
   const { mutate } = useCreateClass();
 
   return (
@@ -102,29 +113,6 @@ export const TeacherDashboardPage = () => {
         {/* CREATE CLASS BUTTON */}
         <CreateClassButton onClick={() => setIsCreateModalOpen(true)} />
 
-        <CreateClassModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          onCreate={(data) => {
-            mutate(data, {
-              onSuccess: () => {
-                setIsCreateModalOpen(false);
-                setIsSuccessModalOpen(true);
-                setTimeout(() => {
-                  setIsSuccessModalOpen(false);
-                }, 3000);
-              },
-            });
-          }}
-          isLoading={false}
-        />
-
-        <SuccessModal
-          isOpen={isSuccessModalOpen}
-          onClose={() => setIsSuccessModalOpen(false)}
-          title="Kelas berhasil dibuat"
-        />
-
         <EmptyStateWrapper
           description="Buat kelas baru untuk mengelola siswa dan materi"
           emptyTitle="Anda Belum Memiliki Kelas"
@@ -149,7 +137,10 @@ export const TeacherDashboardPage = () => {
             <div className="grid md:grid-cols-3 gap-3">
               {classrooms?.map((classroom, index) => (
                 <ClassroomCard
-                  onEdit={() => {}}
+                  onEdit={() => {
+                    setSelectedClassroom(classroom);
+                    setIsEditModalOpen(true);
+                  }}
                   onDelete={() => {}}
                   key={classroom.id}
                   title={classroom.name}
@@ -165,6 +156,117 @@ export const TeacherDashboardPage = () => {
           )}
         </EmptyStateWrapper>
       </main>
+
+      <EditClassModal
+        isOpen={isEditModalOpen}
+        classData={{
+          name: selectedClassroom?.name ?? "",
+          description: selectedClassroom?.description ?? "",
+          type: selectedClassroom?.type ?? "book",
+          image: selectedClassroom?.cover_image ?? "",
+        }}
+        isLoading={isUpdating}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedClassroom(null);
+        }}
+        onUpdate={(data) => {
+          if (!selectedClassroom) return;
+
+          updateClass(
+            {
+              classId: selectedClassroom.id,
+              payload: data,
+            },
+            {
+              onSuccess: () => {
+                setIsEditModalOpen(false);
+                setSelectedClassroom(null);
+                setSuccessModal({
+                  isOpen: true,
+                  title: "Kelas berhasil diupdate",
+                  description:
+                    "Kelas berhasil diupdate, anda dapat melihatnya di halaman kelas",
+                });
+                setTimeout(() => {
+                  setSuccessModal((prev) => ({
+                    ...prev,
+                    isOpen: false,
+                  }));
+                }, 3000);
+              },
+              onError: () => {
+                setIsEditModalOpen(false);
+                setSelectedClassroom(null);
+                setSuccessModal({
+                  isOpen: true,
+                  title: "Gagal mengupdate kelas",
+                  description:
+                    "Gagal mengupdate kelas, anda dapat melihatnya di halaman kelas",
+                });
+                setTimeout(() => {
+                  setSuccessModal((prev) => ({
+                    ...prev,
+                    isOpen: false,
+                  }));
+                }, 3000);
+              },
+            },
+          );
+        }}
+      />
+
+      <CreateClassModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreate={(data) => {
+          mutate(data, {
+            onSuccess: () => {
+              setIsCreateModalOpen(false);
+              setSuccessModal({
+                isOpen: true,
+                title: "Kelas berhasil dibuat",
+                description:
+                  "Kelas berhasil dibuat, anda dapat melihatnya di halaman kelas",
+              });
+              setTimeout(() => {
+                setSuccessModal((prev) => ({
+                  ...prev,
+                  isOpen: false,
+                }));
+              }, 3000);
+            },
+            onError: () => {
+              setIsCreateModalOpen(false);
+              setSuccessModal({
+                isOpen: true,
+                title: "Gagal membuat kelas",
+                description:
+                  "Kelas gagal dibuat, anda dapat melihatnya di halaman kelas",
+              });
+              setTimeout(() => {
+                setSuccessModal((prev) => ({
+                  ...prev,
+                  isOpen: false,
+                }));
+              }, 3000);
+            },
+          });
+        }}
+        isLoading={false}
+      />
+
+      <SuccessModal
+        isOpen={successModal.isOpen}
+        title={successModal.title}
+        description={successModal.description}
+        onClose={() =>
+          setSuccessModal((prev) => ({
+            ...prev,
+            isOpen: false,
+          }))
+        }
+      />
     </div>
   );
 };

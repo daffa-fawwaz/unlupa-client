@@ -8,6 +8,7 @@ export interface ClassItem {
   class_code: string;
   type: "book" | "quran";
   is_active: boolean;
+  cover_image?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -16,6 +17,13 @@ export interface CreateClassPayload {
   name: string;
   description: string;
   type: "book" | "quran";
+}
+
+export interface UpdateClassPayload {
+  name?: string;
+  description?: string;
+  type: "book" | "quran";
+  image?: string;
 }
 
 /// CLASSROOM CARD
@@ -53,4 +61,4 @@ export type ClassroomCardProps = {
 
 export type CreateClassButtonProps = {
   onClick?: () => void;
-}
+};

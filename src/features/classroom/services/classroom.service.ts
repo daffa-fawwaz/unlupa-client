@@ -1,4 +1,8 @@
-import type { ClassItem, CreateClassPayload } from "../types";
+import type {
+  ClassItem,
+  CreateClassPayload,
+  UpdateClassPayload,
+} from "../types";
 import { api } from "@/services/api";
 
 export const classroomService = {
@@ -11,6 +15,15 @@ export const classroomService = {
   // CREATE CLASS (for teacher)
   createClass: async (payload: CreateClassPayload): Promise<ClassItem> => {
     const response = await api.post(`/api/v1/classes`, payload);
+    return response.data.data;
+  },
+
+  // UPDATE CLASS (for teacher)
+  updateClass: async (
+    classId: string,
+    payload: UpdateClassPayload,
+  ): Promise<ClassItem[]> => {
+    const response = await api.put(`/api/v1/classes/${classId}`, payload);
     return response.data.data;
   },
 };

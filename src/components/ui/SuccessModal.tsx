@@ -1,12 +1,18 @@
 import { CheckCircle } from "lucide-react";
 
-interface SuccessModalProps {
+export interface SuccessModalProps {
   isOpen: boolean;
   title: string;
+  description?: string;
   onClose: () => void;
 }
 
-export const SuccessModal = ({ isOpen, title, onClose }: SuccessModalProps) => {
+export const SuccessModal = ({
+  isOpen,
+  title,
+  description,
+  onClose,
+}: SuccessModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -22,6 +28,9 @@ export const SuccessModal = ({ isOpen, title, onClose }: SuccessModalProps) => {
           </div>
           <div className="min-w-0">
             <p className="font-semibold text-base text-black">{title}</p>
+            {description && (
+              <p className="text-sm text-black/80 mt-1">{description}</p>
+            )}
           </div>
         </div>
       </button>

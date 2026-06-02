@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { classroomService } from "../services/classroom.service";
+import type { UpdateClassPayload } from "../types";
 
 // Hook to fetch teacher's classes
 export const useMyClassesTeacher = () => {
@@ -17,6 +18,20 @@ export const useCreateClass = () => {
     mutationFn: classroomService.createClass,
     onSuccess: () => {
       // Invalidate and refetch the classes after creating a new one
+      queryClient.invalidateQueries({ queryKey: ["my-classes-teacher"] });
+    },
+  });
+};
+
+// Hook to update a class (for teacher)
+export const useUpdateClass = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: { classId: string; payload: UpdateClassPayload }) =>
+      classroomService.updateClass(payload.classId, payload.payload),
+    onSuccess: () => {
+      // Invalidate and refetch the classes after updating a class
       queryClient.invalidateQueries({ queryKey: ["my-classes-teacher"] });
     },
   });
