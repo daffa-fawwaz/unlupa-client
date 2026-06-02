@@ -149,6 +149,8 @@ export const TeacherDashboardPage = () => {
             <div className="grid md:grid-cols-3 gap-3">
               {classrooms?.map((classroom, index) => (
                 <ClassroomCard
+                  onEdit={() => {}}
+                  onDelete={() => {}}
                   key={classroom.id}
                   title={classroom.name}
                   description={classroom.description}
