@@ -14,6 +14,21 @@ export const classroomService = {
 
   // CREATE CLASS (for teacher)
   createClass: async (payload: CreateClassPayload): Promise<ClassItem> => {
+    if (payload.cover_image instanceof File) {
+      const formData = new FormData();
+      formData.append("name", payload.name);
+      formData.append("description", payload.description);
+      formData.append("type", payload.type);
+      formData.append("cover_image", payload.cover_image);
+
+      const response = await api.post(`/api/v1/classes`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data.data;
+    }
+
     const response = await api.post(`/api/v1/classes`, payload);
     return response.data.data;
   },
@@ -23,7 +38,31 @@ export const classroomService = {
     classId: string,
     payload: UpdateClassPayload,
   ): Promise<ClassItem[]> => {
+    if (payload.cover_image instanceof File) {
+      const formData = new FormData();
+
+      if (payload.name) {
+        formData.append("name", payload.name);
+      }
+
+      if (payload.description) {
+        formData.append("description", payload.description);
+      }
+
+      formData.append("type", payload.type);
+      formData.append("cover_image", payload.cover_image);
+
+      const response = await api.put(`/api/v1/classes/${classId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return response.data.data;
+    }
+
     const response = await api.put(`/api/v1/classes/${classId}`, payload);
+
     return response.data.data;
   },
 

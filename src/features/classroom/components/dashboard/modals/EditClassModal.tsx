@@ -7,6 +7,7 @@ import {
   X,
   ChevronDown,
   Save,
+  Upload,
 } from "lucide-react";
 
 export interface EditClassModalProps {
@@ -15,14 +16,14 @@ export interface EditClassModalProps {
     name: string;
     description: string;
     type: "book" | "quran";
-    image?: string;
+    cover_image?: string;
   };
   onClose: () => void;
   onUpdate: (payload: {
     name: string;
     description: string;
     type: "book" | "quran";
-    image?: string;
+    cover_image?: string | File;
   }) => void;
   isLoading?: boolean;
 }
@@ -35,11 +36,16 @@ export const EditClassModal = ({
   isLoading = false,
 }: EditClassModalProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    type: "book" | "quran";
+    cover_image: string | File;
+  }>({
     name: classData.name,
     description: classData.description,
     type: classData.type,
-    image: classData.image ?? "",
+    cover_image: classData.cover_image ?? "",
   });
 
   useEffect(() => {
@@ -48,7 +54,7 @@ export const EditClassModal = ({
         name: classData.name,
         description: classData.description,
         type: classData.type,
-        image: classData.image ?? "",
+        cover_image: classData.cover_image ?? "",
       });
     }
   }, [isOpen, classData]);
@@ -67,6 +73,14 @@ export const EditClassModal = ({
     }));
   };
 
+  // Separate handler for file input
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, cover_image: file }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -80,8 +94,15 @@ export const EditClassModal = ({
       name: formData.name.trim(),
       description: formData.description.trim(),
       type: formData.type as "book" | "quran",
-      image: formData.image.trim() || undefined,
+      cover_image:
+        formData.cover_image instanceof File
+          ? formData.cover_image
+          : formData.cover_image.trim() || undefined,
     });
+
+    console.log(formData);
+    console.log(formData.cover_image);
+    console.log(formData.cover_image instanceof File);
   };
 
   return createPortal(
@@ -189,24 +210,60 @@ export const EditClassModal = ({
 
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-white">
-                URL Gambar (Opsional)
+                Gambar Sampul (Opsional)
               </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
-                  <Image className="h-5 w-5" />
-                </div>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="https://..."
-                  disabled={isLoading}
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-11 pr-4 text-white placeholder:text-gray-500 outline-none transition focus:border-cyan-400 focus:bg-white/10"
-                />
+              <div className="relative flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/5 p-6 text-center transition hover:bg-white/8 hover:border-cyan-400/30 min-h-36">
+                {formData.cover_image ? (
+                  <div className="relative z-10 flex flex-col items-center gap-2">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 border border-cyan-400/20">
+                      <Image className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-white truncate max-w-xs">
+                        {formData.cover_image instanceof File
+                          ? formData.cover_image.name
+                          : formData.cover_image}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setFormData((prev) => ({ ...prev, cover_image: "" }));
+                      }}
+                      className="mt-2 text-xs font-semibold text-rose-400 hover:text-rose-300 hover:underline cursor-pointer"
+                    >
+                      Hapus Gambar
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="file"
+                      id="cover_image_upload"
+                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                      onChange={handleFileChange}
+                      disabled={isLoading}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                    />
+                    <div className="flex flex-col items-center gap-2 pointer-events-none">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 text-gray-400 border border-white/10">
+                        <Upload className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-300">
+                          Pilih atau seret gambar ke sini
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          PNG, JPG, atau JPEG (Maks. 5MB)
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-
             {errorMessage ? (
               <p className="text-sm text-rose-400">{errorMessage}</p>
             ) : null}

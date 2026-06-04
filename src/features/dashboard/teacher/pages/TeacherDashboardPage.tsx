@@ -59,7 +59,7 @@ export const TeacherDashboardPage = () => {
     description: "",
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { mutate } = useCreateClass();
+  const { mutate, isPending: isCreating } = useCreateClass();
 
   return (
     <div className="min-h-screen bg-deep-universe text-white relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
@@ -152,10 +152,10 @@ export const TeacherDashboardPage = () => {
                   key={classroom.id}
                   title={classroom.name}
                   description={classroom.description}
+                  coverImage={classroom?.cover_image}
                   bookCount={12}
-                  memberCount={12}
-                  teacherName="Ulil Albab"
-                  coverImage=""
+                  memberCount={classroom.student_count}
+                  teacherName={classroom.owner_name}
                   tone={tones[index % tones.length]}
                 />
               ))}
@@ -170,7 +170,7 @@ export const TeacherDashboardPage = () => {
           name: selectedClassroom?.name ?? "",
           description: selectedClassroom?.description ?? "",
           type: selectedClassroom?.type ?? "book",
-          image: selectedClassroom?.cover_image ?? "",
+          cover_image: selectedClassroom?.cover_image ?? "",
         }}
         isLoading={isUpdating}
         onClose={() => {
@@ -260,7 +260,7 @@ export const TeacherDashboardPage = () => {
             },
           });
         }}
-        isLoading={false}
+        isLoading={isCreating}
       />
 
       <ConfirmModal
