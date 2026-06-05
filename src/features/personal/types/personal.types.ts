@@ -21,7 +21,7 @@ export interface GetBooksResponse {
 export interface CreateBookPayload {
   title: string;
   description: string;
-  cover_image: string;
+  cover_image?: File | string;
 }
 
 export interface CreateBookResponse {
@@ -35,7 +35,7 @@ export interface CreateBookResponse {
 export interface UpdateBookPayload {
   title: string;
   description: string;
-  cover_image: string;
+  cover_image?: File | string;
 }
 
 export interface UpdateBookResponse {

@@ -98,7 +98,20 @@ export const personalService = {
   },
 
   async createBook(data: CreateBookPayload): Promise<CreateBookResponse> {
-    const response = await api.post("/api/v1/books", data);
+    if (data.cover_image instanceof File) {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("cover_image", data.cover_image);
+
+      const response = await api.post("/api/v1/books", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    }
+
+    const { cover_image, ...rest } = data;
+    const response = await api.post("/api/v1/books", rest);
     return response.data;
   },
 
@@ -106,7 +119,20 @@ export const personalService = {
     id: string,
     data: UpdateBookPayload,
   ): Promise<UpdateBookResponse> {
-    const response = await api.put(`/api/v1/books/${id}`, data);
+    if (data.cover_image instanceof File) {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("cover_image", data.cover_image);
+
+      const response = await api.put(`/api/v1/books/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response.data;
+    }
+
+    const { cover_image, ...rest } = data;
+    const response = await api.put(`/api/v1/books/${id}`, rest);
     return response.data;
   },
 
