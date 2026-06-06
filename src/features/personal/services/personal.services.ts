@@ -34,6 +34,85 @@ import type {
   ReviewFsrsResponse,
 } from "../types/personal.types";
 
+const getImageValue = (data: unknown): string | undefined => {
+  if (!data || typeof data !== "object") return undefined;
+
+  const record = data as Record<string, unknown>;
+  const value =
+    record.image ??
+    record.Image ??
+    record.image_url ??
+    record.imageUrl ??
+    record.image_path ??
+    record.imagePath;
+
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+};
+
+const normalizeImageUrl = (value: string | undefined): string | undefined => {
+  if (!value) return undefined;
+  if (/^(https?:|blob:|data:)/i.test(value)) return value;
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  if (!baseUrl) return value;
+
+  try {
+    return new URL(value, baseUrl).toString();
+  } catch {
+    return value;
+  }
+};
+
+const normalizeItemImage = <T>(item: T): T => {
+  if (!item || typeof item !== "object") return item;
+
+  const image = normalizeImageUrl(getImageValue(item));
+  if (!image) return item;
+
+  return { ...item, image };
+};
+
+const normalizeModulesItemImages = <T extends { items?: unknown; children?: T[] }>(
+  modules: T[] | null | undefined,
+): T[] => {
+  if (!modules) return modules ?? [];
+
+  return modules.map((module) => ({
+    ...module,
+    items: Array.isArray(module.items)
+      ? module.items.map((item) => normalizeItemImage(item))
+      : module.items,
+    children: normalizeModulesItemImages(module.children),
+  }));
+};
+
+const normalizeBookTreeItemImages = (tree: GetBookTreeResponse["data"]) => ({
+  ...tree,
+  items: tree.items.map((item) => normalizeItemImage(item)),
+  modules: normalizeModulesItemImages(tree.modules),
+});
+
+const toItemFormData = (
+  data: CreateItemPayload | CreateModuleItemPayload | UpdateItemPayload,
+) => {
+  const formData = new FormData();
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (key === "image") {
+      if (value instanceof File) {
+        formData.append("image", value);
+      }
+      return;
+    }
+
+    if (value !== undefined && value !== null) {
+      formData.append(key, String(value));
+    }
+  });
+
+  return formData;
+};
+
 export const personalService = {
   async getBooks(): Promise<GetBooksResponse> {
     const response = await api.get("/api/v1/books");
@@ -52,6 +131,7 @@ export const personalService = {
 
   async getBookTree(bookId: string): Promise<GetBookTreeResponse> {
     const response = await api.get(`/api/v1/books/${bookId}/tree`);
+    response.data.data = normalizeBookTreeItemImages(response.data.data);
     return response.data;
   },
 
@@ -80,7 +160,14 @@ export const personalService = {
     bookId: string,
     payload: CreateItemPayload,
   ): Promise<CreateItemResponse> {
-    const response = await api.post(`/api/v1/books/${bookId}/items`, payload);
+    const response = await api.post(
+      `/api/v1/books/${bookId}/items`,
+      toItemFormData(payload),
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    response.data.data = normalizeItemImage(response.data.data);
     return response.data;
   },
 
@@ -88,12 +175,20 @@ export const personalService = {
     moduleId: string,
     payload: CreateModuleItemPayload,
   ): Promise<CreateModuleItemResponse> {
-    const response = await api.post(`/api/v1/books/modules/${moduleId}/items`, payload);
+    const response = await api.post(
+      `/api/v1/books/modules/${moduleId}/items`,
+      toItemFormData(payload),
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    response.data.data = normalizeItemImage(response.data.data);
     return response.data;
   },
 
   async getItemDetail(itemId: string): Promise<GetItemDetailResponse> {
     const response = await api.get(`/api/v1/items/${itemId}`);
+    response.data.data = normalizeItemImage(response.data.data);
     return response.data;
   },
 
@@ -150,7 +245,14 @@ export const personalService = {
     itemId: string,
     data: UpdateItemPayload,
   ): Promise<UpdateItemResponse> {
-    const response = await api.put(`/api/v1/books/items/${itemId}`, data);
+    const response = await api.put(
+      `/api/v1/books/items/${itemId}`,
+      toItemFormData(data),
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    response.data.data = normalizeItemImage(response.data.data);
     return response.data;
   },
 

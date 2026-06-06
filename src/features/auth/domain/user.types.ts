@@ -1,6 +1,7 @@
 export interface User {
   email: string;
   id: string;
+  is_premium?: boolean;
   role: "student" | "teacher" | "admin";
 }
 

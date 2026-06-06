@@ -9,6 +9,7 @@ import {
   BookOpen,
   Lightbulb,
   Brain,
+  Image,
 } from "lucide-react";
 import type {
   BookDailyTask,
@@ -90,6 +91,7 @@ export const BookDailyReviewFlashcardModal = ({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [itemContent, setItemContent] = useState<string>("");
   const [itemAnswer, setItemAnswer] = useState<string>("");
+  const [itemImage, setItemImage] = useState<string>("");
   const [nextReviewDate, setNextReviewDate] = useState<string>("");
   const [nextIntervalDays, setNextIntervalDays] = useState<number>(0);
   const [itemStatus, setItemStatus] = useState<string>("");
@@ -110,10 +112,12 @@ export const BookDailyReviewFlashcardModal = ({
         setItemStatus(d.status || "unknown");
         setItemContent(d.question || "Pertanyaan tidak tersedia");
         setItemAnswer(d.answer || "Jawaban tidak tersedia");
+        setItemImage(d.image || "");
       } catch {
         setItemStatus("unknown");
         setItemContent("Pertanyaan tidak tersedia");
         setItemAnswer("Jawaban tidak tersedia");
+        setItemImage("");
       }
     };
 
@@ -242,6 +246,22 @@ export const BookDailyReviewFlashcardModal = ({
                 </div>
               </div>
 
+              {itemImage && (
+                <div className="mb-8 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                  <div className="flex items-center gap-2 border-b border-white/5 px-4 py-2.5">
+                    <Image className="h-4 w-4 text-cyan-300" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-cyan-200">
+                      Gambar Item
+                    </span>
+                  </div>
+                  <img
+                    src={itemImage}
+                    alt={itemContent || "Gambar item"}
+                    className="max-h-[320px] w-full object-contain bg-black/20"
+                  />
+                </div>
+              )}
+
               <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
                 <CalendarDays className="w-4 h-4" />
                 <span>{task.task_date}</span>
@@ -286,6 +306,16 @@ export const BookDailyReviewFlashcardModal = ({
                   {itemAnswer}
                 </p>
               </div>
+
+              {itemImage && (
+                <div className="mb-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                  <img
+                    src={itemImage}
+                    alt={itemContent || "Gambar item"}
+                    className="max-h-[220px] w-full object-contain bg-black/20"
+                  />
+                </div>
+              )}
 
               {/* Feedback section */}
               <div className="mb-4">

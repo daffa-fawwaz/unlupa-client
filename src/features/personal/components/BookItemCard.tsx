@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Brain, CalendarClock, Clock, FileText, Flame } from "lucide-react";
+import { Brain, CalendarClock, Clock, FileText, Flame, Image } from "lucide-react";
 import { useItemDetailCached } from "@/features/personal/hooks/useItemDetailCached";
 import type { BookItem } from "@/features/personal/types/personal.types";
 
@@ -29,6 +29,21 @@ export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) =>
       {/* Background */}
       <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
       <div className="absolute inset-0 bg-linear-to-br from-emerald-500/10 via-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      {item.image && (
+        <div className="relative z-10 mb-3 overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-white/5">
+          <img
+            src={item.image}
+            alt={item.content || "Gambar item"}
+            className="h-28 w-full object-cover sm:h-40 transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-wider text-white/80 backdrop-blur">
+            <Image className="h-3 w-3" />
+            Gambar
+          </div>
+        </div>
+      )}
 
       {/* Question */}
       <div className="relative z-10 mb-2 sm:mb-4">

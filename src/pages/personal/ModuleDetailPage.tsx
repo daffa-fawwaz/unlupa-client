@@ -303,7 +303,7 @@ export const ModuleDetailPage = () => {
 
   useEffect(() => {
     if (bookId) {
-      fetchBookTree(bookId);
+      fetchBookTree(bookId, true);
       void fetchStatusMap();
     }
   }, [bookId, fetchBookTree, fetchStatusMap]);
@@ -334,6 +334,7 @@ export const ModuleDetailPage = () => {
       title: created.title,
       content: created.content,
       answer: created.answer,
+      image: created.image,
       order: created.order,
       estimated_review_seconds: created.estimated_review_seconds,
       review_count: 0,
@@ -341,6 +342,7 @@ export const ModuleDetailPage = () => {
       created_at: created.created_at,
       updated_at: created.updated_at,
     });
+    void fetchBookTree(bookId!, true);
   };
 
   const handleAddSubModuleSuccess = (created: import("@/features/personal/types/personal.types").CreatedModule) => {

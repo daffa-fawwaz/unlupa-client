@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertCircle,
   AlignLeft,
@@ -6,11 +6,14 @@ import {
   Clock,
   FileText,
   Hash,
+  Image,
   Loader2,
   Lock,
   Plus,
+  Upload,
   X,
 } from "lucide-react";
+import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { useCreateItem } from "@/features/personal/hooks/useCreateItem";
 import { useCreateModuleItem } from "@/features/personal/hooks/useCreateModuleItem";
 import type {
@@ -60,9 +63,12 @@ export const AddItemModal = ({
 }: AddItemModalProps) => {
   const { createItem, loading: loadingItem } = useCreateItem();
   const { createModuleItem, loading: loadingModule } = useCreateModuleItem();
+  const isPremium = useAuthStore((state) => state.user?.is_premium === true);
   const loading = moduleId ? loadingModule : loadingItem;
 
   const [form, setForm] = useState(INITIAL_FORM(nextOrder));
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [resultState, setResultState] = useState<"idle" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -70,6 +76,33 @@ export const AddItemModal = ({
   const sliderMax = form.estimate_unit === "seconds" ? SECONDS_MAX : MINUTES_MAX;
   const sliderStep = form.estimate_unit === "seconds" ? SECONDS_STEP : MINUTES_STEP;
   const sliderPercent = ((form.estimateValue - sliderMin) / (sliderMax - sliderMin)) * 100;
+
+  useEffect(() => {
+    if (!imageFile) {
+      setImagePreview(null);
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(imageFile);
+    setImagePreview(previewUrl);
+
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [imageFile]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setErrorMsg("File harus berupa gambar.");
+      setResultState("error");
+      return;
+    }
+
+    setImageFile(file);
+  };
 
   const handleUnitChange = (unit: string) => {
     // Reset to sensible default when switching unit
@@ -86,6 +119,8 @@ export const AddItemModal = ({
     }
     const order = Math.max(1, parseInt(form.orderStr) || 1);
     const estimate_value = form.estimateValue;
+    const imagePayload = isPremium && imageFile ? { image: imageFile } : {};
+
     try {
       let created: CreatedItem | CreatedModuleItem;
       if (moduleId) {
@@ -94,6 +129,7 @@ export const AddItemModal = ({
           title: "",
           content: form.content.trim(),
           answer: form.answer.trim(),
+          ...imagePayload,
           order,
           estimate_value,
           estimate_unit: form.estimate_unit,
@@ -103,6 +139,7 @@ export const AddItemModal = ({
           title: "",
           content: form.content.trim(),
           answer: form.answer.trim(),
+          ...imagePayload,
           order,
           estimate_value,
           estimate_unit: form.estimate_unit,
@@ -118,6 +155,7 @@ export const AddItemModal = ({
 
   const handleCreateAnother = () => {
     setForm(INITIAL_FORM(nextOrder));
+    setImageFile(null);
     setResultState("idle");
   };
 
@@ -127,9 +165,9 @@ export const AddItemModal = ({
         className="absolute inset-0 bg-black/75 backdrop-blur-md"
         onClick={resultState === "idle" ? onClose : undefined}
       />
-      <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
+      <div className="relative z-10 w-full max-w-lg max-h-[calc(100vh-2rem)] animate-in fade-in zoom-in-95 duration-300">
         <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-emerald-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
-        <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
+        <div className="relative max-h-[calc(100vh-2rem)] rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
 
           {/* Success */}
           {resultState === "success" && (
@@ -194,7 +232,7 @@ export const AddItemModal = ({
           {/* Form */}
           {resultState === "idle" && (
             <>
-              <div className="relative px-8 pt-8 pb-6 border-b border-white/5">
+              <div className="relative shrink-0 px-8 pt-8 pb-6 border-b border-white/5">
                 <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none" />
                 <button
                   onClick={onClose}
@@ -217,7 +255,7 @@ export const AddItemModal = ({
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-8 space-y-5">
+              <form onSubmit={handleSubmit} className="overflow-y-auto px-8 py-6 space-y-5">
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
                     <AlignLeft className="w-3.5 h-3.5" />Pertanyaan / Konten
@@ -245,6 +283,48 @@ export const AddItemModal = ({
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
                   />
                 </div>
+
+                {isPremium && (
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                      <Image className="w-3.5 h-3.5" />Gambar
+                    </label>
+                    {imagePreview ? (
+                      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                        <img
+                          src={imagePreview}
+                          alt="Preview gambar item"
+                          className="h-44 w-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setImageFile(null)}
+                          className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition"
+                          disabled={loading}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center hover:border-emerald-500/40 hover:bg-white/8 transition">
+                        <Upload className="h-6 w-6 text-emerald-400" />
+                        <span className="text-sm font-semibold text-white">
+                          Pilih gambar item
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          JPG, PNG, atau format gambar lain
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                          disabled={loading}
+                        />
+                      </label>
+                    )}
+                  </div>
+                )}
 
                 {/* Estimasi Waktu Review — Slider */}
                 <div className="space-y-3">
@@ -323,7 +403,7 @@ export const AddItemModal = ({
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="sticky bottom-0 -mx-8 -mb-6 flex justify-end gap-3 border-t border-white/5 bg-[#0E1420]/95 px-8 py-4 backdrop-blur">
                   <button
                     type="button"
                     onClick={onClose}

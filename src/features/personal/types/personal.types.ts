@@ -74,6 +74,7 @@ export interface BookItem {
   title: string;
   content: string;
   answer: string;
+  image?: string;
   order: number;
   estimated_review_seconds: number;
   review_count: number;
@@ -166,6 +167,7 @@ export interface CreateItemPayload {
   title: string;
   content: string;
   answer: string;
+  image?: File | string;
   order: number;
   estimate_value?: number;
   estimate_unit?: string;
@@ -177,6 +179,7 @@ export interface CreatedItem {
   title: string;
   content: string;
   answer: string;
+  image?: string;
   order: number;
   estimated_review_seconds: number;
   created_at: string;
@@ -207,6 +210,7 @@ export interface ItemDetail {
   book_item_title: string;
   question: string;
   answer: string;
+  image?: string;
 }
 
 export interface GetItemDetailResponse {
@@ -248,6 +252,7 @@ export interface CreateModuleItemPayload {
   title: string;
   content: string;
   answer: string;
+  image?: File | string;
   order: number;
   estimate_value: number;
   estimate_unit: string;
@@ -260,6 +265,7 @@ export interface CreatedModuleItem {
   title: string;
   content: string;
   answer: string;
+  image?: string;
   order: number;
   estimated_review_seconds: number;
   created_at: string;
@@ -278,6 +284,7 @@ export interface UpdateItemPayload {
   title: string;
   content: string;
   answer: string;
+  image?: File | string;
   order: number;
   estimate_value: number;
   estimate_unit: string;

@@ -1,5 +1,16 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, AlertCircle, FileText, Lock, ListOrdered, Clock } from "lucide-react";
+import {
+  X,
+  Loader2,
+  AlertCircle,
+  FileText,
+  Lock,
+  ListOrdered,
+  Clock,
+  Image,
+  Upload,
+} from "lucide-react";
+import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { useUpdateItem } from "@/features/personal/hooks/useUpdateItem";
 import type { BookItem, UpdateItemPayload, CreatedItem } from "@/features/personal/types/personal.types";
 
@@ -17,7 +28,10 @@ export const EditItemModal = ({
   onSuccess,
 }: EditItemModalProps) => {
   const { updateItem, loading } = useUpdateItem();
+  const isPremium = useAuthStore((state) => state.user?.is_premium === true);
   const [error, setError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<UpdateItemPayload>({
     title: "",
@@ -38,9 +52,20 @@ export const EditItemModal = ({
         estimate_value: item.estimated_review_seconds ? Math.floor(item.estimated_review_seconds / 60) : 1,
         estimate_unit: "minutes",
       });
+      setImageFile(null);
+      setImagePreview(item.image ?? null);
       setError(null);
     }
   }, [isOpen, item]);
+
+  useEffect(() => {
+    if (!imageFile) return;
+
+    const previewUrl = URL.createObjectURL(imageFile);
+    setImagePreview(previewUrl);
+
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [imageFile]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -50,6 +75,20 @@ export const EditItemModal = ({
       ...prev,
       [name]: name === "order" || name === "estimate_value" ? Number(value) : value,
     }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("File harus berupa gambar.");
+      return;
+    }
+
+    setImageFile(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,7 +101,10 @@ export const EditItemModal = ({
     }
 
     try {
-      const response = await updateItem(item.id, formData);
+      const response = await updateItem(item.id, {
+        ...formData,
+        ...(isPremium && imageFile ? { image: imageFile } : {}),
+      });
       onSuccess(response);
       onClose();
     } catch (err: unknown) {
@@ -79,7 +121,7 @@ export const EditItemModal = ({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-2xl max-h-[calc(100vh-2rem)]">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors z-10"
@@ -87,9 +129,9 @@ export const EditItemModal = ({
           <X className="w-5 h-5" />
         </button>
 
-        <div className="rounded-[2.5rem] border border-white/10 bg-[#0E1420] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
+        <div className="max-h-[calc(100vh-2rem)] rounded-[2.5rem] border border-white/10 bg-[#0E1420] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="px-6 sm:px-8 py-5 sm:py-6 border-b border-white/10 pr-14 sm:pr-8">
+          <div className="shrink-0 px-6 sm:px-8 py-5 sm:py-6 border-b border-white/10 pr-14 sm:pr-8">
             <h3 className="text-xl sm:text-2xl font-black text-white mb-1">
               Edit Item
             </h3>
@@ -107,7 +149,7 @@ export const EditItemModal = ({
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="px-6 sm:px-8 py-6 space-y-5">
+          <form onSubmit={handleSubmit} className="overflow-y-auto px-6 sm:px-8 py-6 space-y-5">
             {/* Content (Question) */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2">
@@ -149,6 +191,70 @@ export const EditItemModal = ({
                 />
               </div>
             </div>
+
+            {isPremium && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                  Gambar
+                </label>
+                {imagePreview ? (
+                  <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                    <img
+                      src={imagePreview}
+                      alt="Preview gambar item"
+                      className="h-48 w-full object-cover"
+                    />
+                    <label className="absolute bottom-3 left-3 flex cursor-pointer items-center gap-2 rounded-full bg-black/65 px-3 py-2 text-xs font-semibold text-white hover:bg-black/80 transition">
+                      <Upload className="h-3.5 w-3.5" />
+                      Ganti gambar
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                        disabled={loading}
+                      />
+                    </label>
+                    {imageFile && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImageFile(null);
+                          setImagePreview(item.image ?? null);
+                        }}
+                        disabled={loading}
+                        className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-50"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center hover:border-blue-500/40 hover:bg-white/8 transition">
+                    <Upload className="h-6 w-6 text-blue-400" />
+                    <span className="text-sm font-semibold text-white">
+                      Pilih gambar item
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      JPG, PNG, atau format gambar lain
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      disabled={loading}
+                    />
+                  </label>
+                )}
+                {imagePreview && !imageFile && (
+                  <p className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                    <Image className="h-3.5 w-3.5" />
+                    Menggunakan gambar yang tersimpan.
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Order */}
             <div>
@@ -213,7 +319,7 @@ export const EditItemModal = ({
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            <div className="sticky bottom-0 -mx-6 sm:-mx-8 -mb-6 flex flex-col sm:flex-row gap-3 border-t border-white/5 bg-[#0E1420]/95 px-6 sm:px-8 py-4 backdrop-blur">
               <button
                 type="button"
                 onClick={onClose}

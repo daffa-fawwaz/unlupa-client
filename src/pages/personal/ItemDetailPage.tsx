@@ -15,6 +15,7 @@ import {
   PenSquare,
   Trash2,
   AlertTriangle,
+  Image,
 } from "lucide-react";
 import { personalService } from "@/features/personal/services/personal.services";
 import type { ItemDetail } from "@/features/personal/types/personal.types";
@@ -77,6 +78,7 @@ export const ItemDetailPage = () => {
     useStartIntervalPhase();
   const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
   const { fetchStatusMap } = useBookItemStatusMap();
+  const itemImage = item?.image || itemDetail?.image;
 
   // Load item: fetch tree for content, fetch statusMap for status
   useEffect(() => {
@@ -85,7 +87,7 @@ export const ItemDetailPage = () => {
     const load = async () => {
       // Fetch tree (for item content/answer/etc) and status map in parallel
       const [treeResult, statusMap] = await Promise.all([
-        fetchBookTree(bookId).catch(() => null),
+        fetchBookTree(bookId, true).catch(() => null),
         fetchStatusMap().catch(() => new Map()),
       ]);
 
@@ -462,6 +464,22 @@ export const ItemDetailPage = () => {
 
                 {/* Question & Answer */}
                 <div className="space-y-4">
+                  {itemImage && (
+                    <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
+                      <div className="flex items-center gap-2 border-b border-white/5 px-5 py-3">
+                        <Image className="h-4 w-4 text-cyan-400" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-cyan-300">
+                          Gambar Item
+                        </span>
+                      </div>
+                      <img
+                        src={itemImage}
+                        alt={item.content || "Gambar item"}
+                        className="max-h-[420px] w-full object-contain bg-black/20"
+                      />
+                    </div>
+                  )}
+
                   {/* Question */}
                   <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
                     <div className="flex items-center gap-2 mb-3">

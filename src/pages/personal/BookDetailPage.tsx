@@ -484,7 +484,7 @@ export const BookDetailPage = () => {
   useEffect(() => {
     if (id) {
       fetchBookDetail(id);
-      fetchBookTree(id);
+      fetchBookTree(id, true);
       void fetchStatusMap();
     }
   }, [id, fetchBookDetail, fetchBookTree, fetchStatusMap]);
@@ -509,6 +509,7 @@ export const BookDetailPage = () => {
       title: created.title,
       content: created.content,
       answer: created.answer,
+      image: created.image,
       order: created.order,
       estimated_review_seconds: created.estimated_review_seconds,
       review_count: 0,
@@ -516,6 +517,7 @@ export const BookDetailPage = () => {
       created_at: created.created_at,
       updated_at: created.updated_at,
     });
+    void fetchBookTree(id!, true);
   };
 
   const formatDate = (dateStr: string) =>
