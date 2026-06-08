@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/ui/Sidebar";
-import { TopNavigationBar } from "../components/navigation/TopNavigationBar";
-import HeaderSection from "../components/shared/HeaderSection";
-import DynamicBackgroundAtmosphere from "../components/shared/DynamicBackgroundAtmosphere";
-import BackgroundAmbience from "../components/shared/BackgroundAmbience";
-import MobileSidebarOverlay from "../components/navigation/MobileSidebarOverlay";
-import { ClassroomCard } from "../components/dashboard/ClassroomCard";
+import { TopNavigationBar } from "@/features/classroom/components/navigation/TopNavigationBar";
+import HeaderSection from "@/features/classroom/components/shared/HeaderSection";
+import DynamicBackgroundAtmosphere from "@/features/classroom/components/shared/DynamicBackgroundAtmosphere";
+import BackgroundAmbience from "@/features/classroom/components/shared/BackgroundAmbience";
+import MobileSidebarOverlay from "@/features/classroom/components/navigation/MobileSidebarOverlay";
+import { ClassroomCard } from "@/features/classroom/components/dashboard/ClassroomCard";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
 import { Plus, School, School2 } from "lucide-react";
-import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
+import { QuickAccessCard } from "@/features/classroom/components/dashboard/QuickAccessSection";
 import { DailyReviewSection } from "@/components/ui/DailyReviewSection";
+import JoinClassSection from "@/features/classroom/components/dashboard/JoinClassSection";
 
 export const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -48,22 +49,26 @@ export const StudentDashboard = () => {
 
             <div className="grid mt-6 grid-cols-2 gap-2">
               <QuickAccessCard
+                title="Masuk Kelas"
+                description="Masukkan kode untuk bergabung dengan kelas."
+                href="#masuk-kelas"
+                color="blue"
+                icon={Plus}
+              />
+              <QuickAccessCard
                 title="Kelas Saya"
                 description="Kelas yang sudah Anda ikuti dan aktif saat ini."
                 href="#kelas-saya"
-                color="blue"
-                icon={School}
-              />
-              <QuickAccessCard
-                title="Daftar Kelas"
-                description="Temukan dan bergabung dengan kelas baru."
-                href="#daftar-kelas"
                 color="green"
-                icon={School2}
+                icon={School}
               />
             </div>
 
             <DailyReviewSection />
+
+            <div id="masuk-kelas">
+              <JoinClassSection />
+            </div>
 
             <div id="kelas-saya">
               <EmptyStateWrapper
@@ -90,7 +95,7 @@ export const StudentDashboard = () => {
                 // Optional Button Styling
                 buttonClassName="hover:scale-[1.02]"
               >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                   <ClassroomCard
                     title="Kelas Arabiyah Baina Yadaik"
                     memberCount={0}
@@ -118,65 +123,7 @@ export const StudentDashboard = () => {
                     description="Kitab Bahasa Arab Bagus"
                     teacherName="Ustadz Abdurrahman"
                   />
-                </div>
-              </EmptyStateWrapper>
-            </div>
-
-            <div id="daftar-kelas">
-              <EmptyStateWrapper
-                // Header
-                title="Daftar Kelas"
-                badge="Kelas"
-                subtitle="Berikut adalah daftar kelas yang tersedia. "
-                // Empty State
-                emptyTitle="Belum ada kelas yang tersedia"
-                description="Ayo, daftarkan kelas Anda sekarang agar dapat mulai digunakan oleh siswa!"
-                buttonText="Daftarkan Kelas"
-                colorScheme="green"
-                // Icons
-                icon={School}
-                buttonIcon={Plus}
-                // Action
-                onButtonClick={() => {
-                  // Debug log removed for production
-                }}
-                // Optional Styling
-                mainBgColor="bg-[#020817]"
-                wrapperGradient="bg-gradient-to-b from-[#081225] to-[#030712]"
-                glowColor="bg-blue-500/10"
-                borderColor="border-blue-500/10"
-                // Optional Button Styling
-                buttonClassName="hover:scale-[1.02]"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                  <ClassroomCard
-                    title="Kelas Arabiyah Baina Yadaik"
-                    memberCount={0}
-                    bookCount={0}
-                    nextSessionLabel="Sedang Berlangsung"
-                    tone="emerald"
-                    description="Kitab Bahasa Arab Bagus"
-                    teacherName="Ustadz Abdurrahman"
-                  />
-                  <ClassroomCard
-                    title="Kelas Arabiyah Baina Yadaik"
-                    memberCount={0}
-                    bookCount={0}
-                    nextSessionLabel="Sedang Berlangsung"
-                    tone="amber"
-                    description="Kitab Bahasa Arab Bagus"
-                    teacherName="Ustadz Abdurrahman"
-                  />
-                  <ClassroomCard
-                    title="Kelas Arabiyah Baina Yadaik"
-                    memberCount={0}
-                    bookCount={0}
-                    nextSessionLabel="Sedang Berlangsung"
-                    tone="blue"
-                    description="Kitab Bahasa Arab Bagus"
-                    teacherName="Ustadz Abdurrahman"
-                  />
-                </div>
+                </div> */}
               </EmptyStateWrapper>
             </div>
           </div>
