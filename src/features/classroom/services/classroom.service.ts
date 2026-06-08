@@ -1,6 +1,7 @@
 import type {
   ClassItem,
   CreateClassPayload,
+  JoinClassPayload,
   UpdateClassPayload,
 } from "../types";
 import { api } from "@/services/api";
@@ -75,6 +76,12 @@ export const classroomService = {
   // GET MY JOINED CLASS
   getMyJoinedClass: async (): Promise<ClassItem[]> => {
     const response = await api.get(`/api/v1/classes/joined`);
+    return response.data.data;
+  },
+
+  // JOIN CLASS
+  joinClass: async (payload: JoinClassPayload): Promise<ClassItem[]> => {
+    const response = await api.post(`/api/v1/classes/join`, payload);
     return response.data.data;
   },
 };

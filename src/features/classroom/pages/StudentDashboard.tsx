@@ -35,7 +35,6 @@ export const StudentDashboard = () => {
     "lime",
     "gray",
   ];
-  console.log(classes);
 
   return (
     <div className="min-h-screen bg-deep-universe text-white font-sans selection:bg-blue-500/30">
@@ -118,15 +117,14 @@ export const StudentDashboard = () => {
               >
                 {classes && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    {classes?.map((item, index) => {
+                    {[...classes].reverse()?.map((item, index) => {
                       return (
                         <ClassroomCard
                           key={item.id}
                           title={item.name}
                           memberCount={item.student_count}
                           bookCount={0}
-                          // nextSessionLabel="Sedang Berlangsung"
-                          tone={tones[index % tones.length]}
+                          tone={tones[Math.floor(Math.random() * tones.length)]}
                           description={item.description}
                           teacherName={item.owner_name}
                         />

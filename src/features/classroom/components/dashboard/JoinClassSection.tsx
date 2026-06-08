@@ -1,37 +1,35 @@
 import { useState } from "react";
 import { GraduationCap, Hash, Loader2, Sparkles, Users } from "lucide-react";
+import { useJoinClass } from "@/features/classroom/hooks/useClassroom";
 
-type JoinClassSectionProps = {
-  onJoin?: (classCode: string) => void;
-};
-
-export const JoinClassSection = ({ onJoin }: JoinClassSectionProps) => {
+export const JoinClassSection = () => {
   const [code, setCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const {
+    mutate: joinClass,
+    isPending,
+    error: mutationError,
+    isSuccess,
+  } = useJoinClass();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!code.trim()) {
-      setError("Masukkan kode kelas yang valid");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      await onJoin?.(code.trim());
-      setSuccess("Berhasil bergabung ke kelas!");
-      setCode("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal bergabung ke kelas");
-    } finally {
-      setIsLoading(false);
-    }
+    joinClass(
+      {
+        code: code.trim(),
+      },
+      {
+        onSuccess: () => {
+          setSuccess("Berhasil bergabung ke kelas!");
+          setCode("");
+        },
+        onError: (error) => {
+          setError(error.message);
+        },
+      },
+    );
   };
 
   return (
@@ -75,20 +73,21 @@ export const JoinClassSection = ({ onJoin }: JoinClassSectionProps) => {
                     setError(null);
                   }}
                   placeholder="Contoh: ABC123"
-                  disabled={isLoading}
                   className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-white placeholder:text-gray-500 outline-none transition focus:border-indigo-400 focus:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
                 />
               </div>
 
               {error && <p className="mt-2 text-sm text-rose-400">{error}</p>}
-              {success && <p className="mt-2 text-sm text-emerald-400">{success}</p>}
+              {success && (
+                <p className="mt-2 text-sm text-emerald-400">{success}</p>
+              )}
 
               <button
                 type="submit"
-                disabled={isLoading || !code.trim()}
+                disabled={isPending || !code.trim()}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-indigo-600 to-blue-600 px-5 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition-all hover:from-indigo-500 hover:to-blue-500 hover:-translate-y-0.5 hover:shadow-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-8"
               >
-                {isLoading ? (
+                {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span>Memproses...</span>
@@ -121,7 +120,9 @@ export const JoinClassSection = ({ onJoin }: JoinClassSectionProps) => {
                   <Hash className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-200">Masukkan kode</p>
+                  <p className="text-xs font-bold text-gray-200">
+                    Masukkan kode
+                  </p>
                   <p className="text-[11px] leading-relaxed text-gray-500">
                     Ketik kode pada kolom di atas
                   </p>
@@ -132,7 +133,9 @@ export const JoinClassSection = ({ onJoin }: JoinClassSectionProps) => {
                   <Users className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-200">Gabung kelas</p>
+                  <p className="text-xs font-bold text-gray-200">
+                    Gabung kelas
+                  </p>
                   <p className="text-[11px] leading-relaxed text-gray-500">
                     Klik gabung dan mulai mengakses materi
                   </p>

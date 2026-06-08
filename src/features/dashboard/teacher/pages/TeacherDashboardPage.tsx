@@ -156,7 +156,7 @@ export const TeacherDashboardPage = () => {
                   bookCount={12}
                   memberCount={classroom.student_count}
                   teacherName={classroom.owner_name}
-                  tone={tones[index % tones.length]}
+                  tone={tones[Math.floor(Math.random() * tones.length)]}
                 />
               ))}
             </div>

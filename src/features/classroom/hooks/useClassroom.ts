@@ -59,3 +59,16 @@ export const useMyJoinedClass = () => {
     queryFn: classroomService.getMyJoinedClass,
   });
 };
+
+// Hook to join class
+export const useJoinClass = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: classroomService.joinClass,
+    onSuccess: () => {
+      // Invalidate and refetch the classes after creating a new one
+      queryClient.invalidateQueries({ queryKey: ["my-joined-classes"] });
+    },
+  });
+};

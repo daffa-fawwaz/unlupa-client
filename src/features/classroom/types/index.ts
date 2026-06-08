@@ -22,6 +22,10 @@ export interface CreateClassPayload {
   cover_image?: File | string;
 }
 
+export interface JoinClassPayload {
+  code: string
+}
+
 export interface UpdateClassPayload {
   name?: string;
   description?: string;
