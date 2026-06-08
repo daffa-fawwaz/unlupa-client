@@ -79,7 +79,6 @@ export const StudentDashboard = () => {
                 // Empty State
                 emptyTitle="Anda belum bergabung di kelas manapun"
                 description="Yuk, cari dan bergabung dengan kelas yang sesuai minat dan level kemampuan Anda untuk memulai perjalanan belajar bersama!"
-                buttonText="Cari Kelas"
                 // Icons
                 icon={School}
                 buttonIcon={Plus}

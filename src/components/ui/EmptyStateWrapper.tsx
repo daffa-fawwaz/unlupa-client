@@ -10,7 +10,7 @@ interface EmptyStateWrapperProps {
   // Empty State Section
   emptyTitle: string;
   description: string;
-  buttonText: string;
+  buttonText?: string;
   onButtonClick?: () => void;
   icon: ElementType;
   buttonIcon?: ElementType;
@@ -63,9 +63,9 @@ export const EmptyStateWrapper = ({
   badge,
   subtitle,
   children,
+  buttonText,
   emptyTitle,
   description,
-  buttonText,
   onButtonClick,
   icon: Icon,
   buttonIcon: ButtonIcon,
@@ -148,15 +148,14 @@ export const EmptyStateWrapper = ({
             </p>
 
             {/* CTA Button */}
-            <button
-              onClick={onButtonClick}
-              className={`group relative flex h-14 items-center justify-center gap-3 rounded-full bg-white px-10 text-base font-bold text-black transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.2)] active:translate-y-0 ${buttonClassName}`}
-            >
-              {ButtonIcon && (
-                <ButtonIcon className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
-              )}
-              <span>{buttonText}</span>
-            </button>
+            {buttonText && (
+              <button
+                onClick={onButtonClick}
+                className={`rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-3 font-bold text-white shadow-lg transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+              >
+                {buttonText}
+              </button>
+            )}
           </div>
         )}
       </div>
