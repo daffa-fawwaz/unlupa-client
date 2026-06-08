@@ -151,7 +151,7 @@ export const EmptyStateWrapper = ({
             {buttonText && (
               <button
                 onClick={onButtonClick}
-                className={`rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-3 font-bold text-white shadow-lg transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                className={`rounded-xl bg-linear-to-r from-blue-500 to-blue-600 px-8 py-3 font-bold text-white shadow-lg transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
               >
                 {buttonText}
               </button>
