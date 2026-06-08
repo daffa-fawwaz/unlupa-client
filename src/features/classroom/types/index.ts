@@ -5,10 +5,10 @@ export interface ClassItem {
   guru_id: string;
   name: string;
   description: string;
+  cover_image?: string | null;
   class_code: string;
   type: "book" | "quran";
   is_active: boolean;
-  cover_image?: string | null;
   owner_name: string;
   student_count: number;
   created_at: string;

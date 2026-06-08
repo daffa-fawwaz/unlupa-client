@@ -11,9 +11,31 @@ import { Plus, School, School2 } from "lucide-react";
 import { QuickAccessCard } from "@/features/classroom/components/dashboard/QuickAccessSection";
 import { DailyReviewSection } from "@/components/ui/DailyReviewSection";
 import JoinClassSection from "@/features/classroom/components/dashboard/JoinClassSection";
+import { useMyJoinedClass } from "../hooks/useClassroom";
+import { toneStyles } from "../constants";
+import type { ClassroomCardTone } from "../types";
 
 export const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const { data: classes } = useMyJoinedClass();
+  const tones: ClassroomCardTone[] = [
+    "blue",
+    "teal",
+    "blue",
+    "emerald",
+    "amber",
+    "violet",
+    "rose",
+    "indigo",
+    "teal",
+    "cyan",
+    "fuchsia",
+    "pink",
+    "yellow",
+    "lime",
+    "gray",
+  ];
+  console.log(classes);
 
   return (
     <div className="min-h-screen bg-deep-universe text-white font-sans selection:bg-blue-500/30">
@@ -94,35 +116,24 @@ export const StudentDashboard = () => {
                 // Optional Button Styling
                 buttonClassName="hover:scale-[1.02]"
               >
-                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                  <ClassroomCard
-                    title="Kelas Arabiyah Baina Yadaik"
-                    memberCount={0}
-                    bookCount={0}
-                    nextSessionLabel="Sedang Berlangsung"
-                    tone="emerald"
-                    description="Kitab Bahasa Arab Bagus"
-                    teacherName="Ustadz Abdurrahman"
-                  />
-                  <ClassroomCard
-                    title="Kelas Arabiyah Baina Yadaik"
-                    memberCount={0}
-                    bookCount={0}
-                    nextSessionLabel="Sedang Berlangsung"
-                    tone="amber"
-                    description="Kitab Bahasa Arab Bagus"
-                    teacherName="Ustadz Abdurrahman"
-                  />
-                  <ClassroomCard
-                    title="Kelas Arabiyah Baina Yadaik"
-                    memberCount={0}
-                    bookCount={0}
-                    nextSessionLabel="Sedang Berlangsung"
-                    tone="blue"
-                    description="Kitab Bahasa Arab Bagus"
-                    teacherName="Ustadz Abdurrahman"
-                  />
-                </div> */}
+                {classes && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                    {classes?.map((item, index) => {
+                      return (
+                        <ClassroomCard
+                          key={item.id}
+                          title={item.name}
+                          memberCount={item.student_count}
+                          bookCount={0}
+                          // nextSessionLabel="Sedang Berlangsung"
+                          tone={tones[index % tones.length]}
+                          description={item.description}
+                          teacherName={item.owner_name}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </EmptyStateWrapper>
             </div>
           </div>

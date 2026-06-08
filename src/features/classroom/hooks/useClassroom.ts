@@ -49,3 +49,13 @@ export const useDeleteClass = () => {
     },
   });
 };
+
+// Hook to fetch my joined classes
+export const useMyJoinedClass = () => {
+  const queryClient = useQueryClient();
+
+  return useQuery({
+    queryKey: ["my-joined-classes"],
+    queryFn: classroomService.getMyJoinedClass,
+  });
+};

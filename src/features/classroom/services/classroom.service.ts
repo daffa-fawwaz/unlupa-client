@@ -71,4 +71,10 @@ export const classroomService = {
     const response = await api.delete(`/api/v1/classes/${classId}`);
     return response.data.data;
   },
+
+  // GET MY JOINED CLASS
+  getMyJoinedClass: async (): Promise<ClassItem[]> => {
+    const response = await api.get(`/api/v1/classes/joined`);
+    return response.data.data;
+  },
 };
