@@ -112,6 +112,9 @@ export const BookDailyReviewFlashcardModal = ({
         setItemStatus(d.status || "unknown");
         setItemContent(d.question || "Pertanyaan tidak tersedia");
         setItemAnswer(d.answer || "Jawaban tidak tersedia");
+        console.log("DEBUG getItemDetail raw data keys:", Object.keys(d));
+        console.log("DEBUG getItemDetail image value:", d.image);
+        console.log("DEBUG getItemDetail normalized:", JSON.stringify(d));
         setItemImage(d.image || "");
       } catch {
         setItemStatus("unknown");
@@ -212,16 +215,23 @@ export const BookDailyReviewFlashcardModal = ({
         </button>
       </div>
 
-      {/* Main content — two panels side by side, clipped */}
-      <div className="flex-1 overflow-hidden relative">
+      {/* Main content — 3D Flip Card Container */}
+      <div className="flex-1 overflow-hidden relative" style={{ perspective: "1500px" }}>
         <div
-          className={`absolute inset-0 flex transition-transform duration-500 ease-in-out ${
-            isFlipped ? "-translate-x-1/2" : "translate-x-0"
-          }`}
-          style={{ width: "200%" }}
+          className="w-full h-full transition-transform duration-700 ease-in-out relative"
+          style={{
+            transformStyle: "preserve-3d",
+            transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          }}
         >
           {/* FRONT — Question */}
-          <div className="w-1/2 h-full flex flex-col bg-[#090A0F]">
+          <div
+            className="absolute inset-0 w-full h-full flex flex-col bg-[#090A0F]"
+            style={{
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+            }}
+          >
             <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_20%_20%,rgba(20,184,166,0.4),transparent_50%)]" />
 
             {/* Scrollable content area */}
@@ -235,6 +245,16 @@ export const BookDailyReviewFlashcardModal = ({
                 </span>
               </div>
 
+              {itemImage && itemImage.trim() !== "" && (
+                <div className="mb-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                  <img
+                    src={itemImage}
+                    alt={itemContent || "Gambar item"}
+                    className="max-h-[320px] w-full object-contain bg-black/20"
+                  />
+                </div>
+              )}
+
               <div className="p-6 sm:p-8 rounded-2xl border border-cyan-300/20 bg-cyan-400/8 mb-8">
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center shrink-0 mt-0.5">
@@ -245,22 +265,6 @@ export const BookDailyReviewFlashcardModal = ({
                   </p>
                 </div>
               </div>
-
-              {itemImage && (
-                <div className="mb-8 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                  <div className="flex items-center gap-2 border-b border-white/5 px-4 py-2.5">
-                    <Image className="h-4 w-4 text-cyan-300" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-cyan-200">
-                      Gambar Item
-                    </span>
-                  </div>
-                  <img
-                    src={itemImage}
-                    alt={itemContent || "Gambar item"}
-                    className="max-h-[320px] w-full object-contain bg-black/20"
-                  />
-                </div>
-              )}
 
               <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
                 <CalendarDays className="w-4 h-4" />
@@ -281,9 +285,16 @@ export const BookDailyReviewFlashcardModal = ({
           </div>
 
           {/* BACK — Answer + Feedback */}
-          <div className="w-1/2 h-full flex flex-col bg-[#090A0F] overflow-y-auto">
+          <div
+            className="absolute inset-0 w-full h-full flex flex-col bg-[#090A0F]"
+            style={{
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+              transform: "rotateY(180deg)",
+            }}
+          >
             <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.4),transparent_50%)]" />
-            <div className="flex-1 flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
               {/* Answer */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center">
@@ -292,30 +303,23 @@ export const BookDailyReviewFlashcardModal = ({
                 <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/20 text-xs font-bold tracking-wider uppercase">
                   Jawaban
                 </span>
-                <button
-                  onClick={() => setIsFlipped(false)}
-                  className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <RotateCw className="w-3.5 h-3.5" />
-                  Pertanyaan
-                </button>
               </div>
+
+              {itemImage && itemImage.trim() !== "" && (
+                <div className="mb-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                  <img
+                    src={itemImage}
+                    alt={itemContent || "Gambar item"}
+                    className="max-h-[320px] w-full object-contain bg-black/20"
+                  />
+                </div>
+              )}
 
               <div className="p-5 sm:p-6 rounded-2xl border border-emerald-300/20 bg-emerald-400/8 mb-6">
                 <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-relaxed whitespace-pre-wrap wrap-break-word">
                   {itemAnswer}
                 </p>
               </div>
-
-              {itemImage && (
-                <div className="mb-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                  <img
-                    src={itemImage}
-                    alt={itemContent || "Gambar item"}
-                    className="max-h-[220px] w-full object-contain bg-black/20"
-                  />
-                </div>
-              )}
 
               {/* Feedback section */}
               <div className="mb-4">
@@ -325,7 +329,7 @@ export const BookDailyReviewFlashcardModal = ({
                 <p className="text-gray-500 text-sm">Pilih satu — nilai langsung tersimpan.</p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                 {REVIEW_BUTTONS.map((btn) => {
                   const isSubmitting = submittingButtonId === btn.id;
                   return (
@@ -361,6 +365,17 @@ export const BookDailyReviewFlashcardModal = ({
                   );
                 })}
               </div>
+            </div>
+
+            {/* Sticky flip button */}
+            <div className="px-4 sm:px-8 md:px-16 pb-6 pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-white/5 bg-[#090A0F]">
+              <button
+                onClick={() => setIsFlipped(false)}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/5 border border-white/10 text-gray-400 font-bold text-base hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <RotateCw className="w-5 h-5" />
+                Lihat Pertanyaan
+              </button>
             </div>
           </div>
         </div>
