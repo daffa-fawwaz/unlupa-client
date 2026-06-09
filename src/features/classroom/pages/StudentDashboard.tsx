@@ -122,6 +122,7 @@ export const StudentDashboard = () => {
                         <ClassroomCard
                           key={item.id}
                           title={item.name}
+                          coverImage={item.cover_image}
                           memberCount={item.student_count}
                           bookCount={0}
                           tone={tones[Math.floor(Math.random() * tones.length)]}
