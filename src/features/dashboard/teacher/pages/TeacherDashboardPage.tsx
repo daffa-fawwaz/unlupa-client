@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, School, Plus } from "lucide-react";
+import { useNavigate } from "react-router";
+import { Menu, Plus, School } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
@@ -23,6 +24,7 @@ import { EditClassModal } from "@/features/classroom/components/dashboard/modals
 import { ConfirmModal } from "@/features/classroom/components/dashboard/modals/ConfirmModal";
 
 export const TeacherDashboardPage = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedClassroom, setSelectedClassroom] = useState<ClassItem | null>(
@@ -139,8 +141,20 @@ export const TeacherDashboardPage = () => {
             />
           ) : (
             <div className="grid md:grid-cols-3 gap-3">
-              {classrooms?.map((classroom, index) => (
+              {classrooms?.map((classroom, index) => {
+                const toneIndex = index % tones.length;
+                return (
                 <ClassroomCard
+                  key={classroom.id}
+                  id={classroom.id}
+                  title={classroom.name}
+                  description={classroom.description}
+                  coverImage={classroom?.cover_image}
+                  bookCount={12}
+                  memberCount={classroom.student_count}
+                  teacherName={classroom.owner_name}
+                  tone={tones[toneIndex]}
+                  onClick={() => navigate(`/dashboard/kelas/${classroom.id}`)}
                   onEdit={() => {
                     setSelectedClassroom(classroom);
                     setIsEditModalOpen(true);
@@ -149,16 +163,9 @@ export const TeacherDashboardPage = () => {
                     setIsDeleteModalOpen(true);
                     setSelectedClassroom(classroom);
                   }}
-                  key={classroom.id}
-                  title={classroom.name}
-                  description={classroom.description}
-                  coverImage={classroom?.cover_image}
-                  bookCount={12}
-                  memberCount={classroom.student_count}
-                  teacherName={classroom.owner_name}
-                  tone={tones[Math.floor(Math.random() * tones.length)]}
                 />
-              ))}
+              );
+              })}
             </div>
           )}
         </EmptyStateWrapper>

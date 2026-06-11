@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { TopNavigationBar } from "@/features/classroom/components/navigation/TopNavigationBar";
 import HeaderSection from "@/features/classroom/components/shared/HeaderSection";
@@ -7,15 +8,15 @@ import BackgroundAmbience from "@/features/classroom/components/shared/Backgroun
 import MobileSidebarOverlay from "@/features/classroom/components/navigation/MobileSidebarOverlay";
 import { ClassroomCard } from "@/features/classroom/components/dashboard/ClassroomCard";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
-import { Plus, School, School2 } from "lucide-react";
+import { Plus, School } from "lucide-react";
 import { QuickAccessCard } from "@/features/classroom/components/dashboard/QuickAccessSection";
 import { DailyReviewSection } from "@/components/ui/DailyReviewSection";
 import JoinClassSection from "@/features/classroom/components/dashboard/JoinClassSection";
 import { useMyJoinedClass } from "../hooks/useClassroom";
-import { toneStyles } from "../constants";
 import type { ClassroomCardTone } from "../types";
 
 export const StudentDashboard = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const { data: classes } = useMyJoinedClass();
   const tones: ClassroomCardTone[] = [
@@ -59,7 +60,10 @@ export const StudentDashboard = () => {
           />
 
           <div className="p-4 sm:p-6 lg:p-8 animate-fadeIn max-w-400 mx-auto relative z-10">
-            <TopNavigationBar setIsSidebarOpen={setIsSidebarOpen} />
+            <TopNavigationBar
+              info="Ruang Kelas"
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
 
             <HeaderSection
               workspace="Dashboard Siswa"
@@ -118,16 +122,21 @@ export const StudentDashboard = () => {
                 {classes && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                     {[...classes].reverse()?.map((item, index) => {
+                      const toneIndex = index % tones.length;
                       return (
                         <ClassroomCard
                           key={item.id}
+                          id={item.id}
                           title={item.name}
                           coverImage={item.cover_image}
                           memberCount={item.student_count}
                           bookCount={0}
-                          tone={tones[Math.floor(Math.random() * tones.length)]}
+                          tone={tones[toneIndex]}
                           description={item.description}
                           teacherName={item.owner_name}
+                          onClick={() =>
+                            navigate(`/dashboard/kelas/${item.id}`)
+                          }
                         />
                       );
                     })}

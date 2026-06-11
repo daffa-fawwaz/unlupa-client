@@ -51,6 +51,7 @@ export type ClassroomCardTone =
   | "gray";
 
 export type ClassroomCardProps = {
+  id?: string;
   title: string;
   description?: string;
   teacherName: string;

@@ -15,7 +15,6 @@ export const ClassroomCard = ({
   tone = "blue",
   coverImage,
   onClick,
-  onMenuClick,
   onEdit,
   onDelete,
 }: ClassroomCardProps) => {

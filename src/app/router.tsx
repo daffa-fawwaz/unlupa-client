@@ -24,6 +24,7 @@ import { ModuleDetailPage } from "@/pages/personal/ModuleDetailPage";
 import { ItemDetailPage } from "@/pages/personal/ItemDetailPage";
 import { ClassroomCardSandbox } from "@/features/classroom/pages/ClassroomSandbox";
 import { StudentDashboard } from "@/features/classroom/pages/StudentDashboard";
+import { ClassroomDetailView } from "@/features/classroom/pages/ClassroomDetailView";
 
 export const router = createBrowserRouter([
   {
@@ -73,6 +74,7 @@ export const router = createBrowserRouter([
                 element: <ItemDetailPage />,
               },
               { path: "/dashboard/kelas", element: <StudentDashboard /> },
+              { path: "/dashboard/kelas/:classroomId", element: <ClassroomDetailView /> },
               // Status-based item pages
               {
                 path: "/dashboard/alquran/status/:status",

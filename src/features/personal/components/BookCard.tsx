@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { MoreVertical, Edit2, Trash2, Calendar, Box } from "lucide-react";
 import type { Book } from "../types/personal.types";
 
-interface BookCardProps {
+export interface BookCardProps {
   book: Book;
   onClick?: () => void;
   onEdit?: (book: Book) => void;
