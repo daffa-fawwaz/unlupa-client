@@ -1,5 +1,6 @@
 import type {
   ClassItem,
+  ClassMember,
   CreateClassPayload,
   JoinClassPayload,
   UpdateClassPayload,
@@ -82,6 +83,12 @@ export const classroomService = {
   // JOIN CLASS
   joinClass: async (payload: JoinClassPayload): Promise<ClassItem[]> => {
     const response = await api.post(`/api/v1/classes/join`, payload);
+    return response.data.data;
+  },
+
+  // GET CLASS MEMBER (TEACHER)
+  getClassMember: async (classId: string): Promise<ClassMember[]> => {
+    const response = await api.get(`/api/v1/classes/${classId}/members`)
     return response.data.data;
   },
 };

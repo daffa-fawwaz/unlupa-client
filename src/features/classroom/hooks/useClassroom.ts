@@ -72,3 +72,11 @@ export const useJoinClass = () => {
     },
   });
 };
+
+// Hook to fetch teacher's classes
+export const useGetClassMember = (classId: string) => {
+  return useQuery({
+    queryKey: ["class-member", classId],
+    queryFn: () => classroomService.getClassMember(classId),
+  });
+};

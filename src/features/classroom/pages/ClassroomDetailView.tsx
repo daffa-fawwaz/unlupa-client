@@ -19,7 +19,11 @@ import {
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { TopNavigationBar } from "@/features/classroom/components/navigation/TopNavigationBar";
-import { useMyClassesTeacher, useMyJoinedClass } from "../hooks/useClassroom";
+import {
+  useGetClassMember,
+  useMyClassesTeacher,
+  useMyJoinedClass,
+} from "../hooks/useClassroom";
 import { toneStyles, statusLabel } from "../constants";
 import type { ClassroomCardTone } from "../types";
 import { Button } from "@/components/ui/button";
@@ -48,6 +52,10 @@ export const ClassroomDetailView = () => {
   const [activeTab, setActiveTab] = useState<"books" | "members">("books");
   const [memberSearch, setMemberSearch] = useState("");
   const [bookSearch, setBookSearch] = useState("");
+  const { data: memberData, isLoading: isLoadingMember } = useGetClassMember(
+    classroomId!,
+  );
+  console.log(memberData);
 
   const { data: teacherClasses } = useMyClassesTeacher();
   const { data: studentClasses } = useMyJoinedClass();
@@ -106,37 +114,6 @@ export const ClassroomDetailView = () => {
   const toneIndex = classroom.id.charCodeAt(0) % tones.length;
   const theme = toneStyles[tones[toneIndex]];
 
-  const mockMembers: Member[] = [
-    {
-      id: "1",
-      name: "Ahmad Fauzi",
-      email: "ahmad@example.com",
-      joinedAt: "2024-01-15",
-      role: "student",
-    },
-    {
-      id: "2",
-      name: "Siti Aminah",
-      email: "siti@example.com",
-      joinedAt: "2024-02-20",
-      role: "student",
-    },
-    {
-      id: "3",
-      name: "Budiono Sutrisno",
-      email: "budiono@example.com",
-      joinedAt: "2024-03-10",
-      role: "student",
-    },
-    {
-      id: "4",
-      name: "Ustadz Hamzah",
-      email: "hamzah@example.com",
-      joinedAt: "2024-03-25",
-      role: "co-teacher",
-    },
-  ];
-
   const mockBooks: Book[] = [
     {
       id: "1",
@@ -165,12 +142,6 @@ export const ClassroomDetailView = () => {
   const visibleBooks = isTeacher
     ? mockBooks
     : mockBooks.filter((b) => b.status === "active");
-
-  const filteredMembers = mockMembers.filter(
-    (m) =>
-      m.name.toLowerCase().includes(memberSearch.toLowerCase()) ||
-      m.email.toLowerCase().includes(memberSearch.toLowerCase()),
-  );
 
   const filteredBooks = visibleBooks.filter((b) =>
     b.title.toLowerCase().includes(bookSearch.toLowerCase()),
@@ -415,29 +386,24 @@ export const ClassroomDetailView = () => {
                   />
                 </div>
 
-                {filteredMembers.length > 0 ? (
+                {memberData && memberData?.length > 0 ? (
                   <div className="border border-white/[0.06] bg-slate-950/20 rounded-xl overflow-hidden divide-y divide-white/[0.06]">
-                    {filteredMembers.map((member) => (
+                    {memberData?.map((member) => (
                       <div
-                        key={member.id}
+                        key={member.user_id}
                         className="flex items-center justify-between p-4 hover:bg-slate-900/30 transition-all gap-4"
                       >
                         <div className="flex items-center gap-3.5 min-w-0">
                           <div
-                            className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border ${member.role === "co-teacher" ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-slate-800 border-white/5 text-slate-300"}`}
+                            className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border bg-slate-800 border-white/5 text-slate-300`}
                           >
-                            {member.name.charAt(0).toUpperCase()}
+                            {member.full_name.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <p className="font-semibold text-sm text-slate-200 truncate">
-                                {member.name}
+                                {member.full_name}
                               </p>
-                              {member.role === "co-teacher" && (
-                                <span className="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.2 rounded font-medium border border-amber-500/20">
-                                  Asisten
-                                </span>
-                              )}
                             </div>
                             <p className="text-xs text-slate-500 truncate flex items-center gap-1 mt-0.5">
                               <Mail className="h-3 w-3" /> {member.email}
@@ -447,13 +413,9 @@ export const ClassroomDetailView = () => {
 
                         <div className="flex items-center gap-4 shrink-0">
                           <div className="text-right hidden sm:block">
-                            <p className="text-[11px] text-slate-400 flex items-center gap-1 justify-end">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-500" />{" "}
-                              Primari
-                            </p>
                             <p className="text-[10px] text-slate-600 mt-0.5">
                               Gabung{" "}
-                              {new Date(member.joinedAt).toLocaleDateString(
+                              {new Date(member.joined_at).toLocaleDateString(
                                 "id-ID",
                                 { month: "short", year: "numeric" },
                               )}

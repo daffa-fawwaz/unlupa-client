@@ -70,3 +70,13 @@ export type ClassroomCardProps = {
 export type CreateClassButtonProps = {
   onClick?: () => void;
 };
+
+
+// GET CLASS MEMBER
+
+export type ClassMember = {
+  user_id: string;
+  email: string;
+  full_name: string;
+  joined_at: string;
+}
