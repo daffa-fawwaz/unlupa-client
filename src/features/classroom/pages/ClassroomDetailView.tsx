@@ -394,9 +394,7 @@ export const ClassroomDetailView = () => {
                         className="flex items-center justify-between p-4 hover:bg-slate-900/30 transition-all gap-4"
                       >
                         <div className="flex items-center gap-3.5 min-w-0">
-                          <div
-                            className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border bg-slate-800 border-white/5 text-slate-300`}
-                          >
+                          <div className="h-9 w-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border bg-slate-800 border-white/5 text-slate-300">
                             {member.full_name.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
