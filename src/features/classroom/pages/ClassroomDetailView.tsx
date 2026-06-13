@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
+import { tones } from "../constants";
 import {
-  ArrowLeft,
   Users,
   BookOpen,
   Plus,
@@ -10,22 +10,19 @@ import {
   Sparkles,
   SlidersHorizontal,
   ArrowUpRight,
-  MoreVertical,
   Mail,
-  CheckCircle2,
-  FileText,
-  BookOpenCheck,
   ImageIcon,
+  MoreVertical,
 } from "lucide-react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { TopNavigationBar } from "@/features/classroom/components/navigation/TopNavigationBar";
 import {
+  useGetClassBook,
   useGetClassMember,
   useMyClassesTeacher,
   useMyJoinedClass,
 } from "../hooks/useClassroom";
 import { toneStyles, statusLabel } from "../constants";
-import type { ClassroomCardTone } from "../types";
 import { Button } from "@/components/ui/button";
 import BackgroundAmbience from "../components/shared/BackgroundAmbience";
 import MobileSidebarOverlay from "../components/navigation/MobileSidebarOverlay";
@@ -33,17 +30,7 @@ import {
   BookCard,
   type BookCardProps,
 } from "@/features/personal/components/BookCard";
-import type { Book } from "@/features/personal/types/personal.types";
 import { AddBookToClassSection } from "../components/dashboard/AddBookToClassSection";
-
-type Member = {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  joinedAt: string;
-  role: "student" | "co-teacher";
-};
 
 export const ClassroomDetailView = () => {
   const navigate = useNavigate();
@@ -55,26 +42,16 @@ export const ClassroomDetailView = () => {
   const { data: memberData, isLoading: isLoadingMember } = useGetClassMember(
     classroomId!,
   );
-  console.log(memberData);
+  const {
+    data: bookData,
+    isLoading: isLoadingBook,
+    error: bookError,
+  } = useGetClassBook(classroomId!);
+  console.log("classroomId:", classroomId);
+  console.log("bookData:", bookData);
 
   const { data: teacherClasses } = useMyClassesTeacher();
   const { data: studentClasses } = useMyJoinedClass();
-
-  const tones: ClassroomCardTone[] = [
-    "blue",
-    "teal",
-    "emerald",
-    "amber",
-    "violet",
-    "rose",
-    "indigo",
-    "cyan",
-    "fuchsia",
-    "pink",
-    "yellow",
-    "lime",
-    "gray",
-  ];
 
   const allClasses = [...(teacherClasses || []), ...(studentClasses || [])];
   const classroom = allClasses.find((c) => c.id === classroomId);
@@ -114,38 +91,14 @@ export const ClassroomDetailView = () => {
   const toneIndex = classroom.id.charCodeAt(0) % tones.length;
   const theme = toneStyles[tones[toneIndex]];
 
-  const mockBooks: Book[] = [
-    {
-      id: "1",
-      cover_image: "Apalah",
-      created_at: "19",
-      description: "Ini Buku Bagus",
-      owner_id: "12312312",
-      status: "active",
-      published_at: "Yahaha Hayyuk",
-      title: "Arabiyah Baina Yadaik",
-      updated_at: "Kapan Aja",
-    },
-    {
-      id: "2",
-      cover_image: "Apalah",
-      created_at: "19",
-      description: "Ini Buku Bagus",
-      owner_id: "12312312",
-      status: "active",
-      published_at: "Yahaha Hayyuk",
-      title: "Fiqih Sunnah",
-      updated_at: "Kapan Aja",
-    },
-  ];
-
   const visibleBooks = isTeacher
-    ? mockBooks
-    : mockBooks.filter((b) => b.status === "active");
+    ? bookData
+    : bookData?.filter((b) => b.book.status === "active");
 
-  const filteredBooks = visibleBooks.filter((b) =>
-    b.title.toLowerCase().includes(bookSearch.toLowerCase()),
-  );
+  const filteredBooks =
+    visibleBooks?.filter((b) =>
+      b.book.title.toLowerCase().includes(bookSearch.toLowerCase()),
+    ) ?? [];
 
   return (
     <div className="min-h-screen bg-[#06080C] text-slate-200 font-sans antialiased selection:bg-indigo-500/40 pb-12">
@@ -269,7 +222,7 @@ export const ClassroomDetailView = () => {
                     <ArrowUpRight className="h-3.5 w-3.5 text-slate-600" />
                   </div>
                   <p className="text-2xl font-black text-white tracking-tight">
-                    {mockBooks.length}
+                    {bookData?.length}
                   </p>
                   <p className="text-[11px] font-semibold text-slate-400 mt-1 uppercase tracking-wide">
                     Koleksi Kitab
@@ -299,7 +252,7 @@ export const ClassroomDetailView = () => {
             ) : (
               <div className="p-5 rounded-xl border border-white/[0.06] bg-[#0E131F]/20 text-center space-y-1">
                 <p className="text-2xl font-bold text-white tracking-tight">
-                  {filteredBooks.length}
+                  {filteredBooks?.length}
                 </p>
                 <p className="text-xs text-slate-400">
                   Materi Kitab Siap Dipelajari
@@ -351,7 +304,7 @@ export const ClassroomDetailView = () => {
                 {filteredBooks.length > 0 ? (
                   <div className="grid gap-4 sm:grid-cols-2">
                     {filteredBooks.map((book, idx) => (
-                      <BookCard key={idx} book={book} />
+                      <BookCard key={idx} book={book.book} />
                     ))}
                   </div>
                 ) : (

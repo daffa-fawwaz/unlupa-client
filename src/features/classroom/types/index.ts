@@ -1,5 +1,7 @@
 /// CLASSROOM TYPES
 
+import type { Book } from "@/features/personal/types/personal.types";
+
 export interface ClassItem {
   id: string;
   guru_id: string;
@@ -79,4 +81,15 @@ export type ClassMember = {
   email: string;
   full_name: string;
   joined_at: string;
+}
+
+// GET CLASS BOOK
+
+export type GetClassBook = {
+  id: string;
+  class_id: string;
+  book_id: string;
+  order: number;
+  created_at: string;
+  book: Book
 }

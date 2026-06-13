@@ -80,3 +80,11 @@ export const useGetClassMember = (classId: string) => {
     queryFn: () => classroomService.getClassMember(classId),
   });
 };
+
+// Hook to fetch classroom book
+export const useGetClassBook = (classId: string) => {
+  return useQuery({
+    queryKey: ["class-book", classId],
+    queryFn: () => classroomService.getClassBook(classId),
+  });
+};

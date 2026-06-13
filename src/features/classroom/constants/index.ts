@@ -122,3 +122,19 @@ export const statusLabel = {
   draft: "Draft",
   archived: "Arsip",
 };
+
+export const tones: ClassroomCardTone[] = [
+    "blue",
+    "teal",
+    "emerald",
+    "amber",
+    "violet",
+    "rose",
+    "indigo",
+    "cyan",
+    "fuchsia",
+    "pink",
+    "yellow",
+    "lime",
+    "gray",
+  ];
