@@ -4,12 +4,14 @@ import type { ClassroomCardProps } from "@/features/classroom/types/index";
 
 import { toneStyles, statusLabel } from "@/features/classroom/constants/index";
 import { ClassroomCardMenu } from "./ClassroomCardMenu";
+import { useAuthStore } from "@/features/auth/stores/auth.store";
 
 export const ClassroomCard = ({
   title,
   description,
   classCode,
   memberCount,
+  teacherName,
   bookCount,
   status = "active",
   tone = "blue",
@@ -19,6 +21,10 @@ export const ClassroomCard = ({
   onDelete,
 }: ClassroomCardProps) => {
   const theme = toneStyles[tone];
+
+  const userRole = useAuthStore((state) => state.user?.role);
+
+  const isTeacher = userRole === "teacher";
 
   return (
     <article
@@ -70,21 +76,39 @@ export const ClassroomCard = ({
       </div>
 
       <div className="relative z-10 flex flex-1 flex-col p-5">
-        <div className="mb-4 flex min-w-0 items-center gap-3">
-          <div
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border ${theme.border} ${theme.iconBg}`}
-          >
-            <QrCode className={`h-5 w-5 ${theme.text}`} />
+        {isTeacher ? (
+          <div className="mb-4 flex min-w-0 items-center gap-3">
+            <div
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border ${theme.border} ${theme.iconBg}`}
+            >
+              <QrCode className={`h-5 w-5 ${theme.text}`} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                Kode Kelas
+              </p>
+              <p className="truncate text-sm font-semibold text-gray-300">
+                {classCode}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
-              Kode Kelas
-            </p>
-            <p className="truncate text-sm font-semibold text-gray-300">
-              {classCode}
-            </p>
+        ) : (
+          <div className="mb-4 flex min-w-0 items-center gap-3">
+            <div
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border ${theme.border} ${theme.iconBg}`}
+            >
+              <QrCode className={`h-5 w-5 ${theme.text}`} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                Nama Pengajar
+              </p>
+              <p className="truncate text-sm font-semibold text-gray-300">
+                {teacherName}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="mb-2">
           <h3 className="mb-2 line-clamp-2 text-xl font-black leading-tight text-white transition-colors group-hover:text-blue-50">
@@ -95,26 +119,44 @@ export const ClassroomCard = ({
           </p>
         </div>
 
-        <div className="mb-2 grid grid-cols-2 gap-2">
-          <div className="rounded-2xl border border-white/5 bg-white/4 p-3">
-            <Users className="mb-2 h-4 w-4 text-gray-500" />
-            <p className="text-lg font-black leading-none text-white">
-              {memberCount}
-            </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
-              Siswa
-            </p>
+        {isTeacher ? (
+          <div className="mb-2 grid grid-cols-2 gap-2">
+            <div className="rounded-2xl border border-white/5 bg-white/4 p-3">
+              <Users className="mb-2 h-4 w-4 text-gray-500" />
+              <p className="text-lg font-black leading-none text-white">
+                {memberCount}
+              </p>
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                Siswa
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/5 bg-white/4 p-3">
+              <BookOpen className="mb-2 h-4 w-4 text-gray-500" />
+              <p className="text-lg font-black leading-none text-white">
+                {bookCount}
+              </p>
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                Kitab
+              </p>
+            </div>
           </div>
-          <div className="rounded-2xl border border-white/5 bg-white/4 p-3">
-            <BookOpen className="mb-2 h-4 w-4 text-gray-500" />
-            <p className="text-lg font-black leading-none text-white">
-              {bookCount}
-            </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
-              Kitab
-            </p>
+        ) : (
+          <div className="mb-2 grid grid-cols-1 gap-2">
+            <div className="rounded-2xl px-6 border flex justify-between items-center border-white/5 bg-white/4 p-3">
+              <div>
+                <p className="text-lg font-black leading-none text-white">
+                  {bookCount}
+                </p>
+              </div>
+              <div className="flex flex-col justify-center items-center">
+                <BookOpen className="mb-2 h-4 w-4 text-gray-500" />
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                  Kitab
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </article>
   );

@@ -52,7 +52,7 @@ export type ClassroomCardTone =
   | "lime"
   | "gray";
 
-export type ClassroomCardProps = {
+export interface ClassroomCardProps {
   id?: string;
   title: string;
   description?: string;
@@ -68,11 +68,11 @@ export type ClassroomCardProps = {
   onMenuClick?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
-};
+}
 
-export type CreateClassButtonProps = {
+export interface CreateClassButtonProps {
   onClick?: () => void;
-};
+}
 
 // GET CLASS MEMBER
 

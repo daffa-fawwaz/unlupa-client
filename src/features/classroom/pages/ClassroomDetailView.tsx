@@ -49,6 +49,8 @@ export const ClassroomDetailView = () => {
     error: bookError,
   } = useGetClassBook(classroomId!);
 
+  console.log("BOOK DATA", bookData)
+
   const { data: teacherClasses } = useMyClassesTeacher();
   const { data: studentClasses } = useMyJoinedClass();
 

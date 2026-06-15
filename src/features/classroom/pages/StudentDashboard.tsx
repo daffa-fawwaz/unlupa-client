@@ -19,6 +19,7 @@ export const StudentDashboard = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const { data: classes } = useMyJoinedClass();
+  console.log("CLASSES", classes)
   const tones: ClassroomCardTone[] = [
     "blue",
     "teal",
