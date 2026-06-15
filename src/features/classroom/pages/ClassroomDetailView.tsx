@@ -31,6 +31,7 @@ import {
   type BookCardProps,
 } from "@/features/personal/components/BookCard";
 import { AddBookToClassSection } from "../components/dashboard/AddBookToClassSection";
+import { useAuthStore } from "@/features/auth/stores/auth.store";
 
 export const ClassroomDetailView = () => {
   const navigate = useNavigate();
@@ -53,7 +54,9 @@ export const ClassroomDetailView = () => {
 
   const allClasses = [...(teacherClasses || []), ...(studentClasses || [])];
   const classroom = allClasses.find((c) => c.id === classroomId);
-  const isTeacher = teacherClasses?.some((c) => c.id === classroomId);
+  const userRole = useAuthStore((state) => state.user?.role);
+
+  const isTeacher = userRole === "teacher";
 
   // UX Guard: Memastikan jika user adalah student, tab otomatis terkunci di 'books'
   useEffect(() => {
@@ -91,18 +94,6 @@ export const ClassroomDetailView = () => {
 
   const filteredBooks = (bookData ?? []).filter((b) =>
     b.book.title.toLowerCase().includes(bookSearch.toLowerCase()),
-  );
-
-  console.log("teacherClasses", teacherClasses);
-  console.log("studentClasses", studentClasses);
-  console.log("classroom", classroom);
-
-  console.log(
-    "BOOK DATA",
-    bookData?.map((b) => ({
-      title: b.book.title,
-      status: b.book.status,
-    })),
   );
 
   return (
@@ -171,19 +162,6 @@ export const ClassroomDetailView = () => {
                   "Belum ada deskripsi detail yang disematkan untuk kelas ini."}
               </p>
             </div>
-
-            {isTeacher && (
-              <div className="flex items-center gap-2 shrink-0 self-end md:self-center z-20">
-                <Button
-                  onClick={() => setActiveTab("books")}
-                  size="sm"
-                  className="bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs rounded-xl h-10 px-4 shadow-xl"
-                >
-                  <Plus className="h-4 w-4 mr-1.5 stroke-[2.5]" /> Buat Kitab
-                  Baru
-                </Button>
-              </div>
-            )}
           </div>
         </div>
 
