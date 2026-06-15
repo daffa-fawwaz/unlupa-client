@@ -1,4 +1,4 @@
-import { BookOpen, GraduationCap, Users } from "lucide-react";
+import { BookOpen, Code, GraduationCap, QrCode, Users } from "lucide-react";
 
 import type { ClassroomCardProps } from "@/features/classroom/types/index";
 
@@ -74,7 +74,7 @@ export const ClassroomCard = ({
           <div
             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border ${theme.border} ${theme.iconBg}`}
           >
-            <GraduationCap className={`h-5 w-5 ${theme.text}`} />
+            <QrCode className={`h-5 w-5 ${theme.text}`} />
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
