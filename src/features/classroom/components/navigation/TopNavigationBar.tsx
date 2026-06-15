@@ -13,17 +13,6 @@ export const TopNavigationBar = ({
     <div className="flex justify-between items-center mb-6">
       {/* Container untuk tombol Kembali dan Menu agar berdampingan */}
       <div className="flex items-center gap-3">
-        {/* Tombol Kembali (Arrow) */}
-        <button
-          onClick={() => window.history.back()}
-          className="flex items-center gap-3 text-gray-400 hover:text-white transition-all group cursor-pointer"
-          title="Kembali"
-        >
-          <div className="p-2.5 rounded-2xl border border-white/5 group-hover:border-white/20 bg-white/5 group-hover:bg-white/10 transition-all duration-300 backdrop-blur-xl shadow-lg">
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
-          </div>
-        </button>
-
         {/* Tombol Menu */}
         <button
           onClick={() => setIsSidebarOpen(true)}
