@@ -56,7 +56,7 @@ export type ClassroomCardProps = {
   id?: string;
   title: string;
   description?: string;
-  classCode: string;
+  classCode?: string;
   teacherName?: string;
   memberCount: number;
   bookCount: number;
