@@ -47,8 +47,6 @@ export const ClassroomDetailView = () => {
     isLoading: isLoadingBook,
     error: bookError,
   } = useGetClassBook(classroomId!);
-  console.log("classroomId:", classroomId);
-  console.log("bookData:", bookData);
 
   const { data: teacherClasses } = useMyClassesTeacher();
   const { data: studentClasses } = useMyJoinedClass();
@@ -91,14 +89,21 @@ export const ClassroomDetailView = () => {
   const toneIndex = classroom.id.charCodeAt(0) % tones.length;
   const theme = toneStyles[tones[toneIndex]];
 
-  const visibleBooks = isTeacher
-    ? bookData
-    : bookData?.filter((b) => b.book.status === "active");
+  const filteredBooks = (bookData ?? []).filter((b) =>
+    b.book.title.toLowerCase().includes(bookSearch.toLowerCase()),
+  );
 
-  const filteredBooks =
-    visibleBooks?.filter((b) =>
-      b.book.title.toLowerCase().includes(bookSearch.toLowerCase()),
-    ) ?? [];
+  console.log("teacherClasses", teacherClasses);
+  console.log("studentClasses", studentClasses);
+  console.log("classroom", classroom);
+
+  console.log(
+    "BOOK DATA",
+    bookData?.map((b) => ({
+      title: b.book.title,
+      status: b.book.status,
+    })),
+  );
 
   return (
     <div className="min-h-screen bg-[#06080C] text-slate-200 font-sans antialiased selection:bg-indigo-500/40 pb-12">
