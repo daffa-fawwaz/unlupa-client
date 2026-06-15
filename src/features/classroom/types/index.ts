@@ -25,7 +25,7 @@ export interface CreateClassPayload {
 }
 
 export interface JoinClassPayload {
-  code: string
+  code: string;
 }
 
 export interface UpdateClassPayload {
@@ -56,7 +56,8 @@ export type ClassroomCardProps = {
   id?: string;
   title: string;
   description?: string;
-  teacherName: string;
+  classCode: string;
+  teacherName?: string;
   memberCount: number;
   bookCount: number;
   nextSessionLabel?: string;
@@ -73,7 +74,6 @@ export type CreateClassButtonProps = {
   onClick?: () => void;
 };
 
-
 // GET CLASS MEMBER
 
 export type ClassMember = {
@@ -81,7 +81,7 @@ export type ClassMember = {
   email: string;
   full_name: string;
   joined_at: string;
-}
+};
 
 // GET CLASS BOOK
 
@@ -91,5 +91,5 @@ export type GetClassBook = {
   book_id: string;
   order: number;
   created_at: string;
-  book: Book
-}
+  book: Book;
+};

@@ -8,7 +8,7 @@ import { ClassroomCardMenu } from "./ClassroomCardMenu";
 export const ClassroomCard = ({
   title,
   description,
-  teacherName,
+  classCode,
   memberCount,
   bookCount,
   status = "active",
@@ -78,10 +78,10 @@ export const ClassroomCard = ({
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
-              Pengajar
+              Kode Kelas
             </p>
             <p className="truncate text-sm font-semibold text-gray-300">
-              {teacherName}
+              {classCode}
             </p>
           </div>
         </div>

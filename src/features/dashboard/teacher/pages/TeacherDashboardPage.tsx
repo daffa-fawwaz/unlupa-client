@@ -144,27 +144,27 @@ export const TeacherDashboardPage = () => {
               {classrooms?.map((classroom, index) => {
                 const toneIndex = index % tones.length;
                 return (
-                <ClassroomCard
-                  key={classroom.id}
-                  id={classroom.id}
-                  title={classroom.name}
-                  description={classroom.description}
-                  coverImage={classroom?.cover_image}
-                  bookCount={12}
-                  memberCount={classroom.student_count}
-                  teacherName={classroom.owner_name}
-                  tone={tones[toneIndex]}
-                  onClick={() => navigate(`/dashboard/kelas/${classroom.id}`)}
-                  onEdit={() => {
-                    setSelectedClassroom(classroom);
-                    setIsEditModalOpen(true);
-                  }}
-                  onDelete={() => {
-                    setIsDeleteModalOpen(true);
-                    setSelectedClassroom(classroom);
-                  }}
-                />
-              );
+                  <ClassroomCard
+                    key={classroom.id}
+                    id={classroom.id}
+                    title={classroom.name}
+                    description={classroom.description}
+                    coverImage={classroom?.cover_image}
+                    bookCount={12}
+                    memberCount={classroom.student_count}
+                    classCode={classroom.class_code}
+                    tone={tones[toneIndex]}
+                    onClick={() => navigate(`/dashboard/kelas/${classroom.id}`)}
+                    onEdit={() => {
+                      setSelectedClassroom(classroom);
+                      setIsEditModalOpen(true);
+                    }}
+                    onDelete={() => {
+                      setIsDeleteModalOpen(true);
+                      setSelectedClassroom(classroom);
+                    }}
+                  />
+                );
               })}
             </div>
           )}
