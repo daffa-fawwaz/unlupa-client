@@ -12,7 +12,7 @@ export const useGetDaily = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await alquranService.getDaily();
+      const response = await alquranService.getDaily("quran");
       setData(response);
     } catch (err: unknown) {
       const message = isAxiosError(err)

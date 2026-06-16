@@ -46,7 +46,7 @@ export const useDailyReviewEstimate = () => {
 
       // Use the daily endpoint — it already filters items due today,
       // includes the correct status for each item, and provides juz_index.
-      const dailyTasks: DailyTask[] = await alquranService.getDaily();
+      const dailyTasks: DailyTask[] = await alquranService.getDaily("quran");
 
       // Only include quran items that are pending review (not yet done)
       // and have a reviewable status (interval or fsrs_active/graduate).
