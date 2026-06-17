@@ -51,7 +51,7 @@ export const DailyReviewSection = () => {
   // Fetch daily tasks to get completed state from API
   const refreshDailyState = useCallback(async () => {
     try {
-      const response = await alquranService.getDaily();
+      const response = await alquranService.getDaily("quran");
       const completed = new Set(
         response.filter((t) => t.state === "completed").map((t) => t.item_id),
       );

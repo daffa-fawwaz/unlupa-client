@@ -12,7 +12,7 @@ export const useGetDailyBooks = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await personalService.getDailyBooks();
+      const response = await personalService.getDailyBooks("book");
       setData(response);
       return response;
     } catch (err: unknown) {

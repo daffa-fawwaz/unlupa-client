@@ -72,7 +72,9 @@ const normalizeItemImage = <T>(item: T): T => {
   return { ...item, image };
 };
 
-const normalizeModulesItemImages = <T extends { items?: unknown; children?: T[] }>(
+const normalizeModulesItemImages = <
+  T extends { items?: unknown; children?: T[] },
+>(
   modules: T[] | null | undefined,
 ): T[] => {
   if (!modules) return modules ?? [];
@@ -147,7 +149,10 @@ export const personalService = {
     moduleId: string,
     payload: UpdateModulePayload,
   ): Promise<UpdateModuleResponse> {
-    const response = await api.put(`/api/v1/books/modules/${moduleId}`, payload);
+    const response = await api.put(
+      `/api/v1/books/modules/${moduleId}`,
+      payload,
+    );
     return response.data;
   },
 
@@ -265,7 +270,9 @@ export const personalService = {
     bookId: string,
     itemId: string,
   ): Promise<StartItemPhaseResponse> {
-    const response = await api.post(`/api/v1/books/${bookId}/items/${itemId}/start`);
+    const response = await api.post(
+      `/api/v1/books/${bookId}/items/${itemId}/start`,
+    );
     return response.data;
   },
 
@@ -306,10 +313,12 @@ export const personalService = {
     return response.data;
   },
 
-  async getDailyBooks(): Promise<BookDailyTasksResponse> {
+  async getDailyBooks(group: "book"): Promise<BookDailyTasksResponse> {
     const today = new Date();
     const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-    const response = await api.get(`/api/v1/daily?date=${dateStr}`);
+    const response = await api.get(
+      `/api/v1/daily?date=${dateStr}&group=${group}`,
+    );
     return response.data;
   },
 

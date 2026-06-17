@@ -4,14 +4,19 @@ import {
   Sun,
   Target,
   Trophy,
+  UserCheck,
+  X,
+  Loader2,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router";
 import type { DashboardContextType } from "@/layouts/DashboardLayout";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
+import { useTeacherRequest } from "../hooks/useTeacherRequest"; 
+import { toast } from "sonner"; 
 
 const getTodayDateKey = () => {
   const now = new Date();
@@ -42,6 +47,12 @@ export const StudentDashboardPage = () => {
 
   const { data: myItems, loading: myItemsLoading, getMyItems } = useGetMyItems();
   const { data: dailyTasks, loading: dailyLoading } = useGetDaily();
+  
+  const { sendTeacherRequest } = useTeacherRequest();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isRequested, setIsRequested] = useState(false); 
 
   useEffect(() => {
     void getMyItems("quran");
@@ -50,26 +61,53 @@ export const StudentDashboardPage = () => {
   const totalTerjaga =
     myItems?.data.groups.reduce((sum, group) => sum + group.item_count, 0) ?? 0;
 
-  // Calculate items by status (dinamis dari API)
   const allItems = myItems?.data.groups.flatMap((group) => group.items) ?? [];
   const totalSelesai = allItems.filter(
     (item) => item.status === "graduated" || item.status === "graduate"
   ).length;
 
-  // Review hari ini (dari daily tasks)
   const reviewHariIni = dailyTasks?.length ?? 0;
 
-  // Calculate estimated focus time today (dinamis dari localStorage)
-  // Asumsi: 1 item review = ~3-5 menit (estimasi berdasarkan kompleksitas)
   const reviewedToday = getReviewedIdsForTaskDate(getTodayDateKey()).length;
-  const estimatedFocusTime = reviewedToday * 4; // 4 menit per item (rata-rata)
+  const estimatedFocusTime = reviewedToday * 4;
 
-  // Get initial letter for avatar
   const initialLetter = name.charAt(0).toUpperCase();
 
+  const handleRequestTeacher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!message.trim()) return;
+
+    // Trigger toast loading state biar user tahu sistem sedang bekerja
+    const toastId = toast.loading("Sedang mengirim pengajuan Anda...");
+
+    try {
+      await sendTeacherRequest.mutateAsync({ message: message });
+      
+      setIsRequested(true);
+      setIsModalOpen(false);
+      setMessage("");
+
+      // Update toast ke sukses dengan style kustom gelap/amber jika diinginkan
+      toast.success("Pengajuan berhasil dikirim! Menunggu persetujuan admin.", {
+        id: toastId,
+        duration: 4000,
+      });
+    } catch (error: any) {
+      console.error("Error submitting teacher request:", error);
+      
+      // Ambil pesan error dari API backend jika ada, kalau tidak pakai fallback text
+      const errorMessage = error?.response?.data?.message || "Gagal mengirim permintaan. Anda mungkin sudah mengajukannya sebelumnya.";
+      
+      toast.error(errorMessage, {
+        id: toastId,
+        duration: 5000,
+      });
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
-      {/* HEADER (PROFILE FOCUS - CLEANED) */}
+    <div className="max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300 relative">
+      {/* HEADER (PROFILE FOCUS) */}
       <nav className="flex justify-between items-center mb-10">
         {/* Left: Menu Trigger */}
         <button
@@ -84,15 +122,29 @@ export const StudentDashboardPage = () => {
           </span>
         </button>
 
-        {/* Right: User Identity (Dynamic from auth store) */}
+        {/* Right: User Identity & Request Teacher Action */}
         <div className="flex items-center gap-4">
-          <div className="text-right">
+          <div className="text-right flex flex-col items-end">
             <p className="text-sm text-white font-serif font-medium">
               {name}
             </p>
-            <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
-              Penjaga Ilmu
-            </p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
+                Penjaga Ilmu
+              </p>
+              <span className="text-gray-600 text-[10px]">•</span>
+              <button
+                onClick={() => !isRequested && setIsModalOpen(true)}
+                disabled={isRequested}
+                className={`text-[10px] font-mono uppercase tracking-widest transition cursor-pointer flex items-center gap-1 ${
+                  isRequested 
+                    ? "text-emerald-500 cursor-not-allowed" 
+                    : "text-amber-500/80 hover:text-amber-400 underline decoration-amber-500/30 underline-offset-4"
+                }`}
+              >
+                {isRequested ? "Request Pending" : "Jadi Guru?"}
+              </button>
+            </div>
           </div>
           <div className="w-10 h-10 rounded-full bg-linear-to-b from-amber-500 to-amber-700 flex items-center justify-center font-serif font-bold text-black border-2 border-amber-400/50 shadow-lg shadow-amber-500/20">
             {initialLetter}
@@ -100,7 +152,7 @@ export const StudentDashboardPage = () => {
         </div>
       </nav>
 
-      {/* 1. QUOTE BANNER (Fixed Text) */}
+      {/* 1. QUOTE BANNER */}
       <div className="quote-banner fade-in-up mb-12 text-center md:text-left border-l-4 border-amber-500 bg-linear-to-r from-amber-900/20 to-transparent p-6 rounded-r-xl">
         <p className="text-xl md:text-2xl font-serif text-white italic leading-relaxed">
           "Menjaga hafalan itu lebih ringan <br /> daripada mengulang hafalan
@@ -108,7 +160,6 @@ export const StudentDashboardPage = () => {
         </p>
         <p className="text-xs text-amber-500 mt-3 font-mono uppercase tracking-widest flex items-center gap-2 md:justify-start justify-center">
           <Sun className="w-3 h-3" />
-          {/* Fixed Text Greeting */}
           <span className="shimmer-text">
             Istiqomah Hari Ini = Kemudahan Esok Hari
           </span>
@@ -120,7 +171,7 @@ export const StudentDashboardPage = () => {
 
       {/* 2. STATS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-        {/* Stat 1: Materi Terjaga (dinamis dari my-items API) */}
+        {/* Stat 1: Materi Terjaga */}
         <div className="glass-stat border-emerald-500/20 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition"></div>
           <div className="flex justify-between items-start mb-6">
@@ -143,7 +194,7 @@ export const StudentDashboardPage = () => {
           </div>
         </div>
 
-        {/* Stat 2: Review Hari Ini (dinamis dari daily tasks API) */}
+        {/* Stat 2: Review Hari Ini */}
         <div className="glass-stat border-purple-500/20 bg-purple-900/5 relative overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300">
           <div className="absolute inset-0 bg-linear-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
           <div className="flex justify-between items-start mb-6 relative z-10">
@@ -165,7 +216,7 @@ export const StudentDashboardPage = () => {
           </p>
         </div>
 
-        {/* Stat 3: Total Selesai/Graduated (dinamis dari my-items API) */}
+        {/* Stat 3: Total Selesai */}
         <div className="glass-stat border-amber-500/20 relative overflow-hidden group">
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition"></div>
           <div className="flex justify-between items-start mb-4">
@@ -222,6 +273,72 @@ export const StudentDashboardPage = () => {
           </div>
         </div>
       </div>
+
+      {/* MODAL DIALOG: REQUEST TEACHER */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md transition-opacity duration-300">
+          <div className="bg-neutral-900 border border-amber-500/30 rounded-2xl max-w-md w-full p-6 relative shadow-2xl shadow-amber-500/5 animate-in fade-in zoom-in-95 duration-200">
+            
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-500">
+                <UserCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-lg font-serif text-white">Ajukan Sebagai Pengajar</h4>
+                <p className="text-xs text-gray-400 font-sans">Bagikan ilmu dan bimbing generasi penghafal.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleRequestTeacher} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-mono uppercase tracking-widest text-gray-400 mb-2">
+                  Pesan / Catatan Pengajuan
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Contoh: Saya lulusan pondok pesantren X dan ingin berkontribusi mengajar di UNLUPA..."
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white placeholder-gray-600 focus:outline-hidden focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-xs font-mono uppercase tracking-widest text-gray-400 hover:text-white border border-transparent hover:border-white/10 rounded-lg transition cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={sendTeacherRequest.isPending}
+                  className="px-5 py-2 text-xs font-mono uppercase tracking-widest bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg transition shadow-lg shadow-amber-500/10 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {sendTeacherRequest.isPending ? (
+                    <>
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Mengirim...
+                    </>
+                  ) : (
+                    "Kirim Request"
+                  )}
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

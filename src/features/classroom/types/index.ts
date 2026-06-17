@@ -93,3 +93,5 @@ export type GetClassBook = {
   created_at: string;
   book: Book;
 };
+
+
