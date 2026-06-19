@@ -98,4 +98,13 @@ export const classroomService = {
     const response = await api.get(`/api/v1/classes/${classId}/books`);
     return response.data.data;
   },
+
+  // ADD BOOK TO CLASS (TEACHER)
+  addBookToClass: async (
+    classId: string,
+    payload: { book_id: string; order: number },
+  ): Promise<any> => {
+    const response = await api.post(`/api/v1/classes/${classId}/books`, payload);
+    return response.data.data;
+  },
 };

@@ -88,3 +88,20 @@ export const useGetClassBook = (classId: string) => {
     queryFn: () => classroomService.getClassBook(classId),
   });
 };
+
+// Hook to add book to classroom
+export const useAddBookToClass = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: { classId: string; bookId: string; order: number }) =>
+      classroomService.addBookToClass(payload.classId, {
+        book_id: payload.bookId,
+        order: payload.order,
+      }),
+    onSuccess: (_, variables) => {
+      // Invalidate and refetch the class books list
+      queryClient.invalidateQueries({ queryKey: ["class-book", variables.classId] });
+    },
+  });
+};

@@ -15,8 +15,9 @@ import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 import { useGetDaily } from "@/features/alquran/hooks/useGetDaily";
-import { useTeacherRequest } from "../hooks/useTeacherRequest"; 
-import { toast } from "sonner"; 
+import { useTeacherRequest } from "../hooks/useTeacherRequest";
+import { toast } from "sonner";
+import { isAxiosError } from "axios";
 
 const getTodayDateKey = () => {
   const now = new Date();
@@ -45,14 +46,18 @@ export const StudentDashboardPage = () => {
   const { toggleSidebar } = useOutletContext<DashboardContextType>();
   const { name } = useCurrentUser();
 
-  const { data: myItems, loading: myItemsLoading, getMyItems } = useGetMyItems();
+  const {
+    data: myItems,
+    loading: myItemsLoading,
+    getMyItems,
+  } = useGetMyItems();
   const { data: dailyTasks, loading: dailyLoading } = useGetDaily();
-  
+
   const { sendTeacherRequest } = useTeacherRequest();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [isRequested, setIsRequested] = useState(false); 
+  const [isRequested, setIsRequested] = useState(false);
 
   useEffect(() => {
     void getMyItems("quran");
@@ -63,7 +68,7 @@ export const StudentDashboardPage = () => {
 
   const allItems = myItems?.data.groups.flatMap((group) => group.items) ?? [];
   const totalSelesai = allItems.filter(
-    (item) => item.status === "graduated" || item.status === "graduate"
+    (item) => item.status === "graduated" || item.status === "graduate",
   ).length;
 
   const reviewHariIni = dailyTasks?.length ?? 0;
@@ -82,7 +87,7 @@ export const StudentDashboardPage = () => {
 
     try {
       await sendTeacherRequest.mutateAsync({ message: message });
-      
+
       setIsRequested(true);
       setIsModalOpen(false);
       setMessage("");
@@ -92,12 +97,19 @@ export const StudentDashboardPage = () => {
         id: toastId,
         duration: 4000,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error submitting teacher request:", error);
-      
-      // Ambil pesan error dari API backend jika ada, kalau tidak pakai fallback text
-      const errorMessage = error?.response?.data?.message || "Gagal mengirim permintaan. Anda mungkin sudah mengajukannya sebelumnya.";
-      
+
+      if (isAxiosError(error)) {
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", error.response?.data);
+      }
+
+      const errorMessage = isAxiosError(error)
+        ? error.response?.data?.message ||
+          "Gagal mengirim permintaan. Anda mungkin sudah mengajukannya sebelumnya."
+        : "Terjadi kesalahan yang tidak diketahui.";
+
       toast.error(errorMessage, {
         id: toastId,
         duration: 5000,
@@ -125,9 +137,7 @@ export const StudentDashboardPage = () => {
         {/* Right: User Identity & Request Teacher Action */}
         <div className="flex items-center gap-4">
           <div className="text-right flex flex-col items-end">
-            <p className="text-sm text-white font-serif font-medium">
-              {name}
-            </p>
+            <p className="text-sm text-white font-serif font-medium">{name}</p>
             <div className="flex items-center gap-2 mt-0.5">
               <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
                 Penjaga Ilmu
@@ -137,8 +147,8 @@ export const StudentDashboardPage = () => {
                 onClick={() => !isRequested && setIsModalOpen(true)}
                 disabled={isRequested}
                 className={`text-[10px] font-mono uppercase tracking-widest transition cursor-pointer flex items-center gap-1 ${
-                  isRequested 
-                    ? "text-emerald-500 cursor-not-allowed" 
+                  isRequested
+                    ? "text-emerald-500 cursor-not-allowed"
                     : "text-amber-500/80 hover:text-amber-400 underline decoration-amber-500/30 underline-offset-4"
                 }`}
               >
@@ -210,8 +220,8 @@ export const StudentDashboardPage = () => {
             <p className="text-sm text-purple-300 mt-1">Tugas Review</p>
           </div>
           <p className="text-[10px] text-center text-gray-500 mt-6 relative z-10">
-            {reviewHariIni > 0 
-              ? "Ayo selesaikan sekarang!" 
+            {reviewHariIni > 0
+              ? "Ayo selesaikan sekarang!"
               : "Tidak ada tugas hari ini"}
           </p>
         </div>
@@ -235,15 +245,16 @@ export const StudentDashboardPage = () => {
             <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
               <div
                 className="h-full bg-linear-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500"
-                style={{ 
-                  width: totalTerjaga > 0 
-                    ? `${Math.min((totalSelesai / totalTerjaga) * 100, 100)}%` 
-                    : "0%" 
+                style={{
+                  width:
+                    totalTerjaga > 0
+                      ? `${Math.min((totalSelesai / totalTerjaga) * 100, 100)}%`
+                      : "0%",
                 }}
               />
             </div>
             <p className="text-[10px] text-amber-500/70 mt-2">
-              {totalTerjaga > 0 
+              {totalTerjaga > 0
                 ? `${Math.round((totalSelesai / totalTerjaga) * 100)}% dari total terjaga`
                 : "Mulai menghafal untuk melihat progress"}
             </p>
@@ -278,7 +289,6 @@ export const StudentDashboardPage = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md transition-opacity duration-300">
           <div className="bg-neutral-900 border border-amber-500/30 rounded-2xl max-w-md w-full p-6 relative shadow-2xl shadow-amber-500/5 animate-in fade-in zoom-in-95 duration-200">
-            
             <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-white transition cursor-pointer"
@@ -291,8 +301,12 @@ export const StudentDashboardPage = () => {
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-lg font-serif text-white">Ajukan Sebagai Pengajar</h4>
-                <p className="text-xs text-gray-400 font-sans">Bagikan ilmu dan bimbing generasi penghafal.</p>
+                <h4 className="text-lg font-serif text-white">
+                  Ajukan Sebagai Pengajar
+                </h4>
+                <p className="text-xs text-gray-400 font-sans">
+                  Bagikan ilmu dan bimbing generasi penghafal.
+                </p>
               </div>
             </div>
 
@@ -335,7 +349,6 @@ export const StudentDashboardPage = () => {
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       )}
