@@ -80,13 +80,15 @@ export const BookCard = ({ book, onClick, onEdit, onDelete }: BookCardProps) => 
       <div className="absolute -inset-10 bg-blue-500/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-full pointer-events-none" />
 
       {/* Three-dot button — inside card, z-10 */}
-      <button
-        ref={btnRef}
-        onClick={toggleMenu}
-        className="absolute top-3 right-3 z-20 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-xl border border-white/15 shadow-lg text-gray-300 hover:text-white hover:bg-white/20 transition-all duration-300"
-      >
-        <MoreVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-      </button>
+      {(onEdit || onDelete) && (
+        <button
+          ref={btnRef}
+          onClick={toggleMenu}
+          className="absolute top-3 right-3 z-20 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-xl border border-white/15 shadow-lg text-gray-300 hover:text-white hover:bg-white/20 transition-all duration-300"
+        >
+          <MoreVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        </button>
+      )}
 
       {/* Dropdown via portal — never clipped */}
       {menuOpen && createPortal(

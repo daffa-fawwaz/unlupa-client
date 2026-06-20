@@ -11,6 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useBooks } from "../hooks/useBooks";
+import { useMyCollection } from "../hooks/useMyCollection";
 import { Link, useNavigate } from "react-router";
 import { BookCard } from "./BookCard";
 import { CreateBookModal } from "./CreateBookModal";
@@ -27,10 +28,12 @@ export const PersonalDashboard = () => {
   const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
   const { books, loading, fetchBooks, deleteBook } = useBooks();
+  const { collection, loadingCollection, fetchCollection } = useMyCollection();
 
   useEffect(() => {
     void fetchBooks();
-  }, [fetchBooks]);
+    void fetchCollection();
+  }, [fetchBooks, fetchCollection]);
 
   const totalMateri = books.length;
 
@@ -281,7 +284,7 @@ export const PersonalDashboard = () => {
               <div className="max-w-2xl">
                 <div className="flex items-center gap-3 mb-2">
                   <h2 className="text-3xl font-serif font-bold text-white tracking-wide flex items-center gap-3">
-                    Perpustakaan Global
+                    Katalog Impor
                     <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 align-middle flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
                       Live
@@ -289,39 +292,70 @@ export const PersonalDashboard = () => {
                   </h2>
                 </div>
                 <p className="text-gray-500 text-sm">
-                  Download karya pengguna lain ke dalam workspace Anda.
+                  Karya pengguna lain yang Anda unduh ke workspace Anda.
                 </p>
               </div>
-            </div>
-
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-linear-to-r from-purple-500/10 to-pink-500/10 rounded-[3rem] blur opacity-40 group-hover:opacity-75 transition duration-1000"></div>
-              <div className="relative flex flex-col items-center justify-center py-28 px-4 rounded-[3rem] border border-white/5 bg-[#0F141C] text-center overflow-hidden">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[400px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
-
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-[2rem] bg-linear-to-br from-[#1A1A2E] to-[#16213E] flex items-center justify-center mb-8 border border-purple-500/20 shadow-[0_0_40px_rgba(168,85,247,0.15)] mx-auto relative z-10 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700">
-                    <Library className="w-10 h-10 text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                  </div>
-                </div>
-
-                <h3 className="text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-md">
-                  Area Unduhan Kosong
-                </h3>
-                <p className="text-gray-400 max-w-md mb-10 text-lg font-light leading-relaxed">
-                  Jelajahi berbagai materi kurikulum pilihan dari penuntut ilmu
-                  yang lain yang siap pakai untuk Anda pelajari sekarang.
-                </p>
-
+              <div className="flex shrink-0">
                 <Link
                   to="/dashboard/pribadi/explore"
-                  className="w-max px-8 py-4 rounded-full cursor-pointer bg-[#1A1A2E] border border-purple-500/30 hover:border-purple-400 hover:bg-[#202035] shadow-[0_10px_30px_rgba(168,85,247,0.15)] hover:shadow-[0_10px_40px_rgba(168,85,247,0.3)] text-white font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 decoration-transparent"
+                  className="px-6 py-2.5 rounded-full cursor-pointer bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 font-bold transition-all flex items-center gap-2 border border-purple-500/20 shadow-lg shadow-purple-500/5 decoration-transparent"
                 >
-                  <Download className="w-5 h-5 text-purple-400" />
-                  <span className="tracking-wide">Jelajahi Perpustakaan</span>
+                  <Download className="w-4 h-4" />
+                  <span className="text-sm">Jelajahi Perpustakaan</span>
                 </Link>
               </div>
             </div>
+
+            {loadingCollection && collection.length === 0 ? (
+              <div className="flex flex-col justify-center items-center py-20 bg-[#111620]/30 rounded-[2.5rem] border border-white/5">
+                <Loader2 className="w-8 h-8 text-purple-500 animate-spin mb-4" />
+                <p className="text-gray-500 text-sm animate-pulse">
+                  Memuat koleksi impor...
+                </p>
+              </div>
+            ) : collection.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+                {collection.map((book) => (
+                  <BookCard
+                    key={book.id}
+                    book={book}
+                    onClick={() =>
+                      navigate(`/dashboard/pribadi/book/${book.id}`)
+                    }
+                    // onEdit and onDelete not provided to disable editing/deleting global library items
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-linear-to-r from-purple-500/10 to-pink-500/10 rounded-[3rem] blur opacity-40 group-hover:opacity-75 transition duration-1000"></div>
+                <div className="relative flex flex-col items-center justify-center py-28 px-4 rounded-[3rem] border border-white/5 bg-[#0F141C] text-center overflow-hidden">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[400px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-[2rem] bg-linear-to-br from-[#1A1A2E] to-[#16213E] flex items-center justify-center mb-8 border border-purple-500/20 shadow-[0_0_40px_rgba(168,85,247,0.15)] mx-auto relative z-10 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700">
+                      <Library className="w-10 h-10 text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                    </div>
+                  </div>
+
+                  <h3 className="text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-md">
+                    Area Unduhan Kosong
+                  </h3>
+                  <p className="text-gray-400 max-w-md mb-10 text-lg font-light leading-relaxed">
+                    Jelajahi berbagai materi kurikulum pilihan dari penuntut ilmu
+                    yang lain yang siap pakai untuk Anda pelajari sekarang.
+                  </p>
+
+                  <Link
+                    to="/dashboard/pribadi/explore"
+                    className="w-max px-8 py-4 rounded-full cursor-pointer bg-[#1A1A2E] border border-purple-500/30 hover:border-purple-400 hover:bg-[#202035] shadow-[0_10px_30px_rgba(168,85,247,0.15)] hover:shadow-[0_10px_40px_rgba(168,85,247,0.3)] text-white font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 decoration-transparent"
+                  >
+                    <Download className="w-5 h-5 text-purple-400" />
+                    <span className="tracking-wide">Jelajahi Perpustakaan</span>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

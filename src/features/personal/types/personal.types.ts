@@ -18,6 +18,24 @@ export interface GetBooksResponse {
   path: string;
 }
 
+export interface BookCollectionItem {
+  book_id: string;
+  title: string;
+  description: string;
+  cover_image: string;
+  owner_name: string;
+  item_count: number;
+  added_at: string;
+}
+
+export interface GetMyCollectionResponse {
+  status: number;
+  message: string;
+  data: BookCollectionItem[];
+  timestamp: string;
+  path: string;
+}
+
 export interface CreateBookPayload {
   title: string;
   description: string;

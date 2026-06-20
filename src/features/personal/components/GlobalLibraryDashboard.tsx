@@ -3,15 +3,41 @@ import { useState, useEffect } from "react";
 import { Menu, Library, Loader2, Globe, Search, ArrowLeft } from "lucide-react";
 import { usePublishedBooks } from "../hooks/usePublishedBooks";
 import { PublicBookCard } from "./PublicBookCard";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
+import { toast } from "sonner";
+import { isAxiosError } from "axios";
+import { personalService } from "../services/personal.services";
+import type { Book } from "../types/personal.types";
 
 export const GlobalLibraryDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { books, loading, fetchBooks } = usePublishedBooks();
+  const navigate = useNavigate();
 
   useEffect(() => {
     void fetchBooks();
   }, [fetchBooks]);
+
+  const handleImport = async (book: Book) => {
+    const toastId = toast.loading("Menambahkan ke koleksi...");
+    try {
+      await personalService.addPublishedBookToMyBooks(book.id);
+      toast.success("Kitab berhasil ditambahkan ke koleksi Anda!", {
+        id: toastId,
+        duration: 4000,
+      });
+      navigate("/dashboard/pribadi");
+    } catch (error: unknown) {
+      const errorMessage = isAxiosError(error)
+        ? error.response?.data?.message || "Gagal menambahkan kitab."
+        : "Terjadi kesalahan yang tidak diketahui.";
+
+      toast.error(errorMessage, {
+        id: toastId,
+        duration: 5000,
+      });
+    }
+  };
 
   const totalPublished = books.length;
 
@@ -107,7 +133,7 @@ export const GlobalLibraryDashboard = () => {
           ) : books.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {books.map((book) => (
-                <PublicBookCard key={book.id} book={book} />
+                <PublicBookCard key={book.id} book={book} onImport={handleImport} />
               ))}
             </div>
           ) : (

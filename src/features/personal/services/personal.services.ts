@@ -3,6 +3,7 @@ import type {
   CreateBookPayload,
   CreateBookResponse,
   GetBooksResponse,
+  GetMyCollectionResponse,
   GetBookDetailResponse,
   GetBookTreeResponse,
   CreateModulePayload,
@@ -121,8 +122,18 @@ export const personalService = {
     return response.data;
   },
 
+  async getMyCollection(): Promise<GetMyCollectionResponse> {
+    const response = await api.get("/api/v1/books/my-collection");
+    return response.data;
+  },
+
   async getPublishedBooks(): Promise<GetBooksResponse> {
     const response = await api.get("/api/v1/books/published");
+    return response.data;
+  },
+
+  async addPublishedBookToMyBooks(id: string): Promise<CreateBookResponse> {
+    const response = await api.post(`/api/v1/books/published/${id}/add-to-my-books`);
     return response.data;
   },
 
