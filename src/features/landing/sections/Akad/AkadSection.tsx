@@ -20,13 +20,13 @@ export const AkadSection = () => {
       <div className="text-center mb-24 animate-fade-in-up">
         <div className="inline-flex items-center gap-3 mb-8 opacity-70">
           <span className="w-px h-8 bg-linear-to-b from-transparent to-warning"></span>
-          <span className="font-cinzel text-xs text-warning tracking-[0.3em] uppercase">
+          <span className="font-display text-xs text-warning tracking-[0.3em] uppercase">
             Akad Moral & Etika
           </span>
           <span className="w-px h-8 bg-linear-to-b from-transparent to-warning"></span>
         </div>
 
-        <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-10 leading-tight">
+        <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-10 leading-tight tracking-tight">
           Kesepakatan Kita <br />{" "}
           <span className="text-warning italic">Menjaga Ilmu</span>
         </h1>
@@ -62,7 +62,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <Target className="w-8 h-8 text-info shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Tujuan Penggunaan
               </h3>
               <p className="text-foreground/70 mb-6 leading-relaxed">
@@ -95,7 +95,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <Shield className="w-8 h-8 text-success shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Ilmu Sebagai Amanah
               </h3>
               <div className="text-foreground/70 leading-relaxed space-y-4">
@@ -125,7 +125,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <CloudOff className="w-8 h-8 text-muted-foreground shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Lupa & Proses Belajar
               </h3>
               <p className="text-foreground/70 leading-relaxed mb-4">
@@ -149,7 +149,7 @@ export const AkadSection = () => {
             <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center border border-warning/50">
               <ShieldCheck className="w-6 h-6 text-warning" />
             </div>
-            <h3 className="font-cinzel text-2xl text-warning">
+            <h3 className="font-display text-2xl text-warning">
               Kejujuran sebagai Asas Utama
             </h3>
           </div>
@@ -216,7 +216,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <BookHeart className="w-8 h-8 text-success shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Tentang Hafalan Al-Qur’an
               </h3>
               <p className="text-foreground/70 leading-relaxed mb-4">
@@ -243,7 +243,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <Cpu className="w-8 h-8 text-info shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Sistem & Batasannya
               </h3>
               <p className="text-foreground/70 leading-relaxed">
@@ -274,7 +274,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <HeartHandshake className="w-8 h-8 text-primary shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Kontribusi & Keberlanjutan
               </h3>
               <p className="text-foreground/70 leading-relaxed mb-4">
@@ -300,7 +300,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <ShieldAlert className="w-8 h-8 text-destructive shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Itikad Baik
               </h3>
               <p className="text-foreground/70 leading-relaxed">
@@ -322,7 +322,7 @@ export const AkadSection = () => {
           <div className="flex items-start gap-6">
             <RefreshCcw className="w-8 h-8 text-muted-foreground shrink-0 mt-1" />
             <div>
-              <h3 className="font-cinzel text-xl text-foreground mb-4">
+              <h3 className="font-display text-xl text-foreground mb-4 leading-snug">
                 Tentang Perubahan
               </h3>
               <p className="text-foreground/70 leading-relaxed">
@@ -340,7 +340,7 @@ export const AkadSection = () => {
         <div className="inline-block p-10 border border-border bg-card rounded-2xl max-w-2xl relative overflow-hidden">
           <Feather className="w-8 h-8 text-warning mx-auto mb-6" />
 
-          <h3 className="font-cinzel text-xl text-foreground mb-6 tracking-widest">
+          <h3 className="font-display text-xl text-foreground mb-6 tracking-widest">
             Akad yang Kita Jaga Bersama
           </h3>
 

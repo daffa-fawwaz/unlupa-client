@@ -14,7 +14,7 @@ export const SolutionSection = () => {
         </div>
 
         <div className="text-center mb-16">
-          <h2 className="font-serif italic text-3xl md:text-5xl text-muted-foreground mb-4 leading-relaxed">
+          <h2 className="font-serif italic text-3xl md:text-5xl text-muted-foreground mb-4 leading-tight">
             Kerugian Ini Sebenarnya <br />
             <span className="bg-linear-to-br from-warning via-warning/70 to-warning bg-clip-text text-transparent font-bold not-italic text-4xl md:text-6xl tracking-wide">
               BISA DICEGAH

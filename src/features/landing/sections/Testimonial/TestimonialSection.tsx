@@ -17,7 +17,7 @@ export const TestimonialSection = () => {
   return (
     <section id="social-proof" className="relative w-full py-24 md:py-32">
       <div className="text-center mb-16 px-6">
-        <p className="font-mono text-primary text-[10px] md:text-xs tracking-[0.3em] uppercase mb-6 flex items-center justify-center gap-2">
+        <p className="font-display text-primary text-xs tracking-[0.3em] uppercase mb-6 flex items-center justify-center gap-2">
           <Activity className="w-3 h-3" /> Live Data Logs
         </p>
         <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-6 leading-tight tracking-tight">

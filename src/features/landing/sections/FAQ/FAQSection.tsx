@@ -77,10 +77,10 @@ export const FAQSection = () => {
       <div className="text-center mb-16">
         <div className="inline-flex items-center gap-3 mb-6">
           <span className="w-px h-8 bg-gradient-to-b from-transparent to-primary"></span>
-          <span className="font-mono text-xs text-primary tracking-[0.3em] uppercase">Pusat Informasi</span>
+          <span className="font-display text-xs text-primary tracking-[0.3em] uppercase">Pusat Informasi</span>
           <span className="w-px h-8 bg-gradient-to-b from-transparent to-primary"></span>
         </div>
-        <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-6 leading-tight">
+        <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-6 leading-tight tracking-tight">
           Pertanyaan yang Sering <br /> <span className="text-primary italic">Ditanyakan</span>
         </h2>
         <p className="text-muted-foreground font-light text-sm tracking-wide">Jawaban untuk keraguan Anda yang ingin belajar dengan serius.</p>

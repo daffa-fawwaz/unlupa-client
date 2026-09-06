@@ -22,14 +22,14 @@ export const AboutSection = () => {
       <div className="text-center mb-32 animate-fade-in-up relative z-10">
         <div className="inline-flex items-center gap-3 mb-8 opacity-70">
           <span className="w-px h-8 bg-linear-to-b from-transparent to-primary"></span>
-          <span className="font-cinzel text-xs text-primary tracking-[0.3em] uppercase">
+          <span className="font-display text-xs text-primary tracking-[0.3em] uppercase">
             Akad Moral Platform
           </span>
           <span className="w-px h-8 bg-linear-to-b from-transparent to-primary"></span>
         </div>
 
-        <h1 className="font-serif text-4xl md:text-6xl text-foreground mb-12 leading-tight">
-          Nilai & <span className="text-highlight italic">Prinsip</span>
+        <h1 className="font-serif text-4xl md:text-6xl text-foreground mb-12 leading-tight tracking-tight">
+          Nilai & <span className="italic">Prinsip</span>
         </h1>
 
         <div className="max-w-2xl mx-auto space-y-8 text-lg font-light leading-relaxed text-muted-foreground">
@@ -65,7 +65,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-foreground mb-4">
+              <h3 className="font-serif text-2xl text-foreground mb-4 leading-snug">
                 Ilmu Dijaga, Bukan Sekadar Dipelajari
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -95,7 +95,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-foreground mb-4">
+              <h3 className="font-serif text-2xl text-foreground mb-4 leading-snug">
                 Lupa Bukan Kesalahan Manusia
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -127,7 +127,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-foreground mb-4">
+              <h3 className="font-serif text-2xl text-foreground mb-4 leading-snug">
                 Ketenangan Lebih Utama
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -156,7 +156,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-success mb-4">
+              <h3 className="font-serif text-2xl text-success mb-4 leading-snug">
                 Al-Qur’an Diperlakukan Istimewa
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -189,7 +189,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-foreground mb-4">
+              <h3 className="font-serif text-2xl text-foreground mb-4 leading-snug">
                 Manfaat Luas & Keberlanjutan Adil
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -223,7 +223,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-foreground mb-4">
+              <h3 className="font-serif text-2xl text-foreground mb-4 leading-snug">
                 Kejujuran Utama
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -256,7 +256,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-foreground mb-4">
+              <h3 className="font-serif text-2xl text-foreground mb-4 leading-snug">
                 Manusia di Balik Sistem
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -285,7 +285,7 @@ export const AboutSection = () => {
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="font-serif text-2xl text-foreground mb-4">
+              <h3 className="font-serif text-2xl text-foreground mb-4 leading-snug">
                 Belajar adalah Perjalanan Panjang
               </h3>
               <div className="space-y-4 text-muted-foreground font-light leading-relaxed">
@@ -309,7 +309,7 @@ export const AboutSection = () => {
         <div className="inline-block p-10 border border-warning/20 bg-surface-1 rounded-2xl max-w-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-warning to-transparent"></div>
 
-          <h3 className="font-cinzel text-xl text-warning mb-6 tracking-widest">
+          <h3 className="font-display text-xl text-warning mb-6 tracking-widest">
             Akad Kami kepada Anda
           </h3>
 

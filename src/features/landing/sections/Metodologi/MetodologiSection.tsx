@@ -11,12 +11,12 @@ export const MetodologiSection = () => {
         <div className="text-center mb-28">
           <div className="inline-flex items-center gap-3 mb-4 opacity-80">
             <span className="h-px w-8 bg-linear-gradient-to-r from-transparent to-primary"></span>
-            <span className="font-display text-[10px] text-primary tracking-[0.3em] uppercase">
+            <span className="font-display text-xs text-primary tracking-[0.3em] uppercase">
               Metodologi
             </span>
             <span className="h-px w-8 bg-linear-gradient-to-l from-transparent to-primary"></span>
           </div>
-          <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-6 tracking-wide">
+          <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-6 tracking-tight">
             Cara Kerja{" "}
             <span className="font-display text-primary">
               UNLUPA
@@ -44,7 +44,7 @@ export const MetodologiSection = () => {
               <BookOpen className="w-8 h-8 text-info transition-transform duration-500 group-hover:scale-110" />
             </div>
 
-            <h3 className="font-serif text-xl text-foreground mb-3 transition-colors">
+            <h3 className="font-serif text-xl text-foreground mb-3 leading-snug transition-colors">
               Input Materi
             </h3>
             <p className="text-sm text-muted-foreground font-light leading-relaxed">
@@ -64,7 +64,7 @@ export const MetodologiSection = () => {
               <BarChart2 className="w-8 h-8 text-warning transition-transform duration-500 group-hover:scale-110" />
             </div>
 
-            <h3 className="font-serif text-xl text-foreground mb-3 transition-colors">
+            <h3 className="font-serif text-xl text-foreground mb-3 leading-snug transition-colors">
               Nilai Ingatan
             </h3>
             <p className="text-sm text-muted-foreground font-light leading-relaxed">
@@ -85,7 +85,7 @@ export const MetodologiSection = () => {
               <RefreshCw className="w-8 h-8 text-success transition-transform duration-500 group-hover:rotate-180" />
             </div>
 
-            <h3 className="font-serif text-xl text-foreground mb-3 transition-colors">
+            <h3 className="font-serif text-xl text-foreground mb-3 leading-snug transition-colors">
               Recall Presisi
             </h3>
             <p className="text-sm text-muted-foreground font-light leading-relaxed">

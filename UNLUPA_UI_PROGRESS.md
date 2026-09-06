@@ -7,15 +7,14 @@
 
 ## Handoff Sesi Berikutnya (BACA DULU — Rule 12 & Rule 10)
 
-> Status: **Tahap A LOLOS** (user menulis "Tahap A lolos. Lanjut Tahap B." + "sekalian kerjain G5"). **G5 SELESAI.** Berikutnya: **Tahap B** + keputusan commit.
+> Status: **COMMIT 0d70d2d SELESAI** ("feat(ui): redesign visual tahap A (G0–G5) + bug hunt dashboard" — 170 file, `tsconfig.app.tsbuildinfo` sengaja dikecualikan). **B1 Typography landing SELESAI (item 17)** — belum diverifikasi browser. Berikutnya: **verifikasi browser B1** → pilih batch B2–B5.
 
-- **SEMUA pekerjaan G0–G4 + batch 4 temuan + bug hunt dashboard + G5 BELUM di-commit.** Working tree berisi hampir seluruh perubahan redesign; ada file baru yang belum di-track. JANGAN commit tanpa perintah eksplisit user.
-- **Tahap A lolos** — verifikasi browser (Light/Dark, zoom 100/90%, 1280/768/480, dashboard/authenticated flow) disetujui user. Bug hunt dashboard selesai (lihat item 15).
-- **G5 SELESAI (item 16)** — seluruh CSS legacy dihapus dari `index.css` (juga `.glass-panel` tak terpakai di `alquran.css`); semua komponen pemakai class legacy dimigrasikan ke token Tailwind. Grep seluruh `src/**/*.{tsx,ts,js,jsx,css}`: **0 hits** class legacy. Build PASS (CSS 169.33 kB / gzip 21.59 kB).
-- **Checkpoint commit G0–G4 TANPA G5 sudah tidak bisa murni** (index.css dan beberapa file tersentuh di kedua fase). Perlu keputusan user: commit gabungan (G0–G5 + bug fix), atau split via `git add -p`.
-- **Tahap B dimulai** (acuan: `docs/design/references/linear.md` & `raycast.md`). Scope item Tahap B belum dipilih user.
+- **Commit gabungan selesai** atas perintah eksplisit user (keputusan: "1 commit gabungan"). `tsconfig.app.tsbuildinfo` TETAP un-committed (build artifact) dan masih menunjukkan modified di working tree — jangan di-commit.
+- **B1 SELESAI (item 17)** — tipografi landing (acuan linear.md/raycast.md; belum diverifikasi browser). Ringkasan di item 17.
+- **Tahap A + G5** tetap LULOS/SELESAI (item 14-16). Semua pekerjaan berikutnya (item 17) di-commit menyusul setelah verifikasi browser batch.
+- **Tahap B scope yang belum dikerjakan:** B2 Navbar+Footer, B3 Button/Input/Badge, B4 Card & surface ladder, B5 font-cinzel non-landing (Sidebar.tsx & ComingSoonRoomPage masih pakai `.font-cinzel` yang hanya didefinisikan di `alquran.css`, diimpor hanya AlquranPage → tidak teraplikasi).
 - **File pilar wajib dibaca:** `UNLUPA_GOLDEN_RULES.md`, `UNLUPA_UI_PROGRESS.md`, `docs/design/references/linear.md`, `docs/design/references/raycast.md`, `UNLUPA_AGENT_EXECUTE_TODAY.md`. Prinsip: restraint, 1 aksen teal, hairline border, surface ladder, tanpa glow/rainbow/glass, copy Indonesia jangan diganti.
-- **File paling baru diubah:** `src/index.css`, `src/features/landing/sections/Hero/HeroSection.tsx`, `src/features/landing/sections/CTA/CtaSection.tsx`, `src/features/landing/sections/Akad/AkadSection.tsx`, `src/features/landing/sections/About/AboutSection.tsx`, `src/components/ui/SidebarClassItems.tsx`.
+- **File paling baru diubah:** 9 section landing (About, Akad, Feature, Metodologi, Solution, Testimonial, Inklusivitas, FAQ, Price) ± `UNLUPA_UI_PROGRESS.md`.
 
 ## Current Progress
 
@@ -37,14 +36,16 @@
 15. **Bug hunt dashboard selesai:** 4 bug user + 1 temuan audit, semua build PASS — (1) `CreateBookModal`/`EditBookModal` submit disabled → `disabled:bg-surface-2 disabled:text-muted-foreground` (teks terbaca dua tema); (2) `DeactivateJuzModal` dirapikan jadi kartu tengah `max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border-border bg-card shadow-2xl p-6 sm:p-8` + overlay `bg-black/50 backdrop-blur-sm` (hapus wrapper nested); (3) `ItemDetailActionSection` overlay hover "Ke Dashboard" `bg-surface-1` → `bg-white/15 dark:bg-black/30`; (4) `BookCard` cover image container + `overflow-hidden`; (5) `DailyReviewFlashcardModal` header tombol rating + field `headerText` (`text-*-foreground`) agar teks tak sama-warna-dengan-header. Audit harian/flashcard/modal/card/button aman (pola `bg-*`+`text-*-foreground`).
 16. **G5 SELESAI (cleanup CSS legacy):** `index.css` — semua blok cosmic legacy DIHAPUS: glow-*, text-gold/premium/pain/red-fading/gold-gradient/text-glow/text-glow-white, bg-deep-universe (duplikat), vanishing-card, monolith-card (+ varian + ::before + hover), card-nebula, icon-orb, neon-icon, energy-card (+ varian + icon-glow/title-glow), icon-box, log-card, role-*, avatar-box, text-gold-gradient, particle-orbit, glass-panel, glass-stat, footer-link, faq-* (item/header/content/quote/list + accent-* + icon-chevron), cosmic-loader, btn-start, btn-submit, shard-card/shard-gold/clean-input, role-switch-btn, heatmap-*, item-row, phase-label, bg-phase-*, btn-play-*, spin-loader, shimmer-text, gate-*, num-badge, glass-doc, section-number, highlight-box, danger-box, list-check, list-dot, connector-vertical (duplikat + kedua redefinisi), stars-overlay, nav-card/nav-quran/nav-class/nav-private. **DIPERTAHANKAN:** tokens, base (`select option`), `scrollbar-hide`, `scroller`/`__inner` (marquee Testimonial) + keyframes, `thumb` (DualRange/TimeSlider), `.sidebar`/`.sidebar-overlay` (drawer token-based). Migrasi komponen: NotFoundPage (hapus div `stars-overlay` kosong), SidebarClassItems (`flex ... bg-surface-1 border hover:translate-x-1` + varian `border-{success/info/primary}/20 bg-{...}/10 hover:border-{...}/50`), ShardCard (`shard-card+shard-*` → `bg-card border rounded-2xl p-6 hover:-translate-y-1 hover:shadow-{tone}/10`; `clean-input` → Tailwind + `focus:border-[color:var(--text-color)]`, merubah `color:white` lama → `text-foreground`), HeroSection & CtaSection (`btn-submit` → solid `bg-primary text-primary-foreground rounded-xl`), AkadSection (`glass-doc`→`bg-card border-border rounded-2xl p-6 sm:p-10`, `section-number`→`font-display text-6xl text-foreground/10`, highlight/danger-box → border-l token, `list-dot/check` → `[&_li]:before:content-['•'/'✓']` tokens), AboutSection (`num-badge`→`font-display text-5xl text-foreground/10` (fix invisible-light putih/10), connector→w-px `via-foreground/10`), InklusivitasSection (connector → token). `alquran.css` `.glass-panel` (tak terpakai) dihapus. Grep seluruh `src/**` class legacy **0 hits**. `npm run build`: **PASS** (CSS 169.33 kB / gzip 21.59 kB; sebelumnya 182.76/24.72). Esklint file yang diubah: hanya sisa pre-existing (SidebarClassItems react-refresh, Hero useEffect deps; `ArrowRight` unused di Hero sudah dibersihkan).
 
+17. **B1 SELESAI (Typography landing):** acuan `linear.md` (negative tracking display, eyebrow positif tracking, ladder line-height 1.05–1.6) & `raycast.md` (ss03 Inter). Hasil: (a) **eyebrow section landing diseragamkan** → `font-display text-xs uppercase tracking-[0.3em]` (About/Akad/Metodologi/Feature sudah Cinzel; Testimonial/Inklusivitas/FAQ yang tadinya `font-mono` ikut diharmonisasi; ukuran `text-[10px] md:text-xs` diseragamkan `text-xs`; warna aksen per section dipertahankan; Hero & slides punya sistem label mono sendiri yang konsisten — tidak disentuh); (b) **`font-cinzel` → `font-display` di seluruh landing** (Akad 11×, About 2×, Feature 1×) — perbaikan bug diam-diam: `.font-cinzel` hanya didefinisikan di `alquran.css` (diimpor hanya AlquranPage), jadi di landing font TIDAK teraplikasi (render Inter); kini benar-benar Cinzel via token `--font-display`; (c) **display heading serif diberi negative tracking** `tracking-tight` (About h1, Akad h1, Feature h2, Metodologi h2, Inklusivitas h2, FAQ h2, Price h2 — menggantikan `tracking-wide` positif di Feature/Metodologi/Inklusivitas); (d) **line-height ladder** — Solution h2 `leading-relaxed`→`leading-tight`, subhead serif `text-xl`→`leading-snug` (About 8×, Metodologi 3×, Inklusivitas 4× + 1 `leading-tight` utk `text-2xl/3xl`), Akad h3 `text-xl`→`leading-snug`; (e) **hapus class mati `text-highlight`** (AboutSpan "Prinsip" — tak ada definisi token/CSS; kini mewarisi foreground); (f) **section rhythm sudah 96px** (`py-24`) di hampir semua section — tidak diubah. Build **PASS** (CSS 169.51 kB / gzip 21.62 kB). ESLint 9 file landing: bersih. Grep `font-cinzel|text-highlight` di `src/features/landing`: **0 hits**. Catatan: `font-cinzel` tersisa di `Sidebar.tsx:35` & `ComingSoonRoomPage.tsx:53` → scope **B5**.
+
 ### In Progress
-- **Tahap B (redesign visual lanjutan)** — SUDAH DIMULAI (User: "Tahap A lolos. Lanjut Tahap B, sekalian kerjain G5"). Scope item Tahap B belum dipilih user; acuan `linear.md` & `raycast.md`.
-- **Keputusan commit** — seluruh G0–G4 + batch 4 + bug hunt + G5 belum di-commit; menunggu instruksi user (gabungan atau split).
+- **Tahap B (redesign visual lanjutan)** — B1 SELESAI (item 17), belum verifikasi browser. Batch berikutnya (B2 Navbar+Footer, B3 Button/Input/Badge, B4 Card & surface ladder, B5 font-cinzel non-landing) belum dipilih user.
+- **Keputusan commit** — **SELESAI: commit gabungan `0d70d2d`** ("feat(ui): redesign visual tahap A (G0–G5) + bug hunt dashboard", 170 file; `tsconfig.app.tsbuildinfo` dikecualikan). Item B1 belum di-commit — menyusul setelah verifikasi browser.
 
 ### Not Finished
-- **Commit seluruh pekerjaan redesign** — hanya atas perintah eksplisit user. Perhatian: `tsconfig.app.tsbuildinfo` ikut termodifikasi (artifact build) — jangan di-commit.
-- **Tahap B** — scope belum didefinisikan (menunggu pemilihan user dari usulan berbasis `linear.md`/`raycast.md`).
-- **Verifikasi browser Tahap B** — belum ada (menyusul setelah batch Tahap B pertama).
+- **Commit item B1 (dan seluruh perubahan baru)** — menyusul setelah verifikasi browser batch (Golden Rule 5); hanya atas perintah user. `tsconfig.app.tsbuildinfo` jangan di-commit (build artifact).
+- **Tahap B B2–B5** — belum dipilih user: B2 Navbar+Footer, B3 Button/Input/Badge, B4 Card & surface ladder, B5 font-cinzel non-landing (Sidebar.tsx & ComingSoonRoomPage).
+- **Verifikasi browser Tahap B B1** — belum dilakukan (Light/Dark, zoom 100/90%, 1280/768/480).
 
 ## Important Files
 - `UNLUPA_GOLDEN_RULES.md`
@@ -70,8 +71,9 @@
 - Avoid overdone glass, gradients, shadows, decorative bloat.
 
 ## Next Priority
-1. **Keputusan commit** — user memilih: commit tunggal `Tahap A lolos + G5` (G0–G4 + batch 4 + bug hunt + G5) atau split. JANGAN commit tanpa perintah; jangan include `tsconfig.app.tsbuildinfo`.
-2. **Tahap B** — definisikan scope dari `linear.md` & `raycast.md`; kerjakan batch kecil + verifikasi browser per batch (Golden Rule 5).
+1. **Verifikasi browser B1** — tampilkan landing (Light/Dark, zoom 100/90%, 1280/768/480): eyebrow seragam Cinzel, heading lebih rapat (tracking-tight), line-height subhead, font-cinzel kini benar-benar Cinzel. Golden Rule 5.
+2. **Commit item B1** — atas perintah user; jangan include `tsconfig.app.tsbuildinfo`.
+3. **Tahap B B2–B5** — user memilih batch berikutnya (Navbar+Footer / Button-Input-Badge / Card & surface ladder / font-cinzel non-landing).
 
 ## Do Not Change
 - Authentication business logic, payloads, hooks, services, or API behavior.
@@ -81,8 +83,9 @@
 - Hero Section unless bug nyata exists.
 
 ## Verification
-- `npm run build`: **PASS** 2026-09-06 sesi G5 — 2091 modules, CSS **169.33 kB** (gzip 21.59 kB), JS 1199.31 kB (gzip 301.40 kB). Warn chunk-size (bukan error).
+- `npm run build`: **PASS** 2026-09-06 sesi B1 — 2091 modules, CSS **169.51 kB** (gzip 21.62 kB), JS 1199.41 kB (gzip 301.41 kB). Warn chunk-size (bukan error).
 - `npx tsc -b`: PASS (no errors).
-- Grep `cosmic-loader|btn-submit|h-1px` di `src/features/auth`: **0 hits** (G2 bersih).
-- Grep final seluruh `src/**/*.tsx` (G4 + G5): seluruh class legacy (`monolith-card`, `energy-card`, `glass-panel`, `vanishing-card`, `glass-stat`, `num-badge`, `shard-*`, `clean-input`, `btn-submit`, `btn-start`, `glass-doc`, `section-number`, `highlight-box`, `danger-box`, `list-check`, `list-dot`, `nav-card`, `nav-quran`, `nav-class`, `nav-private`, `stars-overlay`, `text-gold*`, `cosmic-loader`, `faq-*`, `gate-*`, `heatmap-*`, `item-row`, `phase-label`, `bg-phase-*`, `btn-play-*`, `spin-loader`, `shimmer-text`, `role-switch-btn`, `connector-vertical`, dll) → **0 hits** di seluruh `src/**/*.{tsx,ts,js,jsx,css}`.
-- Browser/rendered visual verification: **Tahap A LOLOS** (seluruh landing + authenticated flow). Tahap B belum diverifikasi (belum ada batch).
+- ESLint 9 file section landing yang diedit B1: **bersih** (tanpa error).
+- Grep `font-cinzel|text-highlight` di `src/features/landing`: **0 hits** (B1). `font-cinzel` tersisa: `src/components/ui/Sidebar.tsx:35`, `src/pages/dashboard/ComingSoonRoomPage.tsx:53` (scope B5).
+- Grep final seluruh `src/**/*.tsx` (G4 + G5): seluruh class legacy → **0 hits**; tak berubah pada B1.
+- Browser/rendered visual verification: **Tahap A LOLOS** (seluruh landing + authenticated flow). **B1 belum diverifikasi** (menyusul).

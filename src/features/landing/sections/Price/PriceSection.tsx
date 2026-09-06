@@ -27,7 +27,7 @@ export const PriceSection = () => {
             <span className="w-px h-8 bg-gradient-to-b from-transparent to-primary"></span>
           </div>
 
-          <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-foreground mb-16 leading-tight">
+          <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-foreground mb-16 leading-tight tracking-tight">
             Kontribusi untuk <br /> <span className="text-primary italic">Kebermanfaatan &amp; Keberlanjutan</span>
           </h2>
 

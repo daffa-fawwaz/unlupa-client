@@ -18,12 +18,12 @@ export const InklusivitasSection = () => {
 
       {/* HEADER */}
       <div className="text-center mb-24">
-        <p className="font-mono text-primary text-[10px] md:text-xs tracking-[0.3em] uppercase mb-6 flex items-center justify-center gap-2">
+        <p className="font-display text-primary text-xs tracking-[0.3em] uppercase mb-6 flex items-center justify-center gap-2">
           <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>{" "}
           Inklusivitas{" "}
           <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
         </p>
-        <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-4 leading-tight tracking-wide">
+        <h2 className="font-serif text-3xl md:text-5xl text-foreground mb-4 leading-tight tracking-tight">
           UNLUPA Dibangun Untuk Mereka <br />
           <span className="text-muted-foreground font-light italic">
             Yang Tidak Ingin Ilmunya Hilang
@@ -43,7 +43,7 @@ export const InklusivitasSection = () => {
             <BookHeart className="w-7 h-7 transition-all duration-300" />
           </div>
           <div>
-            <h3 className="text-xl font-serif text-foreground mb-2">
+            <h3 className="text-xl font-serif text-foreground mb-2 leading-snug">
               Pembelajar Al-Qur’an
             </h3>
             <p className="text-muted-foreground text-sm font-light leading-relaxed">
@@ -59,7 +59,7 @@ export const InklusivitasSection = () => {
             <GraduationCap className="w-7 h-7 transition-all duration-300" />
           </div>
           <div>
-            <h3 className="text-xl font-serif text-foreground mb-2">
+            <h3 className="text-xl font-serif text-foreground mb-2 leading-snug">
               Pelajar & Mahasiswa
             </h3>
             <p className="text-muted-foreground text-sm font-light leading-relaxed">
@@ -75,7 +75,7 @@ export const InklusivitasSection = () => {
             <Presentation className="w-7 h-7 transition-all duration-300" />
           </div>
           <div>
-            <h3 className="text-xl font-serif text-foreground mb-2">
+            <h3 className="text-xl font-serif text-foreground mb-2 leading-snug">
               Guru & Pengajar
             </h3>
             <p className="text-muted-foreground text-sm font-light leading-relaxed">
@@ -91,7 +91,7 @@ export const InklusivitasSection = () => {
             <Compass className="w-7 h-7 transition-all duration-300" />
           </div>
           <div>
-            <h3 className="text-xl font-serif text-foreground mb-2">
+            <h3 className="text-xl font-serif text-foreground mb-2 leading-snug">
               Pembelajar Mandiri
             </h3>
             <p className="text-muted-foreground text-sm font-light leading-relaxed">
@@ -113,7 +113,7 @@ export const InklusivitasSection = () => {
           </div>
 
           <div className="relative z-10 flex-1">
-            <h3 className="text-2xl md:text-3xl font-serif text-foreground mb-2">
+            <h3 className="text-2xl md:text-3xl font-serif text-foreground mb-2 leading-tight">
               Dan Siapa Pun...
             </h3>
             <p className="text-muted-foreground text-base md:text-lg font-light leading-relaxed">

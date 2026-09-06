@@ -39,11 +39,11 @@ export const FeatureSection = () => {
       {/* HEADER */}
       <div className="mb-16 flex flex-col md:flex-row justify-between items-end gap-8">
         <div>
-          <div className="text-primary font-cinzel text-[10px] md:text-xs tracking-[0.3em] uppercase mb-4 flex items-center gap-3">
+          <div className="text-primary font-display text-xs tracking-[0.3em] uppercase mb-4 flex items-center gap-3">
             <Cpu className="w-4 h-4" />
             Core System
           </div>
-          <h2 className="font-serif text-4xl md:text-6xl text-foreground mb-3 leading-tight tracking-wide">
+          <h2 className="font-serif text-4xl md:text-6xl text-foreground mb-3 leading-tight tracking-tight">
             Fitur Inti{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary/40 to-primary">
               UNLUPA
