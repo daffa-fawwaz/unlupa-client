@@ -7,12 +7,13 @@
 
 ## Handoff Sesi Berikutnya (BACA DULU — Rule 12 & Rule 10)
 
-> Status: **B2 Navbar + Footer SELESAI (item 18)** — menunggu verifikasi browser light/dark oleh user (Golden Rule 5). Commit B1 `578183c` dibuat. Berikutnya (SETELAH user cek): commit B2, lalu batch B3/B4/B5 (belum diizinkan — user: "Jangan B3 B4 B5"), atau lanjut sesuai arahan.
+> Status: **B5 (font-cinzel non-landing) SELESAI (item 21)** — menunggu verifikasi browser light/dark oleh user (Sidebar & ComingSoonRoomPage). Tahap B (B1–B5) TUNTAS: B1 `578183c`, B2 `26cb1f3`, B3 `15ce6fd`, B4 `1b05383` LOLOS + ter-commit. Berikutnya (SETELAH user cek): commit B5, lalu keputusan direction lanjutan.
 
 - **Commit B1 `578183c`** — "feat(ui): B1 typography landing" (10 file) atas perintah user. `tsconfig.app.tsbuildinfo` tetap un-committed.
-- **B2 SELESAI (item 18)** — Navbar + Footer; belum diverifikasi browser. Ringkasan di item 18.
-- **Tahap A + G5 + B1** tetap selesai (item 14–17). B2 belum di-commit (menunggu verifikasi user).
-- **Temuan sesi:** `AboutSection` & `AkadSection` adalah komponen ORPHAN — tidak diimpor oleh file mana pun (hanya definisi), jadi B1 padanya (font-cinzel→font-display, tracking) tidak berdampak visual. Catatan untuk sesi berikutnya: koneksikan ke LandingPage atau hapus.
+- **B2 `26cb1f3`** "feat(ui): B2 navbar footer landing"; **B3 `15ce6fd`** "feat(ui): B3 button input badge radius"; **B4 `1b05383`** "feat(ui): B4 card surface ladder no shadow" — semuanya LOLOS verifikasi browser & commit.
+- **B5 SELESAI (item 21)** — Sidebar + ComingSoonRoomPage `font-cinzel` → `font-display`; BELUM di-commit (menunggu verifikasi + perintah user).
+- **Tahap A + G5 + B1–B5** tetap selesai (item 14–21).
+- **Temuan sesi:** `AboutSection` & `AkadSection` adalah komponen ORPHAN — tidak diimpor oleh file mana pun (hanya definisi), jadi B1 padanya tidak berdampak visual. Catatan untuk sesi berikutnya: koneksikan ke LandingPage atau hapus (user: jangan sentuh untuk sekarang).
 - **File pilar wajib dibaca:** `UNLUPA_GOLDEN_RULES.md`, `UNLUPA_UI_PROGRESS.md`, `docs/design/references/linear.md`, `docs/design/references/raycast.md`, `UNLUPA_AGENT_EXECUTE_TODAY.md`. Prinsip: restraint, 1 aksen teal, hairline border, surface ladder, tanpa glow/rainbow/glass, copy Indonesia jangan diganti.
 - **File paling baru diubah:** `src/features/landing/components/navbar/LandingNavbar.tsx`, `src/features/landing/components/footer/LandingFooter.tsx`, `UNLUPA_UI_PROGRESS.md`.
 
@@ -40,15 +41,17 @@
 18. **B2 SELESAI (Navbar + Footer landing):** acuan `raycast.md` (`primary-nav` h-56px, hairline bottom rule, CTA putih scar) & `linear.md` (`top-nav` 56px, tanpa shadow). **Navbar** — `py-4/py-6` → **`h-14` (56px)** tetap dengan content di tengah; hapus `shadow-sm` saat scrolled (kedalaman kini via `bg-background/80 backdrop-blur-xl` + hairline `border-border`, sesuai prinsip tanpa drop-shadow); triad link (Metode/Fitur/Biaya), CTA "Login"/"Pendaftaran", dan mobile dropdown TIDAK diubah. **Footer** — dari satu baris (logo + copyright) menjadi footer terstruktur: `bg-background border-t border-border py-16`; blok brand (logo + "Dibuat untuk penuntut ilmu.") + 3 kolom link (`font-mono text-xs uppercase tracking-widest` headers): **Jelajahi** (#metode/#fitur/#biaya/#untuk-siapa), **Tentang UNLUPA** (#solution/#social-proof), **Mulai** (/login /register) — SEMUA anchor divalidasi benar-benar ada di `LandingPage.tsx` (#about/#akad TIDAK ada di landing); bottom bar `© {tahun} UNLUPA. Dibuat untuk penuntut ilmu.`. Copy Indonesia dipertahankan. **Temuan sesi:** `AboutSection` & `AkadSection` = komponen **orphan** (tidak diimpor) → B1 padanya tidak berdampak visual; usulan sesi berikut: koneksikan ke landing atau hapus. Build **PASS** (CSS 169.62 kB / gzip 21.64 kB). ESLint 2 file: bersih.
 19. **B3 SELESAI (Button/Input/Badge konsistensi):** acuan `linear.md` (button `rounded.md`=8px) & `raycast.md` (primary button 8px, text-input 8px). **Primitif shared** — `button.tsx`: base `rounded-md`(6px)→**`rounded-lg`(8px)**, override `rounded-md` pada size `sm`/`lg` dihapus (warisi base); `Input.tsx`: `rounded-md`→**`rounded-lg`**. **Landing CTA diseragamkan 8px** — CtaSection primary & secondary `rounded-xl`→`rounded-lg`; LandingNavbar "Pendaftaran" desktop `rounded-md`→`rounded-lg` (mobile sudah 8px); HeroSection CTA primer `rounded-xl`→`rounded-lg` (secondary sudah 8px); Conclusion slide CTA `rounded-xl`→`rounded-lg`; PriceSection input custom nominal `rounded-md`→`rounded-lg`. **Keputusan:** container/card `rounded-xl` (12px) DI-PERTAHANKAN (FAQ/Testimonial/Price/Hero chips/ikon tile = kartu, bukan buton); Badge = `rounded-full` pill sudah sesuai vocab Raycast `pill-tab` → tidak diubah. **Catatan:** error lint `react-refresh/only-export-components` di `button.tsx` (ekspor `buttonVariants` bersama komponen) + warning `useEffect` di HeroSection = **pre-existing**, bukan dari B3, tidak difix (di luar scope). Build **PASS** (CSS 169.62 kB / gzip 21.64 kB, JS 1201.16 kB). ESLint file diedit: bersih (kecuali 2 temuan pre-eksisting di atas).
 20. **B4 SELESAI (Card & surface ladder):** acuan `linear.md` ("Never suggest elevation with blurs/shadows on dark surfaces — use surface tones and 1px borders"; "No drop-shadows — background/border for depth") & `raycast.md`. **Ladder sudah ada di token:** light bg `0.99`→card `1.0`/surface-1 `0.99`/surface-2 `0.97`/surface-3 `0.94`; dark bg `0.15`→card `0.19`/surface-2 `0.22`/surface-3 `0.25` → B4 mengaktifkannya: elevasi kartu = **bg-card + border hairline**, TANPA shadow. **Hapus drop-shadow kartu landing + auth (13 file):** Testimonial (`shadow-sm hover:shadow-md` → hover tetap `border-primary/20`); Solution (kartu utama + diamond `shadow-sm`); Metodologi (3 step card `shadow-sm`, motion hover `-translate` tetap); Inklusivitas (4 kartu `shadow-sm`); Price (3 opsi kontribusi `hover:shadow-sm`); ShardCard (`hover:shadow-lg` + `hover:shadow-{success/info/primary}/10` = pola glow → dihapus, hover border tetap); auth (7 kartu: LoginForm/ForgotPassword/LoginLoading/LoginSuccess/RegisterForm/RegisterLoading/RegisterSucces `shadow-sm` → hapus, garis aksen atas tetap). **Dipertahankan:** shadow-sm pada tombol CTA (navbar/Hero/Cta) — hasil B3 yang sudah lolos; kartu & modal dashboard/alquran TIDAK disentuh (di luar halaman cek). **Catatan:** `Card` primitive (`ui/card.tsx`) tidak diimpor siapa pun → dilewati. Build **PASS** (CSS **168.58 kB** / gzip 21.54 kB — turun 1.04 kB karena utility shadow tak lagi terbangkit; JS 1200.90 kB). ESLint 13 file diedit: **bersih**.
+21. **B5 SELESAI (font-cinzel non-landing):** 2 sisa pemakai `.font-cinzel` diperbaiki → **`font-display`** (kelas `.font-cinzel` hanya didefinisikan di `alquran.css` yang diimpor AlquranPage — jadi selama ini nama "UNLUPA" di Sidebar & judul "…Segera Hadir" di ComingSoonRoomPage TIDAK pernah tampil Cinzel): `Sidebar.tsx:35` (`font-display font-bold text-xl tracking-widest`) & `ComingSoonRoomPage.tsx:53` (`font-display text-3xl sm:text-4xl font-bold tracking-wide`). Class lain tidak diubah. **Hasil: `font-cinzel` di seluruh `src` hanya tersisa definisi CSS di `alquran.css:28` (domain Alquran, di luar scope UI shared).** Build **PASS** (CSS 168.58 kB). ESLint 2 file: **bersih**.
+22. **TAHAP B TUNTAS (B1–B5).** Commit sejauh ini: B1 `578183c`, B2 `26cb1f3`, B3 `15ce6fd`, B4 `1b05383` — semuanya LOLOS verifikasi browser & commit atas perintah user. B5 belum di-commit (menunggu perintah user).
 
 ### In Progress
-- **Tahap B (redesign visual lanjutan)** — B1 (`578183c`) & B2 (`26cb1f3`) & **B3 (`15ce6fd`) SELESAI + ter-verifikasi browser oleh user (light/dark OK)**. **B4 Card & surface ladder SELESAI (item 20)**, belum diverifikasi user (cek landing + login light/dark). B5 TIDAK dikerjakan (perintah user: "Jangan B5").
-- **Commit B4** — menunggu verifikasi + perintah user.
+- **Tahap B (redesign visual lanjutan)** — SELURUH BATCH (B1–B5) SELESAI. **B5 (item 21) selesai, belum diverifikasi & belum di-commit.** About/Akad TIDAK disentuh selama Tahap B.
+- **Commit B5** — menunggu verifikasi + perintah user.
 
 ### Not Finished
-- **Commit item B4** — setelah user cek landing + login light/dark; hanya atas perintah user. `tsconfig.app.tsbuildinfo` jangan di-commit (build artifact).
-- **Tahap B B5** — dibatalkan oleh user pada sesi ini ("Jangan B5"). `AboutSection`/`AkadSection` jangan disentuh (perintah user).
-- **Verifikasi browser B4** — belum dilakukan (Light/Dark, landing + login, zoom 100/90%, 1280/768/480).
+- **Commit item B5** — setelah user cek Sidebar + ComingSoonRoomPage (light/dark); hanya atas perintah user. `tsconfig.app.tsbuildinfo` jangan di-commit (build artifact).
+- **Verifikasi browser B5** — belum dilakukan (nama "UNLUPA" di Sidebar + "…Segera Hadir" kini benar-benar Cinzel; light/dark).
+- **Tahap berikutnya** — seluruh batch acuan linear/raycast tuntas; keputusan lanjutan menunggu arahan user.
 
 ## Important Files
 - `UNLUPA_GOLDEN_RULES.md`
@@ -74,9 +77,9 @@
 - Avoid overdone glass, gradients, shadows, decorative bloat.
 
 ## Next Priority
-1. **Verifikasi browser B4 (user)** — landing + login, light/dark, zoom 100/90%, 1280/768/480: kartu kini elevasi via bg-card + hairline border tanpa shadow; tombol CTA tetap.
-2. **Commit B4** — atas perintah user; jangan include `tsconfig.app.tsbuildinfo`.
-3. **Sesi berikutnya** — B5 dibatalkan sesi ini; keputusan lanjutan menunggu arahan user.
+1. **Verifikasi browser B5 (user)** — Sidebar (nama UNLUPA) + ComingSoonRoomPage ("Segera Hadir"), light/dark.
+2. **Commit B5** — atas perintah user; jangan include `tsconfig.app.tsbuildinfo`.
+3. **Tahap B tuntas** — seluruh batch linear/raycast selesai; keputusan lanjutan menunggu arahan user.
 
 ## Do Not Change
 - Authentication business logic, payloads, hooks, services, or API behavior.
@@ -86,8 +89,8 @@
 - Hero Section unless bug nyata exists.
 
 ## Verification
-- `npm run build`: **PASS** 2026-09-06 sesi B4 — 2091 modules, CSS **168.58 kB** (gzip 21.54 kB, turun 1.04 kB dari B3), JS 1200.90 kB (gzip 301.63 kB). Warn chunk-size (bukan error).
+- `npm run build`: **PASS** 2026-09-06 sesi B5 — 2091 modules, CSS **168.58 kB** (gzip 21.54 kB), JS 1200.90 kB (gzip 301.63 kB). Warn chunk-size (bukan error).
 - `npx tsc -b`: PASS (no errors).
-- ESLint 13 file diedit B4: **bersih** (no output). Temuan pre-eksisting (error `react-refresh` button.tsx, warning `exhaustive-deps` HeroSection) — tidak hubungan B4.
-- Grep `font-cinzel|text-highlight` di `src/features/landing`: **0 hits** (B1 tetap). Grep final seluruh `src/**/*.tsx` (G4 + G5): class legacy → **0 hits**.
-- Browser/rendered visual verification: Tahap A LOLOS, B1/B2/B3 LOLOS (terverifikasi user), **B4 belum diverifikasi** (menunggu user, landing + login light/dark).
+- ESLint file diedit B5 (Sidebar, ComingSoonRoomPage): **bersih** (no output).
+- Grep `font-cinzel` seluruh `src`: hanya definisi CSS di `alquran.css:28` (domain Alquran) — 0 di `.tsx`. Grep `font-cinzel|text-highlight` di `src/features/landing`: **0 hits**. Grep final seluruh `src/**/*.tsx` (G4 + G5): class legacy → **0 hits**.
+- Browser/rendered visual verification: Tahap A LOLOS, B1/B2/B3/B4 LOLOS (terverifikasi user), **B5 belum diverifikasi** (menunggu user, Sidebar + ComingSoonRoomPage light/dark).

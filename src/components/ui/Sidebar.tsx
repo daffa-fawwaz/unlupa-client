@@ -32,7 +32,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="font-cinzel font-bold text-xl text-foreground tracking-widest">
+            <span className="font-display font-bold text-xl text-foreground tracking-widest">
               UNLUPA
             </span>
           </div>

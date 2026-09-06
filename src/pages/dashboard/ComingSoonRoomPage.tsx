@@ -50,7 +50,7 @@ export const ComingSoonRoomPage = () => {
               </div>
 
               <div>
-                <h1 className="font-cinzel text-3xl sm:text-4xl font-bold tracking-wide mb-3">
+                <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-wide mb-3">
                   {label} <span className="text-primary">Segera Hadir</span>
                 </h1>
 
