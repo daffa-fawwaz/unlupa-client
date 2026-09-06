@@ -17,8 +17,8 @@ export const LandingNavbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
-        scrolled ? "bg-background/80 backdrop-blur-xl border-border py-4 shadow-sm" : "bg-transparent border-transparent py-6"
+      className={`fixed top-0 left-0 right-0 z-50 h-14 border-b transition-all duration-500 ${
+        scrolled ? "bg-background/80 backdrop-blur-xl border-border" : "bg-transparent border-transparent"
       }`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
