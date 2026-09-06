@@ -41,24 +41,24 @@ export const IntervalModal = ({
         onClick={onClose}
       />
       <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
-        <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-purple-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
-        <div className="relative rounded-[2.5rem] sm:rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
+        <div className="absolute -inset-px rounded-2xl bg-primary/30 blur-sm pointer-events-none" />
+        <div className="relative rounded-2xl bg-card border border-border shadow-xl overflow-hidden p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white transition-all"
+            className="absolute top-4 right-4 p-2 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-muted-foreground hover:text-foreground transition-all"
           >
             <X className="w-4 h-4" />
           </button>
 
           <div className="text-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mx-auto mb-4">
-              <CalendarDays className="w-7 h-7 sm:w-8 sm:h-8 text-purple-400" />
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto mb-4">
+              <CalendarDays className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
               Mulai Ujian Interval
             </h3>
-            <p className="text-gray-400 text-xs sm:text-sm mb-6 leading-relaxed">
+            <p className="text-muted-foreground text-xs sm:text-sm mb-6 leading-relaxed">
               Pilih interval review untuk "{itemTitle}"
             </p>
 
@@ -71,8 +71,8 @@ export const IntervalModal = ({
                   disabled={isLoading}
                   className={`px-4 py-3 rounded-xl border text-sm font-bold transition-all ${
                     selectedDays === option.value
-                      ? "bg-purple-500/20 border-purple-500/50 text-purple-400"
-                      : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/20"
+                      ? "bg-primary/20 border-primary/50 text-primary"
+                      : "bg-surface-1 border-border text-muted-foreground hover:bg-surface-2 hover:border-border"
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {option.label}
@@ -85,14 +85,14 @@ export const IntervalModal = ({
               <button
                 onClick={onClose}
                 disabled={isLoading}
-                className="flex-1 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition disabled:opacity-50 cursor-pointer"
+                className="flex-1 px-5 py-3 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-muted-foreground hover:text-foreground text-sm font-medium transition disabled:opacity-50 cursor-pointer"
               >
                 Batal
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="flex-1 px-5 py-3 rounded-xl bg-linear-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white text-sm font-bold transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 px-5 py-3 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold transition-all shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isLoading ? (
                   <>

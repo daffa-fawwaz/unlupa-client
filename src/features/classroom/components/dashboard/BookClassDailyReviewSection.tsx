@@ -163,26 +163,25 @@ export const BookClassDailyReviewSection = ({
 
   return (
     <section className="relative mb-8 animate-fadeIn">
-      <div className="absolute -inset-1 blur-2xl bg-linear-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-3xl opacity-50 pointer-events-none" />
-      <div className="relative bg-linear-to-br from-[#1A222C] to-[#0F141A] rounded-2xl border border-purple-500/30 overflow-hidden shadow-2xl shadow-purple-900/20">
-        <div className="h-1 w-full bg-linear-to-r from-purple-400 via-pink-400 to-purple-400" />
+      <div className="relative bg-card rounded-2xl border border-primary/30 overflow-hidden">
+        <div className="h-1 w-full bg-linear-to-r from-primary via-primary/70 to-primary" />
         <div className="p-6 md:p-8">
-          <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-white/5 pb-6">
-            <div className="w-16 h-16 rounded-xl bg-linear-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/30 shrink-0 transform -rotate-3">
-              <Flame className="w-8 h-8 text-white animate-pulse" />
+          <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-border pb-6">
+            <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center shrink-0 transform -rotate-3">
+              <Flame className="w-8 h-8 text-primary-foreground animate-pulse" />
             </div>
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold tracking-wide uppercase mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase mb-2">
                 <Star className="w-3.5 h-3.5" /> Review Harian Buku Kelas
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
                 Target Review Buku Hari Ini
               </h2>
-              <p className="text-gray-400 text-sm md:text-base max-w-2xl">
+              <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
                 Ada{" "}
-                <strong className="text-purple-400">{totalItems} item</strong>{" "}
+                <strong className="text-primary">{totalItems} item</strong>{" "}
                 di{" "}
-                <strong className="text-purple-400">
+                <strong className="text-primary">
                   {groups.length} buku
                 </strong>{" "}
                 yang menunggu untuk direview di kelas ini.
@@ -191,18 +190,18 @@ export const BookClassDailyReviewSection = ({
           </div>
 
           {loading && (
-            <p className="text-sm text-gray-400 animate-pulse">
+            <p className="text-sm text-muted-foreground animate-pulse">
               Memuat target harian...
             </p>
           )}
 
           {!loading && groups.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8 text-purple-400" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-8 h-8 text-primary" />
               </div>
-              <p className="text-white font-bold mb-1">Semua sudah direview!</p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-foreground font-bold mb-1">Semua sudah direview!</p>
+              <p className="text-muted-foreground text-sm">
                 Tidak ada review kelas tersisa hari ini.
               </p>
             </div>
@@ -212,35 +211,34 @@ export const BookClassDailyReviewSection = ({
             {groups.map((group, index) => (
               <div
                 key={group.book_title}
-                className="group relative overflow-hidden rounded-xl bg-[#161D26] border border-white/10 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-xl bg-surface-1 border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="absolute inset-0 bg-linear-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 pointer-events-none" />
                 <div className="relative z-10 p-5">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                      <BookOpen className="w-6 h-6 text-purple-400" />
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                      <BookOpen className="w-6 h-6 text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="text-base font-black text-white group-hover:text-purple-400 transition-colors truncate leading-tight">
+                      <h3 className="text-base font-black text-foreground group-hover:text-primary transition-colors truncate leading-tight">
                         {group.book_title}
                       </h3>
-                      <p className="text-gray-500 text-xs mt-1">
+                      <p className="text-muted-foreground text-xs mt-1">
                         {isTeacher ? "Guru" : "Murid"} • {group.items.length}{" "}
                         item siap review
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-white/10 gap-3">
+                  <div className="flex items-center justify-between pt-4 border-t border-border gap-3">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse shrink-0" />
-                        <span className="text-purple-300 font-bold text-sm">
+                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />
+                        <span className="text-primary font-bold text-sm">
                           {group.count} item
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+                      <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
                         <Clock className="w-3.5 h-3.5 shrink-0" />
                         <span>
                           ~{formatEstimate(group.totalEstimatedSeconds)}
@@ -250,7 +248,7 @@ export const BookClassDailyReviewSection = ({
 
                     <button
                       onClick={() => openGroup(group.book_title)}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-500 hover:bg-purple-400 text-[#0B0E14] font-bold text-xs transition-all shrink-0 shadow-md shadow-purple-500/20"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-all shrink-0"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       Gas Review!

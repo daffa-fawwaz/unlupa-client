@@ -18,8 +18,8 @@ export const HeroPagination = ({
           h-1.5 rounded-full transition-all duration-500
           ${
             i === activeIndex
-              ? "w-12 bg-linear-to-r from-primary to-purple-400"
-              : "w-2 bg-white/10 hover:bg-white/30"
+              ? "w-12 bg-primary"
+              : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
           }
         `}
       />

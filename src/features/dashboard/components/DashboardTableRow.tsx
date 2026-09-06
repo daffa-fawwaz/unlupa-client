@@ -14,7 +14,7 @@ export const DashboardTableRow = <T,>({
   renderCell,
 }: TableRowProps<T>) => {
   return (
-    <tr className="hover:bg-white/5 transition group border-b border-white/5 last:border-0">
+    <tr className="hover:bg-surface-1 transition group border-b border-border last:border-0">
       {columns.map((column) => (
         <td
           key={column.key}

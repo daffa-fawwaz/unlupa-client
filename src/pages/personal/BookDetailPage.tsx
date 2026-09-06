@@ -31,6 +31,7 @@ import { BookItemCard } from "@/features/personal/components/BookItemCard";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
 import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
 import type { Module } from "@/features/personal/types/personal.types";
+import { resolveAssetUrl } from "@/lib/assets";
 
 /* ------------------------------------------------------------------ */
 /* Add Module Form Modal                                                */
@@ -89,25 +90,22 @@ const AddModuleModal = ({
       />
 
       <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
-        <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-blue-500/30 via-purple-500/20 to-transparent blur-sm pointer-events-none" />
-
-        <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
+        <div className="relative rounded-3xl bg-card border-border overflow-hidden">
           {/* ---- Success State ---- */}
           {resultState === "success" && (
             <div className="p-10 flex flex-col items-center text-center gap-5">
               <div className="relative">
-                <div className="w-20 h-20 rounded-[2rem] bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                  <CheckCircle className="w-10 h-10 text-emerald-400" />
+                <div className="w-20 h-20 rounded-2xl bg-success/15 border border-success/30 flex items-center justify-center">
+                  <CheckCircle className="w-10 h-10 text-success" />
                 </div>
-                <div className="absolute inset-0 bg-emerald-500/10 rounded-[2rem] blur-2xl" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-xl font-bold text-foreground mb-2">
                   Modul Berhasil Dibuat!
                 </h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   Modul{" "}
-                  <span className="text-white font-semibold">
+                  <span className="text-foreground font-semibold">
                     "{form.title}"
                   </span>{" "}
                   telah berhasil ditambahkan ke buku ini.
@@ -115,7 +113,7 @@ const AddModuleModal = ({
               </div>
               <button
                 onClick={handleSuccessClose}
-                className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                className="px-8 py-3 rounded-2xl bg-success text-success-foreground hover:bg-success/90 font-bold text-sm transition-colors active:scale-95"
               >
                 Lihat Modul
               </button>
@@ -126,29 +124,28 @@ const AddModuleModal = ({
           {resultState === "error" && (
             <div className="p-10 flex flex-col items-center text-center gap-5">
               <div className="relative">
-                <div className="w-20 h-20 rounded-[2rem] bg-rose-500/15 border border-rose-500/30 flex items-center justify-center">
-                  <AlertCircle className="w-10 h-10 text-rose-400" />
+                <div className="w-20 h-20 rounded-2xl bg-destructive/15 border border-destructive/30 flex items-center justify-center">
+                  <AlertCircle className="w-10 h-10 text-destructive" />
                 </div>
-                <div className="absolute inset-0 bg-rose-500/10 rounded-[2rem] blur-2xl" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-xl font-bold text-foreground mb-2">
                   Gagal Membuat Modul
                 </h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {errorMsg}
                 </p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setResultState("idle")}
-                  className="px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm transition"
+                  className="px-6 py-3 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border text-foreground font-medium text-sm transition"
                 >
                   Coba Lagi
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-medium text-sm transition"
+                  className="px-6 py-3 rounded-2xl bg-destructive/10 hover:bg-destructive/20 border border-destructive/20 text-destructive font-medium text-sm transition"
                 >
                   Tutup
                 </button>
@@ -160,23 +157,22 @@ const AddModuleModal = ({
           {resultState === "idle" && (
             <>
               {/* Header */}
-              <div className="relative px-8 pt-8 pb-6 border-b border-white/5">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 blur-3xl rounded-full pointer-events-none" />
+              <div className="relative px-8 pt-8 pb-6 border-b border-border">
                 <button
                   onClick={onClose}
-                  className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition"
+                  className="absolute top-6 right-6 w-8 h-8 rounded-full bg-surface-1 hover:bg-surface-2 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition"
                 >
                   <X className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center">
-                    <Layers className="w-5 h-5 text-blue-400" />
+                  <div className="w-10 h-10 rounded-2xl bg-info/15 border border-info/20 flex items-center justify-center">
+                    <Layers className="w-5 h-5 text-info" />
                   </div>
-                  <h2 className="text-xl font-bold text-white tracking-tight">
+                  <h2 className="text-xl font-bold text-foreground tracking-tight">
                     Tambah Modul
                   </h2>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Buat bab atau bagian baru untuk mengelompokkan .
                 </p>
               </div>
@@ -185,7 +181,7 @@ const AddModuleModal = ({
               <form onSubmit={handleSubmit} className="p-8 space-y-5">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     <FileText className="w-3.5 h-3.5" />
                     Judul Modul
                   </label>
@@ -197,16 +193,16 @@ const AddModuleModal = ({
                     onChange={(e) =>
                       setForm((f) => ({ ...f, title: e.target.value }))
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors"
                   />
                 </div>
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     <AlignLeft className="w-3.5 h-3.5" />
                     Deskripsi
-                    <span className="text-gray-600 font-normal normal-case tracking-normal">
+                    <span className="text-muted-foreground font-normal normal-case tracking-normal">
                       (opsional)
                     </span>
                   </label>
@@ -217,13 +213,13 @@ const AddModuleModal = ({
                     onChange={(e) =>
                       setForm((f) => ({ ...f, description: e.target.value }))
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors resize-none"
                   />
                 </div>
 
                 {/* Order */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     <Hash className="w-3.5 h-3.5" />
                     Urutan
                   </label>
@@ -237,7 +233,7 @@ const AddModuleModal = ({
                         orderStr: e.target.value,
                       }))
                     }
-                    className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500/50 focus:outline-none text-white text-sm transition-colors"
+                    className="w-32 px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm transition-colors"
                   />
                 </div>
 
@@ -246,14 +242,14 @@ const AddModuleModal = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition"
+                    className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-muted-foreground hover:text-foreground text-sm font-medium transition"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
                     disabled={loading || !form.title.trim()}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
                   >
                     {loading ? (
                       <>
@@ -298,26 +294,24 @@ const AddContentModal = ({
         onClick={onClose}
       />
       <div className="relative z-10 w-full max-w-md animate-in fade-in zoom-in-95 duration-300">
-        <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-blue-500/30 via-purple-500/20 to-transparent blur-sm pointer-events-none" />
-        <div className="relative rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
+        <div className="relative rounded-3xl bg-card border-border overflow-hidden">
           {/* Header */}
-          <div className="relative px-8 pt-8 pb-6 border-b border-white/5">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 blur-3xl rounded-full pointer-events-none" />
+          <div className="relative px-8 pt-8 pb-6 border-b border-border">
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition"
+              className="absolute top-6 right-6 w-8 h-8 rounded-full bg-surface-1 hover:bg-surface-2 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition"
             >
               <X className="w-4 h-4" />
             </button>
             <div className="flex items-center gap-3 mb-1">
-              <div className="w-10 h-10 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center">
-                <Plus className="w-5 h-5 text-blue-400" />
+              <div className="w-10 h-10 rounded-2xl bg-info/15 border border-info/20 flex items-center justify-center">
+                <Plus className="w-5 h-5 text-info" />
               </div>
-              <h2 className="text-xl font-bold text-white tracking-tight">
+              <h2 className="text-xl font-bold text-foreground tracking-tight">
                 Tambah Hafalan
               </h2>
             </div>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Pilih jenis konten yang ingin ditambahkan ke buku ini.
             </p>
           </div>
@@ -326,38 +320,38 @@ const AddContentModal = ({
           <div className="p-6 space-y-4">
             <button
               onClick={onSelectModule}
-              className="w-full group flex items-center gap-5 p-5 rounded-2xl bg-linear-to-r from-blue-500/10 to-transparent border border-blue-500/20 hover:border-blue-400/60 hover:from-blue-500/20 transition-all duration-300 text-left cursor-pointer"
+              className="w-full group flex items-center gap-5 p-5 rounded-2xl bg-info/10 border border-info/20 hover:border-info/40 hover:bg-info/20 transition-all duration-300 text-left cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <Layers className="w-6 h-6 text-blue-400" />
+              <div className="w-12 h-12 rounded-xl bg-info/20 border border-info/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <Layers className="w-6 h-6 text-info" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-white text-base mb-1">
+                <h3 className="font-bold text-foreground text-base mb-1">
                   Tambah Modul
                 </h3>
-                <p className="text-xs text-gray-500 leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Kelompokkan  menjadi bab atau bagian terstruktur.
                 </p>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-info group-hover:translate-x-1 transition-all" />
             </button>
 
             <button
               onClick={onSelectItem}
-              className="w-full group flex items-center gap-5 p-5 rounded-2xl bg-linear-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 hover:border-emerald-400/60 hover:from-emerald-500/20 transition-all duration-300 text-left cursor-pointer"
+              className="w-full group flex items-center gap-5 p-5 rounded-2xl bg-success/10 border border-success/20 hover:border-success/40 hover:bg-success/20 transition-all duration-300 text-left cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <FileText className="w-6 h-6 text-emerald-400" />
+              <div className="w-12 h-12 rounded-xl bg-success/20 border border-success/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <FileText className="w-6 h-6 text-success" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-white text-base mb-1">
+                <h3 className="font-bold text-foreground text-base mb-1">
                   Tambah Item
                 </h3>
-                <p className="text-xs text-gray-500 leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Tambahkan unit hafalan langsung, tanpa modul.
                 </p>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-success group-hover:translate-x-1 transition-all" />
             </button>
           </div>
         </div>
@@ -385,19 +379,19 @@ const ModuleCard = ({
   return (
     <button
       onClick={onClick}
-      className="group relative bg-[#0F1218]/80 backdrop-blur-md border border-white/5 rounded-2xl sm:rounded-[2rem] p-3 sm:p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/10 flex flex-col overflow-hidden"
+      className="group relative bg-surface-1 border border-border rounded-2xl sm:rounded-2xl p-3 sm:p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-border flex flex-col overflow-hidden"
     >
       {/* Background Gradient/Glow */}
-      <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
-      <div className="absolute inset-0 bg-linear-to-br from-blue-500/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-linear-to-b from-foreground/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-linear-to-br from-info/10 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Decorative Icon Background */}
       <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-500 transform group-hover:scale-125 group-hover:-rotate-12 pointer-events-none">
-        <Layers className="w-40 h-40 text-white" />
+        <Layers className="w-40 h-40 text-foreground/5" />
       </div>
 
       {/* Large Order Number Watermark */}
-      <div className="absolute top-2 right-4 text-7xl font-serif font-bold text-white/3 group-hover:text-blue-500/5 transition-colors duration-500 pointer-events-none select-none">
+      <div className="absolute top-2 right-4 text-7xl font-serif font-bold text-foreground/5 group-hover:text-primary/5 transition-colors duration-500 pointer-events-none select-none">
         {module.order}
       </div>
 
@@ -405,10 +399,10 @@ const ModuleCard = ({
       <div className="relative z-10 mb-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="text-sm sm:text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+            <h3 className="text-sm sm:text-xl font-bold text-foreground mb-1 group-hover:text-info transition-colors duration-300 line-clamp-2">
               {module.title}
             </h3>
-            <p className="text-gray-500 text-xs font-medium tracking-wide">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide">
               MODUL
             </p>
           </div>
@@ -418,45 +412,45 @@ const ModuleCard = ({
       {/* Description */}
       <div className="relative z-10 flex-1 mb-4">
         {module.description ? (
-          <div className="p-3 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+          <div className="p-3 rounded-xl bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
             <div className="flex items-center gap-2 mb-2">
-              <AlignLeft className="w-3 h-3 text-gray-500" />
-              <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+              <AlignLeft className="w-3 h-3 text-muted-foreground" />
+              <span className="text-[0.6rem] text-muted-foreground uppercase tracking-wider font-bold">
                 Deskripsi
               </span>
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed line-clamp-3 whitespace-pre-wrap break-words">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 whitespace-pre-wrap break-words">
               {module.description}
             </p>
           </div>
         ) : (
-          <div className="p-3 rounded-xl bg-white/2 border border-dashed border-white/5 flex items-center justify-center h-full">
-            <p className="text-xs text-gray-600 italic">Tidak ada deskripsi</p>
+          <div className="p-3 rounded-xl bg-surface-1 border border-dashed border-border flex items-center justify-center h-full">
+            <p className="text-xs text-muted-foreground italic">Tidak ada deskripsi</p>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto pt-4 border-t border-white/5">
-        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+      <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto pt-4 border-t border-border">
+        <div className="flex flex-col p-2 rounded-xl bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
           <div className="flex items-center gap-1.5 mb-1">
-            <FileText className="w-3 h-3 text-blue-400" />
-            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+            <FileText className="w-3 h-3 text-info" />
+            <span className="text-[0.6rem] text-muted-foreground uppercase tracking-wider font-bold">
               Item
             </span>
           </div>
-          <span className="text-base font-mono font-bold text-blue-400 leading-none">
+          <span className="text-base font-mono font-bold text-info leading-none">
             {itemCount}
           </span>
         </div>
-        <div className="flex flex-col p-2 rounded-xl bg-white/2 group-hover:bg-white/5 transition-colors border border-transparent group-hover:border-white/5">
+        <div className="flex flex-col p-2 rounded-xl bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
           <div className="flex items-center gap-1.5 mb-1">
-            <Layers className="w-3 h-3 text-purple-400" />
-            <span className="text-[0.6rem] text-gray-500 uppercase tracking-wider font-bold">
+            <Layers className="w-3 h-3 text-primary" />
+            <span className="text-[0.6rem] text-muted-foreground uppercase tracking-wider font-bold">
               Sub-modul
             </span>
           </div>
-          <span className="text-base font-mono font-bold text-purple-400 leading-none">
+          <span className="text-base font-mono font-bold text-primary leading-none">
             {childCount}
           </span>
         </div>
@@ -531,23 +525,23 @@ export const BookDetailPage = () => {
     draft: {
       label: "Draft",
       icon: Lock,
-      color: "text-amber-400",
-      bg: "bg-amber-500/10",
-      border: "border-amber-500/20",
+      color: "text-warning",
+      bg: "bg-warning/10",
+      border: "border-warning/20",
     },
     pending: {
       label: "Pending Review",
       icon: Clock,
-      color: "text-orange-400",
-      bg: "bg-orange-500/10",
-      border: "border-orange-500/20",
+      color: "text-warning",
+      bg: "bg-warning/10",
+      border: "border-warning/20",
     },
     published: {
       label: "Published",
       icon: Globe,
-      color: "text-emerald-400",
-      bg: "bg-emerald-500/10",
-      border: "border-emerald-500/20",
+      color: "text-success",
+      bg: "bg-success/10",
+      border: "border-success/20",
     },
   };
 
@@ -561,11 +555,11 @@ export const BookDetailPage = () => {
   const nextOrder = modules.length + 1;
 
   return (
-    <div className="min-h-screen bg-[#090A0F] text-white font-primary selection:bg-blue-500/30">
+    <div className="min-h-screen bg-background text-foreground font-primary selection:bg-primary/30">
       {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-blue-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-info/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
       </div>
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
@@ -580,13 +574,13 @@ export const BookDetailPage = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2.5 rounded-2xl border border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all duration-300 backdrop-blur-xl shadow-lg text-gray-400 hover:text-white"
+              className="p-2.5 rounded-2xl border border-border hover:border-border bg-surface-1 hover:bg-surface-2 transition-all duration-300 text-muted-foreground hover:text-foreground"
             >
               <LayoutList className="w-5 h-5" />
             </button>
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/15 text-gray-400 hover:text-white transition-all duration-300 text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="hidden sm:inline">Kembali</span>
@@ -595,9 +589,9 @@ export const BookDetailPage = () => {
 
           {/* Breadcrumb title */}
           {book && (
-            <div className="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 border border-white/5 text-xs text-gray-400 max-w-xs truncate">
-              <BookOpen className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-              <span className="truncate font-medium text-white">
+            <div className="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-1 border border-border text-xs text-muted-foreground max-w-xs truncate">
+              <BookOpen className="w-3.5 h-3.5 text-info shrink-0" />
+              <span className="truncate font-medium text-foreground">
                 {book.title}
               </span>
             </div>
@@ -605,7 +599,7 @@ export const BookDetailPage = () => {
 
           <button
             onClick={() => setModalStep("picker")}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-white text-sm font-bold shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-colors active:scale-95"
           >
             <ListPlus className="w-4 h-4" />
             <span>Tambah Hafalan</span>
@@ -616,12 +610,11 @@ export const BookDetailPage = () => {
         {loading && (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+              <div className="w-16 h-16 rounded-3xl bg-info/10 border border-info/20 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-info animate-spin" />
               </div>
-              <div className="absolute inset-0 bg-blue-500/10 rounded-3xl blur-xl animate-pulse" />
             </div>
-            <p className="text-gray-500 text-sm animate-pulse">
+            <p className="text-muted-foreground text-sm animate-pulse">
               Memuat detail buku...
             </p>
           </div>
@@ -630,13 +623,13 @@ export const BookDetailPage = () => {
         {/* Error */}
         {!loading && error && (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
-              <AlertCircle className="w-8 h-8 text-rose-400" />
+            <div className="w-16 h-16 rounded-3xl bg-destructive/10 border border-destructive/20 flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-destructive" />
             </div>
-            <p className="text-rose-400 text-sm font-medium">{error}</p>
+            <p className="text-destructive text-sm font-medium">{error}</p>
             <button
               onClick={() => id && fetchBookDetail(id)}
-              className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-gray-300 hover:text-white transition"
+              className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               Coba Lagi
             </button>
@@ -647,35 +640,33 @@ export const BookDetailPage = () => {
         {!loading && !error && book && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Hero Card */}
-            <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)]">
-              <div className="relative h-56 sm:h-72 w-full overflow-hidden bg-[#0D1117]">
+            <div className="relative rounded-3xl overflow-hidden border border-border">
+              <div className="relative h-56 sm:h-72 w-full overflow-hidden bg-surface-1">
                 {book.cover_image ? (
                   <>
                     <img
-                      src={book.cover_image}
+                      src={resolveAssetUrl(book.cover_image)}
                       alt={book.title}
                       className="absolute inset-0 w-full h-full object-cover opacity-60"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-[#0D1117] via-[#0D1117]/60 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-surface-1 via-surface-1/60 to-transparent" />
                   </>
                 ) : (
                   <>
-                    <div className="absolute inset-0 bg-linear-to-br from-[#0D1117] via-[#111827] to-[#0F0A1A]" />
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 blur-[80px] rounded-full" />
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 blur-[60px] rounded-full" />
+                    <div className="absolute inset-0 bg-surface-1" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-20 h-20 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-xl shadow-2xl">
-                        <ImageOff className="w-9 h-9 text-gray-600" />
+                      <div className="w-20 h-20 rounded-2xl bg-surface-2 border border-border flex items-center justify-center">
+                        <ImageOff className="w-9 h-9 text-muted-foreground" />
                       </div>
                     </div>
-                    <div className="absolute inset-0 bg-linear-to-t from-[#0D1117] via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-surface-1 via-transparent to-transparent" />
                   </>
                 )}
 
                 {/* Status badge */}
                 <div className="absolute top-5 left-5">
                   <div
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${status.bg} border ${status.border} backdrop-blur-xl shadow-lg`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${status.bg} border ${status.border}`}
                   >
                     <StatusIcon className={`w-3.5 h-3.5 ${status.color}`} />
                     <span
@@ -687,33 +678,33 @@ export const BookDetailPage = () => {
                 </div>
 
                 <div className="absolute top-5 right-5">
-                  <button className="w-9 h-9 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-all duration-300">
+                  <button className="w-9 h-9 flex items-center justify-center rounded-full bg-surface-1 border border-border text-muted-foreground hover:text-foreground hover:bg-surface-2 transition-all duration-300">
                     <BookOpen className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
               {/* Book Info Body */}
-              <div className="bg-[#0E1420] px-6 sm:px-10 py-8">
-                <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight mb-3">
+              <div className="bg-card px-6 sm:px-10 py-8">
+                <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight leading-tight mb-3">
                   {book.title}
                 </h1>
-                <p className="text-gray-400 text-base leading-relaxed font-light max-w-2xl">
+                <p className="text-muted-foreground text-base leading-relaxed font-light max-w-2xl">
                   {book.description || "Tidak ada deskripsi untuk buku ini."}
                 </p>
-                <div className="flex flex-wrap items-center gap-5 mt-6 pt-6 border-t border-white/5">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Calendar className="w-4 h-4 text-gray-600" />
+                <div className="flex flex-wrap items-center gap-5 mt-6 pt-6 border-t border-border">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
                     <span>Dibuat {formatDate(book.created_at)}</span>
                   </div>
                   {book.published_at && (
-                    <div className="flex items-center gap-2 text-sm text-emerald-500/80">
+                    <div className="flex items-center gap-2 text-sm text-success/80">
                       <CheckCircle2 className="w-4 h-4" />
                       <span>Dipublikasi {formatDate(book.published_at)}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Clock className="w-4 h-4 text-gray-600" />
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
                     <span>Diperbarui {formatDate(book.updated_at)}</span>
                   </div>
                 </div>
@@ -726,16 +717,16 @@ export const BookDetailPage = () => {
                 {
                   label: "Total Item",
                   value: (tree?.items?.length ?? 0).toString(),
-                  color: "text-blue-400",
-                  bg: "from-blue-500/10",
-                  border: "border-blue-500/15",
+                  color: "text-info",
+                  bg: "from-info/10",
+                  border: "border-info/15",
                 },
                 {
                   label: "Modul",
                   value: modules.length.toString(),
-                  color: "text-purple-400",
-                  bg: "from-purple-500/10",
-                  border: "border-purple-500/15",
+                  color: "text-primary",
+                  bg: "from-primary/10",
+                  border: "border-primary/15",
                 }
               ].map((s) => (
                 <div
@@ -745,7 +736,7 @@ export const BookDetailPage = () => {
                   <div className={`text-3xl font-black ${s.color} mb-1`}>
                     {s.value}
                   </div>
-                  <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                     {s.label}
                   </div>
                 </div>
@@ -753,23 +744,23 @@ export const BookDetailPage = () => {
             </div>
 
             {/* Modules / Content Section */}
-            <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#0E1420]">
-              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-blue-500/30 to-transparent" />
+            <div className="relative rounded-3xl overflow-hidden border border-border bg-card">
+              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-info/30 to-transparent" />
 
               {/* Section header */}
-              <div className="px-8 py-7 border-b border-white/5 flex flex-col md:flex-row items-center justify-between">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
-                  <Layers className="w-5 h-5 text-blue-400" />
+              <div className="px-8 py-7 border-b border-border flex flex-col md:flex-row items-center justify-between">
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2.5">
+                  <Layers className="w-5 h-5 text-info" />
                   Modul & Konten
                   {(modules.length > 0 || items.length > 0) && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold">
+                    <span className="px-2.5 py-0.5 rounded-full bg-info/10 border border-info/20 text-info text-xs font-bold">
                       {modules.length + items.length}
                     </span>
                   )}
                 </h2>
                 <button
                   onClick={() => setModalStep("picker")}
-                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:border-blue-400/50 hover:bg-blue-500/20 text-blue-400 text-sm font-medium transition-all duration-300"
+                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-xl bg-info/10 border border-info/20 hover:border-info/40 hover:bg-info/20 text-info text-sm font-medium transition-all duration-300"
                 >
                   <Plus className="w-4 h-4" />
                   Tambah
@@ -780,8 +771,8 @@ export const BookDetailPage = () => {
               {modules.length > 0 && (
                 <div className="p-6 pb-4">
                   <div className="flex items-center gap-2 mb-4">
-                    <Layers className="w-4 h-4 text-purple-400" />
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+                    <Layers className="w-4 h-4 text-primary" />
+                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
                       Modul ({modules.length})
                     </h3>
                   </div>
@@ -808,10 +799,10 @@ export const BookDetailPage = () => {
               {/* Items Grid Section */}
               {items.length > 0 && (
                 <>
-                  <div className="px-8 py-4 border-t border-white/5">
+                  <div className="px-8 py-4 border-t border-border">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
-                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+                      <Sparkles className="w-4 h-4 text-success" />
+                      <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
                          Item ({items.length})
                       </h3>
                     </div>
@@ -838,21 +829,20 @@ export const BookDetailPage = () => {
               {modules.length === 0 && items.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
                   <div className="relative mb-8">
-                    <div className="w-20 h-20 rounded-[2rem] bg-[#161D29] border border-white/10 flex items-center justify-center shadow-2xl">
-                      <BookOpen className="w-10 h-10 text-gray-600" />
+                    <div className="w-20 h-20 rounded-2xl bg-surface-1 border border-border flex items-center justify-center">
+                      <BookOpen className="w-10 h-10 text-muted-foreground" />
                     </div>
-                    <div className="absolute -inset-3 bg-blue-500/5 rounded-[2.5rem] blur-2xl pointer-events-none" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3 tracking-tight">
+                  <h3 className="text-xl font-bold text-foreground mb-3 tracking-tight">
                     Buku Masih Kosong
                   </h3>
-                  <p className="text-gray-500 text-sm max-w-sm leading-relaxed mb-8">
+                  <p className="text-muted-foreground text-sm max-w-sm leading-relaxed mb-8">
                     Mulai tambahkan modul pertama Anda untuk membangun kurikulum
                     yang terstruktur.
                   </p>
                   <button
                     onClick={() => setModalStep("module")}
-                    className="flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-white text-black font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                    className="flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm transition-colors active:scale-95"
                   >
                     <Plus className="w-4 h-4" />
                     Tambah Modul Pertama

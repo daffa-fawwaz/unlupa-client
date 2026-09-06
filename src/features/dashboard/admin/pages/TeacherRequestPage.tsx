@@ -160,25 +160,25 @@ export const TeacherRequestPage = () => {
     switch (column.key) {
       case "id":
         return (
-          <div className="text-gray-500 font-mono text-xs">#{index + 1}</div>
+          <div className="text-muted-foreground font-mono text-xs">#{index + 1}</div>
         );
 
       case "name":
         return (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 hidden md:flex rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 items-center justify-center text-white font-bold text-sm">
+            <div className="w-10 h-10 hidden md:flex rounded-xl bg-primary items-center justify-center text-primary-foreground font-bold text-sm">
               {item.user.full_name.charAt(0)}
             </div>
             <div>
-              <p className="font-medium text-white">{item.user.full_name}</p>
-              <p className="text-xs text-gray-400">Teacher Applicant</p>
+              <p className="font-medium text-foreground">{item.user.full_name}</p>
+              <p className="text-xs text-muted-foreground">Teacher Applicant</p>
             </div>
           </div>
         );
 
       case "email":
         return (
-          <div className="text-gray-300 font-mono text-xs">
+          <div className="text-muted-foreground font-mono text-xs">
             {item.user.email}
           </div>
         );
@@ -186,7 +186,7 @@ export const TeacherRequestPage = () => {
       case "message":
         return (
           <div
-            className="max-w-[200px] truncate text-gray-400 italic text-sm"
+            className="max-w-[200px] truncate text-muted-foreground italic text-sm"
             title={item.message}
           >
             "{item.message}"
@@ -206,7 +206,7 @@ export const TeacherRequestPage = () => {
                 onClick={() =>
                   handleOpenModal("approve", item.id, item.user.full_name)
                 }
-                className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition"
+                className="p-2 rounded-lg bg-success/10 text-success hover:bg-success hover:text-success-foreground transition"
                 title="Approve Request"
               >
                 <CheckCircle className="w-4 h-4" />
@@ -215,7 +215,7 @@ export const TeacherRequestPage = () => {
                 onClick={() =>
                   handleOpenModal("reject", item.id, item.user.full_name)
                 }
-                className="p-2 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition"
+                className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition"
                 title="Reject Request"
               >
                 <XCircle className="w-4 h-4" />
@@ -226,7 +226,7 @@ export const TeacherRequestPage = () => {
           // Show green badge for approved requests
           return (
             <div className="flex justify-end">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success/10 text-success text-xs font-medium border border-success/20">
                 <CheckCircle className="w-3.5 h-3.5" />
                 Approved
               </span>
@@ -236,7 +236,7 @@ export const TeacherRequestPage = () => {
           // Show red badge for rejected requests
           return (
             <div className="flex justify-end">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-medium border border-rose-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/10 text-destructive text-xs font-medium border border-destructive/20">
                 <XCircle className="w-3.5 h-3.5" />
                 Rejected
               </span>
@@ -251,13 +251,7 @@ export const TeacherRequestPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-deep-universe text-white font-primary max-w-7xl mx-auto p-6 md:p-10">
-      {/* Background Elements */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl" />
-      </div>
-
+    <div className="relative min-h-screen bg-background text-foreground font-primary max-w-7xl mx-auto p-6 md:p-10">
       {/* Sidebar Integration */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
@@ -272,23 +266,23 @@ export const TeacherRequestPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/50 transition text-amber-500"
+            className="p-2 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border transition text-foreground"
           >
             <Menu className="w-6 h-6" />
           </button>
           <p className="text-sm font-mono tracking-widest md:inline">MENU</p>
         </div>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                <User className="w-5 h-5 text-amber-500" />
+              <div className="p-2 rounded-lg bg-warning/10 border border-warning/20">
+                <User className="w-5 h-5 text-warning" />
               </div>
-              <h1 className="text-2xl md:text-3xl font-display font-bold text-white tracking-wide">
-                TEACHER <span className="text-amber-400">REQUESTS</span>
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-wide">
+                TEACHER <span className="text-warning">REQUESTS</span>
               </h1>
             </div>
-            <p className="text-gray-400 text-sm max-w-lg">
+            <p className="text-muted-foreground text-sm max-w-lg">
               Manage incoming applications from users who want to become
               teachers on the platform. Review their details and approve or
               reject them.
@@ -300,21 +294,21 @@ export const TeacherRequestPage = () => {
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-gray-400 hover:text-white group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border transition text-muted-foreground hover:text-foreground group disabled:opacity-50 disabled:cursor-not-allowed"
               title="Refresh Data"
             >
               <RefreshCw
-                className={`w-5 h-5 group-hover:text-amber-500 transition-transform ${isRefreshing ? "animate-spin" : ""}`}
+                className={`w-5 h-5 group-hover:text-warning transition-transform ${isRefreshing ? "animate-spin" : ""}`}
               />
             </button>
 
             {/* STEP 6: Bind value dan onChange ke select element */}
             <div className="relative group">
-              <Filter className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 group-hover:text-amber-500 transition" />
+              <Filter className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 group-hover:text-warning transition" />
               <select
                 value={statusFilter}
                 onChange={handleFilterChange}
-                className="pl-10 pr-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none cursor-pointer hover:bg-white/10 transition min-w-[160px] font-medium"
+                className="pl-10 pr-5 py-2.5 bg-surface-1 border border-border rounded-xl text-sm text-foreground focus:outline-none focus:border-warning/50 appearance-none cursor-pointer hover:bg-surface-2 transition min-w-[160px] font-medium"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending Review</option>
@@ -327,48 +321,48 @@ export const TeacherRequestPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-amber-500/30 transition-all duration-300">
+          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-warning/30 transition-all duration-300">
             <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <Clock className="w-32 h-32 text-amber-500" />
+              <Clock className="w-32 h-32 text-warning" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-amber-500/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-warning/80 mb-2 uppercase tracking-wider">
                 Pending Review
               </p>
-              <h3 className="text-4xl font-display font-bold text-white">
+              <h3 className="text-4xl font-display font-bold text-foreground">
                 {stats.pending}
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Awaiting decision</p>
+              <p className="text-xs text-muted-foreground mt-2">Awaiting decision</p>
             </div>
           </div>
 
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-300">
+          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-success/30 transition-all duration-300">
             <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <CheckCircle className="w-32 h-32 text-emerald-500" />
+              <CheckCircle className="w-32 h-32 text-success" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-emerald-500/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-success/80 mb-2 uppercase tracking-wider">
                 Approved
               </p>
-              <h3 className="text-4xl font-display font-bold text-white">
+              <h3 className="text-4xl font-display font-bold text-foreground">
                 {stats.approved}
               </h3>
-              <p className="text-xs text-gray-500 mt-2">New teachers joined</p>
+              <p className="text-xs text-muted-foreground mt-2">New teachers joined</p>
             </div>
           </div>
 
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-rose-500/30 transition-all duration-300">
+          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-destructive/30 transition-all duration-300">
             <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <XCircle className="w-32 h-32 text-rose-500" />
+              <XCircle className="w-32 h-32 text-destructive" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-rose-500/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-destructive/80 mb-2 uppercase tracking-wider">
                 Rejected
               </p>
-              <h3 className="text-4xl font-display font-bold text-white">
+              <h3 className="text-4xl font-display font-bold text-foreground">
                 {stats.rejected}
               </h3>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Applications declined
               </p>
             </div>
@@ -388,15 +382,15 @@ export const TeacherRequestPage = () => {
         />
 
         {/* Requests List (Mobile) - Empty State Only for now per static code */}
-        <div className="md:hidden glass-panel rounded-2xl border border-white/5 p-6 text-center">
+        <div className="md:hidden bg-card rounded-2xl border border-border p-6 text-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="p-4 rounded-full bg-white/5 border border-white/10">
-              <User className="w-12 h-12 text-gray-600" />
+            <div className="p-4 rounded-full bg-surface-1 border border-border">
+              <User className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-display font-semibold text-white">
+            <h3 className="text-lg font-display font-semibold text-foreground">
               No Applications Yet
             </h3>
-            <p className="text-gray-500 text-sm max-w-md">
+            <p className="text-muted-foreground text-sm max-w-md">
               Once users apply to become teachers, their requests will appear
               here for review.
             </p>

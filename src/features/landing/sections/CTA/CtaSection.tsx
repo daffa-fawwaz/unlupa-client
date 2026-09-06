@@ -1,52 +1,48 @@
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Link } from "react-router";
 
 export const CtaSection = () => {
   return (
-    <section className="relative w-full min-h-[50vh] flex items-center justify-center overflow-hidden py-32">
-      <div className="gate-container">
-        <div className="gate-glow"></div>
-
-        {/* 1. INTRO (Helpful Tone) */}
-        <div className="mb-10 animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-500/80 text-[10px] font-mono tracking-widest uppercase mb-6">
-            <Sparkles className="w-3 h-3" /> Niatkan untuk Menjaga
-          </div>
-
-          <h2 className="font-serif text-3xl md:text-5xl text-white mb-6 leading-tight">
-            Mulai Perjalanan Anda <br />
-            <span className="text-gold-gradient italic">Tanpa Beban</span>
-          </h2>
-
-          <p className="text-gray-400 font-light text-base md:text-lg leading-relaxed max-w-xl mx-auto">
-            Kami ingin Anda merasakan ketenangannya terlebih dahulu. Sistem ini
-            dibangun untuk membantu, bukan memberatkan.
-          </p>
+    <section id="cta" className="py-24 md:py-32 bg-primary/5 border-y border-primary/10">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="font-mono text-xs uppercase tracking-widest text-primary">Siap Memulai?</span>
         </div>
 
-        {/* 2. THE BUTTON (Simple CTA) */}
-        <div className="relative inline-block animate-fade-in-up delay-100 group">
-          <div className="particle-orbit opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-[1.05] tracking-tight mb-6">
+          Ilmu Anda Berhak<br />Terjaga.
+        </h2>
 
-          <a href="#" className="btn-start">
-            <span>Mulai Menjaga Sekarang</span>
-            <ArrowRight className="w-4 h-4" />
-          </a>
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-12">
+          Bergabunglah dengan ribuan pelajar yang telah memilih UNLUPA untuk menjaga ilmu mereka.
+          Mulai dari nol biaya bulan pertama, kontribusi bebas sesuai kemampuan.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            to="/register"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors w-full sm:w-auto"
+          >
+            Mulai Menjaga Ilmu
+            <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+          <Link
+            to="#metode"
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector("#metode")?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="px-8 py-4 text-lg font-medium text-foreground hover:text-primary border border-border rounded-xl transition-colors w-full sm:w-auto"
+          >
+            Pelajari Metodenya Dulu
+          </Link>
         </div>
 
-        {/* 3. FOOTER NOTE */}
-        <div className="mt-20 border-t border-white/5 pt-8 animate-fade-in-up delay-200">
-          <p className="text-gray-600 text-xs mb-4 font-light">
-            Kebermanfaatan adalah prioritas kami.
-          </p>
-          <div className="flex justify-center gap-6">
-            <a href="#" className="footer-link">
-              Tentang Kontribusi
-            </a>
-            <a href="#" className="footer-link">
-              Filosofi Kami
-            </a>
-          </div>
-        </div>
+        <p className="mt-8 text-sm text-muted-foreground">
+          Bulan pertama bebas kontribusi. Batalkan kapan saja.
+        </p>
       </div>
     </section>
   );

@@ -597,7 +597,7 @@ export const DailyReviewSection = () => {
 
   if (isLoadingClasses) {
     return (
-      <div className="mt-8 p-6 text-center text-sm text-slate-400 animate-pulse">
+      <div className="mt-8 p-6 text-center text-sm text-muted-foreground animate-pulse">
         Memuat informasi kelas...
       </div>
     );
@@ -605,26 +605,24 @@ export const DailyReviewSection = () => {
 
   return (
     <div className="mb-8 mt-8 animate-fadeIn relative">
-      <div className="absolute -inset-1 blur-2xl bg-linear-to-r from-cyan-500/20 via-blue-500/20 to-violet-500/20 rounded-3xl opacity-50 pointer-events-none" />
-
-      <div className="relative bg-linear-to-br from-[#1A222C] to-[#0F141A] rounded-2xl border border-cyan-500/30 overflow-hidden shadow-2xl shadow-cyan-900/20">
-        <div className="h-1 w-full bg-linear-to-r from-cyan-400 via-blue-400 to-violet-400" />
+      <div className="relative bg-card rounded-2xl border border-border overflow-hidden">
+        <div className="h-1 w-full bg-primary" />
 
         <div className="p-6 md:p-8">
           {/* Header */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-white/5 pb-6">
-            <div className="w-16 h-16 rounded-xl bg-linear-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 shrink-0 transform -rotate-3">
-              <Flame className="w-8 h-8 text-white animate-pulse" />
+          <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-border pb-6">
+            <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 transform -rotate-3">
+              <Flame className="w-8 h-8 text-primary animate-pulse" />
             </div>
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold tracking-wide uppercase mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase mb-2">
                 <Star className="w-3.5 h-3.5" /> Prioritas Kelas
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
                 Daily Review Kelas
               </h2>
-              <p className="text-gray-400 text-sm md:text-base max-w-2xl">
-                Ada <strong className="text-cyan-400">{totalItems} item</strong>{" "}
+              <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
+                Ada <strong className="text-primary">{totalItems} item</strong>{" "}
                 di kelas Quran yang menunggu untuk direview hari ini.
               </p>
             </div>
@@ -632,7 +630,7 @@ export const DailyReviewSection = () => {
 
           {/* Loading */}
           {loading && classGroups.length === 0 && (
-            <p className="text-sm text-gray-400 animate-pulse">
+            <p className="text-sm text-muted-foreground animate-pulse">
               Memuat target harian...
             </p>
           )}
@@ -640,13 +638,13 @@ export const DailyReviewSection = () => {
           {/* Empty */}
           {!loading && filteredClassGroups.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8 text-cyan-400" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-8 h-8 text-primary" />
               </div>
-              <p className="text-white font-bold mb-1">
+              <p className="text-foreground font-bold mb-1">
                 Semua kelas sudah direview!
               </p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-muted-foreground text-sm">
                 Tidak ada review tersisa hari ini.
               </p>
             </div>
@@ -656,11 +654,11 @@ export const DailyReviewSection = () => {
           <div className="space-y-8">
             {filteredClassGroups.map((group) => (
               <div key={group.classId} className="space-y-4">
-                <div className="flex items-center gap-2 border-l-4 border-cyan-500 pl-3">
-                  <h3 className="text-lg font-black text-white">
+                <div className="flex items-center gap-2 border-l-4 border-primary pl-3">
+                  <h3 className="text-lg font-black text-foreground">
                     {group.className}
                   </h3>
-                  <span className="rounded-full bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 text-[10px] text-cyan-400 font-bold uppercase">
+                  <span className="rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5 text-[10px] text-primary font-bold uppercase">
                     {group.classType === "book"
                       ? (group.bookEstimates?.reduce(
                           (acc, b) => acc + b.itemCount,
@@ -679,21 +677,19 @@ export const DailyReviewSection = () => {
                     {group.bookEstimates.map((book, index) => (
                       <div
                         key={book.book_title}
-                        className="group relative overflow-hidden rounded-xl bg-[#161D26] border border-white/10 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                        className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
-                        <div className="absolute inset-0 bg-linear-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 pointer-events-none" />
-
                         <div className="relative z-10 p-5">
                           <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                              <BookOpen className="w-6 h-6 text-purple-400" />
+                            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                              <BookOpen className="w-6 h-6 text-primary" />
                             </div>
                             <div className="min-w-0">
-                              <h3 className="text-base font-black text-white group-hover:text-purple-400 transition-colors truncate leading-tight">
+                              <h3 className="text-base font-black text-foreground group-hover:text-primary transition-colors truncate leading-tight">
                                 {book.book_title}
                               </h3>
-                              <p className="text-gray-500 text-xs mt-1">
+                              <p className="text-muted-foreground text-xs mt-1">
                                 {book.itemCount} item siap diuji
                               </p>
                             </div>
@@ -703,9 +699,9 @@ export const DailyReviewSection = () => {
                             {book.items.slice(0, 3).map((item, itemIndex) => (
                               <span
                                 key={item.item_id}
-                                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-gray-300"
+                                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-1 px-3 py-1 text-[11px] text-muted-foreground"
                               >
-                                <span className="w-5 h-5 rounded-full bg-purple-500/15 text-purple-300 flex items-center justify-center font-bold">
+                                <span className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold">
                                   {itemIndex + 1}
                                 </span>
                                 <span className="max-w-[11rem] truncate">
@@ -714,15 +710,15 @@ export const DailyReviewSection = () => {
                               </span>
                             ))}
                             {book.itemCount > 3 && (
-                              <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-gray-400">
+                              <span className="inline-flex items-center rounded-full border border-border bg-surface-1 px-3 py-1 text-[11px] text-muted-foreground">
                                 +{book.itemCount - 3} lagi
                               </span>
                             )}
                           </div>
 
-                          <div className="flex items-center justify-between pt-4 border-t border-white/10 gap-3">
+                          <div className="flex items-center justify-between pt-4 border-t border-border gap-3">
                             <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+                              <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
                                 <Clock className="w-3.5 h-3.5 shrink-0" />
                                 <span>
                                   ~{formatEstimate(book.totalEstimatedSeconds)}
@@ -732,7 +728,7 @@ export const DailyReviewSection = () => {
 
                             <button
                               onClick={() => openJuz(group.classId, book)}
-                              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-500 hover:bg-purple-400 text-[#0B0E14] font-bold text-xs transition-all shrink-0 shadow-md shadow-purple-500/20"
+                              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-xs transition-colors shrink-0"
                             >
                               <Play className="w-3.5 h-3.5 fill-current" />
                               Gas Review!
@@ -747,21 +743,19 @@ export const DailyReviewSection = () => {
                     {group.juzEstimates?.map((juz, index) => (
                       <div
                         key={juz.juz_id}
-                        className="group relative overflow-hidden rounded-xl bg-[#161D26] border border-white/10 hover:border-cyan-500/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                        className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
-                        <div className="absolute inset-0 bg-linear-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-500 pointer-events-none" />
-
                         <div className="relative z-10 p-5">
                           <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                              <BookOpen className="w-6 h-6 text-cyan-400" />
+                            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                              <BookOpen className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                              <h3 className="text-2xl font-black text-white group-hover:text-cyan-400 transition-colors">
+                              <h3 className="text-2xl font-black text-foreground group-hover:text-primary transition-colors">
                                 Juz {juz.juz_index}
                               </h3>
-                              <p className="text-gray-500 text-xs mt-1">
+                              <p className="text-muted-foreground text-xs mt-1">
                                 {juz.itemCount} item siap diuji
                               </p>
                             </div>
@@ -775,9 +769,9 @@ export const DailyReviewSection = () => {
                               return (
                                 <span
                                   key={item.item_id}
-                                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-gray-300"
+                                  className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-1 px-3 py-1 text-[11px] text-muted-foreground"
                                 >
-                                  <span className="w-5 h-5 rounded-full bg-cyan-500/15 text-cyan-300 flex items-center justify-center font-bold">
+                                  <span className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold">
                                     {itemIndex + 1}
                                   </span>
                                   <span className="max-w-[11rem] truncate">
@@ -789,15 +783,15 @@ export const DailyReviewSection = () => {
                               );
                             })}
                             {juz.itemCount > 3 && (
-                              <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-gray-400">
+                              <span className="inline-flex items-center rounded-full border border-border bg-surface-1 px-3 py-1 text-[11px] text-muted-foreground">
                                 +{juz.itemCount - 3} lagi
                               </span>
                             )}
                           </div>
 
-                          <div className="flex items-center justify-between pt-4 border-t border-white/10 gap-3">
+                          <div className="flex items-center justify-between pt-4 border-t border-border gap-3">
                             <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+                              <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
                                 <Clock className="w-3.5 h-3.5 shrink-0" />
                                 <span>
                                   ~{formatEstimate(juz.totalEstimatedSeconds)}
@@ -807,7 +801,7 @@ export const DailyReviewSection = () => {
 
                             <button
                               onClick={() => openJuz(group.classId, juz)}
-                              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-[#0B0E14] font-bold text-xs transition-all shrink-0 shadow-md shadow-cyan-500/20"
+                              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground font-bold text-xs transition-colors shrink-0"
                             >
                               <Play className="w-3.5 h-3.5 fill-current" />
                               Gas Review!

@@ -14,8 +14,8 @@ export const SidebarNavItems = () => {
           className={({ isActive }) =>
             `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
               isActive
-                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
-                : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                ? "bg-primary/10 text-primary border border-primary/20"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface-1 border border-transparent"
             }`
           }
         >
@@ -30,8 +30,8 @@ export const SidebarNavItems = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
                   isActive
-                    ? "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
-                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-1 border border-transparent"
                 }`
               }
             >
@@ -44,8 +44,8 @@ export const SidebarNavItems = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
                   isActive
-                    ? "bg-violet-500/10 text-violet-400 border border-violet-500/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]"
-                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-1 border border-transparent"
                 }`
               }
             >
@@ -58,12 +58,12 @@ export const SidebarNavItems = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group ${
                   isActive
-                    ? "bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
-                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-1 border border-transparent"
                 }`
               }
             >
-              <Users className="w-4 h-4 group-hover:text-amber-500 transition-colors" />
+              <Users className="w-4 h-4 group-hover:text-primary transition-colors" />
               <span className="text-sm font-medium">Users</span>
             </NavLink>
           </>

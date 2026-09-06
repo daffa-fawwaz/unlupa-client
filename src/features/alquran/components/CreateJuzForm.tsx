@@ -46,21 +46,18 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
   if (data) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-        <div className="w-full max-w-md bg-[#0F1115] border border-emerald-500/30 rounded-3xl p-8 shadow-[0_0_100px_-20px_rgba(16,185,129,0.2)] text-center relative overflow-hidden">
-          {/* Background effect */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/20 rounded-full blur-[50px]" />
-
+        <div className="w-full max-w-md bg-card border border-success/30 rounded-2xl p-8 shadow-xl text-center relative overflow-hidden">
           <div className="relative z-10 flex flex-col items-center">
-            <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 animate-in zoom-in duration-500">
-              <CheckCircle className="w-10 h-10 text-emerald-400" />
+            <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6 animate-in zoom-in duration-500">
+              <CheckCircle className="w-10 h-10 text-success" />
             </div>
 
-            <h2 className="text-2xl font-serif text-white mb-2">
+            <h2 className="text-2xl font-serif text-foreground mb-2">
               Alhamdulillah!
             </h2>
-            <p className="text-gray-400 mb-8">
+            <p className="text-muted-foreground mb-8">
               Juz{" "}
-              <span className="text-emerald-400 font-bold">
+              <span className="text-success font-bold">
                 {selectedJuzLabel}
               </span>{" "}
               berhasil ditambahkan.
@@ -70,7 +67,7 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
 
             <button
               onClick={onClose}
-              className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/20 cursor-pointer"
+              className="w-full py-3.5 bg-success hover:bg-success/90 text-success-foreground font-bold rounded-xl transition-all shadow-xl cursor-pointer"
             >
               Mulai Menghafal
             </button>
@@ -82,13 +79,13 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-[550px] bg-[rgba(10,12,15,0.95)] border border-amber-500/30 backdrop-blur-3xl rounded-3xl p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)]">
+      <div className="w-full max-w-[550px] bg-background border border-warning/30 rounded-2xl p-10 shadow-xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
-          <h1 className="text-xl font-serif text-white">Hafalan Baru</h1>
+        <div className="flex justify-between items-center mb-8 border-b border-border pb-4">
+          <h1 className="text-xl font-serif text-foreground">Hafalan Baru</h1>
           <button
             onClick={onClose}
-            className="text-gray-500 cursor-pointer hover:text-white transition"
+            className="text-muted-foreground cursor-pointer hover:text-foreground transition"
           >
             <X className="w-6 h-6" />
           </button>
@@ -96,14 +93,14 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
 
         {/* Juz Selection */}
         <div className="mb-6">
-          <label className="block font-mono text-xs text-amber-400 uppercase tracking-widest mb-2">
+          <label className="block font-mono text-xs text-warning uppercase tracking-widest mb-2">
             1. Pilih Juz
           </label>
           <select
             value={selectedJuz}
             onChange={(e) => handleJuzChange(e.target.value)}
             disabled={loading}
-            className="w-full bg-white/5 border border-white/10 text-white px-3.5 py-3.5 rounded-xl font-inter cursor-pointer appearance-none transition-colors hover:bg-white/10 focus:outline-none focus:border-amber-400 focus:bg-amber-500/5 disabled:opacity-50"
+            className="w-full bg-surface-1 border border-border text-foreground px-3.5 py-3.5 rounded-xl font-inter cursor-pointer appearance-none transition-colors hover:bg-surface-2 focus:outline-none focus:border-warning focus:bg-warning/5 disabled:opacity-50"
           >
             <option value="">-- Pilih Juz --</option>
             {Array.from({ length: 30 }, (_, i) => 30 - i).map((juz) => (
@@ -118,7 +115,7 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
         <button
           onClick={handleSubmit}
           disabled={loading || !selectedJuz}
-          className="w-full py-4 bg-linear-to-r from-amber-400 to-amber-600 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-500 text-black font-bold uppercase rounded-xl transition-transform hover:-translate-y-0.5 hover:shadow-[0_5px_20px_rgba(245,158,11,0.2)] tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+          className="w-full py-4 bg-warning disabled:bg-surface-2 disabled:text-muted-foreground text-warning-foreground font-bold uppercase rounded-xl transition-transform hover:-translate-y-0.5 tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
         >
           {loading ? (
             <>

@@ -36,23 +36,23 @@ export const SidebarRoleSwitcher = () => {
     student: {
       label: "Pelajar",
       icon: GraduationCap,
-      color: "text-emerald-400",
-      bg: "bg-emerald-500/10",
-      border: "group-hover:border-emerald-500/50",
+      color: "text-success",
+      bg: "bg-success/10",
+      border: "group-hover:border-success/50",
     },
     teacher: {
       label: "Guru",
       icon: BookOpen,
-      color: "text-amber-400",
-      bg: "bg-amber-500/10",
-      border: "group-hover:border-amber-500/50",
+      color: "text-warning",
+      bg: "bg-warning/10",
+      border: "group-hover:border-warning/50",
     },
     admin: {
       label: "Admin",
       icon: ShieldCheck,
-      color: "text-purple-400",
-      bg: "bg-purple-500/10",
-      border: "group-hover:border-purple-500/50",
+      color: "text-primary",
+      bg: "bg-primary/10",
+      border: "group-hover:border-primary/50",
     },
   };
 
@@ -71,8 +71,8 @@ export const SidebarRoleSwitcher = () => {
         onClick={() => setIsOpen(!isOpen)}
         className={clsx(
           "w-full flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 group",
-          "bg-white/5 hover:bg-white/10",
-          "border-white/10",
+          "bg-surface-1 hover:bg-surface-2",
+          "border-border",
           currentConfig.border,
         )}
       >
@@ -90,7 +90,7 @@ export const SidebarRoleSwitcher = () => {
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
               Mode
             </p>
-            <p className="text-sm font-medium text-white">
+            <p className="text-sm font-medium text-foreground">
               {currentConfig.label}
             </p>
           </div>
@@ -106,7 +106,7 @@ export const SidebarRoleSwitcher = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 p-2 bg-[#0F172A]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute top-full left-0 right-0 mt-2 p-2 bg-card border border-border rounded-2xl shadow-xl z-50 animate-in fade-in zoom-in-95 duration-200">
           <div className="space-y-1">
             {availableRoles.map((role: any) => {
               const config = roleConfig[role as keyof typeof roleConfig];
@@ -123,8 +123,8 @@ export const SidebarRoleSwitcher = () => {
                   className={clsx(
                     "w-full flex items-center gap-3 p-2 rounded-xl transition-all",
                     isActive
-                      ? "bg-white/10 text-white"
-                      : "text-muted-foreground hover:bg-white/5 hover:text-white",
+                      ? "bg-surface-2 text-foreground"
+                      : "text-muted-foreground hover:bg-surface-1 hover:text-foreground",
                   )}
                 >
                   <Icon
@@ -135,7 +135,7 @@ export const SidebarRoleSwitcher = () => {
                   />
                   <span className="text-sm font-medium">{config.label}</span>
                   {isActive && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_10px_white]"></div>
+                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"></div>
                   )}
                 </button>
               );

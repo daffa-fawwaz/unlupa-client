@@ -45,7 +45,7 @@ export const DailyReviewJuzModal = ({
       <div className="relative w-full max-w-2xl max-h-[90vh]">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 md:-top-5 md:-right-5 z-20 p-2 rounded-full bg-[#111826] border border-white/10 text-gray-400 hover:text-white hover:bg-[#1A2232] transition-colors"
+          className="absolute top-2 right-2 md:-top-5 md:-right-5 z-20 p-2 rounded-full bg-surface-1 border border-border text-muted-foreground hover:text-foreground hover:bg-surface-2 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -57,27 +57,25 @@ export const DailyReviewJuzModal = ({
             }`}
           >
             {/* Front - Item List */}
-            <div className="absolute inset-0 backface-hidden rounded-3xl md:rounded-[2rem] border border-cyan-400/20 bg-linear-to-br from-[#101725] via-[#0D1422] to-[#0A111C] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
-              <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(20,184,166,0.28),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(59,130,246,0.20),transparent_35%)]" />
-
+            <div className="absolute inset-0 backface-hidden rounded-2xl border border-info/20 bg-card shadow-xl overflow-y-auto">
               <div className="relative p-4 md:p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-400/20 flex items-center justify-center">
-                      <BookOpen className="w-6 h-6 text-cyan-400" />
+                    <div className="w-12 h-12 rounded-2xl bg-info/10 border border-info/20 flex items-center justify-center">
+                      <BookOpen className="w-6 h-6 text-info" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-black text-white">
+                      <h2 className="text-2xl font-black text-foreground">
                         Juz {juzEstimate.juz_index}
                       </h2>
-                      <p className="text-cyan-200/80 text-sm">
+                      <p className="text-info/80 text-sm">
                         {juzEstimate.itemCount} item untuk direview
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setIsFlipped(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-200 hover:bg-cyan-500/20 hover:border-cyan-300/40 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-1 border border-border text-sm text-muted-foreground hover:bg-info/10 hover:border-info/40 hover:text-info transition-colors"
                   >
                     <Clock className="w-4 h-4" />
                     Lihat Estimasi
@@ -103,40 +101,40 @@ export const DailyReviewJuzModal = ({
                           };
                           onItemSelected(task);
                         }}
-                        className="w-full group flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-500/40 transition-all text-left"
+                        className="w-full group flex items-center justify-between p-4 rounded-xl bg-surface-1 border border-border hover:bg-surface-2 hover:border-info/50 transition-all text-left"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center shrink-0">
-                            <span className="text-cyan-400 font-bold text-sm">
+                          <div className="w-10 h-10 rounded-lg bg-info/10 border border-info/20 flex items-center justify-center shrink-0">
+                            <span className="text-info font-bold text-sm">
                               {index + 1}
                             </span>
                           </div>
                           <div className="min-w-0 flex-1">
-                            <h3 className="text-white font-bold truncate group-hover:text-cyan-400 transition-colors">
+                            <h3 className="text-foreground font-bold truncate group-hover:text-info transition-colors">
                               {info?.title || `Item ${index + 1}`}
                             </h3>
-                            <p className="text-gray-400 text-xs truncate">
+                            <p className="text-muted-foreground text-xs truncate">
                               {info?.subtitle || item.content_ref}
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all shrink-0" />
+                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-info group-hover:translate-x-1 transition-all shrink-0" />
                       </button>
                     );
                   })}
                 </div>
 
                 {/* Total Time Footer */}
-                <div className="mt-6 p-4 rounded-xl bg-cyan-500/10 border border-cyan-400/20">
+                <div className="mt-6 p-4 rounded-xl bg-info/10 border border-info/20">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-cyan-400" />
-                      <span className="text-cyan-200 font-semibold">
+                      <Clock className="w-5 h-5 text-info" />
+                      <span className="text-info font-semibold">
                         Total Estimasi
                       </span>
                     </div>
-                    <span className="text-2xl font-black text-cyan-400">
+                    <span className="text-2xl font-black text-info">
                       {formatTime(juzEstimate.totalEstimatedSeconds)}
                     </span>
                   </div>
@@ -145,27 +143,25 @@ export const DailyReviewJuzModal = ({
             </div>
 
             {/* Back - Time Summary */}
-            <div className="absolute inset-0 backface-hidden transform-[rotateY(180deg)] rounded-3xl md:rounded-[2rem] border border-emerald-400/20 bg-linear-to-br from-[#13211D] via-[#101B19] to-[#0B1513] shadow-[0_30px_80px_rgba(0,0,0,0.5)] overflow-y-auto">
-              <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_15%_25%,rgba(16,185,129,0.32),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(20,184,166,0.2),transparent_35%)]" />
-
+            <div className="absolute inset-0 backface-hidden transform-[rotateY(180deg)] rounded-2xl border border-success/20 bg-surface-1 shadow-xl overflow-y-auto">
               <div className="relative p-4 md:p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-400/20 flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-emerald-400" />
+                    <div className="w-12 h-12 rounded-2xl bg-success/10 border border-success/20 flex items-center justify-center">
+                      <Clock className="w-6 h-6 text-success" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-black text-white">
+                      <h2 className="text-2xl font-black text-foreground">
                         Rincian Waktu
                       </h2>
-                      <p className="text-emerald-200/80 text-sm">
+                      <p className="text-success/80 text-sm">
                         Juz {juzEstimate.juz_index}
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setIsFlipped(false)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-200 hover:bg-emerald-500/20 hover:border-emerald-300/40 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-1 border border-border text-sm text-muted-foreground hover:bg-success/10 hover:border-success/40 hover:text-success transition-colors"
                   >
                     <BookOpen className="w-4 h-4" />
                     Lihat Item
@@ -182,23 +178,23 @@ export const DailyReviewJuzModal = ({
                     return (
                       <div
                         key={item.item_id}
-                        className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10"
+                        className="flex items-center gap-4 p-4 rounded-xl bg-surface-1 border border-border"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-400/20 flex items-center justify-center shrink-0">
-                          <span className="text-emerald-400 font-bold text-xs">
+                        <div className="w-8 h-8 rounded-lg bg-success/10 border border-success/20 flex items-center justify-center shrink-0">
+                          <span className="text-success font-bold text-xs">
                             {index + 1}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-semibold text-sm truncate">
+                          <h3 className="text-foreground font-semibold text-sm truncate">
                             {info?.title || `Item ${index + 1}`}
                           </h3>
-                          <p className="text-gray-400 text-xs truncate">
+                          <p className="text-muted-foreground text-xs truncate">
                             {info?.subtitle || item.content_ref}
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-emerald-400 font-bold text-sm">
+                          <p className="text-success font-bold text-sm">
                             {itemMinutes > 0 ? `${itemMinutes} mnt` : "< 1 mnt"}
                           </p>
                         </div>
@@ -208,12 +204,12 @@ export const DailyReviewJuzModal = ({
                 </div>
 
                 {/* Total */}
-                <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-400/20 text-center">
-                  <p className="text-emerald-200 text-sm mb-2">Total Waktu Review</p>
-                  <p className="text-4xl font-black text-emerald-400 mb-1">
+                <div className="p-6 rounded-2xl bg-success/10 border border-success/20 text-center">
+                  <p className="text-success text-sm mb-2">Total Waktu Review</p>
+                  <p className="text-4xl font-black text-success mb-1">
                     {formatTime(juzEstimate.totalEstimatedSeconds)}
                   </p>
-                  <p className="text-emerald-200/60 text-xs">
+                  <p className="text-success/60 text-xs">
                     {juzEstimate.itemCount} item
                   </p>
                 </div>

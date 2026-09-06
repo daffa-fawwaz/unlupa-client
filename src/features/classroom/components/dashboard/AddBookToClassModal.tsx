@@ -4,6 +4,7 @@ import { useBooks } from "@/features/personal/hooks/useBooks";
 import { useAddBookToClass } from "../../hooks/useClassroom";
 import { toast } from "sonner";
 import type { GetClassBook } from "../../types";
+import { resolveAssetUrl } from "@/lib/assets";
 
 interface AddBookToClassModalProps {
   isOpen: boolean;
@@ -72,18 +73,18 @@ export const AddBookToClassModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="bg-[#0B0F19] border border-white/[0.08] rounded-2xl max-w-xl w-full flex flex-col max-h-[85vh] relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-card border border-border rounded-2xl max-w-xl w-full flex flex-col max-h-[85vh] relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400">
+            <div className="p-2 bg-primary/10 rounded-xl border border-primary/20 text-primary">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-lg font-bold text-white leading-tight">
+              <h4 className="text-lg font-bold text-foreground leading-tight">
                 Tambahkan Buku ke Kelas
               </h4>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Pilih salah satu buku Anda untuk dibagikan ke seluruh siswa
                 kelas ini.
               </p>
@@ -91,7 +92,7 @@ export const AddBookToClassModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+            className="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-surface-2 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -101,13 +102,13 @@ export const AddBookToClassModal = ({
         <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-4 min-h-0">
           {books.length > 0 && availableBooks.length > 0 && (
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Cari judul buku..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-white/[0.06] bg-slate-950/40 text-sm text-white placeholder:text-slate-500 outline-none ring-1 ring-white/5 focus:ring-indigo-500/50 transition-all"
+                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-border bg-surface-1 text-sm text-foreground placeholder:text-muted-foreground outline-none ring-1 ring-border focus:ring-primary/50 transition-all"
               />
             </div>
           )}
@@ -115,41 +116,41 @@ export const AddBookToClassModal = ({
           {/* Book List State Management */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3">
-              <Loader2 className="h-8 w-8 text-indigo-500 animate-spin" />
-              <p className="text-xs text-slate-400">
+              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+              <p className="text-xs text-muted-foreground">
                 Memuat daftar buku Anda...
               </p>
             </div>
           ) : books.length === 0 ? (
             /* Empty State: No Books owned by teacher */
-            <div className="text-center py-12 border border-dashed border-white/5 rounded-xl bg-slate-950/10">
-              <BookOpen className="h-10 w-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-sm font-medium text-slate-300">
+            <div className="text-center py-12 border border-dashed border-border rounded-xl bg-surface-1">
+              <BookOpen className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm font-medium text-foreground">
                 Belum Ada Buku
               </p>
-              <p className="text-xs text-slate-400 max-w-xs mx-auto mt-1">
+              <p className="text-xs text-muted-foreground max-w-xs mx-auto mt-1">
                 Anda belum memiliki buku yang dapat ditambahkan ke kelas ini.
               </p>
             </div>
           ) : availableBooks.length === 0 ? (
             /* Empty State: All books already added to classroom */
-            <div className="text-center py-12 border border-dashed border-white/5 rounded-xl bg-slate-950/10">
-              <Check className="h-10 w-10 text-emerald-500 mx-auto mb-3 bg-emerald-500/10 p-2 rounded-full border border-emerald-500/20" />
-              <p className="text-sm font-medium text-slate-300">
+            <div className="text-center py-12 border border-dashed border-border rounded-xl bg-surface-1">
+              <Check className="h-10 w-10 text-success mx-auto mb-3 bg-success/10 p-2 rounded-full border border-success/20" />
+              <p className="text-sm font-medium text-foreground">
                 Semua Buku Sudah Ditambahkan
               </p>
-              <p className="text-xs text-slate-400 max-w-xs mx-auto mt-1">
+              <p className="text-xs text-muted-foreground max-w-xs mx-auto mt-1">
                 Semua buku Anda sudah ditambahkan ke kelas ini.
               </p>
             </div>
           ) : filteredBooks.length === 0 ? (
             /* Empty State: Search matches none */
-            <div className="text-center py-12 border border-dashed border-white/5 rounded-xl bg-slate-950/10">
-              <Search className="h-10 w-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-sm font-medium text-slate-300">
+            <div className="text-center py-12 border border-dashed border-border rounded-xl bg-surface-1">
+              <Search className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm font-medium text-foreground">
                 Buku Tidak Ditemukan
               </p>
-              <p className="text-xs text-slate-400 max-w-xs mx-auto mt-1">
+              <p className="text-xs text-muted-foreground max-w-xs mx-auto mt-1">
                 Tidak ada buku dengan judul "{searchTerm}" yang tersedia untuk
                 ditambahkan.
               </p>
@@ -165,28 +166,28 @@ export const AddBookToClassModal = ({
                     onClick={() => setSelectedBookId(book.id)}
                     className={`flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer group ${
                       isSelected
-                        ? "bg-indigo-600/10 border-indigo-500/50 ring-1 ring-indigo-500/30"
-                        : "border-white/[0.06] bg-[#0E131F]/40 hover:bg-slate-900/50 hover:border-white/[0.12]"
+                        ? "bg-primary/10 border-primary/50 ring-1 ring-primary/30"
+                        : "border-border bg-surface-1 hover:bg-surface-2 hover:border-border"
                     }`}
                   >
                     {/* Cover image or fallback */}
-                    <div className="h-14 w-10 rounded bg-slate-950/60 border border-white/5 shrink-0 overflow-hidden flex items-center justify-center relative">
+                    <div className="h-14 w-10 rounded bg-surface-1 border border-border shrink-0 overflow-hidden flex items-center justify-center relative">
                       {book.cover_image ? (
                         <img
-                          src={book.cover_image}
+                          src={resolveAssetUrl(book.cover_image)}
                           alt={book.title}
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <BookOpen className="h-5 w-5 text-slate-600" />
+                        <BookOpen className="h-5 w-5 text-muted-foreground" />
                       )}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h5 className="font-bold text-sm text-white truncate group-hover:text-indigo-400 transition-colors">
+                      <h5 className="font-bold text-sm text-foreground truncate group-hover:text-primary transition-colors">
                         {book.title}
                       </h5>
-                      <p className="text-xs text-slate-400 line-clamp-2 mt-0.5 leading-relaxed">
+                      <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5 leading-relaxed">
                         {book.description || "Tidak ada deskripsi singkat."}
                       </p>
                     </div>
@@ -196,8 +197,8 @@ export const AddBookToClassModal = ({
                       <div
                         className={`h-5 w-5 rounded-full border flex items-center justify-center transition-all ${
                           isSelected
-                            ? "bg-indigo-600 border-indigo-500 text-white"
-                            : "border-white/20 group-hover:border-white/40"
+                            ? "bg-primary border-primary text-primary-foreground"
+                            : "border-border group-hover:border-border"
                         }`}
                       >
                         {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
@@ -211,11 +212,11 @@ export const AddBookToClassModal = ({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-white/[0.06] flex items-center justify-end gap-3 bg-slate-950/20">
+        <div className="p-6 border-t border-border flex items-center justify-end gap-3 bg-surface-1">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-mono uppercase tracking-widest text-slate-400 hover:text-white border border-transparent hover:border-white/10 rounded-xl transition cursor-pointer"
+            className="px-4 py-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground border border-transparent hover:border-border rounded-xl transition cursor-pointer"
           >
             Batal
           </button>
@@ -223,7 +224,7 @@ export const AddBookToClassModal = ({
             type="button"
             disabled={!selectedBookId || isAdding}
             onClick={handleAdd}
-            className="px-5 py-2.5 text-xs font-mono uppercase tracking-widest bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-600/10 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="px-5 py-2.5 text-xs font-mono uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isAdding ? (
               <>

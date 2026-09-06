@@ -211,7 +211,7 @@ export const AlquranDashboard = ({
 
   return (
     <>
-      <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-[#0B0E14] rounded-3xl">
+      <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-background rounded-3xl">
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
@@ -240,19 +240,19 @@ export const AlquranDashboard = ({
 
           {/* Quick Access Buttons */}
           <div className="mt-12 mb-6">
-            <h2 className="text-xl font-bold text-white mb-4 border-l-4 border-blue-500 pl-3">
+            <h2 className="text-xl font-bold text-foreground mb-4 border-l-4 border-primary pl-3">
               Akses Cepat Berdasarkan Status
             </h2>
             <QuickAccessButtons counts={statusCounts} />
           </div>
 
           {/* Section: Koleksi Hafalan & Actions */}
-          <div className="mt-12 mb-6 border-t border-white/10 pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="mt-12 mb-6 border-t border-border pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-1 border-l-4 border-emerald-500 pl-3">
+              <h2 className="text-2xl font-bold text-foreground mb-1 border-l-4 border-primary pl-3">
                 Koleksi Hafalan & Juz
               </h2>
-              <p className="text-gray-400 text-sm pl-4">
+              <p className="text-muted-foreground text-sm pl-4">
                 Pantau progress hafalan dan tambahkan target Juz baru di sini.
               </p>
             </div>

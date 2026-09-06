@@ -79,25 +79,25 @@ export const CreateBookInClassModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="bg-[#0B0F19] border border-white/[0.08] rounded-2xl max-w-xl w-full flex flex-col max-h-[90vh] relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-card border border-border rounded-2xl max-w-xl w-full flex flex-col max-h-[90vh] relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400">
+            <div className="p-2 bg-success/10 rounded-xl border border-success/20 text-success">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-lg font-bold text-white leading-tight">
+              <h4 className="text-lg font-bold text-foreground leading-tight">
                 Buat Buku Baru di Kelas
               </h4>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Buku ini akan otomatis dikaitkan dengan kelas ini sehingga semua siswa dapat mengabdi padanya.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+            className="p-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-surface-2 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -108,8 +108,8 @@ export const CreateBookInClassModal = ({
           <div className="p-6 overflow-y-auto space-y-4 flex-1">
             {/* Title */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Judul Buku <span className="text-red-400">*</span>
+              <label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                Judul Buku <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
@@ -117,32 +117,32 @@ export const CreateBookInClassModal = ({
                 placeholder="cth. Kitab Matan Al-Ajurrumiyyah"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-slate-950/50 text-sm text-white placeholder:text-slate-500 outline-none ring-1 ring-white/5 focus:ring-emerald-500/50 transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface-1 text-sm text-foreground placeholder:text-muted-foreground outline-none ring-1 ring-border focus:ring-success/50 transition-all"
               />
             </div>
 
             {/* Description */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Deskripsi Buku <span className="text-slate-500 font-normal lowercase">(opsional)</span>
+              <label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                Deskripsi Buku <span className="text-muted-foreground font-normal lowercase">(opsional)</span>
               </label>
               <textarea
                 rows={3}
                 placeholder="Gambaran singkat atau pengantar mengenai buku ini..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-slate-950/50 text-sm text-white placeholder:text-slate-500 outline-none ring-1 ring-white/5 focus:ring-emerald-500/50 transition-all resize-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface-1 text-sm text-foreground placeholder:text-muted-foreground outline-none ring-1 ring-border focus:ring-success/50 transition-all resize-none"
               />
             </div>
 
             {/* Cover Image */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Gambar Sampul / Cover <span className="text-slate-500 font-normal lowercase">(opsional)</span>
+              <label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                Gambar Sampul / Cover <span className="text-muted-foreground font-normal lowercase">(opsional)</span>
               </label>
 
               {previewUrl ? (
-                <div className="relative rounded-xl overflow-hidden border border-white/10 group max-h-48 bg-slate-950/60 flex items-center justify-center">
+                <div className="relative rounded-xl overflow-hidden border border-border group max-h-48 bg-surface-1 flex items-center justify-center">
                   <img
                     src={previewUrl}
                     alt="Preview cover"
@@ -151,7 +151,7 @@ export const CreateBookInClassModal = ({
                   <button
                     type="button"
                     onClick={handleRemoveImage}
-                    className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-red-500 text-white rounded-lg backdrop-blur-md transition-colors"
+                    className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-destructive text-foreground rounded-lg transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -159,15 +159,15 @@ export const CreateBookInClassModal = ({
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border border-dashed border-white/10 hover:border-emerald-500/40 rounded-xl p-6 text-center cursor-pointer bg-slate-950/30 hover:bg-slate-900/40 transition-all group"
+                  className="border border-dashed border-border hover:border-success/40 rounded-xl p-6 text-center cursor-pointer bg-surface-1 hover:bg-surface-2 transition-all group"
                 >
-                  <div className="h-10 w-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                  <div className="h-10 w-10 rounded-full bg-success/10 border border-success/20 text-success flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
                     <Upload className="w-5 h-5" />
                   </div>
-                  <p className="text-xs font-semibold text-slate-300">
+                  <p className="text-xs font-semibold text-foreground">
                     Klik untuk unggah gambar sampul
                   </p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
                     PNG, JPG, JPEG, WEBP (Maksimal 3MB)
                   </p>
                 </div>
@@ -184,18 +184,18 @@ export const CreateBookInClassModal = ({
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-white/[0.06] flex items-center justify-end gap-3 bg-slate-950/20">
+          <div className="p-6 border-t border-border flex items-center justify-end gap-3 bg-surface-1">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-mono uppercase tracking-widest text-slate-400 hover:text-white border border-transparent hover:border-white/10 rounded-xl transition cursor-pointer"
+              className="px-4 py-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground border border-transparent hover:border-border rounded-xl transition cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={!title.trim() || isPending}
-              className="px-5 py-2.5 text-xs font-mono uppercase tracking-widest bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-600/10 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="px-5 py-2.5 text-xs font-mono uppercase tracking-widest bg-success hover:bg-success/90 text-success-foreground font-bold rounded-xl transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isPending ? (
                 <>

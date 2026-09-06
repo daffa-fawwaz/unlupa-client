@@ -36,8 +36,8 @@ export const ClassroomSearchInput = ({
 
   return (
     <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
-      <label className="group relative flex h-12 flex-1 items-center overflow-hidden rounded-2xl border border-white/8 bg-white/5 transition-all duration-300 focus-within:border-emerald-400/35 focus-within:bg-white/7 focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.08)]">
-        <span className="flex h-full w-12 shrink-0 items-center justify-center text-gray-500 transition-colors group-focus-within:text-emerald-300">
+      <label className="group relative flex h-12 flex-1 items-center overflow-hidden rounded-2xl border border-border bg-surface-1 transition-all duration-300 focus-within:border-primary/35 focus-within:bg-surface-2 focus-within:ring-4 focus-within:ring-primary/10">
+        <span className="flex h-full w-12 shrink-0 items-center justify-center text-muted-foreground transition-colors group-focus-within:text-primary">
           <Search className="h-4 w-4" />
         </span>
         <input
@@ -45,13 +45,13 @@ export const ClassroomSearchInput = ({
           value={currentValue}
           onChange={(event) => handleChange(event.target.value)}
           placeholder={placeholder}
-          className="h-full min-w-0 py-2 flex-1 bg-transparent pr-11 text-sm font-medium text-white outline-none placeholder:text-gray-600"
+          className="h-full min-w-0 py-2 flex-1 bg-transparent pr-11 text-sm font-medium text-foreground outline-none placeholder:text-muted-foreground"
         />
         {hasValue && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-full text-gray-500 transition hover:bg-white/10 hover:text-white"
+            className="absolute right-2 flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-2 hover:text-foreground"
             aria-label="Bersihkan pencarian"
           >
             <X className="h-4 w-4" />
@@ -61,7 +61,7 @@ export const ClassroomSearchInput = ({
 
       <div className="flex items-center gap-2">
         {typeof resultCount === "number" && (
-          <span className="hidden whitespace-nowrap rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs font-semibold text-gray-400 sm:inline-flex">
+          <span className="hidden whitespace-nowrap rounded-full border border-border bg-surface-1 px-3 py-2 text-xs font-semibold text-muted-foreground sm:inline-flex">
             {resultCount} kelas
           </span>
         )}
@@ -69,9 +69,9 @@ export const ClassroomSearchInput = ({
         <button
           type="button"
           onClick={onFilterClick}
-          className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-white/8 bg-white/5 px-4 text-sm font-bold text-gray-300 transition hover:border-white/15 hover:bg-white/10 hover:text-white"
+          className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-border bg-surface-1 px-4 text-sm font-bold text-muted-foreground transition hover:border-border hover:bg-surface-2 hover:text-foreground"
         >
-          <SlidersHorizontal className="h-4 w-4 text-emerald-300" />
+          <SlidersHorizontal className="h-4 w-4 text-primary" />
           <span>Filter</span>
         </button>
       </div>

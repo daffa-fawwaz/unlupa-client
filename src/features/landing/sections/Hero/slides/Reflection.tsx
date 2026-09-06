@@ -5,12 +5,12 @@ export const Reflection = ({ index }: { index: number }) => {
   return (
     <SlideContainer>
       {/* Header */}
-      <div className="flex justify-between items-start text-xs font-mono tracking-widest border-b border-white/5 pb-6">
-        <div className="flex items-center gap-2 text-secondary drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">
+      <div className="flex justify-between items-start text-xs font-mono tracking-widest border-b border-border pb-6">
+        <div className="flex items-center gap-2 text-secondary">
           <HelpCircle className="w-4 h-4 animate-pulse text-secondary" />
           REFLEKSI
         </div>
-        <span className="text-white/30">0{index} / 08</span>
+        <span className="text-foreground/30">0{index} / 08</span>
       </div>
 
       {/* Main Content */}
@@ -26,15 +26,15 @@ export const Reflection = ({ index }: { index: number }) => {
 
         <div className="relative space-y-8 max-w-5xl mx-auto">
           <div className="relative inline-block">
-            <h2 className="font-serif text-3xl md:text-5xl text-white/90 font-light tracking-wide leading-tight">
+            <h2 className="font-serif text-3xl md:text-5xl text-foreground/90 font-light tracking-wide leading-tight">
               HASIL BELAJAR ITU
             </h2>
-            <div className="h-px w-1/2 bg-linear-to-r from-transparent via-secondary/50 to-transparent mx-auto mt-4"></div>
+            <div className="h-px w-1/2 bg-secondary/30 mx-auto mt-4"></div>
           </div>
 
           <div className="relative group">
             {/* Glowing Text */}
-            <h1 className="relative z-10 font-display font-black text-5xl sm:text-6xl md:text-8xl text-transparent bg-clip-text bg-linear-to-b from-cyan-200 via-secondary to-blue-600 drop-shadow-[0_0_35px_rgba(34,211,238,0.4)] tracking-tight leading-tight transition-transform duration-700 group-hover:scale-[1.02]">
+            <h1 className="relative z-10 font-display font-black text-5xl sm:text-6xl md:text-8xl text-foreground tracking-tight leading-tight transition-transform duration-700 group-hover:scale-[1.02]">
               SEBENARNYA KE MANA?
             </h1>
 
@@ -45,20 +45,20 @@ export const Reflection = ({ index }: { index: number }) => {
 
         {/* Floating Icons */}
         <div className="absolute left-8 md:left-24 bottom-32 hidden md:block opacity-60 animate-float delay-500">
-          <div className="p-4 rounded-full border border-secondary/20 bg-secondary/5 shadow-[0_0_20px_rgba(34,211,238,0.15)]">
-            <Brain className="w-8 h-8 text-cyan-300" />
+          <div className="p-4 rounded-full border border-secondary/20 bg-secondary/5">
+            <Brain className="w-8 h-8 text-secondary" />
           </div>
         </div>
         <div className="absolute right-8 md:right-24 top-32 hidden md:block opacity-60 animate-float delay-200">
-          <div className="p-4 rounded-full border border-secondary/20 bg-secondary/5 shadow-[0_0_20px_rgba(34,211,238,0.15)]">
-            <Fingerprint className="w-8 h-8 text-cyan-300" />
+          <div className="p-4 rounded-full border border-secondary/20 bg-secondary/5">
+            <Fingerprint className="w-8 h-8 text-secondary" />
           </div>
         </div>
 
         {/* Bottom Badge */}
-        <div className="mt-16 flex items-center gap-3 px-6 py-2 rounded-full border border-secondary/30 bg-secondary/10 shadow-[0_0_20px_rgba(34,211,238,0.1)] backdrop-blur-md">
+        <div className="mt-16 flex items-center gap-3 px-6 py-2 rounded-full border border-secondary/30 bg-secondary/10 backdrop-blur-md">
           <div className="w-2 h-2 rounded-full bg-secondary animate-ping" />
-          <span className="text-cyan-200 text-xs md:text-sm font-mono tracking-widest">
+          <span className="text-secondary text-xs md:text-sm font-mono tracking-widest">
             STATUS: HILANG DARI INGATAN
           </span>
         </div>

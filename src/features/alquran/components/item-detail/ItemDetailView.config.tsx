@@ -63,8 +63,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
       "Sebelum memulai ujian FSRS, konfirmasi dulu bahwa kamu sudah hafal bagian ini dengan baik.",
     label: "Sudah Hafal",
     icon: <CheckCircle className="w-5 h-5" />,
-    buttonClass:
-      "bg-linear-to-r from-emerald-500 to-green-600 text-white shadow-emerald-900/20 hover:shadow-emerald-500/30",
+    buttonClass: "bg-success text-success-foreground",
   },
   terjaga: {
     sectionTitle: "Mode Ujian FSRS Aktif",
@@ -73,8 +72,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
       "Bagus, hafalan ini sekarang sedang di mode ujian FSRS. Sistem akan mengatur kapan kamu perlu review berikutnya berdasarkan performa terakhir.",
     label: "Ke Dashboard",
     icon: <ArrowRight className="w-5 h-5" />,
-    buttonClass:
-      "bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-900/20 hover:shadow-emerald-500/30",
+    buttonClass: "bg-success text-success-foreground",
   },
   graduate: {
     sectionTitle: "Selamat! Anda Telah Menyelesaikan Fase Ini",
@@ -83,30 +81,29 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
     label: "Lihat Progress",
     href: "/dashboard/alquran",
     icon: <Trophy className="w-5 h-5" />,
-    buttonClass:
-      "bg-linear-to-r from-purple-500 to-violet-600 text-white shadow-purple-900/20 hover:shadow-purple-500/30",
+    buttonClass: "bg-primary text-primary-foreground",
   },
 };
 
 const STATUS_DISPLAY_CONFIG: Record<ActionPhaseStatus, StatusDisplay> = {
   menghafal: {
     title: "Fase Menghafal",
-    icon: <Brain className="w-12 h-12 text-amber-400" />,
-    iconBg: "bg-amber-500/10 border-amber-500/20 shadow-amber-500/20",
+    icon: <Brain className="w-12 h-12 text-warning" />,
+    iconBg: "bg-warning/10 border-warning/20",
     description:
       "Item ini masih dalam tahap hafalan awal. Fokuslah untuk mengulang-ulang bacaan secara berkesinambungan hingga lancar tanpa melihat mushaf.",
   },
   fsrs_active: {
     title: "Fase Ujian FSRS",
-    icon: <RotateCcw className="w-12 h-12 text-emerald-400" />,
-    iconBg: "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/20",
+    icon: <RotateCcw className="w-12 h-12 text-success" />,
+    iconBg: "bg-success/10 border-success/20",
     description:
       "Hafalan ini sudah masuk ke jadwal ujian FSRS berkala. Lakukan review rutin tepat waktu ketika jadwalnya tiba agar hafalan tetap terjaga seumur hidup.",
   },
   graduate: {
     title: "Fase Selesai",
-    icon: <Trophy className="w-12 h-12 text-purple-400" />,
-    iconBg: "bg-purple-500/10 border-purple-500/20 shadow-purple-500/20",
+    icon: <Trophy className="w-12 h-12 text-primary" />,
+    iconBg: "bg-primary/10 border-primary/20",
     description:
       "Alhamdulillah! Anda telah menyelesaikan fase hafalan ini dengan sukses. Terus pertahankan dengan murajaah rutin agar hafalan tetap melekat.",
   },
@@ -220,31 +217,27 @@ export function getStatusStyle(status: string): StatusStyle {
     case "menghafal":
       return {
         label: "Menghafal",
-        className:
-          "bg-green-500/10 border-green-500/20 text-green-400 shadow-[0_0_12px_rgba(74,222,128,0.1)]",
+        className: "bg-success/10 border-success/20 text-success",
       };
     case "interval":
       return {
         label: "Latihan Interval",
-        className:
-          "bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.1)]",
+        className: "bg-warning/10 border-warning/20 text-warning",
       };
     case "fsrs_active":
       return {
         label: "Ujian FSRS",
-        className:
-          "bg-blue-500/10 border-blue-500/20 text-blue-400 shadow-[0_0_12px_rgba(96,165,250,0.1)]",
+        className: "bg-info/10 border-info/20 text-info",
       };
     case "graduate":
       return {
         label: "Selesai",
-        className:
-          "bg-purple-500/10 border-purple-500/20 text-purple-400 shadow-[0_0_12px_rgba(192,132,252,0.1)]",
+        className: "bg-primary/10 border-primary/20 text-primary",
       };
     default:
       return {
         label: status,
-        className: "bg-gray-500/10 border-gray-500/20 text-gray-400",
+        className: "bg-surface-1 border-border text-muted-foreground",
       };
   }
 }
@@ -254,26 +247,22 @@ export function getStatusStyleByPhase(phase: ActionPhase): StatusStyle {
     case "menghafal":
       return {
         label: "Menghafal",
-        className:
-          "bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.1)]",
+        className: "bg-warning/10 border-warning/20 text-warning",
       };
     case "terjaga":
       return {
         label: "Ujian FSRS",
-        className:
-          "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.1)]",
+        className: "bg-success/10 border-success/20 text-success",
       };
     case "graduate":
       return {
         label: "Selesai",
-        className:
-          "bg-purple-500/10 border-purple-500/20 text-purple-400 shadow-[0_0_12px_rgba(192,132,252,0.1)]",
+        className: "bg-primary/10 border-primary/20 text-primary",
       };
     default:
       return {
         label: "Menghafal",
-        className:
-          "bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.1)]",
+        className: "bg-warning/10 border-warning/20 text-warning",
       };
   }
 }

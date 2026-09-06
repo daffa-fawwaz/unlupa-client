@@ -6,12 +6,12 @@ interface StatusBadgeProps {
 
 export const StatusBadge = ({ status }: StatusBadgeProps) => {
   const styles: Record<string, string> = {
-    pending: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-    approved: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-    rejected: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+    pending: "bg-warning/10 text-warning border-warning/20",
+    approved: "bg-success/10 text-success border-success/20",
+    rejected: "bg-destructive/10 text-destructive border-destructive/20",
   };
 
-  const defaultStyle = "bg-slate-500/10 text-slate-500 border-slate-500/20";
+  const defaultStyle = "bg-muted/10 text-muted-foreground border-muted/20";
 
   return (
     <div

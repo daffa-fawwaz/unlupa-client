@@ -36,16 +36,16 @@ export const SuccessModal = ({
       />
 
       <div className="relative w-full max-w-sm animate-in fade-in zoom-in duration-300">
-        <div className="rounded-3xl border border-emerald-500/30 bg-linear-to-br from-[#1A2232] via-[#152A1F] to-[#111F1A] shadow-[0_40px_100px_rgba(0,0,0,0.7)] p-6 md:p-8 pointer-events-auto">
+        <div className="rounded-2xl border border-success/30 bg-card shadow-xl p-6 md:p-8 pointer-events-auto">
           <div className="text-center">
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 mb-4 mx-auto">
-              <CheckCircle className="w-8 h-8 text-emerald-400" />
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-success/20 border border-success/40 mb-4 mx-auto">
+              <CheckCircle className="w-8 h-8 text-success" />
             </div>
-            <h3 className="text-xl font-black text-white mb-2">
+            <h3 className="text-xl font-black text-foreground mb-2">
               {title}
             </h3>
             {message && (
-              <p className="text-gray-400 text-sm">
+              <p className="text-muted-foreground text-sm">
                 {message}
               </p>
             )}

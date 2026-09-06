@@ -110,33 +110,33 @@ export const CreateClassModal = ({
         className="absolute inset-0"
         onClick={!isLoading ? onClose : undefined}
       />
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#0A1120] shadow-[0_40px_100px_rgba(0,0,0,0.7)]">
+      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl border border-border bg-card">
         <button
           type="button"
           onClick={onClose}
           disabled={isLoading}
-          className="absolute cursor-pointer right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-300 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+          className="absolute cursor-pointer right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface-1 text-muted-foreground transition hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Tutup"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className="relative overflow-hidden px-6 py-6 sm:px-8 sm:py-8">
-          <div className="mb-8 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-inner shadow-white/5">
-            <div className="flex items-center gap-3 text-cyan-300">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 border border-cyan-400/20">
+        <div className="relative flex-1 min-h-0 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
+          <div className="mb-8 rounded-2xl border border-border bg-surface-1 p-6">
+            <div className="flex items-center gap-3 text-primary">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary border border-primary/20">
                 <BookOpen className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300/80">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary/80">
                   Kelas Baru
                 </p>
-                <h2 className="text-2xl font-black text-white">
+                <h2 className="text-2xl font-black text-foreground">
                   Buat Kelas Baru
                 </h2>
               </div>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-gray-400">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Isi nama, deskripsi, tipe kelas, dan unggah gambar sampul untuk
               mulai membuat ruang belajar baru.
             </p>
@@ -145,11 +145,11 @@ export const CreateClassModal = ({
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-white">
-                  Nama Kelas <span className="text-rose-400">*</span>
+                <label className="block text-sm font-semibold text-foreground">
+                  Nama Kelas <span className="text-destructive">*</span>
                 </label>
                 <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">
                     <LayoutGrid className="h-5 w-5" />
                   </div>
                   <input
@@ -159,17 +159,17 @@ export const CreateClassModal = ({
                     onChange={handleChange}
                     placeholder="Contoh: Kelas Bahasa Arab "
                     disabled={isLoading}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-11 pr-4 text-white placeholder:text-gray-500 outline-none transition focus:border-cyan-400 focus:bg-white/10"
+                    className="w-full rounded-2xl border border-border bg-surface-1 py-4 pl-11 pr-4 text-foreground placeholder:text-muted-foreground outline-none transition focus:border-primary focus:bg-surface-2"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-white">
+                <label className="block text-sm font-semibold text-foreground">
                   Tipe Kelas
                 </label>
                 <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">
                     <BookOpen className="h-5 w-5" />
                   </div>
                   <select
@@ -177,12 +177,12 @@ export const CreateClassModal = ({
                     value={formData.type}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className="w-full appearance-none rounded-2xl border border-white/10 bg-white/5 py-4 pl-11 pr-10 text-white outline-none transition focus:border-cyan-400 focus:bg-white/10"
+                    className="w-full appearance-none rounded-2xl border border-border bg-surface-1 py-4 pl-11 pr-10 text-foreground outline-none transition focus:border-primary focus:bg-surface-2"
                   >
                     <option value="book">Book</option>
                     <option value="quran">Quran</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground">
                     <ChevronDown className="h-4 w-4" />
                   </div>
                 </div>
@@ -190,7 +190,7 @@ export const CreateClassModal = ({
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-white">
+              <label className="block text-sm font-semibold text-foreground">
                 Deskripsi
               </label>
               <div className="relative">
@@ -201,26 +201,26 @@ export const CreateClassModal = ({
                   placeholder="Opsional: Tambahkan ringkasan tentang kelas ini..."
                   rows={4}
                   disabled={isLoading}
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 px-4 text-white placeholder:text-gray-500 outline-none transition focus:border-cyan-400 focus:bg-white/10 resize-none"
+                  className="w-full rounded-2xl border border-border bg-surface-1 py-4 px-4 text-foreground placeholder:text-muted-foreground outline-none transition focus:border-primary focus:bg-surface-2 resize-none"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-white">
+              <label className="block text-sm font-semibold text-foreground">
                 Gambar Sampul (Opsional)
               </label>
-              <div className="relative flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/5 p-6 text-center transition hover:bg-white/8 hover:border-cyan-400/30 min-h-36">
+              <div className="relative flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface-1 p-6 text-center transition hover:bg-surface-2 hover:border-primary/30 min-h-36">
                 {formData.cover_image ? (
                   <div className="relative z-10 flex flex-col items-center gap-2">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300 border border-cyan-400/20">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary border border-primary/20">
                       <Image className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-white truncate max-w-xs">
+                      <p className="text-sm font-semibold text-foreground truncate max-w-xs">
                         {formData.cover_image.name}
                       </p>
-                      <p className="text-[10px] text-gray-500 font-mono">
+                      <p className="text-[10px] text-muted-foreground font-mono">
                         {(formData.cover_image.size / 1024).toFixed(1)} KB
                       </p>
                     </div>
@@ -231,7 +231,7 @@ export const CreateClassModal = ({
                         e.stopPropagation();
                         setFormData((prev) => ({ ...prev, cover_image: null }));
                       }}
-                      className="mt-2 text-xs font-semibold text-rose-400 hover:text-rose-300 hover:underline cursor-pointer"
+                      className="mt-2 text-xs font-semibold text-destructive hover:text-destructive/80 hover:underline cursor-pointer"
                     >
                       Hapus Gambar
                     </button>
@@ -247,14 +247,14 @@ export const CreateClassModal = ({
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                     />
                     <div className="flex flex-col items-center gap-2 pointer-events-none">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 text-gray-400 border border-white/10">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-1 text-muted-foreground border border-border">
                         <Upload className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-300">
+                        <p className="text-sm font-semibold text-foreground">
                           Pilih atau seret gambar ke sini
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           PNG, JPG, atau JPEG (Maks. 5MB)
                         </p>
                       </div>
@@ -265,13 +265,13 @@ export const CreateClassModal = ({
             </div>
 
             {errorMessage ? (
-              <p className="text-sm text-rose-400">{errorMessage}</p>
+              <p className="text-sm text-destructive">{errorMessage}</p>
             ) : null}
 
             <button
               type="submit"
               disabled={isLoading}
-              className="flex w-full items-center justify-center rounded-2xl bg-linear-to-r from-cyan-500 to-blue-600 px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center rounded-2xl bg-primary hover:bg-primary/90 px-5 py-4 text-sm font-semibold text-primary-foreground transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isLoading ? "Membuat Kelas..." : "Buat Kelas"}
             </button>

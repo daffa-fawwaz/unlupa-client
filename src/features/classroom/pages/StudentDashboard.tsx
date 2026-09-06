@@ -39,12 +39,12 @@ export const StudentDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-deep-universe text-white font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
       {/* Background Ambience */}
       <BackgroundAmbience />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="min-h-screen relative rounded-3xl overflow-hidden selection:bg-blue-500/30">
+        <div className="min-h-screen relative overflow-hidden selection:bg-primary/30">
           {/* --- Dynamic Background Atmosphere --- */}
           <DynamicBackgroundAtmosphere />
 
@@ -113,11 +113,6 @@ export const StudentDashboard = () => {
                   // Debug log removed for production
                 }}
                 // Optional Styling
-                mainBgColor="bg-[#020817]"
-                wrapperGradient="bg-gradient-to-b from-[#081225] to-[#030712]"
-                glowColor="bg-blue-500/10"
-                borderColor="border-blue-500/10"
-                // Optional Button Styling
                 buttonClassName="hover:scale-[1.02]"
               >
                 {classes && (

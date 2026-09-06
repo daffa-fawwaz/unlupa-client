@@ -76,32 +76,32 @@ export const EditItemModal = ({
       <div className="relative w-full max-w-lg">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-full bg-surface-1 border border-border text-muted-foreground hover:text-foreground hover:bg-surface-2 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="rounded-3xl border border-white/10 bg-linear-to-br from-[#1A2232] via-[#151B28] to-[#111826] shadow-[0_40px_100px_rgba(0,0,0,0.7)] p-6 md:p-8">
+        <div className="rounded-2xl border border-border bg-card shadow-xl p-6 md:p-8">
           <div className="mb-6">
-            <h3 className="text-2xl font-black text-white mb-2">
+            <h3 className="text-2xl font-black text-foreground mb-2">
               Edit Item Hafalan
             </h3>
-            <p className="text-gray-400 text-sm">
+            <p className="text-muted-foreground text-sm">
               Ubah konfigurasi item hafalan ini
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 rounded-xl border border-rose-400/30 bg-rose-500/10 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-              <p className="text-rose-300 text-sm">{error}</p>
+            <div className="mb-6 p-4 rounded-xl border border-destructive/30 bg-destructive/10 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+              <p className="text-destructive/90 text-sm">{error}</p>
             </div>
           )}
 
           <div className="space-y-5">
             {/* Mode Selection */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-muted-foreground mb-2">
                 Tipe Hafalan
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -110,8 +110,8 @@ export const EditItemModal = ({
                   onClick={() => setMode("surah")}
                   className={`px-4 py-3 rounded-xl font-semibold transition-all ${
                     mode === "surah"
-                      ? "bg-emerald-500 text-white"
-                      : "bg-white/5 text-gray-300 hover:bg-white/10"
+                      ? "bg-success text-success-foreground"
+                      : "bg-surface-1 text-muted-foreground hover:bg-surface-2"
                   }`}
                 >
                   Per Surah
@@ -121,8 +121,8 @@ export const EditItemModal = ({
                   onClick={() => setMode("page")}
                   className={`px-4 py-3 rounded-xl font-semibold transition-all ${
                     mode === "page"
-                      ? "bg-emerald-500 text-white"
-                      : "bg-white/5 text-gray-300 hover:bg-white/10"
+                      ? "bg-success text-success-foreground"
+                      : "bg-surface-1 text-muted-foreground hover:bg-surface-2"
                   }`}
                 >
                   Per Halaman
@@ -132,24 +132,24 @@ export const EditItemModal = ({
 
             {/* Content Ref */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-muted-foreground mb-2">
                 Content Reference
               </label>
               <input
                 type="text"
                 value={contentRefValue}
                 onChange={(e) => setContentRefValue(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-success/50 focus:ring-2 focus:ring-success/20 transition-all"
                 placeholder="surah:67:15-25"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Format: surah:{`{nomor_surah}`}:{`{ayat_mulai}`}-{`{ayat_akhir}`}
               </p>
             </div>
 
             {/* Estimate Value */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-muted-foreground mb-2">
                 Estimasi Waktu
               </label>
               <div className="flex gap-3">
@@ -157,7 +157,7 @@ export const EditItemModal = ({
                   type="number"
                   value={estimateValue}
                   onChange={(e) => setEstimateValue(Number(e.target.value))}
-                  className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  className="flex-1 px-4 py-3 rounded-xl bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-success/50 focus:ring-2 focus:ring-success/20 transition-all"
                   placeholder="3"
                   min="1"
                 />
@@ -166,7 +166,7 @@ export const EditItemModal = ({
                   onChange={(e) =>
                     setEstimateUnit(e.target.value as "minutes" | "seconds")
                   }
-                  className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  className="px-4 py-3 rounded-xl bg-surface-1 border border-border text-foreground focus:outline-none focus:border-success/50 focus:ring-2 focus:ring-success/20 transition-all"
                 >
                   <option value="minutes">Menit</option>
                   <option value="seconds">Detik</option>
@@ -180,7 +180,7 @@ export const EditItemModal = ({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-semibold hover:bg-white/10 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-3 rounded-xl bg-surface-1 border border-border text-muted-foreground font-semibold hover:bg-surface-2 transition-colors disabled:opacity-50"
             >
               Batal
             </button>
@@ -188,7 +188,7 @@ export const EditItemModal = ({
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 px-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-3 rounded-xl bg-success hover:bg-success/90 text-success-foreground font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

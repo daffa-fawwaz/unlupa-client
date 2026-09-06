@@ -24,8 +24,8 @@ function StatCard({
   children,
 }: StatCardProps) {
   return (
-    <div className="flex flex-col gap-2 p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/15 transition-colors">
-      <div className="flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-wider">
+    <div className="flex flex-col gap-2 p-5 rounded-2xl bg-surface-1 border border-border hover:border-border transition-colors">
+      <div className="flex items-center gap-2 text-muted-foreground text-xs font-bold uppercase tracking-wider">
         <Icon className={`w-4 h-4 ${iconClassName}`} />
         {label}
       </div>
@@ -54,46 +54,46 @@ export function ItemDetailStatsGrid({
     <div className="grid grid-cols-2 gap-4 mb-8">
       <StatCard
         icon={Clock}
-        iconClassName="text-amber-500/60"
+        iconClassName="text-warning/60"
         label="Total Review"
       >
-        <span className="text-3xl font-mono font-bold text-white">
+        <span className="text-3xl font-mono font-bold text-foreground">
           {reviewCount}
-          <span className="text-base text-gray-500 font-normal ml-1">kali</span>
+          <span className="text-base text-muted-foreground font-normal ml-1">kali</span>
         </span>
       </StatCard>
 
       <StatCard
         icon={CheckCircle}
-        iconClassName="text-green-500/60"
+        iconClassName="text-success/60"
         label="Ditambahkan"
       >
-        <span className="text-sm font-medium text-gray-300 leading-snug mt-1">
+        <span className="text-sm font-medium text-muted-foreground leading-snug mt-1">
           {formatDate(createdDate)}
         </span>
       </StatCard>
 
       <StatCard
         icon={BarChart2}
-        iconClassName="text-blue-500/60"
+        iconClassName="text-info/60"
         label="Tipe Hafalan"
       >
-        <span className="text-lg font-bold text-white capitalize">
+        <span className="text-lg font-bold text-foreground capitalize">
           {info.type === "surah" ? "Per Surah" : "Per Halaman"}
         </span>
       </StatCard>
 
       <StatCard
         icon={CalendarDays}
-        iconClassName="text-purple-500/60"
+        iconClassName="text-primary/60"
         label="Jadwal Latihan Interval Selanjutnya"
       >
         {nextReviewAt ? (
-          <span className="text-sm font-mono font-bold text-white">
+          <span className="text-sm font-mono font-bold text-foreground">
             {formatDate(nextReviewAt)}
           </span>
         ) : (
-          <span className="text-sm font-medium text-gray-500">Belum ada</span>
+          <span className="text-sm font-medium text-muted-foreground">Belum ada</span>
         )}
       </StatCard>
     </div>
