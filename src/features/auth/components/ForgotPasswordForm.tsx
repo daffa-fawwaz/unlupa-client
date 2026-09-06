@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const ForgotPasswordForm = () => {
   return (
     <div className="w-full flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-card border border-border rounded-xl p-10 shadow-sm relative overflow-hidden transition-all duration-500 mx-auto">
+      <div className="w-full max-w-md bg-card border border-border rounded-xl p-10 relative overflow-hidden transition-all duration-500 mx-auto">
         {/* TOP ACCENT LINE */}
         <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/30 to-transparent"></div>
 

@@ -21,20 +21,20 @@ export const ShardCard: React.FC<ShardCardProps> = ({
   onClick,
 }) => {
   // Determine color classes based on the prop
-  let variantClass = "border-success/25 hover:border-success/60 hover:shadow-success/10";
+  let variantClass = "border-success/25 hover:border-success/60";
   let iconClass = "text-success bg-success/10 border-success/30";
   let textClass = "group-hover:text-success";
   let labelClass = "text-success/70";
   let inputStyle = { "--text-color": "var(--success)" } as React.CSSProperties;
 
   if (color === "blue") {
-    variantClass = "border-info/25 hover:border-info/60 hover:shadow-info/10";
+    variantClass = "border-info/25 hover:border-info/60";
     iconClass = "text-info bg-info/10 border-info/30";
     textClass = "group-hover:text-info";
     labelClass = "text-info/70";
     inputStyle = { "--text-color": "var(--info)" } as React.CSSProperties;
   } else if (color === "purple") {
-    variantClass = "border-primary/25 hover:border-primary/60 hover:shadow-primary/10";
+    variantClass = "border-primary/25 hover:border-primary/60";
     iconClass = "text-primary bg-primary/10 border-primary/30";
     textClass = "group-hover:text-primary";
     labelClass = "text-primary/70";
@@ -43,7 +43,7 @@ export const ShardCard: React.FC<ShardCardProps> = ({
 
   return (
     <div
-      className={`group relative cursor-pointer overflow-hidden rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${variantClass}`}
+      className={`group relative cursor-pointer overflow-hidden rounded-2xl border bg-card p-6 transition-all duration-300 hover:-translate-y-1 ${variantClass}`}
       onClick={onClick}
     >
       <div className="flex justify-between items-start mb-4">

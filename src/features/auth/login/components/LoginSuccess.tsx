@@ -7,7 +7,7 @@ export const LoginSuccess = () => {
 
   return (
     <div className="w-full flex justify-center items-center p-6">
-      <div className="w-full max-w-lg bg-card border border-border rounded-xl p-10 shadow-sm relative overflow-hidden transition-all duration-500 mx-auto">
+      <div className="w-full max-w-lg bg-card border border-border rounded-xl p-10 relative overflow-hidden transition-all duration-500 mx-auto">
         <div
           id="state-success"
           className="state-view text-center py-4 relative z-10"

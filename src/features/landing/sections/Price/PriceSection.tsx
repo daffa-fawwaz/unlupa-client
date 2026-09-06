@@ -80,7 +80,7 @@ export const PriceSection = () => {
             <p className="text-muted-foreground text-sm font-light max-w-xl mx-auto">Tidak ada nominal yang benar atau salah. Pilihlah sesuai kemampuan.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <button onClick={() => fillAmount("25000")} className="text-left p-6 md:p-8 bg-card border border-border rounded-xl hover:border-primary/30 hover:shadow-sm transition-all duration-300">
+            <button onClick={() => fillAmount("25000")} className="text-left p-6 md:p-8 bg-card border border-border rounded-xl hover:border-primary/30 transition-all duration-300">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Leaf className="w-6 h-6" /></div>
                 <div><span className="font-mono text-[10px] uppercase tracking-widest text-primary mb-1 block">Pelajar</span><h4 className="font-serif text-lg font-bold text-foreground">Jumlah Ringan</h4></div>
@@ -89,7 +89,7 @@ export const PriceSection = () => {
               <div className="font-mono text-lg font-bold text-foreground">Rp 25.000</div>
               <p className="text-[10px] text-muted-foreground mt-1 italic">Contoh nominal</p>
             </button>
-            <button onClick={() => fillAmount("50000")} className="text-left p-6 md:p-8 bg-card border border-border rounded-xl hover:border-primary/30 hover:shadow-sm transition-all duration-300">
+            <button onClick={() => fillAmount("50000")} className="text-left p-6 md:p-8 bg-card border border-border rounded-xl hover:border-primary/30 transition-all duration-300">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Droplet className="w-6 h-6" /></div>
                 <div><span className="font-mono text-[10px] uppercase tracking-widest text-primary mb-1 block">Rutin</span><h4 className="font-serif text-lg font-bold text-foreground">Jumlah Sedang</h4></div>
@@ -98,7 +98,7 @@ export const PriceSection = () => {
               <div className="font-mono text-lg font-bold text-foreground">Rp 50.000</div>
               <p className="text-[10px] text-muted-foreground mt-1 italic">Contoh nominal</p>
             </button>
-            <button onClick={() => fillAmount("100000")} className="text-left p-6 md:p-8 bg-card border border-border rounded-xl hover:border-primary/30 hover:shadow-sm transition-all duration-300">
+            <button onClick={() => fillAmount("100000")} className="text-left p-6 md:p-8 bg-card border border-border rounded-xl hover:border-primary/30 transition-all duration-300">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Gift className="w-6 h-6" /></div>
                 <div><span className="font-mono text-[10px] uppercase tracking-widest text-primary mb-1 block">Support</span><h4 className="font-serif text-lg font-bold text-foreground">Jumlah Lebih</h4></div>

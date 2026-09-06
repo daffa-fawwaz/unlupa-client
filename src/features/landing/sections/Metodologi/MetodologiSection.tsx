@@ -35,7 +35,7 @@ export const MetodologiSection = () => {
 
         {/* STEPS GRID */}
         <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 pt-6">
-          <div className="p-8 rounded-2xl relative flex flex-col items-center text-center group bg-card border border-border shadow-sm transition-all duration-500 hover:-translate-y-3 hover:border-info/50">
+          <div className="p-8 rounded-2xl relative flex flex-col items-center text-center group bg-card border border-border transition-all duration-500 hover:-translate-y-3 hover:border-info/50">
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 border border-info/40 rounded-full flex items-center justify-center font-mono text-lg text-info font-bold z-20 bg-background transition-transform duration-500 group-hover:scale-110">
               01
             </div>
@@ -55,7 +55,7 @@ export const MetodologiSection = () => {
             </p>
           </div>
 
-          <div className="p-8 rounded-2xl relative flex flex-col items-center text-center md:-translate-y-8 group mt-8 md:mt-0 bg-card border border-border shadow-sm transition-all duration-500 hover:-translate-y-12 hover:border-warning/50">
+          <div className="p-8 rounded-2xl relative flex flex-col items-center text-center md:-translate-y-8 group mt-8 md:mt-0 bg-card border border-border transition-all duration-500 hover:-translate-y-12 hover:border-warning/50">
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 border border-warning/50 rounded-full flex items-center justify-center font-mono text-lg text-warning font-bold z-20 bg-background transition-transform duration-500 group-hover:scale-110">
               02
             </div>
@@ -76,7 +76,7 @@ export const MetodologiSection = () => {
             </p>
           </div>
 
-          <div className="p-8 rounded-2xl relative flex flex-col items-center text-center group mt-8 md:mt-0 bg-card border border-border shadow-sm transition-all duration-500 hover:-translate-y-3 hover:border-success/50">
+          <div className="p-8 rounded-2xl relative flex flex-col items-center text-center group mt-8 md:mt-0 bg-card border border-border transition-all duration-500 hover:-translate-y-3 hover:border-success/50">
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 border border-success/40 rounded-full flex items-center justify-center font-mono text-lg text-success font-bold z-20 bg-background transition-transform duration-500 group-hover:scale-110">
               03
             </div>

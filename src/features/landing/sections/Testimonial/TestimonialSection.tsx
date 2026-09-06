@@ -32,7 +32,7 @@ export const TestimonialSection = () => {
       <div className="scroller mb-6" data-direction="left">
         <div className="scroller__inner">
           {[...logsLeft, ...logsLeft].map((log, index) => (
-            <div key={`left-${index}`} className="w-[320px] md:w-[360px] shrink-0 bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all">
+            <div key={`left-${index}`} className="w-[320px] md:w-[360px] shrink-0 bg-card border border-border rounded-xl p-6 hover:border-primary/20 transition-all">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-9 h-9 rounded-full bg-muted border border-border flex items-center justify-center text-sm font-bold text-foreground">{log.initial}</div>
                 <div>
@@ -49,7 +49,7 @@ export const TestimonialSection = () => {
       <div className="scroller" data-direction="right">
         <div className="scroller__inner">
           {[...logsRight, ...logsRight].map((log, index) => (
-            <div key={`right-${index}`} className="w-[320px] md:w-[360px] shrink-0 bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all">
+            <div key={`right-${index}`} className="w-[320px] md:w-[360px] shrink-0 bg-card border border-border rounded-xl p-6 hover:border-primary/20 transition-all">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-9 h-9 rounded-full bg-muted border border-border flex items-center justify-center text-sm font-bold text-foreground">{log.initial}</div>
                 <div>

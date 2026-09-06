@@ -38,7 +38,7 @@ export const InklusivitasSection = () => {
       {/* GRID SECTORS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {/* 1. Pembelajar Al-Qur'an (Success) */}
-        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default shadow-sm hover:border-success/40 transition-colors">
+        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default hover:border-success/40 transition-colors">
           <div className="w-14 h-14 rounded-xl bg-success/10 flex items-center justify-center shrink-0 text-success">
             <BookHeart className="w-7 h-7 transition-all duration-300" />
           </div>
@@ -54,7 +54,7 @@ export const InklusivitasSection = () => {
         </div>
 
         {/* 2. Pelajar & Mahasiswa (Info) */}
-        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default shadow-sm hover:border-info/40 transition-colors">
+        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default hover:border-info/40 transition-colors">
           <div className="w-14 h-14 rounded-xl bg-info/10 flex items-center justify-center shrink-0 text-info">
             <GraduationCap className="w-7 h-7 transition-all duration-300" />
           </div>
@@ -70,7 +70,7 @@ export const InklusivitasSection = () => {
         </div>
 
         {/* 3. Guru & Pengajar (Warning) */}
-        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default shadow-sm hover:border-warning/40 transition-colors">
+        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default hover:border-warning/40 transition-colors">
           <div className="w-14 h-14 rounded-xl bg-warning/10 flex items-center justify-center shrink-0 text-warning">
             <Presentation className="w-7 h-7 transition-all duration-300" />
           </div>
@@ -86,7 +86,7 @@ export const InklusivitasSection = () => {
         </div>
 
         {/* 4. Pembelajar Mandiri (Primary) */}
-        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default shadow-sm hover:border-primary/40 transition-colors">
+        <div className="bg-card border border-border p-8 rounded-2xl flex items-start gap-6 group cursor-default hover:border-primary/40 transition-colors">
           <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-primary">
             <Compass className="w-7 h-7 transition-all duration-300" />
           </div>

@@ -8,7 +8,7 @@ export const SolutionSection = () => {
     >
       <div className="relative w-full max-w-4xl px-6 md:px-12 py-24 z-10 flex flex-col items-center">
         <div className="mb-12 relative animate-in slide-in-from-bottom-8 fade-in duration-1000">
-          <div className="w-20 h-20 rounded-2xl flex items-center justify-center relative rotate-45 border border-warning/30 bg-card shadow-sm transition-all duration-500 hover:border-warning/40">
+          <div className="w-20 h-20 rounded-2xl flex items-center justify-center relative rotate-45 border border-warning/30 bg-card transition-all duration-500 hover:border-warning/40">
             <ShieldCheck className="w-10 h-10 text-warning -rotate-45" />
           </div>
         </div>
@@ -23,7 +23,7 @@ export const SolutionSection = () => {
           <div className="w-24 h-1 bg-linear-to-r from-transparent via-primary/50 to-transparent mx-auto mt-6"></div>
         </div>
 
-        <div className="p-8 md:p-12 rounded-3xl text-center max-w-2xl relative group bg-card border border-border shadow-sm transition-colors duration-500 hover:border-warning/30">
+        <div className="p-8 md:p-12 rounded-3xl text-center max-w-2xl relative group bg-card border border-border transition-colors duration-500 hover:border-warning/30">
           <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-warning/30 rounded-tl-xl"></div>
           <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-warning/30 rounded-br-xl"></div>
 
