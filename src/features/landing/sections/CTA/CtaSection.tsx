@@ -21,7 +21,7 @@ export const CtaSection = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             to="/register"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-lg font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors w-full sm:w-auto"
           >
             Mulai Menjaga Ilmu
             <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -34,7 +34,7 @@ export const CtaSection = () => {
               e.preventDefault();
               document.querySelector("#metode")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-8 py-4 text-lg font-medium text-foreground hover:text-primary border border-border rounded-xl transition-colors w-full sm:w-auto"
+            className="px-8 py-4 text-lg font-medium text-foreground hover:text-primary border border-border rounded-lg transition-colors w-full sm:w-auto"
           >
             Pelajari Metodenya Dulu
           </Link>

@@ -229,11 +229,11 @@ export const HeroSection = () => {
                   </p>
                   <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                     {activeSlide.cta.href.startsWith("#") ? (
-                      <button onClick={() => handleNav(activeSlide.cta.href)} className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors w-full sm:w-auto">
+                      <button onClick={() => handleNav(activeSlide.cta.href)} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors w-full sm:w-auto">
                         {activeSlide.cta.text}
                       </button>
                     ) : (
-                      <Link to={activeSlide.cta.href} className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors w-full sm:w-auto">
+                      <Link to={activeSlide.cta.href} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors w-full sm:w-auto">
                         {activeSlide.cta.text}
                       </Link>
                     )}

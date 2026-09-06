@@ -63,7 +63,7 @@ export const LandingNavbar = () => {
           </Link>
           <Link
             to="/register"
-            className="px-6 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
+            className="px-6 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm"
           >
             Pendaftaran
           </Link>

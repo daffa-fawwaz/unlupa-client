@@ -115,7 +115,7 @@ export const PriceSection = () => {
             </div>
             <div className="flex-1 w-full relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono text-sm">Rp</span>
-              <input ref={customInputRef} type="text" value={customAmount} onChange={(e) => setCustomAmount(e.target.value)} placeholder="0" className="w-full bg-background border border-input rounded-md text-base text-foreground pl-9 py-3 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent" />
+              <input ref={customInputRef} type="text" value={customAmount} onChange={(e) => setCustomAmount(e.target.value)} placeholder="0" className="w-full bg-background border border-input rounded-lg text-base text-foreground pl-9 py-3 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent" />
               <p className="text-[10px] text-muted-foreground mt-2 italic text-right">“Semua kontribusi dihargai. Tidak ada perbandingan. Tidak ada penilaian.”</p>
             </div>
           </div>

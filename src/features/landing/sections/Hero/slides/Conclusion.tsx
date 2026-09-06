@@ -43,7 +43,7 @@ export const Conclusion = ({ index }: { index: number }) => {
 
         {/* CTA Button */}
         <div className="mt-12 md:mt-16">
-          <button className="group relative px-10 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-sm tracking-widest uppercase hover:bg-primary/90 transition-all flex items-center gap-3 overflow-hidden">
+          <button className="group relative px-10 py-4 rounded-lg bg-primary text-primary-foreground font-bold text-sm tracking-widest uppercase hover:bg-primary/90 transition-all flex items-center gap-3 overflow-hidden">
             <span className="relative z-10">Lihat Solusinya</span>
             <ArrowDown className="w-4 h-4 relative z-10 group-hover:translate-y-1 transition-transform" />
           </button>
