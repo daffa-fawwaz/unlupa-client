@@ -693,7 +693,7 @@ export const ItemDetailPage = () => {
                               key={step.key}
                               className="relative z-10 flex flex-col items-center gap-2"
                             >
-                              <div
+<div
                                 className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                                   isActive
                                     ? "bg-primary border-primary text-primary-foreground"

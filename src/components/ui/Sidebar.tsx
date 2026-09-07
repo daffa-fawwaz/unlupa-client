@@ -50,7 +50,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2 px-1">
               Mode Akun
             </p>
-            <SidebarRoleSwitcher />
+            <SidebarRoleSwitcher onClose={onClose} />
           </div>
         )}
 

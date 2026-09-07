@@ -439,7 +439,8 @@ const StudentProgressDetailModal = ({
     student.total_unreviewed ??
     student.start + student.menghafal + student.interval;
   const fsrsActive = student.total_fsrs_active ?? student.fsrs_active;
-  const inactive = student.total_inactive ?? student.inactive;
+  const inactive =
+    student.total_inactive ?? student.graduate + student.inactive;
 
   return createPortal(
     <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
@@ -481,7 +482,7 @@ const StudentProgressDetailModal = ({
                   {unreviewed} item
                 </span>
               </div>
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-success/10 border border-success/20">
+<div className="flex items-center justify-between p-4 rounded-2xl bg-success/10 border border-success/20">
                 <span className="text-sm font-medium text-success">
                   FSRS Aktif
                 </span>
@@ -581,7 +582,8 @@ const ClassroomBookStudentProgressSection = ({
                 st.total_unreviewed ??
                 st.start + st.menghafal + st.interval;
               const fsrsActive = st.total_fsrs_active ?? st.fsrs_active;
-              const inactive = st.total_inactive ?? st.inactive;
+              const inactive =
+                st.total_inactive ?? st.graduate + st.inactive;
 
               return (
                 <div
@@ -599,7 +601,7 @@ const ClassroomBookStudentProgressSection = ({
                           {unreviewed} item
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-muted-foreground">
+<div className="flex items-center justify-between text-muted-foreground">
                         <span>Aktif FSRS</span>
                         <span className="font-mono font-semibold text-success">
                           {fsrsActive} item
@@ -972,28 +974,28 @@ export const ClassroomBookDetailView = () => {
                         .slice()
                         .sort((a, b) => a.order - b.order)
                         .map((item) => (
-                          <div key={item.id} className="relative">
-                            <BookItemCard
-                              item={item}
-                              bookId={bookId!}
-                              realItemId={statusMap.get(contentRefForItem(bookId!, item.id))?.item_id}
-                            />
-                            {!isTeacher && (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  e.preventDefault();
-                                  handleStartItem(item.id);
-                                }}
-                                disabled={startLoading}
-                                className="absolute bottom-4 left-4 right-4 flex items-center justify-center gap-2 py-3 rounded-xl bg-success hover:bg-success/90 text-success-foreground text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
-                              >
-                                <Play className="w-4 h-4" />
-                                {startLoading ? "Memulai..." : "Mulai"}
-                              </button>
-                            )}
-                          </div>
+<div key={item.id} className="relative">
+                          <BookItemCard
+                            item={item}
+                            bookId={bookId!}
+                            realItemId={statusMap.get(contentRefForItem(bookId!, item.id))?.item_id}
+                          />
+                          {!isTeacher && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                handleStartItem(item.id);
+                              }}
+                              disabled={startLoading}
+                              className="absolute bottom-4 left-4 right-4 flex items-center justify-center gap-2 py-3 rounded-xl bg-success hover:bg-success/90 text-success-foreground text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+                            >
+                              <Play className="w-4 h-4" />
+                              {startLoading ? "Memulai..." : "Mulai"}
+                            </button>
+                          )}
+                        </div>
                         ))}
                     </div>
                   </div>

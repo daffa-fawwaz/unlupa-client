@@ -138,7 +138,7 @@ export const EditClassModal = ({
                 </h2>
               </div>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+<p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Ubah nama, deskripsi, tipe, atau URL gambar kelas. Simpan untuk
               menerapkan perubahan.
             </p>

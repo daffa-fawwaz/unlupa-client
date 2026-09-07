@@ -255,7 +255,7 @@ export const QuranClassroomDetailView = ({
           <div className="flex items-center justify-between gap-4">
             <button
               type="button"
-              onClick={() => navigate(`/dashboard/kelas/`)}
+onClick={() => navigate(`/dashboard/kelas/`)}
               className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-1 px-4 py-2 text-xs font-semibold text-foreground transition hover:border-warning/40 hover:bg-warning/10"
             >
               <ArrowLeft className="h-4 w-4" />

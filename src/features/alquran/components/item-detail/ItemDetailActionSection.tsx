@@ -111,6 +111,9 @@ function PhaseProgress({ phase }: { phase: ActionPhase }) {
               >
                 {index + 1}
               </div>
+{isActive && (
+                <div key="ping" className="absolute inset-0 rounded-full border-2 md:border-[3px] border-amber-500/30 animate-ping" />
+              )}
             </div>
 
             {index < PHASES.length - 1 && (
