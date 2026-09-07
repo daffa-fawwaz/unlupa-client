@@ -13,10 +13,11 @@ import {
   Target,
   CheckCircle2,
   Play,
-  PenSquare,
+  Edit2,
   Trash2,
   AlertTriangle,
   Image,
+  GraduationCap,
 } from "lucide-react";
 import { personalService } from "@/features/personal/services/personal.services";
 import type { ItemDetail } from "@/features/personal/types/personal.types";
@@ -282,9 +283,9 @@ export const ItemDetailPage = () => {
       case "menghafal":
         return {
           label: "Menghafal",
-          color: "text-info",
-          bg: "bg-info/10",
-          border: "border-info/20",
+          color: "text-primary",
+          bg: "bg-primary/10",
+          border: "border-primary/20",
           icon: Brain,
           description: "Item sedang dalam tahap menghafal",
           buttonText: "Mulai Ujian Interval",
@@ -339,10 +340,7 @@ export const ItemDetailPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground font-primary selection:bg-primary/30">
       {/* Ambient background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-info/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
-      </div>
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" />
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div
@@ -372,8 +370,8 @@ export const ItemDetailPage = () => {
         {loading && (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-3xl bg-info/10 border border-info/20 flex items-center justify-center">
-                <Loader2 className="w-8 h-8 text-info animate-spin" />
+              <div className="w-16 h-16 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
               </div>
             </div>
             <p className="text-muted-foreground text-sm animate-pulse">
@@ -401,10 +399,10 @@ export const ItemDetailPage = () => {
         {/* Not Found */}
         {!loading && !error && !item && tree && (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-warning/10 border border-warning/20 flex items-center justify-center">
-              <AlertCircle className="w-8 h-8 text-warning" />
+            <div className="w-16 h-16 rounded-3xl bg-destructive/10 border border-destructive/20 flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-destructive" />
             </div>
-            <p className="text-warning text-sm font-medium">
+            <p className="text-destructive text-sm font-medium">
               Item tidak ditemukan
             </p>
             <button
@@ -421,7 +419,7 @@ export const ItemDetailPage = () => {
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Hero Card */}
             <div className="relative rounded-3xl overflow-hidden border border-border bg-card">
-              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-info/40 to-transparent" />
+              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
 
               <div className="px-8 sm:px-10 py-8">
                 {/* Status Badge */}
@@ -437,8 +435,8 @@ export const ItemDetailPage = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Flame className="w-4 h-4 text-warning" />
-                    <span className="text-warning font-bold">
+                    <Flame className="w-4 h-4 text-primary" />
+                    <span className="text-primary font-bold">
                       {item.review_count ?? 0}x
                     </span>
                     <span>review</span>
@@ -450,8 +448,8 @@ export const ItemDetailPage = () => {
                   {itemImage && (
                     <div className="overflow-hidden rounded-3xl border border-border bg-surface-1">
                       <div className="flex items-center gap-2 border-b border-border px-5 py-3">
-                        <Image className="h-4 w-4 text-info" />
-                        <span className="text-xs font-bold uppercase tracking-wider text-info">
+                        <Image className="h-4 w-4 text-primary" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-primary">
                           Gambar Item
                         </span>
                       </div>
@@ -466,7 +464,7 @@ export const ItemDetailPage = () => {
                   {/* Question */}
                   <div className="p-5 rounded-2xl bg-surface-1 border border-border">
                     <div className="flex items-center gap-2 mb-3">
-                      <FileText className="w-5 h-5 text-info" />
+                      <FileText className="w-5 h-5 text-primary" />
                       <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                         Pertanyaan
                       </span>
@@ -477,14 +475,14 @@ export const ItemDetailPage = () => {
                   </div>
 
                   {/* Answer */}
-                  <div className="p-5 rounded-2xl bg-success/10 border border-success/20">
+                  <div className="p-5 rounded-2xl bg-surface-1 border border-border">
                     <div className="flex items-center gap-2 mb-3">
-                      <Lock className="w-5 h-5 text-success" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-success">
+                      <Lock className="w-5 h-5 text-muted-foreground" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                         Jawaban
                       </span>
                     </div>
-                    <p className="text-lg text-success leading-relaxed whitespace-pre-wrap">
+                    <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap">
                       {item.answer}
                     </p>
                   </div>
@@ -496,27 +494,27 @@ export const ItemDetailPage = () => {
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => setIsEditModalOpen(true)}
-                className="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-primary text-primary-foreground font-bold text-base transition-colors active:scale-95"
+                className="flex items-center justify-center gap-3 px-6 py-4 rounded-lg bg-surface-1 border border-border text-foreground font-bold text-base hover:bg-surface-2 transition-colors"
               >
-                <PenSquare className="w-5 h-5 fill-current" />
+                <Edit2 className="w-5 h-5" />
                 Edit Item
               </button>
               <button
                 onClick={() => setIsDeleteModalOpen(true)}
-                className="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-destructive text-destructive-foreground font-bold text-base transition-colors active:scale-95"
+                className="flex items-center justify-center gap-3 px-6 py-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive font-bold text-base hover:bg-destructive/20 transition-colors"
               >
-                <Trash2 className="w-5 h-5 fill-current" />
+                <Trash2 className="w-5 h-5" />
                 Hapus Item
               </button>
             </div>
 
             {/* Action Section - Hafalan Stages */}
             <div className="relative rounded-3xl overflow-hidden border border-border bg-card">
-              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-success/30 to-transparent" />
+              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
 
               <div className="px-6 sm:px-8 py-6 sm:py-7 border-b border-border">
                 <h2 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2.5">
-                  <Brain className="w-5 h-5 text-success" />
+                  <Brain className="w-5 h-5 text-primary" />
                   Tahapan Hafalan
                 </h2>
                 <p className="text-muted-foreground text-xs sm:text-sm mt-1">
@@ -527,14 +525,16 @@ export const ItemDetailPage = () => {
               {/* Graduated banner */}
               {(getNormalizedStatus() === "inactive" ||
                 getNormalizedStatus() === "graduate") && (
-                <div className="mx-4 sm:mx-8 mt-6 rounded-2xl overflow-hidden border border-success/30 bg-success/10">
+                <div className="mx-4 sm:mx-8 mt-6 rounded-xl overflow-hidden border border-primary/30 bg-primary/10">
                   <div className="px-5 py-4 flex items-center gap-4">
-                    <div className="text-3xl">🎓</div>
+                    <div className="w-fit p-3 rounded-full bg-primary/15 border border-primary/30">
+                      <GraduationCap className="w-6 h-6 text-primary" />
+                    </div>
                     <div>
-                      <p className="text-success font-black text-base">
+                      <p className="text-primary font-black text-base">
                         Item Ini Sudah Lulus!
                       </p>
-                      <p className="text-success/60 text-xs mt-0.5">
+                      <p className="text-primary/60 text-xs mt-0.5">
                         Hafalan kamu untuk item ini sudah sangat kuat.
                         Pertahankan terus!
                       </p>
@@ -547,12 +547,12 @@ export const ItemDetailPage = () => {
                 {/* Progress Steps - Mobile: Horizontal Scroll, Desktop: Flex */}
                 <div className="mb-6 sm:mb-8">
                   {/* Desktop View - Hidden on Mobile */}
-                  <div className="hidden sm:block relative">
-                    <div className="flex items-center justify-between mb-8 relative">
-                      {/* Progress Line */}
-                      <div className="absolute top-5 left-0 right-0 h-0.5 bg-muted">
+                  <div className="hidden sm:block">
+                    <div className="relative h-10">
+                      {/* Progress Line (behind icons, centered on circle row) */}
+                      <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-0.5 bg-muted z-0 pointer-events-none">
                         <div
-                          className="h-full bg-success transition-all duration-500"
+                          className="h-full bg-primary transition-all duration-500"
                           style={{
                             width:
                               getNormalizedStatus() === "belum_mulai"
@@ -566,7 +566,51 @@ export const ItemDetailPage = () => {
                         />
                       </div>
 
-                      {/* Steps */}
+                      {/* Circles Row */}
+                      <div className="relative z-10 flex h-full">
+                        {[
+                          { key: "belum_mulai", label: "Mulai", icon: Play },
+                          { key: "menghafal", label: "Menghafal", icon: Brain },
+                          { key: "fsrs_active", label: "Ujian", icon: Target },
+                          { key: "graduate", label: "Lulus", icon: CheckCircle2 },
+                        ].map((step) => {
+                          const status = getNormalizedStatus();
+                          const phases = [
+                            "belum_mulai",
+                            "menghafal",
+                            "fsrs_active",
+                            "graduate",
+                          ];
+                          const currentIndex = phases.indexOf(status);
+                          const stepIndex = phases.indexOf(step.key);
+
+                          const isActive = status === step.key;
+                          const isCompleted = currentIndex > stepIndex;
+
+                          return (
+                            <div
+                              key={step.key}
+                              className="flex-1 flex items-center justify-center"
+                            >
+                              <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                                  isActive
+                                    ? "bg-primary border-primary text-primary-foreground scale-110"
+                                    : isCompleted
+                                      ? "bg-surface-1 border-primary/60 text-primary"
+                                      : "bg-surface-1 border-border text-muted-foreground"
+                                }`}
+                              >
+                                <step.icon className="w-5 h-5" />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Labels Row */}
+                    <div className="mt-3 flex items-start justify-between">
                       {[
                         { key: "belum_mulai", label: "Mulai", icon: Play },
                         { key: "menghafal", label: "Menghafal", icon: Brain },
@@ -587,33 +631,18 @@ export const ItemDetailPage = () => {
                         const isCompleted = currentIndex > stepIndex;
 
                         return (
-                          <div
+                          <span
                             key={step.key}
-                            className="relative z-10 flex flex-col items-center gap-2"
+                            className={`flex-1 text-center text-xs font-bold uppercase tracking-wider px-1 ${
+                              isActive
+                                ? "text-primary"
+                                : isCompleted
+                                  ? "text-primary/70"
+                                  : "text-muted-foreground"
+                            }`}
                           >
-                            <div
-                              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                                isActive
-                                  ? "bg-success border-success text-success-foreground scale-110"
-                                  : isCompleted
-                                    ? "bg-success/20 border-success/50 text-success"
-                                    : "bg-muted border-border text-muted-foreground"
-                              }`}
-                            >
-                              <step.icon className="w-5 h-5" />
-                            </div>
-                            <span
-                              className={`text-xs font-bold uppercase tracking-wider ${
-                                isActive
-                                  ? "text-success"
-                                  : isCompleted
-                                    ? "text-success/70"
-                                    : "text-muted-foreground"
-                              }`}
-                            >
-                              {step.label}
-                            </span>
-                          </div>
+                            {step.label}
+                          </span>
                         );
                       })}
                     </div>
@@ -621,65 +650,75 @@ export const ItemDetailPage = () => {
 
                   {/* Mobile View */}
                   <div className="sm:hidden">
-                    <div className="flex items-start justify-center gap-4 flex-wrap pt-2">
-                      {[
-                        { key: "belum_mulai", label: "Mulai", icon: Play },
-                        { key: "menghafal", label: "Menghafal", icon: Brain },
-                        { key: "fsrs_active", label: "Ujian", icon: Target },
-                        { key: "graduate", label: "Lulus", icon: CheckCircle2 },
-                      ].map((step, idx, arr) => {
-                        const status = getNormalizedStatus();
-                        const phases = [
-                          "belum_mulai",
-                          "menghafal",
-                          "fsrs_active",
-                          "graduate",
-                        ];
-                        const currentIndex = phases.indexOf(status);
-                        const stepIndex = phases.indexOf(step.key);
+                    <div className="relative">
+                      {/* Connector Line (behind icons) */}
+                      <div className="absolute top-[19px] left-[12.5%] right-[12.5%] h-0.5 bg-muted z-0 pointer-events-none">
+                        <div
+                          className="h-full bg-primary transition-all duration-500"
+                          style={{
+                            width:
+                              getNormalizedStatus() === "belum_mulai"
+                                ? "0%"
+                                : getNormalizedStatus() === "menghafal"
+                                  ? "35%"
+                                  : getNormalizedStatus() === "fsrs_active"
+                                    ? "65%"
+                                    : "100%",
+                          }}
+                        />
+                      </div>
 
-                        const isActive = status === step.key;
-                        const isCompleted = currentIndex > stepIndex;
+                      <div className="grid grid-cols-4">
+                        {[
+                          { key: "belum_mulai", label: "Mulai", icon: Play },
+                          { key: "menghafal", label: "Menghafal", icon: Brain },
+                          { key: "fsrs_active", label: "Ujian", icon: Target },
+                          { key: "graduate", label: "Lulus", icon: CheckCircle2 },
+                        ].map((step) => {
+                          const status = getNormalizedStatus();
+                          const phases = [
+                            "belum_mulai",
+                            "menghafal",
+                            "fsrs_active",
+                            "graduate",
+                          ];
+                          const currentIndex = phases.indexOf(status);
+                          const stepIndex = phases.indexOf(step.key);
 
-                        return (
-                          <div
-                            key={step.key}
-                            className="flex flex-col items-center gap-2 min-w-[60px]"
-                          >
+                          const isActive = status === step.key;
+                          const isCompleted = currentIndex > stepIndex;
+
+                          return (
                             <div
-                              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
-                                isActive
-                                ? "bg-success border-success text-success-foreground"
-                                : isCompleted
-                                  ? "bg-success/20 border-success/50 text-success"
-                                  : "bg-muted border-border text-muted-foreground"
-                              }`}
+                              key={step.key}
+                              className="relative z-10 flex flex-col items-center gap-2"
                             >
-                              <step.icon className="w-4 h-4" />
-                            </div>
-                            <span
-                              className={`text-[10px] font-bold uppercase tracking-wider text-center ${
-                                isActive
-                                  ? "text-success"
-                                  : isCompleted
-                                    ? "text-success/70"
-                                    : "text-muted-foreground"
-                              }`}
-                            >
-                              {step.label}
-                            </span>
-                            {/* Connector Line */}
-                            {idx < arr.length - 1 && (
-                              <div className="absolute top-14 left-10 w-8 h-0.5 bg-muted -z-10">
-                                {isCompleted ||
-                                (isActive && idx < currentIndex) ? (
-                                  <div className="h-full bg-success w-full" />
-                                ) : null}
+                              <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                                  isActive
+                                    ? "bg-primary border-primary text-primary-foreground"
+                                    : isCompleted
+                                      ? "bg-surface-1 border-primary/60 text-primary"
+                                      : "bg-surface-1 border-border text-muted-foreground"
+                                }`}
+                              >
+                                <step.icon className="w-4 h-4" />
                               </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                              <span
+                                className={`text-[10px] font-bold uppercase tracking-wider text-center ${
+                                  isActive
+                                    ? "text-primary"
+                                    : isCompleted
+                                      ? "text-primary/70"
+                                      : "text-muted-foreground"
+                                }`}
+                              >
+                                {step.label}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -691,7 +730,7 @@ export const ItemDetailPage = () => {
                       <button
                         onClick={statusConfig.buttonAction}
                         disabled={statusConfig.isLoading}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-success text-success-foreground font-bold text-base transition-colors active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-lg bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {statusConfig.isLoading ? (
                           <Loader2 className="w-5 h-5 animate-spin" />
@@ -705,12 +744,12 @@ export const ItemDetailPage = () => {
                     );
                   }
                   return (
-                    <div className="text-center p-6 rounded-2xl bg-success/10 border border-success/20">
-                      <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-3" />
-                      <p className="text-success font-medium mb-1">
+                    <div className="text-center p-6 rounded-xl bg-primary/10 border border-primary/20">
+                      <CheckCircle2 className="w-12 h-12 text-primary mx-auto mb-3" />
+                      <p className="text-primary font-medium mb-1">
                         {statusConfig.buttonText}
                       </p>
-                      <p className="text-success/70 text-sm">
+                      <p className="text-primary/70 text-sm">
                         Terus pertahankan hafalanmu!
                       </p>
                     </div>
@@ -736,8 +775,8 @@ export const ItemDetailPage = () => {
             >
               <div className="relative rounded-3xl bg-card border-border overflow-hidden p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
                 <div className="text-center">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-success/20 border border-success/30 flex items-center justify-center mx-auto mb-4">
-                    <Brain className="w-7 h-7 sm:w-8 sm:h-8 text-success" />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto mb-4">
+                    <Brain className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
                     Mulai Menghafal?
@@ -759,7 +798,7 @@ export const ItemDetailPage = () => {
                       type="button"
                       onClick={handleStartPhase}
                       disabled={isStarting}
-                      className="flex-1 px-5 py-3 rounded-xl bg-success text-success-foreground text-sm font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                      className="flex-1 px-5 py-3 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                     >
                       {isStarting ? (
                         <>

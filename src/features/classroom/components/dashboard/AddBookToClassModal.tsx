@@ -73,7 +73,7 @@ export const AddBookToClassModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="bg-card border border-border rounded-2xl max-w-xl w-full flex flex-col max-h-[85vh] relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-card border border-border rounded-2xl max-w-xl w-full flex flex-col max-h-[85vh] relative shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">

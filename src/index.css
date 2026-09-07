@@ -260,15 +260,19 @@
   background: var(--background);
   border-right: 1px solid var(--border);
   transform: translateX(-100%);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.4s;
   z-index: 100;
   display: flex;
   flex-direction: column;
   box-shadow: 10px 0 50px rgba(0, 0, 0, 0.4);
   padding: 24px;
+  visibility: hidden;
 }
 .sidebar.active {
   transform: translateX(0);
+  visibility: visible;
 }
 
 .sidebar-overlay {

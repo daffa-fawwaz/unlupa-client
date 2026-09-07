@@ -25,3 +25,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment (local-only)
+.env.local
+
+# UNLUPA workspace docs (local-only, do not commit)
+UNLUPA_GOLDEN_RULES.md
+UNLUPA_UI_PROGRESS.md
+UNLUPA_AGENT_EXECUTE_TODAY.md
+docs/design/
+
+# TypeScript build info
+*.tsbuildinfo

@@ -186,7 +186,7 @@ export const StatusItemsView = () => {
 
   if (!config) {
     return (
-      <div className="min-h-screen p-6 bg-background rounded-3xl flex items-center justify-center">
+      <div className="min-h-screen p-6 bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-1 flex items-center justify-center">
             <Clock className="w-8 h-8 text-muted-foreground" />
@@ -215,7 +215,7 @@ export const StatusItemsView = () => {
 
   // Render List View
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-background rounded-3xl relative overflow-hidden">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-background relative">
 
       <div className="relative z-10 animate-fadeIn max-w-7xl mx-auto">
         {/* Header */}
@@ -237,7 +237,7 @@ export const StatusItemsView = () => {
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6 flex-1">
                 <div
-                  className={`w-20 h-20 md:w-24 md:h-24 rounded-3xl ${config.bgColor} ${config.textColor} flex items-center justify-center shadow-xl ${config.borderColor} border`}
+                  className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl ${config.bgColor} ${config.textColor} flex items-center justify-center ${config.borderColor} border`}
                 >
                   <Icon className="w-10 h-10 md:w-12 md:h-12" />
                 </div>
@@ -260,7 +260,7 @@ export const StatusItemsView = () => {
 
                   <div className="flex flex-wrap items-center gap-4 text-sm md:text-base">
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <Activity className="w-4 h-4 text-success" />
+                      <Activity className="w-4 h-4 text-primary" />
                       <span>
                         <strong className="text-foreground font-bold">
                           {juzData?.item_count || 0}

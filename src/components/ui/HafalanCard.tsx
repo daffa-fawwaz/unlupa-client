@@ -68,7 +68,7 @@ export const HafalanCard = ({ item, onClick }: HafalanCardProps) => {
 
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex justify-between items-start mb-6">
-          <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-surface-1 border border-border group-hover:bg-primary/15 group-hover:border-primary/30 transition-all duration-300 group-hover:scale-110">
+          <div className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-surface-1 border border-border group-hover:bg-surface-2 group-hover:border-primary/30 transition-all duration-300 group-hover:scale-110">
             <BookOpen className="w-4 md:w-6 h-4 md:h-6 text-muted-foreground group-hover:text-primary transition-colors" />
           </div>
 

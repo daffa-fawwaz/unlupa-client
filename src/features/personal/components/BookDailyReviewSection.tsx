@@ -175,13 +175,13 @@ export const BookDailyReviewSection = () => {
 
   return (
     <div className="mb-16 md:mb-24 animate-fadeIn relative">
-      <div className="relative bg-card rounded-2xl border border-primary/30 overflow-hidden shadow-sm">
+      <div className="relative bg-card rounded-xl border border-border overflow-hidden">
         <div className="h-1 w-full bg-primary" />
 
         <div className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-border pb-6">
-            <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center shadow-sm shrink-0 transform -rotate-3">
-              <Flame className="w-8 h-8 text-primary-foreground animate-pulse" />
+            <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center shrink-0">
+              <Flame className="w-8 h-8 text-primary-foreground" />
             </div>
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase mb-2">
@@ -216,10 +216,10 @@ export const BookDailyReviewSection = () => {
             {filteredGroups.map((group, index) => (
               <div
                 key={group.parent_id}
-                className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-colors hover:-translate-y-1"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="absolute inset-0 group-hover:bg-primary/10 transition-all duration-500 pointer-events-none" />
+                <div className="absolute inset-0 group-hover:bg-primary/10 transition-colors pointer-events-none" />
                 <div className="relative z-10 p-5">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
@@ -237,7 +237,7 @@ export const BookDailyReviewSection = () => {
                   <div className="flex items-center justify-between pt-4 border-t border-border gap-3">
                     <div className="flex flex-col gap-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />
+                        <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
                         <span className="text-primary font-bold text-sm">{group.items.length} item</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
@@ -247,7 +247,7 @@ export const BookDailyReviewSection = () => {
                     </div>
                     <button
                       onClick={() => openGroup(group)}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-all shrink-0 shadow-sm"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-colors shrink-0"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       Gas Review!

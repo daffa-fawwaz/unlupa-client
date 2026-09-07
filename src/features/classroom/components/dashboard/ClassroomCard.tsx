@@ -38,7 +38,7 @@ export const ClassroomCard = ({
   return (
     <article
       onClick={onClick}
-      className={`group relative flex min-h-105 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl ${theme.glow} ${onClick ? "cursor-pointer" : ""}`}
+      className={`group relative flex min-h-105 flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors duration-300 hover:-translate-y-1 hover:border-primary/40 ${onClick ? "cursor-pointer" : ""}`}
     >
       <div className={`absolute inset-x-0 top-0 z-20 h-1 ${theme.accent}`} />
 

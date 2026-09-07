@@ -210,7 +210,7 @@ export const PublishedBooksRequestPage = () => {
               </button>
               <button
                 onClick={() => handleOpenModal("approve", item.id, item.title)}
-                className="p-2 rounded-lg bg-success/10 text-success hover:bg-success hover:text-success-foreground transition"
+                className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition"
                 title="Approve Book"
               >
                 <CheckCircle className="w-4 h-4" />
@@ -306,12 +306,12 @@ export const PublishedBooksRequestPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-warning/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <Clock className="w-32 h-32 text-warning" />
+          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
+              <Clock className="w-32 h-32 text-primary" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-warning/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
                 Pending Review
               </p>
               <h3 className="text-4xl font-display font-bold text-foreground">
@@ -321,12 +321,12 @@ export const PublishedBooksRequestPage = () => {
             </div>
           </div>
 
-          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-info/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <CalendarPlus className="w-32 h-32 text-info" />
+          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
+              <CalendarPlus className="w-32 h-32 text-primary" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-info/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
                 Submitted Today
               </p>
               <h3 className="text-4xl font-display font-bold text-foreground">
@@ -336,12 +336,12 @@ export const PublishedBooksRequestPage = () => {
             </div>
           </div>
 
-          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-warning/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <Hourglass className="w-32 h-32 text-warning" />
+          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
+              <Hourglass className="w-32 h-32 text-primary" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-warning/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
                 Oldest Pending
               </p>
               <h3 className="text-4xl font-display font-bold text-foreground">

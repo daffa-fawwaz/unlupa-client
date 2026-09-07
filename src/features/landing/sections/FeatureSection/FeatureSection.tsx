@@ -45,7 +45,7 @@ export const FeatureSection = () => {
           </div>
           <h2 className="font-serif text-4xl md:text-6xl text-foreground mb-3 leading-tight tracking-tight">
             Fitur Inti{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary/40 to-primary">
+            <span className="text-primary">
               UNLUPA
             </span>
           </h2>
@@ -349,7 +349,6 @@ export const FeatureSection = () => {
           <div className="pt-6 flex justify-between items-end border-t border-primary/20 mt-4 relative z-10">
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
               </span>
               <span className="text-[10px] text-primary font-mono tracking-widest uppercase whitespace-nowrap">

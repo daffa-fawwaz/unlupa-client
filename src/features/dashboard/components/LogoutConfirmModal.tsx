@@ -10,7 +10,7 @@ export const LogoutConfirmModal = ({
 
   return (
     <div className="fixed inset-0 z-99 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-      <div className="bg-card border border-border rounded-xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+      <div className="bg-card border border-border rounded-xl p-6 max-w-sm w-full shadow-xl space-y-4">
         <div className="flex items-center gap-3 text-destructive">
           <LogOut className="w-6 h-6" />
           <h3 className="font-serif font-bold text-lg">Konfirmasi Keluar</h3>

@@ -558,7 +558,7 @@ export const BookDetailPage = () => {
     <div className="min-h-screen bg-background text-foreground font-primary selection:bg-primary/30">
       {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-info/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-primary/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
       </div>
 
@@ -714,26 +714,14 @@ export const BookDetailPage = () => {
             {/* Stats Row */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                {
-                  label: "Total Item",
-                  value: (tree?.items?.length ?? 0).toString(),
-                  color: "text-info",
-                  bg: "from-info/10",
-                  border: "border-info/15",
-                },
-                {
-                  label: "Modul",
-                  value: modules.length.toString(),
-                  color: "text-primary",
-                  bg: "from-primary/10",
-                  border: "border-primary/15",
-                }
+                { label: "Total Item", value: (tree?.items?.length ?? 0).toString() },
+                { label: "Modul", value: modules.length.toString() },
               ].map((s) => (
                 <div
                   key={s.label}
-                  className={`relative  overflow-hidden rounded-2xl bg-linear-to-br ${s.bg} to-transparent border ${s.border} p-5 text-center`}
+                  className="relative overflow-hidden rounded-xl bg-card border border-border p-5 text-center"
                 >
-                  <div className={`text-3xl font-black ${s.color} mb-1`}>
+                  <div className="text-3xl font-black text-foreground mb-1">
                     {s.value}
                   </div>
                   <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -745,22 +733,22 @@ export const BookDetailPage = () => {
 
             {/* Modules / Content Section */}
             <div className="relative rounded-3xl overflow-hidden border border-border bg-card">
-              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-info/30 to-transparent" />
+              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
 
               {/* Section header */}
               <div className="px-8 py-7 border-b border-border flex flex-col md:flex-row items-center justify-between">
                 <h2 className="text-lg font-bold text-foreground flex items-center gap-2.5">
-                  <Layers className="w-5 h-5 text-info" />
+                  <Layers className="w-5 h-5 text-primary" />
                   Modul & Konten
                   {(modules.length > 0 || items.length > 0) && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-info/10 border border-info/20 text-info text-xs font-bold">
+                    <span className="px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
                       {modules.length + items.length}
                     </span>
                   )}
                 </h2>
                 <button
                   onClick={() => setModalStep("picker")}
-                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-xl bg-info/10 border border-info/20 hover:border-info/40 hover:bg-info/20 text-info text-sm font-medium transition-all duration-300"
+                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20 hover:border-primary/40 hover:bg-primary/20 text-primary text-sm font-medium transition-all duration-300"
                 >
                   <Plus className="w-4 h-4" />
                   Tambah

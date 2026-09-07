@@ -593,7 +593,7 @@ export const QuranClassroomDetailView = ({
                                   </div>
                                   <div className="h-2 rounded-full bg-surface-2 overflow-hidden">
                                     <div
-                                      className="h-full rounded-full bg-linear-to-r from-warning to-success"
+                                      className="h-full rounded-full bg-primary"
                                       style={{
                                         width: `${student.progress_pct}%`,
                                       }}

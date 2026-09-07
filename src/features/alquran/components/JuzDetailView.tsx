@@ -143,16 +143,17 @@ export const JuzDetailView = ({
   };
 
   return (
-    <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Premium Header */}
-      <div className="relative mb-8 md:mb-12 p-6 md:p-10 rounded-2xl bg-card border border-border overflow-hidden shadow-xl">
+      <div className="relative mb-8 md:mb-12 p-6 md:p-10 rounded-2xl bg-card border border-border overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8 text-center md:text-left">
           <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center md:items-start">
             <button
-              className="mt-0 md:mt-1 p-3 rounded-2xl cursor-pointer bg-surface-1 border border-border hover:bg-surface-2 hover:border-warning/30 hover:scale-105 transition-all group shrink-0 self-start md:self-auto hidden md:block"
+              className="mt-0 md:mt-1 p-3 rounded-2xl cursor-pointer bg-surface-1 border border-border hover:bg-surface-2 hover:border-primary/30 hover:scale-105 transition-all group shrink-0 self-start md:self-auto hidden md:block"
               onClick={backToDashboard}
             >
-              <ArrowLeft className="w-6 h-6 text-muted-foreground group-hover:text-warning transition-colors" />
+              <ArrowLeft className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </button>
             <div className="w-full flex items-center justify-between md:hidden mb-2">
               <button
@@ -161,14 +162,14 @@ export const JuzDetailView = ({
               >
                 <ArrowLeft className="w-5 h-5 text-muted-foreground" />
               </button>
-              <span className="px-3 py-1 rounded-full bg-warning/10 border border-warning/20 text-warning text-xs font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
                 Juz {juzIndex}
               </span>
             </div>
 
             <div className="flex flex-col items-center md:items-start w-full">
               <div className="hidden md:flex items-center gap-3 mb-2">
-                <span className="px-3 py-1 rounded-full bg-warning/10 border border-warning/20 text-warning text-xs font-bold uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
                   Juz {juzIndex}
                 </span>
                 <span className="px-3 py-1 rounded-full bg-surface-1 border border-border text-muted-foreground text-xs font-medium">
@@ -188,12 +189,12 @@ export const JuzDetailView = ({
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-2 tracking-tight">
                 Hafalan{" "}
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-warning to-warning/70">
+                <span className="text-primary">
                   Juz {juzIndex}
                 </span>
               </h1>
               <p className="text-muted-foreground text-base md:text-lg flex items-center justify-center md:justify-start gap-2">
-                <Activity className="w-4 h-4 text-success" />
+                <Activity className="w-4 h-4 text-primary" />
                 {juzData?.item_count || 0} Item sedang dipelajari
               </p>
             </div>
@@ -204,10 +205,10 @@ export const JuzDetailView = ({
             <button
               onClick={() => setIsAddModalOpen(true)}
               disabled={!isJuzActive}
-              className="w-full sm:w-auto shrink-0 px-6 py-4 bg-warning rounded-2xl text-warning-foreground font-bold shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto shrink-0 px-6 py-4 bg-primary rounded-lg text-primary-foreground font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="p-1 bg-warning-foreground/20 rounded-full group-hover:rotate-90 transition-transform duration-300">
-                <Plus className="w-5 h-5 text-warning-foreground" />
+              <div className="p-1 bg-primary-foreground/20 rounded-lg group-hover:rotate-90 transition-transform duration-300">
+                <Plus className="w-5 h-5 text-primary-foreground" />
               </div>
               <span>Tambah Hafalan</span>
             </button>
@@ -243,10 +244,10 @@ export const JuzDetailView = ({
               <button
                 onClick={handleActivateJuz}
                 disabled={toggleLoading}
-                className="w-full sm:w-auto shrink-0 px-6 py-4 bg-success rounded-2xl text-success-foreground font-bold shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                className="w-full sm:w-auto shrink-0 px-6 py-4 bg-primary rounded-lg text-primary-foreground font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 group disabled:opacity-50"
               >
                 {toggleLoading ? (
-                  <div className="w-5 h-5 border-2 border-success-foreground/30 border-t-success-foreground rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                 ) : (
                   <CheckCircle2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 )}
@@ -294,6 +295,8 @@ export const JuzDetailView = ({
         )}
       </div>
 
+      </div>
+
       {/* Add Hafalan Modal */}
       <AddHafalanModal
         isOpen={isAddModalOpen}
@@ -311,6 +314,6 @@ export const JuzDetailView = ({
         onClose={() => setIsDeactivateModalOpen(false)}
         onDeactivated={handleDeactivateSuccess}
       />
-    </div>
+    </>
   );
 };

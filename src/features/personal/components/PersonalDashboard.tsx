@@ -39,7 +39,7 @@ export const PersonalDashboard = () => {
 
   return (
     <>
-      <div className="min-h-screen relative bg-background rounded-3xl overflow-hidden selection:bg-primary/30">
+      <div className="min-h-screen w-full bg-background selection:bg-primary/30">
         {/* --- Dynamic Background Atmosphere --- */}
 
         <Sidebar
@@ -60,7 +60,7 @@ export const PersonalDashboard = () => {
               onClick={() => setIsSidebarOpen(true)}
               className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-all group cursor-pointer"
             >
-              <div className="p-2.5 rounded-2xl border border-border group-hover:border-border bg-surface-1 group-hover:bg-surface-2 transition-all duration-300 shadow-sm">
+              <div className="p-2.5 rounded-xl border border-border group-hover:border-border bg-surface-1 group-hover:bg-surface-2 transition-colors">
                 <Menu className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </div>
               <span className="text-xs font-mono tracking-[0.2em] font-semibold hidden md:inline opacity-70 group-hover:opacity-100 transition-opacity">
@@ -69,7 +69,7 @@ export const PersonalDashboard = () => {
             </button>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-1 border border-primary/20 text-xs text-primary font-bold shadow-sm select-none transition-all hover:bg-surface-2">
+              <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-1 border border-primary/20 text-xs text-primary font-bold select-none hover:bg-surface-2 transition-colors">
                 <Files className="w-4 h-4" />
                 <span>{totalMateri} Kitab Disimpan</span>
               </div>
@@ -79,7 +79,7 @@ export const PersonalDashboard = () => {
           {/* === HERO / HEADER SECTION === */}
           <div className="mb-12 relative">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-1 border border-border mb-6 text-xs font-medium text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-primary" />
               Personal Workspace
             </div>
 
@@ -94,14 +94,14 @@ export const PersonalDashboard = () => {
             </p>
 
             {/* Quick Action Strip */}
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-stretch sm:gap-0 p-2 rounded-2xl bg-card border border-border shadow-sm relative overflow-hidden">
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-stretch sm:gap-0 p-2 rounded-xl bg-card border border-border relative overflow-hidden">
 
               {/* Buat Materi */}
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-xl hover:bg-primary/10 transition-all duration-300 text-center sm:text-left"
+                className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-xl hover:bg-primary/10 transition-colors decoration-transparent text-center sm:text-left"
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-colors shrink-0">
                   <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
@@ -119,13 +119,13 @@ export const PersonalDashboard = () => {
               {/* Bagikan Karya */}
               <Link
                 to="/dashboard/pribadi/share"
-                className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-xl hover:bg-success/10 transition-all duration-300 decoration-transparent text-center sm:text-left"
+                className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-xl hover:bg-primary/10 transition-colors decoration-transparent text-center sm:text-left"
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-success/10 flex items-center justify-center border border-success/20 text-success group-hover:scale-110 group-hover:bg-success/20 transition-all shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-colors shrink-0">
                   <Share2 className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <div className="text-xs sm:text-base font-black text-foreground group-hover:text-success transition-colors leading-tight">
+                  <div className="text-xs sm:text-base font-black text-foreground group-hover:text-primary transition-colors leading-tight">
                     Bagikan Karya
                   </div>
                   <div className="hidden sm:block text-xs text-muted-foreground group-hover:text-muted-foreground transition-colors">
@@ -139,9 +139,9 @@ export const PersonalDashboard = () => {
               {/* Import Katalog */}
               <Link
                 to="/dashboard/pribadi/explore"
-                className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-xl hover:bg-primary/10 transition-all duration-300 decoration-transparent text-center sm:text-left"
+                className="group flex flex-col sm:flex-row items-center sm:gap-4 gap-2 sm:flex-1 px-2 sm:px-6 py-3 sm:py-4 rounded-xl hover:bg-primary/10 transition-colors decoration-transparent text-center sm:text-left"
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all shrink-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-colors shrink-0">
                   <Download className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
@@ -239,8 +239,7 @@ export const PersonalDashboard = () => {
               <div className="relative group">
                 <div className="relative flex flex-col items-center justify-center py-28 px-4 rounded-2xl border border-border bg-card text-center overflow-hidden">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-2xl bg-surface-1 flex items-center justify-center mb-8 border border-border shadow-sm mx-auto relative z-10 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-700">
-                      <div className="absolute inset-0 bg-primary/10 rounded-2xl animate-pulse" />
+                    <div className="w-24 h-24 rounded-xl bg-surface-1 flex items-center justify-center mb-8 border border-border mx-auto relative z-10 group-hover:scale-105 transition-transform duration-300">
                       <BookOpen className="w-10 h-10 text-primary" />
                     </div>
                   </div>
@@ -255,7 +254,7 @@ export const PersonalDashboard = () => {
 
                   <button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="px-8 py-4 rounded-full cursor-pointer bg-primary text-primary-foreground font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-sm"
+                    className="px-8 py-4 rounded-lg cursor-pointer bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex items-center gap-3 transition-colors"
                   >
                     <Plus className="w-5 h-5" />
                     <span>Mulai Berkarya</span>
@@ -273,7 +272,7 @@ export const PersonalDashboard = () => {
                   <h2 className="text-3xl font-serif font-bold text-foreground tracking-wide flex items-center gap-3">
                     Katalog Impor
                     <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-primary/10 text-primary border border-primary/20 align-middle flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                       Live
                     </span>
                   </h2>
@@ -285,7 +284,7 @@ export const PersonalDashboard = () => {
               <div className="flex shrink-0">
                 <Link
                   to="/dashboard/pribadi/explore"
-                  className="px-6 py-2.5 rounded-full cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary font-bold transition-all flex items-center gap-2 border border-primary/20 shadow-sm decoration-transparent"
+                  className="px-6 py-2.5 rounded-lg cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary font-bold transition-colors flex items-center gap-2 border border-primary/20 decoration-transparent"
                 >
                   <Download className="w-4 h-4" />
                   <span className="text-sm">Jelajahi Perpustakaan</span>
@@ -317,7 +316,7 @@ export const PersonalDashboard = () => {
               <div className="relative group">
                 <div className="relative flex flex-col items-center justify-center py-28 px-4 rounded-2xl border border-border bg-card text-center overflow-hidden">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-2xl bg-surface-1 flex items-center justify-center mb-8 border border-primary/20 shadow-sm mx-auto relative z-10 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700">
+                    <div className="w-24 h-24 rounded-xl bg-surface-1 flex items-center justify-center mb-8 border border-primary/20 mx-auto relative z-10 group-hover:scale-105 transition-transform duration-300">
                       <Library className="w-10 h-10 text-primary" />
                     </div>
                   </div>
@@ -332,7 +331,7 @@ export const PersonalDashboard = () => {
 
                   <Link
                     to="/dashboard/pribadi/explore"
-                    className="w-max px-8 py-4 rounded-full cursor-pointer bg-surface-1 border border-primary/30 hover:border-primary hover:bg-surface-2 shadow-sm text-foreground font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 decoration-transparent"
+                    className="w-max px-8 py-4 rounded-lg cursor-pointer bg-surface-1 border border-primary/30 hover:border-primary hover:bg-surface-2 text-foreground font-bold transition-colors flex items-center justify-center gap-3 decoration-transparent"
                   >
                     <Download className="w-5 h-5 text-primary" />
                     <span className="tracking-wide">Jelajahi Perpustakaan</span>

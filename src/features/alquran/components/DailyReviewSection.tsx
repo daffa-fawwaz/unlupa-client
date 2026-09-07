@@ -195,16 +195,16 @@ export const DailyReviewSection = ({ classId }: { classId?: string }) => {
 
   return (
     <div className="mb-8 animate-fadeIn relative">
-      <div className="relative bg-card rounded-2xl border border-success/30 overflow-hidden shadow-xl">
-        <div className="h-1 w-full bg-linear-to-r from-success via-success/70 to-success" />
+      <div className="relative bg-card rounded-2xl border border-border overflow-hidden">
+        <div className="h-1 w-full bg-primary" />
 
         <div className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-border pb-6">
-            <div className="w-16 h-16 rounded-xl bg-success flex items-center justify-center shadow-lg shrink-0 transform -rotate-3">
-              <Flame className="w-8 h-8 text-success-foreground animate-pulse" />
+            <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center shrink-0">
+              <Flame className="w-8 h-8 text-primary-foreground" />
             </div>
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 border border-success/20 text-success text-xs font-semibold tracking-wide uppercase mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase mb-2">
                 <Star className="w-3.5 h-3.5" /> Prioritas Utama
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
@@ -212,9 +212,9 @@ export const DailyReviewSection = ({ classId }: { classId?: string }) => {
               </h2>
               <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
                 Ada{" "}
-                <strong className="text-success">{totalItems} item</strong>{" "}
+                <strong className="text-primary">{totalItems} item</strong>{" "}
                 di{" "}
-                <strong className="text-success">{filteredJuzGroups.length} Juz</strong>{" "}
+                <strong className="text-primary">{filteredJuzGroups.length} Juz</strong>{" "}
                 yang menunggu untuk direview.
               </p>
             </div>
@@ -228,8 +228,8 @@ export const DailyReviewSection = ({ classId }: { classId?: string }) => {
 
           {!loading && filteredJuzGroups.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-success/10 border border-success/20 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8 text-success" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-8 h-8 text-primary" />
               </div>
               <p className="text-foreground font-bold mb-1">Semua sudah direview!</p>
               <p className="text-muted-foreground text-sm">Tidak ada review tersisa hari ini.</p>
@@ -240,16 +240,16 @@ export const DailyReviewSection = ({ classId }: { classId?: string }) => {
             {filteredJuzGroups.map((juz, index) => (
               <div
                 key={juz.juz_id}
-                className="group relative overflow-hidden rounded-xl bg-surface-1 border border-border hover:border-success/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-xl bg-surface-1 border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="relative z-10 p-5">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-success/10 border border-success/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                      <BookOpen className="w-6 h-6 text-success" />
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                      <BookOpen className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-black text-foreground group-hover:text-success transition-colors">
+                      <h3 className="text-2xl font-black text-foreground group-hover:text-primary transition-colors">
                         Juz {juz.juz_index}
                       </h3>
                       <p className="text-muted-foreground text-xs mt-1">
@@ -266,7 +266,7 @@ export const DailyReviewSection = ({ classId }: { classId?: string }) => {
                           key={item.item_id}
                           className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-2 px-3 py-1 text-[11px] text-muted-foreground"
                         >
-                          <span className="w-5 h-5 rounded-full bg-success/10 text-success flex items-center justify-center font-bold">
+                          <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
                             {itemIndex + 1}
                           </span>
                           <span className="max-w-[11rem] truncate">
@@ -285,8 +285,8 @@ export const DailyReviewSection = ({ classId }: { classId?: string }) => {
                   <div className="flex items-center justify-between pt-4 border-t border-border gap-3">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
-                        <span className="text-success font-bold text-sm">
+                        <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                        <span className="text-primary font-bold text-sm">
                           {juz.itemCount} item siap review
                         </span>
                       </div>
@@ -298,7 +298,7 @@ export const DailyReviewSection = ({ classId }: { classId?: string }) => {
 
                     <button
                       onClick={() => openJuz(juz)}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-success hover:bg-success/90 text-success-foreground font-bold text-xs transition-all shrink-0 shadow-xl"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-all shrink-0"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       Gas Review!

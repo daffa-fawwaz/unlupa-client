@@ -1,4 +1,4 @@
-import { BookOpen, RotateCcw, ShieldCheck, Trophy } from "lucide-react";
+import { BookOpen, ShieldCheck, Trophy } from "lucide-react";
 import { useNavigate } from "react-router";
 
 interface QuickAccessButtonsProps {
@@ -16,7 +16,7 @@ const STATUS_BUTTONS = [
     label: "Menghafal",
     description: "Item yang masih dalam tahap hafalan",
     icon: BookOpen,
-    semantic: "warning",
+    semantic: "primary",
     route: "/dashboard/alquran/status/menghafal",
   },
   {
@@ -24,7 +24,7 @@ const STATUS_BUTTONS = [
     label: "Ujian FSRS",
     description: "Item dalam jadwal ujian berkala",
     icon: ShieldCheck,
-    semantic: "success",
+    semantic: "primary",
     route: "/dashboard/alquran/status/fsrs_active",
   },
   {
@@ -41,18 +41,6 @@ const buttonSemanticStyles: Record<
   string,
   { hover: string; bg: string; border: string; text: string }
 > = {
-  warning: {
-    hover: "bg-warning/10",
-    bg: "bg-warning/10",
-    border: "border-warning/20",
-    text: "text-warning",
-  },
-  success: {
-    hover: "bg-success/10",
-    bg: "bg-success/10",
-    border: "border-success/20",
-    text: "text-success",
-  },
   primary: {
     hover: "bg-primary/10",
     bg: "bg-primary/10",

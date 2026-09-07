@@ -44,7 +44,7 @@ export const JoinClassModal = ({
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-card shadow-2xl animate-in fade-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-card shadow-xl animate-in fade-in zoom-in-95 duration-300">
         {/* Header Background */}
         <div className="relative h-32 sm:h-40 shrink-0 overflow-hidden bg-surface-1">
           {data.coverImage ? (

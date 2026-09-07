@@ -19,7 +19,6 @@ interface EmptyStateWrapperProps {
   className?: string;
   mainBgColor?: string;
   wrapperGradient?: string;
-  glowColor?: string;
   borderColor?: string;
   buttonClassName?: string;
   colorScheme?: "blue" | "green" | "red" | "orange";
@@ -68,13 +67,11 @@ export const EmptyStateWrapper = ({
   className = "",
   mainBgColor = "bg-background",
   wrapperGradient = "bg-card",
-  glowColor,
   borderColor = "border-border",
   buttonClassName = "",
   colorScheme = "blue",
 }: EmptyStateWrapperProps) => {
   const colors = COLOR_MAPS[colorScheme];
-  const finalGlowColor = glowColor || colors.glow;
 
   return (
     <section
@@ -110,11 +107,8 @@ export const EmptyStateWrapper = ({
       <div
         className={`relative flex min-h-[400px] w-full flex-col items-center justify-center overflow-hidden rounded-xl border ${borderColor} ${wrapperGradient} p-6 sm:p-10`}
       >
-        {/* Radial Glow Background */}
+        {/* Top Border */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div
-            className={`absolute left-1/2 top-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full ${finalGlowColor} blur-[120px]`}
-          />
           <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-border to-transparent opacity-50" />
         </div>
 
@@ -146,8 +140,9 @@ export const EmptyStateWrapper = ({
             {buttonText && (
               <button
                 onClick={onButtonClick}
-                className={`rounded-xl bg-primary px-8 py-3 font-bold text-primary-foreground shadow-sm transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${buttonClassName}`}
+                className={`rounded-xl bg-primary px-8 py-3 font-bold text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 inline-flex items-center gap-2 ${buttonClassName}`}
               >
+                {ButtonIcon && <ButtonIcon className="h-4 w-4" />}
                 {buttonText}
               </button>
             )}

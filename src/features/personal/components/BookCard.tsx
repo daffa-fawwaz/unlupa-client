@@ -24,8 +24,7 @@ const CoverImage = ({ src, alt }: CoverImageProps) => {
   if (failed) {
     return (
       <div className="absolute inset-0 w-full h-full bg-linear-to-t from-surface-1 to-surface-2 flex items-center justify-center">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-surface-2 rounded-full blur-[100px] pointer-events-none" />
-        <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-2xl bg-surface-2 border border-border flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-700">
+        <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-xl bg-surface-2 border border-border flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
           <Box className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
         </div>
       </div>
@@ -163,11 +162,10 @@ export const BookCard = ({
     <div
       onClick={onClick}
       className="relative flex flex-col justify-between overflow-hidden group 
-                 rounded-2xl bg-card 
-                 border border-border hover:border-border 
-                 transition-all duration-700 min-h-[200px] sm:min-h-[320px]
-                 hover:-translate-y-1 hover:shadow-xl 
-                 shadow-sm cursor-pointer"
+                 rounded-xl bg-card 
+                 border border-border hover:border-primary/40 
+                 transition-colors min-h-[200px] sm:min-h-[320px]
+                 hover:-translate-y-1 cursor-pointer"
     >
       {/* Ambient effects */}
       <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
@@ -241,8 +239,7 @@ export const BookCard = ({
           <CoverImage key={coverSrc} src={coverSrc} alt={book.title} />
         ) : (
           <div className="absolute inset-0 w-full h-full bg-linear-to-t from-surface-1 to-surface-2 flex items-center justify-center">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-surface-2 rounded-full blur-[100px] pointer-events-none" />
-            <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-2xl bg-surface-2 border border-border flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-700">
+            <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-xl bg-surface-2 border border-border flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
               <Box className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
             </div>
           </div>
@@ -278,7 +275,7 @@ export const BookCard = ({
         </div>
 
         {/* Stats — desktop only */}
-        <div className="hidden sm:flex justify-between items-center bg-surface-1 border border-border rounded-2xl p-4 mb-5 shadow-sm">
+        <div className="hidden sm:flex justify-between items-center bg-surface-1 border border-border rounded-xl p-4 mb-5">
           <div className="flex flex-col items-center flex-1">
             <div className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest mb-1">
               Total

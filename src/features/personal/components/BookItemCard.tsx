@@ -24,7 +24,7 @@ export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) =>
   return (
     <button
       onClick={() => navigate(`/dashboard/pribadi/book/${bookId}/item/${item.id}`)}
-      className="group relative bg-card border border-border rounded-2xl sm:rounded-2xl p-3 sm:p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-success/30 hover:shadow-xl flex flex-col overflow-hidden text-left"
+      className="group relative bg-card border border-border rounded-xl p-3 sm:p-6 cursor-pointer transition-colors hover:-translate-y-1 hover:border-primary/40 flex flex-col overflow-hidden text-left"
     >
       {/* Background */}
       <div className="absolute inset-0 bg-surface-1 opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
@@ -46,7 +46,7 @@ export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) =>
 
       {/* Question */}
       <div className="relative z-10 mb-2 sm:mb-4">
-        <h3 className="text-sm sm:text-xl font-bold text-foreground group-hover:text-success transition-colors duration-300 line-clamp-2 leading-snug whitespace-pre-wrap">
+        <h3 className="text-sm sm:text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug whitespace-pre-wrap">
           {item.content}
         </h3>
       </div>

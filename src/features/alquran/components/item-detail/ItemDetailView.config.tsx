@@ -63,7 +63,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
       "Sebelum memulai ujian FSRS, konfirmasi dulu bahwa kamu sudah hafal bagian ini dengan baik.",
     label: "Sudah Hafal",
     icon: <CheckCircle className="w-5 h-5" />,
-    buttonClass: "bg-success text-success-foreground",
+    buttonClass: "bg-primary text-primary-foreground",
   },
   terjaga: {
     sectionTitle: "Mode Ujian FSRS Aktif",
@@ -72,7 +72,7 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
       "Bagus, hafalan ini sekarang sedang di mode ujian FSRS. Sistem akan mengatur kapan kamu perlu review berikutnya berdasarkan performa terakhir.",
     label: "Ke Dashboard",
     icon: <ArrowRight className="w-5 h-5" />,
-    buttonClass: "bg-success text-success-foreground",
+    buttonClass: "bg-surface-1 text-foreground border border-border hover:bg-surface-2",
   },
   graduate: {
     sectionTitle: "Selamat! Anda Telah Menyelesaikan Fase Ini",

@@ -10,6 +10,10 @@ import {
   Lightbulb,
   Brain,
   Image,
+  Frown,
+  Meh,
+  Smile,
+  Flame,
 } from "lucide-react";
 import type {
   BookDailyTask,
@@ -36,45 +40,45 @@ const REVIEW_BUTTONS = [
     id: 1 as const,
     payloadValue: 1 as const,
     header: "Lemah",
-    emoji: "😰",
+    icon: Frown,
     descriptions: ["Blank", "Banyak Lupa", "Berpikir Lama", "Banyak Salah"],
-    bg: "bg-destructive border-destructive/50 hover:bg-destructive/90",
-    headerBg: "bg-destructive",
-    dot: "bg-destructive",
-    textColor: "text-destructive-foreground",
+    bg: "bg-red-600 border-red-500/70 hover:bg-red-700",
+    headerBg: "bg-red-700",
+    dot: "bg-white/80",
+    textColor: "text-white",
   },
   {
     id: 2 as const,
     payloadValue: 2 as const,
     header: "Sedang",
-    emoji: "😐",
+    icon: Meh,
     descriptions: ["Sering Lupa", "Sering Salah", "Tersendat", "Lambat"],
     bg: "bg-warning border-warning/50 hover:bg-warning/90",
     headerBg: "bg-warning",
-    dot: "bg-warning",
+    dot: "bg-warning-foreground",
     textColor: "text-warning-foreground",
   },
   {
     id: 3 as const,
     payloadValue: 3 as const,
     header: "Baik",
-    emoji: "😊",
+    icon: Smile,
     descriptions: ["Lancar", "Cepat", "Yakin", "Benar"],
-    bg: "bg-success border-success/50 hover:bg-success/90",
-    headerBg: "bg-success",
-    dot: "bg-success",
-    textColor: "text-success-foreground",
+    bg: "bg-emerald-600 border-emerald-500/70 hover:bg-emerald-700",
+    headerBg: "bg-emerald-700",
+    dot: "bg-white/80",
+    textColor: "text-white",
   },
   {
     id: 4 as const,
     payloadValue: 3 as const,
     header: "Sempurna",
-    emoji: "🔥",
+    icon: Flame,
     descriptions: ["Reflek", "Tanpa Salah", "Sangat Lancar", "Sempurna"],
-    bg: "bg-info border-info/50 hover:bg-info/90",
-    headerBg: "bg-info",
-    dot: "bg-info",
-    textColor: "text-info-foreground",
+    bg: "bg-sky-600 border-sky-500/70 hover:bg-sky-700",
+    headerBg: "bg-sky-700",
+    dot: "bg-white/80",
+    textColor: "text-white",
   },
 ] as const;
 
@@ -339,7 +343,7 @@ export const BookDailyReviewFlashcardModal = ({
                       className={`relative overflow-hidden rounded-2xl border-2 flex flex-col text-left transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none ${btn.bg} ${btn.textColor}`}
                     >
                       <div className={`flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-black uppercase tracking-wide border-b border-border ${btn.headerBg}`}>
-                        <span>{btn.emoji}</span>
+                        <btn.icon className="w-4 h-4" />
                         <span>{btn.header}</span>
                       </div>
                       <div className="flex-1 p-3">

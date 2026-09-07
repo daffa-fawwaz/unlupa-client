@@ -245,7 +245,7 @@ export const QuranClassJuzDetailView = () => {
               <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8 text-center md:text-left">
                 <div className="flex flex-col items-center md:items-start w-full">
                   <div className="flex items-center gap-3 mb-2 justify-center md:justify-start">
-                    <span className="px-3 py-1 rounded-full bg-warning/20 border border-warning/20 text-warning text-xs font-bold uppercase tracking-wider">
+                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
                       Juz {juzIndex}
                     </span>
                     <span className="px-3 py-1 rounded-full bg-surface-1 border border-border text-muted-foreground text-xs font-medium">
@@ -254,12 +254,12 @@ export const QuranClassJuzDetailView = () => {
                   </div>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-2 tracking-tight">
                     Hafalan{" "}
-                    <span className="text-transparent bg-clip-text bg-linear-to-r from-warning to-warning/60">
+                    <span className="text-primary">
                       Juz {juzIndex}
                     </span>
                   </h1>
                   <p className="text-muted-foreground text-base md:text-lg flex items-center justify-center md:justify-start gap-2">
-                    <Activity className="w-4 h-4 text-success" />
+                    <Activity className="w-4 h-4 text-primary" />
                     {juzData?.item_count || 0} Item sedang dipelajari
                   </p>
                 </div>
@@ -267,7 +267,7 @@ export const QuranClassJuzDetailView = () => {
                 <div className="flex justify-center md:justify-end w-full md:w-auto">
                   <button
                     onClick={() => setIsAddModalOpen(true)}
-                    className="w-full sm:w-auto shrink-0 px-6 py-4 bg-warning hover:bg-warning/90 rounded-2xl text-warning-foreground font-bold transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 group"
+                    className="w-full sm:w-auto shrink-0 px-6 py-4 bg-primary hover:bg-primary/90 rounded-lg text-primary-foreground font-bold transition-colors flex items-center justify-center gap-3 group"
                   >
                     <div className="p-1 bg-warning-foreground/20 rounded-full group-hover:rotate-90 transition-transform duration-300">
                       <Plus className="w-5 h-5 text-warning-foreground" />
@@ -449,7 +449,7 @@ export const QuranClassJuzDetailView = () => {
                             </div>
                             <div className="mt-3 h-2.5 rounded-full bg-surface-2 overflow-hidden">
                               <div
-                                className="h-full rounded-full bg-linear-to-r from-warning to-success"
+                                className="h-full rounded-full bg-primary"
                                 style={{ width: `${student.progress_pct}%` }}
                               />
                             </div>

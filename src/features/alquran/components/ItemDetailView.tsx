@@ -211,7 +211,8 @@ export const ItemDetailView = ({
   };
 
   return (
-    <div className="animate-fadeIn pb-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <div className="animate-fadeIn pb-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <ItemDetailHero
         juzIndex={juzIndex}
         info={info}
@@ -233,6 +234,8 @@ export const ItemDetailView = ({
         onEditClick={() => setIsEditModalOpen(true)}
         onDeleteClick={() => setIsDeleteModalOpen(true)}
       />
+
+      </div>
 
       <EditItemModal
         isOpen={isEditModalOpen}
@@ -256,6 +259,6 @@ export const ItemDetailView = ({
         message={successMessage.message}
         onClose={() => setIsSuccessModalOpen(false)}
       />
-    </div>
+    </>
   );
 };

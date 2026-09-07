@@ -27,16 +27,13 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
   return (
     <div
       className={`relative flex flex-col justify-between overflow-hidden group 
-                 rounded-2xl bg-card 
-                 border ${isPublished ? "border-success/20 hover:border-success/50" : isPending ? "border-warning/20 hover:border-warning/50" : "border-success/20 hover:border-success/50"} 
-                 transition-all duration-700 min-h-[350px] 
-                 hover:-translate-y-2 ${isPublished ? "hover:shadow-xl" : isPending ? "hover:shadow-xl" : "hover:shadow-xl"} 
-                 shadow-sm cursor-pointer`}
+                 rounded-xl bg-card 
+                 border border-border hover:border-primary/40 
+                 transition-colors min-h-[350px] 
+                 hover:-translate-y-1 cursor-pointer`}
     >
       {/* Decorative Background glow */}
-      <div
-        className={`absolute -inset-10 ${isPublished ? "bg-primary/5" : isPending ? "bg-warning/5" : "bg-success/5"} blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-full pointer-events-none`}
-      />
+      <div className="absolute -inset-10 bg-primary/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-full pointer-events-none" />
 
       {/* --- IMAGE HEADER SECTION --- */}
       <div className="relative h-48 w-full shrink-0 flex items-center justify-center overflow-hidden bg-surface-1">
@@ -53,12 +50,10 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
           <div className="absolute inset-0 w-full h-full bg-linear-to-t from-surface-1 to-surface-2 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-1000">
             {/* Very minimal book pattern for empty state */}
             <div
-              className={`absolute top-0 right-0 w-64 h-64 ${isPublished ? "bg-primary/10" : isPending ? "bg-warning/10" : "bg-success/10"} rounded-full blur-[100px] pointer-events-none`}
+              className={`absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none`}
             />
-            <div
-              className={`w-16 h-16 rounded-2xl ${isPublished ? "bg-primary/10 border-primary/20 text-primary/80 group-hover:text-primary" : isPending ? "bg-warning/10 border-warning/20 text-warning/80 group-hover:text-warning" : "bg-success/10 border-success/20 text-success/80 group-hover:text-success"} border flex items-center justify-center group-hover:scale-120 group-hover:-rotate-3 transition-all duration-700`}
-            >
-              <Box className="w-6 h-6 transition-colors" />
+            <div className="w-16 h-16 rounded-xl bg-primary/10 border-primary/20 text-primary/80 group-hover:text-primary border flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+              <Box className="w-6 h-6 text-primary" />
             </div>
           </div>
         )}
@@ -66,17 +61,17 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
         {/* Top Floating Controls */}
         <div className="absolute top-5 left-5 right-5 flex justify-between items-start z-20">
           {isPublished ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/30 shadow-sm rounded-full text-[9px] font-bold tracking-widest uppercase text-primary group-hover:text-primary group-hover:bg-primary/20 transition-all duration-500">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-full text-[9px] font-bold tracking-widest uppercase text-primary group-hover:text-primary group-hover:bg-primary/20 transition-colors">
               <CheckCircle className="w-3 h-3 text-primary" />
               <span>Sudah Rilis</span>
             </div>
           ) : isPending ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-warning/10 border border-warning/30 shadow-sm rounded-full text-[9px] font-bold tracking-widest uppercase text-warning group-hover:text-warning group-hover:bg-warning/20 transition-all duration-500">
-              <Clock className="w-3 h-3 text-warning animate-pulse" />
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-warning/10 border border-warning/30 rounded-full text-[9px] font-bold tracking-widest uppercase text-warning group-hover:text-warning group-hover:bg-warning/20 transition-colors">
+              <Clock className="w-3 h-3 text-warning" />
               <span>Proses Review</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-background/40 border border-success/30 shadow-sm rounded-full text-[9px] font-bold tracking-widest uppercase text-success group-hover:text-success group-hover:bg-success/20 transition-all duration-500">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-background/40 border border-success/30 rounded-full text-[9px] font-bold tracking-widest uppercase text-success group-hover:text-success group-hover:bg-success/20 transition-colors">
               <Globe2 className="w-3 h-3 text-success" />
               <span>Draft Lokal</span>
             </div>
@@ -112,7 +107,7 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
           {isPublished ? (
             <button
               disabled
-              className="w-full py-3.5 rounded-xl bg-primary/10 border border-primary/20 text-primary/80 font-bold flex items-center justify-center gap-2 cursor-not-allowed opacity-80"
+              className="w-full py-3.5 rounded-lg bg-primary/10 border border-primary/20 text-primary/80 font-bold flex items-center justify-center gap-2 cursor-not-allowed opacity-80"
             >
               <CheckCircle className="w-4 h-4" />
               <span>Terpublikasi Global</span>
@@ -120,7 +115,7 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
           ) : isPending ? (
             <button
               disabled
-              className="w-full py-3.5 rounded-xl bg-warning/10 border border-warning/20 text-warning/80 font-bold flex items-center justify-center gap-2 cursor-not-allowed opacity-80"
+              className="w-full py-3.5 rounded-lg bg-warning/10 border border-warning/20 text-warning/80 font-bold flex items-center justify-center gap-2 cursor-not-allowed opacity-80"
             >
               <CheckCircle className="w-4 h-4" />
               <span>Menunggu Persetujuan</span>
@@ -131,7 +126,7 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
                 e.stopPropagation();
                 onShare?.(book);
               }}
-              className="w-full py-3.5 rounded-xl cursor-pointer bg-success/10 border border-success/30 hover:bg-success hover:text-success-foreground text-success font-bold transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-lg cursor-pointer bg-primary/10 border border-primary/30 hover:bg-primary hover:text-primary-foreground text-primary font-bold transition-colors flex items-center justify-center gap-2"
             >
               <Share2 className="w-4 h-4" />
               <span>Bagikan Kitab</span>

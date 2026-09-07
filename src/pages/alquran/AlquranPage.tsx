@@ -90,11 +90,11 @@ export const AlquranPage = () => {
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-warning/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-info/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative bg-background z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative z-10">
         {/* Level 1: Dashboard */}
         {view === "dashboard" && (
           <AlquranDashboard

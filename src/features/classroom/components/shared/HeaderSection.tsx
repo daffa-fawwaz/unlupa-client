@@ -12,13 +12,13 @@ const HeaderSection = ({
   return (
     <div className="mb-12 relative">
       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-1 border border-border mb-6 text-xs font-medium text-muted-foreground">
-        <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+        <span className="w-2 h-2 rounded-full bg-primary" />
         {workspace}
       </div>
 
       <h1 className="text-4xl md:text-6xl font-serif font-black text-foreground mb-5 tracking-tight leading-tight">
         {mainTitle}{" "}
-        <span className="bg-clip-text text-transparent bg-linear-to-r from-primary via-primary/70 to-primary/40">
+        <span className="text-primary">
           {secTitle}
         </span>
       </h1>

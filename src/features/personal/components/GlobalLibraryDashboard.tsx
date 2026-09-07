@@ -42,7 +42,7 @@ export const GlobalLibraryDashboard = () => {
   const totalPublished = books.length;
 
   return (
-    <div className="min-h-screen relative bg-background rounded-3xl overflow-hidden selection:bg-primary/30">
+    <div className="min-h-screen w-full bg-background selection:bg-primary/30">
       {/* --- Dynamic Background Atmosphere --- */}
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
@@ -61,7 +61,7 @@ export const GlobalLibraryDashboard = () => {
               onClick={() => setIsSidebarOpen(true)}
               className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-all group cursor-pointer lg:mr-4"
             >
-              <div className="p-2.5 rounded-2xl border border-border group-hover:border-border bg-surface-1 group-hover:bg-surface-2 transition-all duration-300 shadow-sm">
+              <div className="p-2.5 rounded-xl border border-border group-hover:border-border bg-surface-1 group-hover:bg-surface-2 transition-colors">
                 <Menu className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </div>
             </button>
@@ -75,7 +75,7 @@ export const GlobalLibraryDashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-1 border border-primary/20 text-xs text-primary font-bold shadow-sm select-none transition-all hover:bg-surface-2">
+            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-1 border border-primary/20 text-xs text-primary font-bold select-none hover:bg-surface-2 transition-colors">
               <Library className="w-4 h-4" />
               <span>{totalPublished} Karya Global</span>
             </div>
@@ -86,7 +86,7 @@ export const GlobalLibraryDashboard = () => {
         <div className="mb-14 relative flex flex-col md:flex-row gap-8 justify-between items-start md:items-end">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6 text-xs font-medium text-primary">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-primary" />
               Live Library Repository
             </div>
 
@@ -110,7 +110,7 @@ export const GlobalLibraryDashboard = () => {
             <input
               type="text"
               placeholder="Cari perihal atau kitab..."
-              className="w-full bg-background/60 border border-primary/20 text-foreground pl-14 pr-5 py-4 rounded-2xl font-inter focus:outline-none focus:border-primary focus:bg-background transition-all box-border shadow-sm placeholder:text-muted-foreground"
+              className="w-full bg-background/60 border border-primary/20 text-foreground pl-14 pr-5 py-4 rounded-lg font-inter focus:outline-none focus:border-primary focus:bg-background transition-colors box-border placeholder:text-muted-foreground"
             />
           </div>
         </div>
@@ -135,8 +135,7 @@ export const GlobalLibraryDashboard = () => {
               <div className="relative flex flex-col items-center justify-center py-32 px-4 rounded-2xl border border-primary/20 bg-card text-center overflow-hidden">
 
                 <div className="relative">
-                  <div className="w-28 h-28 rounded-2xl bg-surface-1 flex items-center justify-center mb-8 border border-border shadow-sm mx-auto relative z-10 group-hover:scale-110 transition-transform duration-700">
-                    <div className="absolute inset-0 bg-primary/10 rounded-2xl animate-pulse" />
+                  <div className="w-28 h-28 rounded-xl bg-surface-1 flex items-center justify-center mb-8 border border-border mx-auto relative z-10 group-hover:scale-105 transition-transform duration-300">
                     <Globe className="w-12 h-12 text-primary/80" />
                   </div>
                 </div>
@@ -151,7 +150,7 @@ export const GlobalLibraryDashboard = () => {
 
                 <NavLink
                   to="/dashboard/pribadi"
-                  className="px-8 py-4 rounded-full cursor-pointer bg-primary text-primary-foreground font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-sm decoration-transparent"
+                  className="px-8 py-4 rounded-lg cursor-pointer bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex items-center gap-3 transition-colors decoration-transparent"
                 >
                   <ArrowLeft className="w-5 h-5" />
                   <span className="tracking-wide">

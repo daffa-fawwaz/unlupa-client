@@ -262,7 +262,7 @@ export const AddHafalanModal = ({
         setSelectedSurahIndex(0);
         setEstimateTime(5);
       }, 300);
-    } catch (err) {
+    } catch {
       console.error("Gagal menyimpan hafalan");
       // Optional: Show error toast here
     }
@@ -445,10 +445,10 @@ export const AddHafalanModal = ({
                   onClick={handleSave}
                   disabled={loading || isDuplicate}
                   className={clsx(
-                    "w-full py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2",
+                    "w-full py-4 rounded-lg font-bold transition-all flex items-center justify-center gap-2",
                     isDuplicate
                       ? "bg-surface-2 text-muted-foreground cursor-not-allowed shadow-none"
-                      : "bg-warning text-warning-foreground hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed",
+                      : "bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed",
                   )}
                 >
                   {loading ? (

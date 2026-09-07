@@ -8,6 +8,10 @@ import {
   X,
   BookOpen,
   Lightbulb,
+  Frown,
+  Meh,
+  Smile,
+  Flame,
 } from "lucide-react";
 import type {
   DailyTask,
@@ -34,11 +38,11 @@ const REVIEW_BUTTONS = [
     id: 1 as const,
     payloadValue: 1 as const,
     header: "Lemah",
-    emoji: "😰",
+    icon: Frown,
     descriptions: ["Blank", "Banyak Lupa", "Berpikir Lama", "Banyak Salah"],
     bg: "bg-destructive/10 border-destructive/50 hover:bg-destructive/15",
-    headerBg: "bg-destructive",
-    headerText: "text-destructive-foreground",
+    headerBg: "bg-red-600",
+    headerText: "text-white",
     dot: "bg-destructive",
     textColor: "text-destructive",
   },
@@ -46,7 +50,7 @@ const REVIEW_BUTTONS = [
     id: 2 as const,
     payloadValue: 2 as const,
     header: "Sedang",
-    emoji: "😐",
+    icon: Meh,
     descriptions: ["Sering Lupa", "Sering Salah", "Tersendat", "Lambat"],
     bg: "bg-warning/10 border-warning/50 hover:bg-warning/15",
     headerBg: "bg-warning",
@@ -58,11 +62,11 @@ const REVIEW_BUTTONS = [
     id: 3 as const,
     payloadValue: 3 as const,
     header: "Baik",
-    emoji: "😊",
+    icon: Smile,
     descriptions: ["Lancar", "Cepat", "Yakin", "Benar"],
     bg: "bg-success/10 border-success/50 hover:bg-success/15",
-    headerBg: "bg-success",
-    headerText: "text-success-foreground",
+    headerBg: "bg-emerald-600",
+    headerText: "text-white",
     dot: "bg-success",
     textColor: "text-success",
   },
@@ -70,11 +74,11 @@ const REVIEW_BUTTONS = [
     id: 4 as const,
     payloadValue: 4 as const,
     header: "Sempurna",
-    emoji: "🔥",
+    icon: Flame,
     descriptions: ["Reflek", "Tanpa Salah", "Sangat Lancar", "Sempurna"],
     bg: "bg-info/10 border-info/50 hover:bg-info/15",
-    headerBg: "bg-info",
-    headerText: "text-info-foreground",
+    headerBg: "bg-sky-600",
+    headerText: "text-white",
     dot: "bg-info",
     textColor: "text-info",
   },
@@ -317,7 +321,7 @@ export const DailyReviewFlashcardModal = ({
                       <div
                         className={`flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-black uppercase tracking-wide border-b border-black/10 ${btn.headerBg} ${btn.headerText}`}
                       >
-                        <span>{btn.emoji}</span>
+                        <btn.icon className="w-4 h-4" />
                         <span>{btn.header}</span>
                       </div>
                       <div className="flex-1 p-3">

@@ -185,7 +185,7 @@ export const EditItemModal = ({
                   value={formData.answer}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-success/50 focus:ring-2 focus:ring-success/20 transition-all resize-none text-sm sm:text-base"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-lg bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-colors resize-none text-sm sm:text-base"
                   placeholder="Masukkan jawaban"
                   disabled={loading}
                 />

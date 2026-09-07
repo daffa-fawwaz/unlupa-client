@@ -62,7 +62,7 @@ export const StartIntervalModal = ({
         {/* Header */}
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-warning/10 text-warning">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <CalendarDays className="w-5 h-5" />
             </div>
             <div>
@@ -100,9 +100,9 @@ export const StartIntervalModal = ({
                 <button
                   key={preset}
                   onClick={() => setIntervalDays(preset)}
-                  className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${
+                  className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
                     intervalDays === preset
-                      ? "bg-warning/10 border-warning/50 text-warning"
+                      ? "bg-primary/10 border-primary/40 text-primary"
                       : "bg-surface-1 border-border text-muted-foreground hover:bg-surface-2"
                   }`}
                 >
@@ -125,7 +125,7 @@ export const StartIntervalModal = ({
               onChange={(e) =>
                 setIntervalDays(Math.max(1, parseInt(e.target.value) || 1))
               }
-              className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border text-foreground text-center text-lg font-mono focus:outline-none focus:border-warning/50 focus:bg-warning/5 transition-all"
+              className="w-full px-4 py-3 rounded-lg bg-surface-1 border border-border text-foreground text-center text-lg font-mono focus:outline-none focus:border-primary/50 focus:bg-primary/5 transition-all"
             />
           </div>
 
@@ -140,7 +140,7 @@ export const StartIntervalModal = ({
           <button
             onClick={handleSubmit}
             disabled={loading || intervalDays < 1}
-            className="w-full py-4 rounded-xl bg-warning text-warning-foreground font-bold shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

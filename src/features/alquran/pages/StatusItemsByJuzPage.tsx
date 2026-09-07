@@ -34,7 +34,7 @@ const STATUS_CONFIG: Record<
     label: "Menghafal",
     description: "Item yang masih dalam tahap hafalan awal",
     icon: BookOpen,
-    color: "from-warning to-warning/60",
+    color: "bg-warning",
     bgColor: "bg-warning/10",
     borderColor: "border-warning/20",
     textColor: "text-warning",
@@ -45,7 +45,7 @@ const STATUS_CONFIG: Record<
     label: "Latihan Interval",
     description: "Item dalam masa latihan pengulangan berkala",
     icon: Clock,
-    color: "from-info to-info/60",
+    color: "bg-info",
     bgColor: "bg-info/10",
     borderColor: "border-info/20",
     textColor: "text-info",
@@ -56,7 +56,7 @@ const STATUS_CONFIG: Record<
     label: "Ujian Interval",
     description: "Item dalam jadwal ujian interval berkala",
     icon: ShieldCheck,
-    color: "from-success to-success/60",
+    color: "bg-success",
     bgColor: "bg-success/10",
     borderColor: "border-success/20",
     textColor: "text-success",
@@ -67,7 +67,7 @@ const STATUS_CONFIG: Record<
     label: "Selesai",
     description: "Item yang telah diselesaikan dengan sukses",
     icon: Trophy,
-    color: "from-primary to-primary/60",
+    color: "bg-primary",
     bgColor: "bg-primary/10",
     borderColor: "border-primary/20",
     textColor: "text-primary",
@@ -130,7 +130,7 @@ export const StatusItemsByJuzPage = () => {
 
   if (!config) {
     return (
-      <div className="min-h-screen p-6 bg-background rounded-3xl flex items-center justify-center">
+      <div className="min-h-screen p-6 bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-1 flex items-center justify-center">
             <Clock className="w-8 h-8 text-muted-foreground" />
@@ -145,7 +145,7 @@ export const StatusItemsByJuzPage = () => {
   const totalItems = groups.reduce((sum, g) => sum + g.item_count, 0);
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-background rounded-3xl relative overflow-hidden">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-background relative">
 
       <div className="relative z-10 animate-fadeIn max-w-6xl mx-auto">
         {/* Header */}
@@ -164,7 +164,7 @@ export const StatusItemsByJuzPage = () => {
           <div className="relative rounded-2xl p-8 md:p-10 bg-card border border-border overflow-hidden">
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
               <div
-                className={`w-20 h-20 md:w-24 md:h-24 rounded-3xl ${config.bgColor} ${config.textColor} flex items-center justify-center shadow-xl ${config.borderColor} border`}
+                className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl ${config.bgColor} ${config.textColor} flex items-center justify-center ${config.borderColor} border`}
               >
                 <Icon className="w-10 h-10 md:w-12 md:h-12" />
               </div>
@@ -272,19 +272,9 @@ export const StatusItemsByJuzPage = () => {
                 <button
                   key={group.juz_id}
                   onClick={() => handleJuzClick(group.juz_index, group.juz_id)}
-                  className="group relative overflow-hidden rounded-2xl p-6 bg-card border border-border hover:border-border transition-all duration-500 text-left hover:-translate-y-2 hover:shadow-xl"
+                  className="group relative overflow-hidden rounded-xl p-6 bg-card border border-border hover:border-primary/40 transition-colors duration-300 text-left hover:-translate-y-1"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  {/* Animated gradient background */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${config.gradientFrom} ${config.gradientTo} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                  />
-
-                  {/* Decorative corner */}
-                  <div
-                    className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${config.color} opacity-0 group-hover:opacity-20 rounded-bl-full transition-opacity duration-500`}
-                  />
-
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -318,9 +308,9 @@ export const StatusItemsByJuzPage = () => {
                     </div>
 
                     {/* Progress bar decoration */}
-                    <div className="mt-4 h-1 rounded-full bg-surface-1 overflow-hidden">
+                    <div className={`mt-4 h-1 rounded-full bg-surface-1 overflow-hidden`}>
                       <div
-                        className={`h-full w-0 group-hover:w-full bg-gradient-to-r ${config.color} transition-all duration-700`}
+                        className={`h-full w-0 group-hover:w-full ${config.color} transition-all duration-700`}
                       />
                     </div>
                   </div>

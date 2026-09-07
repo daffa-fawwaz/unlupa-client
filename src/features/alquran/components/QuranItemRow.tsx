@@ -129,7 +129,7 @@ export const QuranItemRow = ({
   // Render action button based on status
   const renderActionButton = () => {
     const buttonClass =
-      "px-3 py-1.5 bg-transparent border border-dashed border-border text-muted-foreground text-[0.6rem] rounded-md cursor-pointer transition-all hover:border-warning hover:text-warning hover:bg-warning/5";
+      "px-3 py-1.5 bg-transparent border border-dashed border-border text-muted-foreground text-[0.6rem] rounded-md cursor-pointer transition-colors hover:border-primary/40 hover:text-primary hover:bg-primary/5";
 
     if (item.status === "new") {
       return (

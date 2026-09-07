@@ -37,13 +37,13 @@ export const ComingSoonRoomPage = () => {
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex items-center justify-center">
         <div className="w-full">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-warning/10 border border-warning/30 mb-6">
-            <span className="inline-flex h-2 w-2 rounded-full bg-warning animate-pulse" />
+            <span className="inline-flex h-2 w-2 rounded-full bg-warning" />
             <span className="text-[11px] font-medium tracking-[0.16em] uppercase text-warning">
               {badge}
             </span>
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10 bg-card border border-border rounded-2xl p-8 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10 bg-card border border-border rounded-2xl p-8">
             <div className="flex items-start gap-6">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                 {icon}

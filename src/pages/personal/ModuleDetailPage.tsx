@@ -367,10 +367,7 @@ export const ModuleDetailPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground font-primary selection:bg-primary/30">
       {/* Ambient bg */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-15%] right-[-10%] w-[700px] h-[700px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-info/5 rounded-full blur-[120px]" />
-      </div>
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" />
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div
@@ -400,7 +397,7 @@ export const ModuleDetailPage = () => {
           {/* Breadcrumb */}
           {tree && module && (
             <div className="hidden md:flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-surface-1 border border-border text-xs text-muted-foreground max-w-sm">
-              <BookOpen className="w-3.5 h-3.5 text-info shrink-0" />
+              <BookOpen className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               <span
                 className="text-muted-foreground hover:text-foreground truncate cursor-pointer transition-colors max-w-[100px]"
                 onClick={() => navigate(`/dashboard/pribadi/book/${bookId}`)}
@@ -418,15 +415,15 @@ export const ModuleDetailPage = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-warning text-sm font-medium transition-all duration-300"
-            >
-              <Edit2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Edit</span>
-            </button>
-            <button
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-destructive/10 border border-border hover:border-destructive/30 text-muted-foreground hover:text-destructive text-sm font-medium transition-all duration-300"
-            >
+className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-primary text-sm font-medium transition-colors"
+              >
+                <Edit2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Edit</span>
+              </button>
+              <button
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-destructive/10 border border-border hover:border-destructive/30 text-muted-foreground hover:text-destructive text-sm font-medium transition-colors"
+              >
               <Trash2 className="w-4 h-4" />
               <span className="hidden sm:inline">Hapus</span>
             </button>
@@ -466,8 +463,8 @@ export const ModuleDetailPage = () => {
         {/* Not found */}
         {!loading && !error && tree && !module && (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-warning/10 border border-warning/20 flex items-center justify-center">
-              <Layers className="w-8 h-8 text-warning" />
+            <div className="w-16 h-16 rounded-3xl bg-destructive/10 border border-destructive/20 flex items-center justify-center">
+              <Layers className="w-8 h-8 text-destructive" />
             </div>
             <p className="text-muted-foreground text-sm">Modul tidak ditemukan.</p>
             <button
@@ -486,8 +483,6 @@ export const ModuleDetailPage = () => {
             <div className="relative rounded-3xl overflow-hidden border border-border bg-card">
               {/* Decorative gradient top */}
               <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
-              <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 blur-[80px] rounded-full pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-60 h-60 bg-info/5 blur-[60px] rounded-full pointer-events-none" />
 
               <div className="relative px-8 sm:px-10 py-10">
                 {/* Order & type badge */}
@@ -637,21 +632,21 @@ export const ModuleDetailPage = () => {
 
             {/* Items Section */}
             <div className="relative rounded-3xl overflow-hidden border border-border bg-card">
-              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-success/30 to-transparent" />
+              <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
 
               <div className="px-8 py-6 border-b border-border flex flex-col md:flex-row items-center justify-between">
                 <h2 className="text-base font-bold text-foreground flex items-center gap-2.5">
-                  <FileText className="w-4 h-4 text-success" />
+                  <FileText className="w-4 h-4 text-primary" />
                   Item Hafalan
                   {items.length > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-success/10 border border-success/20 text-success text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
                       {items.length}
                     </span>
                   )}
                 </h2>
                 <button
                   onClick={() => setIsAddItemModalOpen(true)}
-                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-xl bg-success/10 hover:bg-success/20 border border-success/20 text-success text-sm font-medium transition-all"
+                  className="flex mt-2 md:mt-0 items-center gap-1.5 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary text-sm font-medium transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Tambah Item
@@ -684,7 +679,7 @@ export const ModuleDetailPage = () => {
                   </p>
                   <button
                     onClick={() => setIsAddItemModalOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-success text-success-foreground text-sm font-bold transition-colors active:scale-95"
+                    className="flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground text-sm font-bold transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     Tambah Item Pertama

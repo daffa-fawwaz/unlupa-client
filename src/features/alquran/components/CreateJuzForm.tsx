@@ -46,7 +46,7 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
   if (data) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-        <div className="w-full max-w-md bg-card border border-success/30 rounded-2xl p-8 shadow-xl text-center relative overflow-hidden">
+        <div className="w-full max-w-md bg-card border border-border rounded-xl p-8 shadow-xl text-center relative overflow-hidden">
           <div className="relative z-10 flex flex-col items-center">
             <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6 animate-in zoom-in duration-500">
               <CheckCircle className="w-10 h-10 text-success" />
@@ -67,7 +67,7 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
 
             <button
               onClick={onClose}
-              className="w-full py-3.5 bg-success hover:bg-success/90 text-success-foreground font-bold rounded-xl transition-all shadow-xl cursor-pointer"
+              className="w-full py-3.5 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-lg transition-colors cursor-pointer"
             >
               Mulai Menghafal
             </button>
@@ -79,7 +79,7 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-[550px] bg-background border border-warning/30 rounded-2xl p-10 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-[550px] bg-background border border-border rounded-xl p-10 shadow-xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8 border-b border-border pb-4">
           <h1 className="text-xl font-serif text-foreground">Hafalan Baru</h1>
@@ -93,14 +93,14 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
 
         {/* Juz Selection */}
         <div className="mb-6">
-          <label className="block font-mono text-xs text-warning uppercase tracking-widest mb-2">
+          <label className="block font-mono text-xs text-primary uppercase tracking-widest mb-2">
             1. Pilih Juz
           </label>
           <select
             value={selectedJuz}
             onChange={(e) => handleJuzChange(e.target.value)}
             disabled={loading}
-            className="w-full bg-surface-1 border border-border text-foreground px-3.5 py-3.5 rounded-xl font-inter cursor-pointer appearance-none transition-colors hover:bg-surface-2 focus:outline-none focus:border-warning focus:bg-warning/5 disabled:opacity-50"
+            className="w-full bg-surface-1 border border-border text-foreground px-3.5 py-3.5 rounded-lg font-inter cursor-pointer appearance-none transition-colors hover:bg-surface-2 focus:outline-none focus:border-primary focus:bg-primary/5 disabled:opacity-50"
           >
             <option value="">-- Pilih Juz --</option>
             {Array.from({ length: 30 }, (_, i) => 30 - i).map((juz) => (
@@ -115,7 +115,7 @@ export const CreateJuzForm = ({ onClose, onSuccess, classId }: CreateJuzFormProp
         <button
           onClick={handleSubmit}
           disabled={loading || !selectedJuz}
-          className="w-full py-4 bg-warning disabled:bg-surface-2 disabled:text-muted-foreground text-warning-foreground font-bold uppercase rounded-xl transition-transform hover:-translate-y-0.5 tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+          className="w-full py-4 bg-primary disabled:bg-surface-2 disabled:text-muted-foreground text-primary-foreground font-bold uppercase rounded-lg tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed transition-colors"
         >
           {loading ? (
             <>

@@ -1,13 +1,13 @@
 /* Custom animations and effects for Alquran page */
 
+/* Opacity-only to guarantee the container can never become a containing block
+   (a transform would break position:fixed modals inside it). */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 

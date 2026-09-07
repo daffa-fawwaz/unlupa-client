@@ -47,7 +47,7 @@ export const ShareBooksDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen relative bg-background rounded-3xl overflow-hidden selection:bg-success/30">
+    <div className="min-h-screen w-full bg-background selection:bg-success/30">
       {/* --- Dynamic Background Atmosphere --- */}
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
@@ -66,7 +66,7 @@ export const ShareBooksDashboard = () => {
               onClick={() => setIsSidebarOpen(true)}
               className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-all group cursor-pointer lg:mr-4"
             >
-              <div className="p-2.5 rounded-2xl border border-border group-hover:border-border bg-surface-1 group-hover:bg-surface-2 transition-all duration-300 shadow-sm">
+              <div className="p-2.5 rounded-xl border border-border group-hover:border-border bg-surface-1 group-hover:bg-surface-2 transition-colors">
                 <Menu className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </div>
             </button>
@@ -80,7 +80,7 @@ export const ShareBooksDashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-1 border border-success/20 text-xs text-success font-bold shadow-sm select-none transition-all hover:bg-surface-2">
+            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-1 border border-primary/20 text-xs text-primary font-bold select-none transition-colors hover:bg-surface-2">
               <BookOpen className="w-4 h-4" />
               <span>{totalBooks} Karya Pribadi</span>
             </div>
@@ -90,14 +90,14 @@ export const ShareBooksDashboard = () => {
         {/* === HERO / HEADER SECTION === */}
         <div className="mb-14 relative flex flex-col md:flex-row gap-8 justify-between items-start md:items-end">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 mb-6 text-xs font-medium text-success">
-              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6 text-xs font-medium text-primary">
+              <span className="w-2 h-2 rounded-full bg-primary" />
               Ruang Publikasi
             </div>
 
             <h1 className="text-4xl md:text-6xl font-serif font-black text-foreground mb-5 tracking-tight leading-tight">
               Karya Anda, <br className="hidden md:block" />
-              <span className="text-success">
+              <span className="text-primary">
                 Amal Jariyah.
               </span>
             </h1>
@@ -112,7 +112,7 @@ export const ShareBooksDashboard = () => {
         <div className="mb-20 z-10 relative">
           {loading && books.length === 0 ? (
             <div className="flex flex-col justify-center items-center py-32 bg-card rounded-2xl border border-border">
-              <Loader2 className="w-10 h-10 text-success animate-spin mb-6" />
+              <Loader2 className="w-10 h-10 text-primary animate-spin mb-6" />
               <p className="text-muted-foreground text-lg animate-pulse font-light tracking-wide">
                 Memuat Koleksi Anda...
               </p>
@@ -129,12 +129,11 @@ export const ShareBooksDashboard = () => {
             </div>
           ) : (
             <div className="relative group">
-              <div className="relative flex flex-col items-center justify-center py-32 px-4 rounded-2xl border border-success/20 bg-card text-center overflow-hidden">
+              <div className="relative flex flex-col items-center justify-center py-32 px-4 rounded-xl border border-border bg-card text-center overflow-hidden">
 
                 <div className="relative">
-                  <div className="w-28 h-28 rounded-2xl bg-surface-1 flex items-center justify-center mb-8 border border-border shadow-sm mx-auto relative z-10 group-hover:scale-110 transition-transform duration-700">
-                    <div className="absolute inset-0 bg-success/10 rounded-2xl animate-pulse" />
-                    <Share2 className="w-12 h-12 text-success/80" />
+                  <div className="w-28 h-28 rounded-2xl bg-surface-1 flex items-center justify-center mb-8 border border-border mx-auto relative z-10 group-hover:scale-105 transition-transform duration-300">
+                    <Share2 className="w-12 h-12 text-muted-foreground" />
                   </div>
                 </div>
 
@@ -148,7 +147,7 @@ export const ShareBooksDashboard = () => {
 
                 <NavLink
                   to="/dashboard/pribadi"
-                  className="px-8 py-4 rounded-full cursor-pointer bg-primary text-primary-foreground font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-sm decoration-transparent"
+                  className="px-8 py-4 rounded-lg cursor-pointer bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex items-center gap-3 transition-colors decoration-transparent"
                 >
                   <ArrowLeft className="w-5 h-5" />
                   <span className="tracking-wide">Kembali Buat Materi</span>

@@ -17,7 +17,7 @@ export const JuzCard = ({
   return (
     <div
       onClick={onClick}
-      className="group relative bg-card border border-border rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-warning/30 hover:shadow-xl min-h-60 flex flex-col overflow-hidden"
+      className="group relative bg-card border border-border rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 min-h-60 flex flex-col overflow-hidden"
     >
       {/* Decorative Icon Background */}
       <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-500 transform group-hover:scale-125 group-hover:-rotate-12 pointer-events-none">
@@ -25,7 +25,7 @@ export const JuzCard = ({
       </div>
 
       {/* Large Juz Number Watermark */}
-      <div className="absolute top-2 right-4 text-7xl font-serif font-bold text-foreground/3 group-hover:text-warning/5 transition-colors duration-500 pointer-events-none select-none">
+      <div className="absolute top-2 right-4 text-7xl font-serif font-bold text-foreground/3 group-hover:text-primary/5 transition-colors duration-500 pointer-events-none select-none">
         {juzNumber}
       </div>
 
@@ -33,14 +33,14 @@ export const JuzCard = ({
       <div className="relative z-10 mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-3xl font-serif text-foreground mb-1 group-hover:text-warning transition-colors duration-300">
+            <h3 className="text-3xl font-serif text-foreground mb-1 group-hover:text-primary transition-colors duration-300">
               Juz {juzNumber}
             </h3>
             <p className="text-muted-foreground text-xs font-medium tracking-wide">
               AL-QUR'AN
             </p>
           </div>
-          <div className="px-3 py-1 bg-surface-1 border border-border rounded-full text-xs font-medium text-muted-foreground group-hover:bg-warning/10 group-hover:border-warning/20 group-hover:text-warning transition-all">
+          <div className="px-3 py-1 bg-surface-1 border border-border rounded-full text-xs font-medium text-muted-foreground group-hover:bg-primary/10 group-hover:border-primary/20 group-hover:text-primary transition-all">
             {itemCount} Item
           </div>
         </div>
@@ -52,7 +52,7 @@ export const JuzCard = ({
           <span className="text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold mb-1">
             Menghafal
           </span>
-          <span className="text-lg font-mono font-bold text-info leading-none">
+          <span className="text-lg font-mono font-bold text-foreground leading-none">
             {stats.menghafal}
           </span>
         </div>
@@ -60,7 +60,7 @@ export const JuzCard = ({
           <span className="text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold mb-1">
             Latihan Interval
           </span>
-          <span className="text-lg font-mono font-bold text-warning leading-none">
+          <span className="text-lg font-mono font-bold text-foreground leading-none">
             {stats.murajaah}
           </span>
         </div>
@@ -68,7 +68,7 @@ export const JuzCard = ({
           <span className="text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold mb-1">
             Ujian Interval
           </span>
-          <span className="text-lg font-mono font-bold text-success leading-none">
+          <span className="text-lg font-mono font-bold text-foreground leading-none">
             {stats.terjaga}
           </span>
         </div>

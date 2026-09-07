@@ -166,17 +166,15 @@ export const AddItemModal = ({
         onClick={resultState === "idle" ? onClose : undefined}
       />
       <div className="relative z-10 w-full max-w-lg max-h-[calc(100vh-2rem)] animate-in fade-in zoom-in-95 duration-300">
-        <div className="absolute -inset-px rounded-2xl bg-primary/30 blur-sm pointer-events-none" />
         <div className="relative max-h-[calc(100vh-2rem)] rounded-2xl bg-card border border-border shadow-xl overflow-hidden flex flex-col">
 
           {/* Success */}
           {resultState === "success" && (
             <div className="p-10 flex flex-col items-center text-center gap-5">
               <div className="relative">
-                <div className="w-20 h-20 rounded-2xl bg-success/15 border border-success/30 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-xl bg-success/15 border border-success/30 flex items-center justify-center">
                   <CheckCircle className="w-10 h-10 text-success" />
                 </div>
-                <div className="absolute inset-0 bg-success/10 rounded-2xl blur-2xl" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Item Berhasil Dibuat!</h3>
@@ -184,14 +182,14 @@ export const AddItemModal = ({
               <div className="flex gap-3">
                 <button
                   onClick={handleCreateAnother}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border text-foreground font-bold text-sm transition-all hover:scale-105 active:scale-95"
+                  className="flex items-center gap-2 px-6 py-3 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border text-foreground font-bold text-sm transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Buat Item Lagi
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-8 py-3 rounded-2xl bg-success text-success-foreground font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-sm"
+                  className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-colors"
                 >
                   Lihat Item
                 </button>
@@ -240,8 +238,8 @@ export const AddItemModal = ({
                   <X className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-2xl bg-success/15 border border-success/20 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-success" />
+                  <div className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-primary" />
                   </div>
                   <h2 className="text-xl font-bold text-foreground tracking-tight">
                     {moduleId ? "Tambah Item ke Modul" : "Tambah Item Hafalan"}
@@ -256,7 +254,7 @@ export const AddItemModal = ({
 
               <form onSubmit={handleSubmit} className="overflow-y-auto px-8 py-6 space-y-5">
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-success">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                     <AlignLeft className="w-3.5 h-3.5" />Pertanyaan / Konten
                   </label>
                   <textarea
@@ -265,12 +263,12 @@ export const AddItemModal = ({
                     placeholder="Tulis pertanyaan disini"
                     value={form.content}
                     onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-success/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors resize-none"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-success">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                     <Lock className="w-3.5 h-3.5" />Jawaban
                   </label>
                   <textarea
@@ -279,13 +277,13 @@ export const AddItemModal = ({
                     placeholder="Tulis jawaban disini"
                     value={form.answer}
                     onChange={(e) => setForm((f) => ({ ...f, answer: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-success/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors resize-none"
                   />
                 </div>
 
                 {isPremium && (
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-success">
+                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                       <Image className="w-3.5 h-3.5" />Gambar
                     </label>
                     {imagePreview ? (
@@ -305,8 +303,8 @@ export const AddItemModal = ({
                         </button>
                       </div>
                     ) : (
-                      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-surface-1 px-4 py-6 text-center hover:border-success/40 hover:bg-surface-2 transition">
-                        <Upload className="h-6 w-6 text-success" />
+                      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-surface-1 px-4 py-6 text-center hover:border-primary/40 hover:bg-surface-2 transition-colors">
+                        <Upload className="h-6 w-6 text-primary" />
                         <span className="text-sm font-semibold text-foreground">
                           Pilih gambar item
                         </span>
@@ -328,7 +326,7 @@ export const AddItemModal = ({
                 {/* Estimasi Waktu Review — Slider */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-success">
+                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                       <Clock className="w-3.5 h-3.5" />Estimasi Waktu Review
                     </label>
                     <span className="text-sm font-bold text-foreground tabular-nums">
@@ -345,7 +343,7 @@ export const AddItemModal = ({
                         onClick={() => handleUnitChange(unit)}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                           form.estimate_unit === unit
-                            ? "bg-success/20 border border-success/40 text-success"
+                            ? "bg-primary/20 border border-primary/40 text-primary"
                             : "bg-surface-1 border border-border text-muted-foreground hover:text-foreground hover:bg-surface-2"
                         }`}
                       >
@@ -358,9 +356,9 @@ export const AddItemModal = ({
                   <div className="relative pt-1">
                     <div className="relative h-2 rounded-full bg-surface-2">
                       <div
-                        className="absolute left-0 top-0 h-full rounded-full bg-success transition-all"
-                        style={{ width: `${sliderPercent}%` }}
-                      />
+                      className="absolute left-0 top-0 h-full rounded-full bg-primary transition-all"
+                      style={{ width: `${sliderPercent}%` }}
+                    />
                     </div>
                     <input
                       type="range"
@@ -375,7 +373,7 @@ export const AddItemModal = ({
                     />
                     {/* Thumb visual */}
                     <div
-                      className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-foreground shadow-lg border-2 border-success transition-all pointer-events-none"
+                      className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-foreground shadow-lg border-2 border-primary transition-all pointer-events-none"
                       style={{ left: `calc(${sliderPercent}% - 10px)` }}
                     />
                   </div>
@@ -388,7 +386,7 @@ export const AddItemModal = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-success">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                     <Hash className="w-3.5 h-3.5" />Urutan
                   </label>
                   <input
@@ -398,7 +396,7 @@ export const AddItemModal = ({
                     onChange={(e) =>
                       setForm((f) => ({ ...f, orderStr: e.target.value }))
                     }
-                    className="w-32 px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-success/50 focus:outline-none text-foreground text-sm transition-colors"
+                    className="w-32 px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm transition-colors"
                   />
                 </div>
 
@@ -413,7 +411,7 @@ export const AddItemModal = ({
                   <button
                     type="submit"
                     disabled={loading || !form.content.trim()}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-success text-success-foreground hover:bg-success/90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-sm"
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {loading ? (
                       <>
