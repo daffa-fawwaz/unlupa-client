@@ -19,7 +19,7 @@ export const DashboardLayout = () => {
         onClick={closeSidebar}
       ></div>
       <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
-      <main className="flex-1 w-full min-h-screen bg-background text-foreground">
+      <main className="flex-1 w-full max-w-full min-h-screen overflow-x-hidden bg-background text-foreground">
         <Outlet context={{ toggleSidebar }} />
       </main>
     </>

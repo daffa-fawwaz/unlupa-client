@@ -661,7 +661,7 @@ export const DailyReviewSection = () => {
                     {group.bookEstimates.map((book, index) => (
                       <div
                         key={book.book_title}
-                        className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                        className="group relative w-full max-w-full overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
                         <div className="relative z-10 p-5">
@@ -727,7 +727,7 @@ export const DailyReviewSection = () => {
                     {group.juzEstimates?.map((juz, index) => (
                       <div
                         key={juz.juz_id}
-                        className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                        className="group relative w-full max-w-full overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
                         <div className="relative z-10 p-5">
