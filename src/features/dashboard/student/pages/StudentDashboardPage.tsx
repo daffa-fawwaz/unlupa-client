@@ -121,26 +121,28 @@ export const StudentDashboardPage = () => {
   return (
     <div className="max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300 relative">
       {/* HEADER (PROFILE FOCUS) */}
-      <nav className="flex justify-between items-center mb-10">
+      <nav className="flex justify-between items-center gap-2 sm:gap-4 mb-10">
         {/* Left: Menu Trigger */}
         <button
           onClick={toggleSidebar}
-          className="flex items-center gap-3 text-muted-foreground hover:text-primary transition group cursor-pointer"
+          className="flex items-center gap-3 text-muted-foreground hover:text-primary transition group cursor-pointer shrink-0"
         >
           <div className="p-2 rounded-lg border border-border group-hover:border-primary/50 bg-surface-1">
             <Menu className="w-5 h-5" />
           </div>
-          <span className="text-sm font-mono tracking-widest hidden md:inline">
+          <span className="text-sm font-mono tracking-widest hidden sm:inline">
             MENU
           </span>
         </button>
 
         {/* Right: User Identity & Request Teacher Action */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <ThemeToggle />
-          <div className="text-right flex flex-col items-end">
-            <p className="text-sm text-foreground font-serif font-medium">{name}</p>
-            <div className="flex items-center gap-2 mt-0.5">
+          <div className="text-right flex flex-col items-end min-w-0">
+            <p className="text-sm text-foreground font-serif font-medium truncate max-w-[8rem] sm:max-w-[13rem]">
+              {name}
+            </p>
+            <div className="hidden sm:flex items-center gap-2 mt-0.5">
               <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
                 Penjaga Ilmu
               </p>
@@ -158,7 +160,7 @@ export const StudentDashboardPage = () => {
               </button>
             </div>
           </div>
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center font-serif font-bold text-primary-foreground">
+          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center font-serif font-bold text-primary-foreground shrink-0">
             {initialLetter}
           </div>
         </div>

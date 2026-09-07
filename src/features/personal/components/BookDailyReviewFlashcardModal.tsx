@@ -273,7 +273,7 @@ export const BookDailyReviewFlashcardModal = ({
             </div>
 
             {/* Sticky flip button */}
-            <div className="px-4 sm:px-8 md:px-16 pb-6 pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-border bg-background">
+            <div className="px-4 sm:px-8 md:px-16 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-border bg-background">
               <button
                 onClick={() => setIsFlipped(true)}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-info/15 border border-info/30 text-info font-bold text-base hover:bg-info/25 transition-colors"
@@ -367,7 +367,7 @@ export const BookDailyReviewFlashcardModal = ({
             </div>
 
             {/* Sticky flip button */}
-            <div className="px-4 sm:px-8 md:px-16 pb-6 pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-border bg-background">
+            <div className="px-4 sm:px-8 md:px-16 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-border bg-background">
               <button
                 onClick={() => setIsFlipped(false)}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-surface-1 border border-border text-muted-foreground font-bold text-base hover:bg-surface-2 hover:text-foreground transition-colors"

@@ -211,7 +211,7 @@ export const BookClassDailyReviewSection = ({
             {groups.map((group, index) => (
               <div
                 key={group.book_title}
-                className="group relative overflow-hidden rounded-xl bg-surface-1 border border-border hover:border-primary/40 transition-colors hover:-translate-y-1"
+                className="group relative w-full max-w-full overflow-hidden rounded-xl bg-surface-1 border border-border hover:border-primary/40 transition-colors hover:-translate-y-1"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="relative z-10 p-5">

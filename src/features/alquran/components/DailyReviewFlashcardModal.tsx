@@ -268,7 +268,7 @@ export const DailyReviewFlashcardModal = ({
               </div>
             </div>
 
-            <div className="px-4 sm:px-8 md:px-16 pb-6 pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-border bg-background">
+            <div className="px-4 sm:px-8 md:px-16 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-3 max-w-3xl mx-auto w-full shrink-0 border-t border-border bg-background">
               <button
                 onClick={() => setIsFlipped(true)}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-success/10 border border-success/30 text-success font-bold text-base hover:bg-success/15 transition-colors"
