@@ -19,23 +19,23 @@ export const ErrorMessage = ({
 
   return (
     <div
-      className={`flex flex-col gap-3 p-4 mt-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-100 animate-in fade-in slide-in-from-bottom-2 duration-300 ${className}`}
+      className={`flex flex-col gap-3 p-4 mt-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive-foreground animate-in fade-in slide-in-from-bottom-2 duration-300 ${className}`}
       role="alert"
     >
       <div className="flex items-start gap-3">
-        <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
+        <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-destructive" />
         <div className="min-w-0">
           {title && (
-            <p className="text-sm font-semibold text-red-100">{title}</p>
+            <p className="text-sm font-semibold text-destructive-foreground">{title}</p>
           )}
-          {message && <p className="text-sm text-red-200">{message}</p>}
+          {message && <p className="text-sm text-destructive-foreground/80">{message}</p>}
         </div>
       </div>
       {actionLabel && onAction && (
         <button
           type="button"
           onClick={onAction}
-          className="self-start rounded-full bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-100 transition hover:bg-red-500/20"
+          className="self-start rounded-full bg-destructive/10 px-4 py-2 text-sm font-semibold text-destructive-foreground transition hover:bg-destructive/20"
         >
           {actionLabel}
         </button>

@@ -77,10 +77,7 @@ export const AdminDashboardPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-deep-universe text-white relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
-      {/* Background Elements */}
-      <div className="stars-overlay"></div>
-
+    <div className="min-h-screen bg-background text-foreground relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
       {/* Sidebar Integration */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
@@ -97,15 +94,15 @@ export const AdminDashboardPage = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/50 transition text-amber-500"
+              className="p-2 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border transition text-foreground"
             >
               <Menu className="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <div>
-              <h1 className="text-xl md:text-3xl font-display font-bold text-white tracking-widest">
-                DASHBOARD <span className="text-gold-premium">ADMIN</span>
+              <h1 className="text-xl md:text-3xl font-display font-bold text-foreground tracking-widest">
+                DASHBOARD <span className="text-primary">ADMIN</span>
               </h1>
-              <p className="text-xs md:text-sm text-gray-400">
+              <p className="text-xs md:text-sm text-muted-foreground">
                 Pusat Kontrol Ekosistem UNLUPA
               </p>
             </div>
@@ -117,19 +114,19 @@ export const AdminDashboardPage = () => {
               <input
                 type="text"
                 placeholder="Cari data..."
-                className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm w-64 focus:w-80 transition-all focus:border-amber-500/50 focus:outline-none text-white placeholder-gray-500"
+                className="pl-10 pr-4 py-2 bg-surface-1 border border-border rounded-full text-sm w-64 focus:w-80 transition-all focus:border-primary/50 focus:outline-none text-foreground placeholder-muted-foreground"
               />
-              <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-amber-500 transition" />
+              <Search className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-primary transition" />
             </div>
 
             {/* Notification */}
-            <button className="relative p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition group">
-              <Bell className="w-5 h-5 text-gray-400 group-hover:text-amber-400 transition" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <button className="relative p-2 rounded-full bg-surface-1 hover:bg-surface-2 border border-border transition group">
+              <Bell className="w-5 h-5 text-muted-foreground group-hover:text-primary transition" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive animate-pulse"></span>
             </button>
 
             {/* Admin Profile (Dynamic from auth store) */}
-            <div className="h-9 w-9 rounded-lg bg-linear-to-br from-amber-500 to-amber-700 flex items-center justify-center font-serif font-bold text-black border border-amber-400/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center font-serif font-bold text-primary-foreground">
               {initialLetter}
             </div>
           </div>
@@ -156,13 +153,13 @@ export const AdminDashboardPage = () => {
         {/* Bottom Section: Activity & Quick Actions */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Activity */}
-          <div className="lg:col-span-2 glass-panel rounded-2xl p-6 border border-white/5">
+          <div className="lg:col-span-2 bg-card rounded-2xl p-6 border border-border">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-serif font-bold text-white flex items-center gap-2">
-                <Activity className="w-5 h-5 text-amber-500" />
+              <h3 className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
+                <Activity className="w-5 h-5 text-primary" />
                 Aktivitas Terkini
               </h3>
-              <button className="text-xs text-gray-400 hover:text-white transition">
+              <button className="text-xs text-muted-foreground hover:text-foreground transition">
                 Lihat Semua
               </button>
             </div>
@@ -171,48 +168,48 @@ export const AdminDashboardPage = () => {
               {[1, 2, 3].map((item) => (
                 <div
                   key={item}
-                  className="group flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition cursor-pointer"
+                  className="group flex items-center gap-4 p-4 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border transition cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 border border-blue-500/30">
+                  <div className="w-10 h-10 rounded-full bg-info/20 flex items-center justify-center text-info border border-info/30">
                     <Users className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-white group-hover:text-blue-300 transition">
+                    <h4 className="text-sm font-medium text-foreground group-hover:text-info transition">
                       Pendaftaran Siswa Baru
                     </h4>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       Ahmad Fauzi mendaftar di kelas Tahsin Dasar
                     </p>
                   </div>
-                  <span className="text-xs text-gray-500 font-mono">
+                  <span className="text-xs text-muted-foreground font-mono">
                     2m lalu
                   </span>
-                  <MoreVertical className="w-4 h-4 text-gray-600 group-hover:text-white transition" />
+                  <MoreVertical className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="glass-panel rounded-2xl p-6 border border-white/5 flex flex-col">
-            <h3 className="text-lg font-serif font-bold text-white mb-6 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-amber-500" />
+          <div className="bg-card rounded-2xl p-6 border border-border flex flex-col">
+            <h3 className="text-lg font-serif font-bold text-foreground mb-6 flex items-center gap-2">
+              <Shield className="w-5 h-5 text-primary" />
               Aksi Cepat
             </h3>
 
             <div className="space-y-3 flex-1">
               <Link
                 to="/dashboard/teacher-requests"
-                className="w-full cursor-pointer group p-4 rounded-xl bg-linear-to-r from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/50 hover:from-amber-500/20 transition flex items-center gap-3 text-left"
+                className="w-full cursor-pointer group p-4 rounded-xl bg-warning/10 border border-warning/20 hover:border-warning/50 transition flex items-center gap-3 text-left"
               >
-                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center text-warning group-hover:scale-110 transition-transform">
                   <Users className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-amber-100 group-hover:text-white">
+                  <h4 className="text-sm font-bold text-foreground">
                     Teacher Requests
                   </h4>
-                  <p className="text-[10px] text-amber-500/60">
+                  <p className="text-[10px] text-muted-foreground">
                     Lihat permintaan menjadi pengajar
                   </p>
                 </div>
@@ -220,38 +217,38 @@ export const AdminDashboardPage = () => {
 
               <Link
                 to="/dashboard/book-requests"
-                className="w-full cursor-pointer group p-4 rounded-xl bg-linear-to-r from-violet-500/10 to-transparent border border-violet-500/20 hover:border-violet-500/50 hover:from-violet-500/20 transition flex items-center gap-3 text-left"
+                className="w-full cursor-pointer group p-4 rounded-xl bg-primary/10 border border-primary/20 hover:border-primary/50 transition flex items-center gap-3 text-left"
               >
-                <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform">
+                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                   <BookMarked className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-violet-100 group-hover:text-white">
+                  <h4 className="text-sm font-bold text-foreground">
                     Book Requests
                   </h4>
-                  <p className="text-[10px] text-violet-400/60">
+                  <p className="text-[10px] text-muted-foreground">
                     Review publikasi buku guru
                   </p>
                 </div>
               </Link>
 
-              <button className="w-full p-4 rounded-xl bg-linear-to-r from-blue-500/10 to-transparent border border-blue-500/20 hover:border-blue-500/50 hover:from-blue-500/20 transition flex items-center gap-3 text-left group">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+              <button className="w-full p-4 rounded-xl bg-info/10 border border-info/20 hover:border-info/50 transition flex items-center gap-3 text-left group">
+                <div className="w-8 h-8 rounded-lg bg-info/20 flex items-center justify-center text-info group-hover:scale-110 transition-transform">
                   <Calendar className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-blue-100 group-hover:text-white">
+                  <h4 className="text-sm font-bold text-foreground">
                     Buat Jadwal
                   </h4>
-                  <p className="text-[10px] text-blue-500/60">
+                  <p className="text-[10px] text-muted-foreground">
                     Sesi kelas baru
                   </p>
                 </div>
               </button>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
-              <p className="text-xs text-gray-500">
+            <div className="mt-6 pt-6 border-t border-border text-center">
+              <p className="text-xs text-muted-foreground">
                 System Version 2.4.0 (Alpha)
               </p>
             </div>

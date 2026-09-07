@@ -17,9 +17,9 @@ import { invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
 import type { BookDailyTask, ParentGroup } from "@/features/personal/types/personal.types";
 
 const ParentIcon = ({ type }: { type: ParentGroup["parent_type"] }) => {
-  if (type === "submodule") return <Layers className="w-6 h-6 text-purple-400" />;
-  if (type === "module") return <FolderOpen className="w-6 h-6 text-purple-400" />;
-  return <BookOpen className="w-6 h-6 text-purple-400" />;
+  if (type === "submodule") return <Layers className="w-6 h-6 text-primary" />;
+  if (type === "module") return <FolderOpen className="w-6 h-6 text-primary" />;
+  return <BookOpen className="w-6 h-6 text-primary" />;
 };
 
 const formatEstimate = (seconds: number): string => {
@@ -175,42 +175,40 @@ export const BookDailyReviewSection = () => {
 
   return (
     <div className="mb-16 md:mb-24 animate-fadeIn relative">
-      <div className="absolute -inset-1 blur-2xl bg-linear-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-3xl opacity-50 pointer-events-none" />
-
-      <div className="relative bg-linear-to-br from-[#1A222C] to-[#0F141A] rounded-2xl border border-purple-500/30 overflow-hidden shadow-2xl shadow-purple-900/20">
-        <div className="h-1 w-full bg-linear-to-r from-purple-400 via-pink-400 to-purple-400" />
+      <div className="relative bg-card rounded-xl border border-border overflow-hidden">
+        <div className="h-1 w-full bg-primary" />
 
         <div className="p-6 md:p-8">
-          <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-white/5 pb-6">
-            <div className="w-16 h-16 rounded-xl bg-linear-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/30 shrink-0 transform -rotate-3">
-              <Flame className="w-8 h-8 text-white animate-pulse" />
+          <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-border pb-6">
+            <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center shrink-0">
+              <Flame className="w-8 h-8 text-primary-foreground" />
             </div>
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold tracking-wide uppercase mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase mb-2">
                 <Star className="w-3.5 h-3.5" /> Review Harian
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
                 Target Review Buku Hari Ini
               </h2>
-              <p className="text-gray-400 text-sm md:text-base max-w-2xl">
+              <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
                 Ada{" "}
-                <strong className="text-purple-400">{totalItems} item</strong>{" "}
+                <strong className="text-primary">{totalItems} item</strong>{" "}
                 di{" "}
-                <strong className="text-purple-400">{filteredGroups.length} wadah</strong>{" "}
+                <strong className="text-primary">{filteredGroups.length} wadah</strong>{" "}
                 yang menunggu untuk direview.
               </p>
             </div>
           </div>
 
-          {loading && <p className="text-sm text-gray-400 animate-pulse">Memuat target harian...</p>}
+          {loading && <p className="text-sm text-muted-foreground animate-pulse">Memuat target harian...</p>}
 
           {!loading && filteredGroups.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8 text-purple-400" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-8 h-8 text-primary" />
               </div>
-              <p className="text-white font-bold mb-1">Semua sudah direview!</p>
-              <p className="text-gray-400 text-sm">Tidak ada review tersisa hari ini.</p>
+              <p className="text-foreground font-bold mb-1">Semua sudah direview!</p>
+              <p className="text-muted-foreground text-sm">Tidak ada review tersisa hari ini.</p>
             </div>
           )}
 
@@ -218,38 +216,38 @@ export const BookDailyReviewSection = () => {
             {filteredGroups.map((group, index) => (
               <div
                 key={group.parent_id}
-                className="group relative overflow-hidden rounded-xl bg-[#161D26] border border-white/10 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-primary/40 transition-colors hover:-translate-y-1"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="absolute inset-0 bg-linear-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 pointer-events-none" />
+                <div className="absolute inset-0 group-hover:bg-primary/10 transition-colors pointer-events-none" />
                 <div className="relative z-10 p-5">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
                       <ParentIcon type={group.parent_type} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-base font-black text-white group-hover:text-purple-400 transition-colors truncate leading-tight">
+                      <h3 className="text-base font-black text-foreground group-hover:text-primary transition-colors truncate leading-tight">
                         {group.parent_title}
                       </h3>
                       {group.parent_type !== "book" && (
-                        <p className="text-gray-500 text-xs truncate mt-0.5">{group.book_title}</p>
+                        <p className="text-muted-foreground text-xs truncate mt-0.5">{group.book_title}</p>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-white/10 gap-3">
+                  <div className="flex items-center justify-between pt-4 border-t border-border gap-3">
                     <div className="flex flex-col gap-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse shrink-0" />
-                        <span className="text-purple-300 font-bold text-sm">{group.items.length} item</span>
+                        <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                        <span className="text-primary font-bold text-sm">{group.items.length} item</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+                      <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
                         <Clock className="w-3.5 h-3.5 shrink-0" />
                         <span>~{formatEstimate(group.totalEstimatedSeconds)}</span>
                       </div>
                     </div>
                     <button
                       onClick={() => openGroup(group)}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-500 hover:bg-purple-400 text-[#0B0E14] font-bold text-xs transition-all shrink-0 shadow-md shadow-purple-500/20"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs transition-colors shrink-0"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       Gas Review!

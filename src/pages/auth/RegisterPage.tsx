@@ -7,7 +7,7 @@ export const RegisterPage = () => {
   const { register, error, view, loading } = useRegister();
   return (
     <>
-      <div className="bg-deep-universe min-h-screen text-white relative">
+      <div className="bg-background min-h-screen text-foreground relative">
         {view === "form" && (
           <RegisterForm onSubmit={register} error={error} loading={loading} />
         )}

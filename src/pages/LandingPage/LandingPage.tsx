@@ -10,8 +10,7 @@ import { PriceSection } from "@/features/landing/sections/Price/PriceSection";
 
 export const LandingPage = () => {
   return (
-    <div className="bg-deep-universe min-h-screen text-white relative">
-      <div className="stars-overlay"></div>
+    <div className="bg-background min-h-screen text-foreground relative">
       <HeroSection />
       <SolutionSection />
       <MetodologiSection />

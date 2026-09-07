@@ -45,45 +45,45 @@ const STATUS_CONFIG: Record<
     label: "Menghafal",
     description: "Item yang masih dalam tahap hafalan awal",
     icon: BookOpen,
-    color: "from-amber-500 to-orange-600",
-    bgColor: "bg-amber-500/10",
-    borderColor: "border-amber-500/20",
-    textColor: "text-amber-400",
-    gradientFrom: "from-amber-500/20",
-    gradientTo: "to-orange-600/20",
+    color: "from-warning to-warning/60",
+    bgColor: "bg-warning/10",
+    borderColor: "border-warning/20",
+    textColor: "text-warning",
+    gradientFrom: "from-warning/20",
+    gradientTo: "to-warning/15",
   },
   interval: {
     label: "Latihan Interval",
     description: "Item dalam masa latihan pengulangan berkala",
     icon: Clock,
-    color: "from-blue-500 to-indigo-600",
-    bgColor: "bg-blue-500/10",
-    borderColor: "border-blue-500/20",
-    textColor: "text-blue-400",
-    gradientFrom: "from-blue-500/20",
-    gradientTo: "to-indigo-600/20",
+    color: "from-info to-info/60",
+    bgColor: "bg-info/10",
+    borderColor: "border-info/20",
+    textColor: "text-info",
+    gradientFrom: "from-info/20",
+    gradientTo: "to-info/15",
   },
   fsrs_active: {
     label: "Ujian Interval",
     description: "Item dalam jadwal ujian interval berkala",
     icon: ShieldCheck,
-    color: "from-emerald-500 to-teal-600",
-    bgColor: "bg-emerald-500/10",
-    borderColor: "border-emerald-500/20",
-    textColor: "text-emerald-400",
-    gradientFrom: "from-emerald-500/20",
-    gradientTo: "to-teal-600/20",
+    color: "from-success to-success/60",
+    bgColor: "bg-success/10",
+    borderColor: "border-success/20",
+    textColor: "text-success",
+    gradientFrom: "from-success/20",
+    gradientTo: "to-success/15",
   },
   graduate: {
     label: "Selesai",
     description: "Item yang telah diselesaikan dengan sukses",
     icon: Trophy,
-    color: "from-purple-500 to-violet-600",
-    bgColor: "bg-purple-500/10",
-    borderColor: "border-purple-500/20",
-    textColor: "text-purple-400",
-    gradientFrom: "from-purple-500/20",
-    gradientTo: "to-violet-600/20",
+    color: "from-primary to-primary/60",
+    bgColor: "bg-primary/10",
+    borderColor: "border-primary/20",
+    textColor: "text-primary",
+    gradientFrom: "from-primary/20",
+    gradientTo: "to-primary/15",
   },
 };
 
@@ -186,12 +186,12 @@ export const StatusItemsView = () => {
 
   if (!config) {
     return (
-      <div className="min-h-screen p-6 bg-[#0B0E14] rounded-3xl flex items-center justify-center">
+      <div className="min-h-screen p-6 bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
-            <Clock className="w-8 h-8 text-gray-500" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-1 flex items-center justify-center">
+            <Clock className="w-8 h-8 text-muted-foreground" />
           </div>
-          <p className="text-gray-400">Status tidak ditemukan</p>
+          <p className="text-muted-foreground">Status tidak ditemukan</p>
         </div>
       </div>
     );
@@ -215,25 +215,16 @@ export const StatusItemsView = () => {
 
   // Render List View
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-[#0B0E14] rounded-3xl relative overflow-hidden">
-      {/* Background Ambience */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div
-          className={`absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-gradient-to-br ${config.gradientFrom} ${config.gradientTo} rounded-full blur-[120px] opacity-30`}
-        />
-        <div
-          className={`absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-gradient-to-tr ${config.gradientFrom} ${config.gradientTo} rounded-full blur-[100px] opacity-20`}
-        />
-      </div>
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-background relative">
 
       <div className="relative z-10 animate-fadeIn max-w-7xl mx-auto">
         {/* Header */}
         <div className="relative mb-10 md:mb-12">
           <button
             onClick={handleBackToStatusList}
-            className="inline-flex items-center gap-2 mb-8 text-gray-400 hover:text-white transition-all group"
+            className="inline-flex items-center gap-2 mb-8 text-muted-foreground hover:text-foreground transition-all group"
           >
-            <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-white/20 transition-all">
+            <div className="p-2 rounded-xl bg-surface-1 border border-border group-hover:bg-surface-2 group-hover:border-border transition-all">
               <ArrowLeft className="w-5 h-5" />
             </div>
             <span className="text-sm font-medium">
@@ -242,22 +233,18 @@ export const StatusItemsView = () => {
           </button>
 
           {/* Hero Card */}
-          <div className="relative rounded-[2.5rem] p-8 md:p-10 bg-linear-to-br from-white/[0.08] via-white/[0.02] to-transparent border border-white/10 overflow-hidden">
-            <div
-              className={`absolute top-0 right-0 w-80 h-80 bg-gradient-to-br ${config.gradientFrom} ${config.gradientTo} rounded-full blur-[100px] opacity-40`}
-            />
-
+          <div className="relative rounded-2xl p-8 md:p-10 bg-card border border-border overflow-hidden">
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6 flex-1">
                 <div
-                  className={`w-20 h-20 md:w-24 md:h-24 rounded-3xl ${config.bgColor} ${config.textColor} flex items-center justify-center shadow-2xl ${config.borderColor} border`}
+                  className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl ${config.bgColor} ${config.textColor} flex items-center justify-center ${config.borderColor} border`}
                 >
                   <Icon className="w-10 h-10 md:w-12 md:h-12" />
                 </div>
 
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <span className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-black uppercase tracking-wider">
+                    <span className="px-4 py-1.5 rounded-full bg-surface-1 border border-border text-muted-foreground text-xs font-black uppercase tracking-wider">
                       Juz {juzIndex}
                     </span>
                     <span
@@ -267,22 +254,22 @@ export const StatusItemsView = () => {
                     </span>
                   </div>
 
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-3">
                     Hafalan Juz {juzIndex}
                   </h1>
 
                   <div className="flex flex-wrap items-center gap-4 text-sm md:text-base">
-                    <div className="flex items-center gap-2 text-gray-400">
-                      <Activity className="w-4 h-4 text-green-500" />
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Activity className="w-4 h-4 text-primary" />
                       <span>
-                        <strong className="text-white font-bold">
+                        <strong className="text-foreground font-bold">
                           {juzData?.item_count || 0}
                         </strong>{" "}
                         Item
                       </span>
                     </div>
-                    <span className="text-gray-600">•</span>
-                    <span className="text-gray-400">
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">
                       Status:{" "}
                       <strong className={`${config.textColor}`}>
                         {config.label.toLowerCase()}
@@ -293,14 +280,14 @@ export const StatusItemsView = () => {
               </div>
 
               {/* Quick Stats */}
-              <div className="flex items-center gap-4 md:gap-6 pt-6 md:pt-0 md:pl-6 md:border-l md:border-white/10">
+              <div className="flex items-center gap-4 md:gap-6 pt-6 md:pt-0 md:pl-6 md:border-l md:border-border">
                 <div className="text-center">
                   <p
                     className={`text-3xl md:text-4xl font-black ${config.textColor}`}
                   >
                     {juzData?.item_count || 0}
                   </p>
-                  <p className="text-[10px] md:text-xs text-gray-500 uppercase tracking-wider font-bold mt-1">
+                  <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider font-bold mt-1">
                     Total Item
                   </p>
                 </div>
@@ -315,7 +302,7 @@ export const StatusItemsView = () => {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="h-64 rounded-3xl bg-white/5 animate-pulse"
+                className="h-64 rounded-3xl bg-surface-1 animate-pulse"
               />
             ))}
           </div>
@@ -328,8 +315,8 @@ export const StatusItemsView = () => {
         ) : (
           <>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white">Daftar Hafalan</h2>
-              <span className="text-sm text-gray-400">
+              <h2 className="text-xl font-bold text-foreground">Daftar Hafalan</h2>
+              <span className="text-sm text-muted-foreground">
                 {itemsWithReview.length} item ditemukan
               </span>
             </div>

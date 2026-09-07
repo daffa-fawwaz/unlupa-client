@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen, Layers } from "lucide-react";
+import { ArrowLeft, Layers } from "lucide-react";
 import type {
   ParsedContentRef,
   StatusStyle,
@@ -22,25 +22,21 @@ export function ItemDetailHero({
       <div className="flex items-center gap-3 mb-8">
         <button
           onClick={onBack}
-          className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/30 hover:scale-105 transition-all group backdrop-blur-sm"
+          className="p-3 rounded-2xl bg-surface-1 border border-border hover:bg-surface-2 hover:border-primary/30 hover:scale-105 transition-all group"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-400 group-hover:text-amber-400 transition-colors" />
+          <ArrowLeft className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
         </button>
-        <div className="min-w-0 flex items-center gap-2 text-sm text-gray-500">
+        <div className="min-w-0 flex items-center gap-2 text-sm text-muted-foreground">
           <span className="shrink-0">Juz {juzIndex}</span>
           <span>/</span>
-          <span className="text-gray-300 truncate">{info.title}</span>
+          <span className="text-muted-foreground truncate">{info.title}</span>
         </div>
       </div>
 
-      <div className="relative p-8 md:p-10 rounded-[3rem] bg-linear-to-br from-amber-500/15 via-gray-900/60 to-gray-900/80 border border-amber-500/20 overflow-hidden shadow-2xl shadow-amber-500/5 mb-8">
-        <div className="absolute -right-10 -bottom-10 opacity-[0.04] pointer-events-none">
-          <BookOpen className="w-64 h-64 text-amber-400" />
-        </div>
-
+      <div className="relative p-8 md:p-10 rounded-xl bg-card border border-border overflow-hidden mb-8">
         <div className="relative z-10">
           <div className="flex flex-wrap items-center gap-2 mb-6">
-            <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
               Juz {juzIndex}
             </span>
             <span
@@ -50,12 +46,12 @@ export function ItemDetailHero({
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-2 leading-tight">
             {info.title}
           </h1>
-          <div className="flex items-center gap-2 text-gray-400 text-base md:text-lg">
-            <Layers className="w-5 h-5 text-amber-500/60" />
-            <span className="wrap-break-word`">{info.subtitle}</span>
+          <div className="flex items-center gap-2 text-muted-foreground text-base md:text-lg">
+            <Layers className="w-5 h-5 text-primary/60" />
+            <span className="break-words">{info.subtitle}</span>
           </div>
         </div>
       </div>

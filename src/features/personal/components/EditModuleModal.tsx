@@ -57,22 +57,18 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-[550px] bg-[rgba(10,12,15,0.95)] border border-purple-500/30 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] relative overflow-hidden">
-        {/* Decorative background blurs */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
+      <div className="w-full max-w-[550px] bg-card border border-primary/30 rounded-2xl p-8 md:p-10 shadow-xl relative overflow-hidden">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-5 relative z-10">
+        <div className="flex justify-between items-center mb-8 border-b border-border pb-5 relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
-              <Layers className="w-5 h-5 text-purple-400" />
+            <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30">
+              <Layers className="w-5 h-5 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold tracking-wide text-white">Edit Modul</h1>
+            <h1 className="text-2xl font-bold tracking-wide text-foreground">Edit Modul</h1>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 cursor-pointer hover:text-white transition bg-white/5 hover:bg-white/10 p-2 rounded-full"
+            className="text-muted-foreground cursor-pointer hover:text-foreground transition bg-surface-1 hover:bg-surface-2 p-2 rounded-full"
           >
             <X className="w-5 h-5" />
           </button>
@@ -81,11 +77,11 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
         <form onSubmit={handleSubmit} className="relative z-10 w-full flex flex-col">
           {/* Title */}
           <div className="mb-6 w-full">
-            <label className="block text-sm font-bold tracking-wide text-purple-400 mb-2 ml-1">
-              Judul Modul <span className="text-red-500">*</span>
+            <label className="block text-sm font-bold tracking-wide text-primary mb-2 ml-1">
+              Judul Modul <span className="text-destructive">*</span>
             </label>
             <div className="relative w-full">
-              <div className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-500">
+              <div className="absolute top-1/2 -translate-y-1/2 left-4 text-muted-foreground">
                 <FileText className="w-5 h-5" />
               </div>
               <input
@@ -94,7 +90,7 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Contoh: Bab 1 - Muqadimah"
-                className="w-full bg-white/5 border border-white/10 text-white pl-12 pr-4 py-4 rounded-2xl font-inter focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-colors disabled:opacity-50 box-border"
+                className="w-full bg-surface-1 border border-border text-foreground pl-12 pr-4 py-4 rounded-2xl font-inter focus:outline-none focus:border-primary focus:bg-surface-1 transition-colors disabled:opacity-50 box-border"
                 disabled={loading}
               />
             </div>
@@ -102,11 +98,11 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
 
           {/* Description */}
           <div className="mb-6 w-full">
-            <label className="block text-sm font-bold tracking-wide text-purple-400 mb-2 ml-1">
+            <label className="block text-sm font-bold tracking-wide text-primary mb-2 ml-1">
               Deskripsi
             </label>
             <div className="relative w-full">
-              <div className="absolute top-4 left-4 text-gray-500">
+              <div className="absolute top-4 left-4 text-muted-foreground">
                 <FileText className="w-5 h-5" />
               </div>
               <textarea
@@ -115,7 +111,7 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
                 onChange={handleChange}
                 placeholder="Opsional: Tulis deskripsi modul..."
                 rows={3}
-                className="w-full bg-white/5 border border-white/10 text-white pl-12 pr-4 py-4 rounded-2xl font-inter focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-colors disabled:opacity-50 resize-none box-border"
+                className="w-full bg-surface-1 border border-border text-foreground pl-12 pr-4 py-4 rounded-2xl font-inter focus:outline-none focus:border-primary focus:bg-surface-1 transition-colors disabled:opacity-50 resize-none box-border"
                 disabled={loading}
               />
             </div>
@@ -123,11 +119,11 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
 
           {/* Order */}
           <div className="mb-8 w-full">
-            <label className="block text-sm font-bold tracking-wide text-purple-400 mb-2 ml-1">
+            <label className="block text-sm font-bold tracking-wide text-primary mb-2 ml-1">
               Urutan Modul
             </label>
             <div className="relative w-full">
-              <div className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-500">
+              <div className="absolute top-1/2 -translate-y-1/2 left-4 text-muted-foreground">
                 <Hash className="w-5 h-5" />
               </div>
               <input
@@ -137,7 +133,7 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
                 onChange={handleNumberChange}
                 placeholder="1"
                 min="1"
-                className="w-full bg-white/5 border border-white/10 text-white pl-12 pr-4 py-4 rounded-2xl font-inter focus:outline-none focus:border-purple-500 focus:bg-purple-500/5 transition-colors disabled:opacity-50 box-border"
+                className="w-full bg-surface-1 border border-border text-foreground pl-12 pr-4 py-4 rounded-2xl font-inter focus:outline-none focus:border-primary focus:bg-surface-1 transition-colors disabled:opacity-50 box-border"
                 disabled={loading}
               />
             </div>
@@ -149,7 +145,7 @@ export const EditModuleModal = ({ module, onClose, onSuccess }: EditModuleModalP
           <button
             type="submit"
             disabled={loading || !formData.title.trim()}
-            className="w-full py-4 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-500 text-white font-bold tracking-wider rounded-2xl transition-all hover:shadow-[0_10px_30px_-10px_rgba(147,51,234,0.5)] flex items-center justify-center gap-3 cursor-pointer disabled:cursor-not-allowed mt-2"
+            className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:text-muted-foreground font-bold tracking-wider rounded-2xl transition-all shadow-sm flex items-center justify-center gap-3 cursor-pointer disabled:cursor-not-allowed mt-2"
           >
             {loading ? (
               <>

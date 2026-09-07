@@ -20,16 +20,16 @@ export const SuccessModal = ({
       <button
         type="button"
         onClick={onClose}
-        className="pointer-events-auto w-full max-w-md rounded-3xl border border-emerald-400/20 bg-emerald-500/95 px-5 py-4 shadow-2xl shadow-emerald-500/30 backdrop-blur-lg text-black transition-all duration-300 text-left"
+        className="pointer-events-auto w-full max-w-md rounded-3xl border border-success/20 bg-success px-5 py-4 shadow-sm text-success-foreground transition-all duration-300 text-left"
       >
         <div className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 text-emerald-950">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-success-foreground/15 text-success-foreground">
             <CheckCircle className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <p className="font-semibold text-base text-black">{title}</p>
+            <p className="font-semibold text-base text-success-foreground">{title}</p>
             {description && (
-              <p className="text-sm text-black/80 mt-1">{description}</p>
+              <p className="text-sm text-success-foreground/80 mt-1">{description}</p>
             )}
           </div>
         </div>

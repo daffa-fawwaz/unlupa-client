@@ -262,7 +262,7 @@ export const AddHafalanModal = ({
         setSelectedSurahIndex(0);
         setEstimateTime(5);
       }, 300);
-    } catch (err) {
+    } catch {
       console.error("Gagal menyimpan hafalan");
       // Optional: Show error toast here
     }
@@ -279,19 +279,19 @@ export const AddHafalanModal = ({
       />
 
       {/* Modal Content - Top sheet on mobile, centered on desktop */}
-      <div className="relative w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] bg-[#0F1218] sm:border border-white/10 rounded-b-[2rem] sm:rounded-[2rem] shadow-2xl overflow-y-auto animate-in slide-in-from-top sm:zoom-in-95 duration-200 sm:mt-0">
+      <div className="relative w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] bg-background sm:border border-border rounded-b-2xl sm:rounded-2xl shadow-xl overflow-y-auto animate-in slide-in-from-top sm:zoom-in-95 duration-200 sm:mt-0">
         {/* Header */}
-        <div className="sticky top-0 z-10 p-4 sm:p-6 border-b border-white/5 flex items-center justify-between bg-[#0F1218]/95 backdrop-blur">
+        <div className="sticky top-0 z-10 p-4 sm:p-6 border-b border-border flex items-center justify-between bg-background/90">
           <div className="flex items-center gap-3">
             {mode && (
               <button
                 onClick={() => setMode(null)}
-                className="p-2 -ml-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+                className="p-2 -ml-2 rounded-full hover:bg-surface-2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
             )}
-            <h2 className="text-lg sm:text-xl font-serif text-white">
+            <h2 className="text-lg sm:text-xl font-serif text-foreground">
               {mode === "PAGE"
                 ? "Target Halaman"
                 : mode === "SURAH"
@@ -301,7 +301,7 @@ export const AddHafalanModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+            className="p-2 rounded-full hover:bg-surface-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -314,16 +314,16 @@ export const AddHafalanModal = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <button
                 onClick={() => setMode("SURAH")}
-                className="group relative p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all text-left flex flex-col gap-3 sm:gap-4 overflow-hidden"
+                className="group relative p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-surface-1 border border-border hover:bg-warning/10 hover:border-warning/30 transition-all text-left flex flex-col gap-3 sm:gap-4 overflow-hidden"
               >
-                <div className="p-2.5 sm:p-3 w-fit rounded-xl sm:rounded-2xl bg-amber-500/20 text-amber-500 group-hover:scale-110 transition-transform duration-300">
+                <div className="p-2.5 sm:p-3 w-fit rounded-xl sm:rounded-2xl bg-warning/10 text-warning group-hover:scale-110 transition-transform duration-300">
                   <BookOpen className="w-6 h-6 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-foreground mb-1">
                     Per Surah
                   </h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
                     Hafalan berdasarkan ayat dalam surah tertentu.
                   </p>
                 </div>
@@ -331,16 +331,16 @@ export const AddHafalanModal = ({
 
               <button
                 onClick={() => setMode("PAGE")}
-                className="group relative p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all text-left flex flex-col gap-3 sm:gap-4 overflow-hidden"
+                className="group relative p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-surface-1 border border-border hover:bg-warning/10 hover:border-warning/30 transition-all text-left flex flex-col gap-3 sm:gap-4 overflow-hidden"
               >
-                <div className="p-2.5 sm:p-3 w-fit rounded-xl sm:rounded-2xl bg-blue-500/20 text-blue-500 group-hover:scale-110 transition-transform duration-300">
+                <div className="p-2.5 sm:p-3 w-fit rounded-xl sm:rounded-2xl bg-info/10 text-info group-hover:scale-110 transition-transform duration-300">
                   <FileText className="w-6 h-6 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-foreground mb-1">
                     Per Halaman
                   </h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
                     Hafalan berdasarkan rentang halaman Mushaf.
                   </p>
                 </div>
@@ -352,7 +352,7 @@ export const AddHafalanModal = ({
               {/* Surah Selector (Only for SURAH mode) */}
               {mode === "SURAH" && (
                 <div className="space-y-3">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Pilih Surah di Juz {juzNumber}
                   </label>
                   <div className="flex flex-col gap-2 max-h-[36vh] sm:max-h-[40vh] overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
@@ -363,8 +363,8 @@ export const AddHafalanModal = ({
                         className={clsx(
                           "w-full p-4 rounded-xl border text-left transition-all flex items-center justify-between shrink-0",
                           selectedSurahIndex === idx
-                            ? "bg-amber-500/20 border-amber-500/50 text-amber-500"
-                            : "bg-white/5 border-white/5 text-gray-400 hover:bg-white/10",
+                            ? "bg-warning/10 border-warning/50 text-warning"
+                            : "bg-surface-1 border-border text-muted-foreground hover:bg-surface-2",
                         )}
                       >
                         <div>
@@ -385,19 +385,19 @@ export const AddHafalanModal = ({
               {/* Slider Input */}
               <div className="space-y-6 pt-2">
                 <div className="flex justify-between items-end gap-3">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     {mode === "PAGE" ? "Rentang Halaman" : "Rentang Ayat"}
                   </label>
-                  <div className="text-xl sm:text-2xl font-mono font-bold text-white shrink-0 text-right">
-                    {range.min} <span className="text-gray-600">-</span>{" "}
+                  <div className="text-xl sm:text-2xl font-mono font-bold text-foreground shrink-0 text-right">
+                    {range.min} <span className="text-muted-foreground">-</span>{" "}
                     {range.max}
                   </div>
                 </div>
 
                 {/* Display converted label for PAGE mode */}
                 {mode === "PAGE" && displayLabel && (
-                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                    <p className="text-sm font-semibold text-blue-400 text-center">
+                  <div className="p-3 rounded-lg bg-info/10 border border-info/20">
+                    <p className="text-sm font-semibold text-info text-center">
                       {displayLabel}
                     </p>
                   </div>
@@ -420,7 +420,7 @@ export const AddHafalanModal = ({
                   />
                 </div>
 
-                <p className="text-xs text-center text-gray-500">
+                <p className="text-xs text-center text-muted-foreground">
                   Geser tombol untuk menentukan target hafalanmu.
                 </p>
               </div>
@@ -434,7 +434,7 @@ export const AddHafalanModal = ({
                   onChange={setEstimateTime}
                   label="Estimasi Waktu Murajaah"
                 />
-                <p className="text-xs text-center pt-6 text-gray-500">
+                <p className="text-xs text-center pt-6 text-muted-foreground">
                   Perkiraan waktu yang dibutuhkan untuk murajaah hafalan ini.
                 </p>
               </div>
@@ -445,10 +445,10 @@ export const AddHafalanModal = ({
                   onClick={handleSave}
                   disabled={loading || isDuplicate}
                   className={clsx(
-                    "w-full py-4 rounded-xl text-black font-bold shadow-lg transition-all flex items-center justify-center gap-2",
+                    "w-full py-4 rounded-lg font-bold transition-all flex items-center justify-center gap-2",
                     isDuplicate
-                      ? "bg-gray-700 text-gray-400 cursor-not-allowed shadow-none"
-                      : "bg-linear-to-r from-amber-500 to-orange-600 shadow-amber-900/20 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed",
+                      ? "bg-surface-2 text-muted-foreground cursor-not-allowed shadow-none"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed",
                   )}
                 >
                   {loading ? (
@@ -464,8 +464,8 @@ export const AddHafalanModal = ({
                 </button>
 
                 {isDuplicate && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-center animate-fadeIn">
-                    <p className="text-red-400 text-xs font-semibold">
+                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-center animate-fadeIn">
+                    <p className="text-destructive text-xs font-semibold">
                       Anda sudah memiliki target hafalan ini. Silakan pilih
                       rentang ayat atau surah lain.
                     </p>
@@ -473,7 +473,7 @@ export const AddHafalanModal = ({
                 )}
 
                 {error && (
-                  <p className="text-red-500 text-center text-sm">{error}</p>
+                  <p className="text-destructive text-center text-sm">{error}</p>
                 )}
               </div>
             </div>

@@ -18,31 +18,19 @@ const QuickAccessCard = ({
 }: QuickAccessCardProps) => {
   const colorClasses = {
     amber: {
-      bg: "from-amber-500/10 to-transparent",
-      border: "border-amber-500/20 hover:border-amber-500/50",
-      iconBg: "bg-amber-500/20",
-      iconText: "text-amber-500",
-      titleText: "text-amber-100 group-hover:text-white",
-      descText: "text-amber-500/60",
-      hover: "hover:from-amber-500/20",
+      border: "border-warning/20 hover:border-warning/50",
+      iconBg: "bg-warning/20",
+      iconText: "text-warning",
     },
     blue: {
-      bg: "from-blue-500/10 to-transparent",
-      border: "border-blue-500/20 hover:border-blue-500/50",
-      iconBg: "bg-blue-500/20",
-      iconText: "text-blue-500",
-      titleText: "text-blue-100 group-hover:text-white",
-      descText: "text-blue-500/60",
-      hover: "hover:from-blue-500/20",
+      border: "border-info/20 hover:border-info/50",
+      iconBg: "bg-info/20",
+      iconText: "text-info",
     },
     emerald: {
-      bg: "from-emerald-500/10 to-transparent",
-      border: "border-emerald-500/20 hover:border-emerald-500/50",
-      iconBg: "bg-emerald-500/20",
-      iconText: "text-emerald-500",
-      titleText: "text-emerald-100 group-hover:text-white",
-      descText: "text-emerald-500/60",
-      hover: "hover:from-emerald-500/20",
+      border: "border-success/20 hover:border-success/50",
+      iconBg: "bg-success/20",
+      iconText: "text-success",
     },
   };
 
@@ -51,7 +39,7 @@ const QuickAccessCard = ({
   return (
     <Link
       to={href}
-      className={`group p-4 rounded-xl bg-linear-to-r ${colors.bg} border ${colors.border} ${colors.hover} transition flex items-center gap-3 text-left cursor-pointer`}
+      className={`group p-4 rounded-xl bg-card border ${colors.border} transition flex items-center gap-3 text-left cursor-pointer`}
     >
       <div
         className={`w-10 h-10 rounded-lg ${colors.iconBg} flex items-center justify-center ${colors.iconText} group-hover:scale-110 transition-transform`}
@@ -59,8 +47,8 @@ const QuickAccessCard = ({
         {icon}
       </div>
       <div>
-        <h4 className={`text-sm font-bold ${colors.titleText}`}>{title}</h4>
-        <p className={`text-[10px] ${colors.descText}`}>{description}</p>
+        <h4 className="text-sm font-bold text-foreground">{title}</h4>
+        <p className="text-xs text-muted-foreground">{description}</p>
       </div>
     </Link>
   );
@@ -156,9 +144,9 @@ export const QuickAccessCards = ({
   const items = getQuickAccessItems();
 
   return (
-    <div className="glass-panel rounded-2xl p-6 border border-white/5 mb-10">
-      <h3 className="text-lg font-serif font-bold text-white mb-4 flex items-center gap-2">
-        <BookOpen className="w-5 h-5 text-amber-500" />
+    <div className="bg-card rounded-2xl p-6 border border-border mb-10">
+      <h3 className="text-lg font-serif font-bold text-foreground mb-4 flex items-center gap-2">
+        <BookOpen className="w-5 h-5 text-primary" />
         Akses Cepat
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

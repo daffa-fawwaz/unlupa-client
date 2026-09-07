@@ -21,9 +21,9 @@ export const DashboardTable = <T,>({
   return (
     <>
       {/* Desktop Table View */}
-      <div className="hidden md:block glass-panel rounded-2xl border border-white/5 overflow-hidden">
-        <div className="p-6 border-b border-white/5">
-          <h2 className="text-lg font-display font-semibold text-white">
+      <div className="hidden md:block bg-card rounded-2xl border border-border overflow-hidden">
+        <div className="p-6 border-b border-border">
+          <h2 className="text-lg font-display font-semibold text-foreground">
             {title}
           </h2>
         </div>
@@ -32,7 +32,7 @@ export const DashboardTable = <T,>({
           {data && data.length > 0 ? (
             <table className="w-full text-sm">
               <DashboardTableHeader columns={columns} />
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-border">
                 {data.map((item, index) => (
                   <DashboardTableRow
                     key={getRowKey(item)}
@@ -48,7 +48,7 @@ export const DashboardTable = <T,>({
             </table>
           ) : (
             <div className="p-12 text-center">
-              <p className="text-gray-500 text-sm">
+              <p className="text-muted-foreground text-sm">
                 Tidak ada teacher request saat ini
               </p>
             </div>
@@ -59,14 +59,14 @@ export const DashboardTable = <T,>({
       {/* Mobile Card View */}
       <div className="md:hidden space-y-4">
         {data?.length === 0 ? (
-          <div className="glass-panel rounded-2xl border border-white/5 p-6 text-center">
-            <p className="text-gray-500 text-sm">Tidak ada data</p>
+          <div className="bg-card rounded-2xl border border-border p-6 text-center">
+            <p className="text-muted-foreground text-sm">Tidak ada data</p>
           </div>
         ) : (
           data?.map((item, index) => (
             <div
               key={getRowKey(item)}
-              className="glass-panel p-4 rounded-xl border border-white/5 space-y-4"
+              className="bg-card p-4 rounded-xl border border-border space-y-4"
             >
               {columns.map((column) => (
                 <div
@@ -75,7 +75,7 @@ export const DashboardTable = <T,>({
                 >
                   {/* Hide label for actions or if it's too obvious, depending on design. For now keep it generic */}
                   {column.key !== "actions" && (
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider shrink-0 mt-1">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider shrink-0 mt-1">
                       {column.label}
                     </span>
                   )}

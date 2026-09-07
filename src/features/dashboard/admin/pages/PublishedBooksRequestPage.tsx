@@ -22,6 +22,7 @@ import type { PendingBook } from "@/features/dashboard/admin/types/pendingBook.t
 import type { TableColumn } from "@/features/dashboard/types/table.types";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Sidebar } from "@/components/ui/Sidebar";
+import { resolveAssetUrl } from "@/lib/assets";
 
 const pendingBookColumns: TableColumn[] = [
   { key: "id", label: "No." },
@@ -146,20 +147,20 @@ export const PublishedBooksRequestPage = () => {
     switch (column.key) {
       case "id":
         return (
-          <div className="text-gray-500 font-mono text-xs">#{index + 1}</div>
+          <div className="text-muted-foreground font-mono text-xs">#{index + 1}</div>
         );
 
       case "cover":
         return (
-          <div className="w-10 h-14 rounded-lg overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+          <div className="w-10 h-14 rounded-lg overflow-hidden bg-surface-1 border border-border flex items-center justify-center shrink-0">
             {item.cover_image ? (
               <img
-                src={item.cover_image}
+                src={resolveAssetUrl(item.cover_image)}
                 alt={item.title}
                 className="w-full h-full object-cover"
               />
             ) : (
-              <ImageOff className="w-5 h-5 text-gray-600" />
+              <ImageOff className="w-5 h-5 text-muted-foreground" />
             )}
           </div>
         );
@@ -167,14 +168,14 @@ export const PublishedBooksRequestPage = () => {
       case "title":
         return (
           <div className="flex items-center gap-3">
-            <div className="hidden md:flex w-8 h-8 rounded-lg bg-linear-to-br from-violet-500 to-indigo-600 items-center justify-center text-white shrink-0">
+            <div className="hidden md:flex w-8 h-8 rounded-lg bg-primary items-center justify-center text-primary-foreground shrink-0">
               <BookMarked className="w-4 h-4" />
             </div>
             <div>
-              <p className="font-medium text-white line-clamp-1">
+              <p className="font-medium text-foreground line-clamp-1">
                 {item.title}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {formatDate(item.created_at)}
               </p>
             </div>
@@ -184,11 +185,11 @@ export const PublishedBooksRequestPage = () => {
       case "description":
         return (
           <div
-            className="max-w-[200px] truncate text-gray-400 italic text-sm"
+            className="max-w-[200px] truncate text-muted-foreground italic text-sm"
             title={item.description}
           >
             {item.description || (
-              <span className="text-gray-600 not-italic">No description</span>
+              <span className="text-muted-foreground not-italic">No description</span>
             )}
           </div>
         );
@@ -202,21 +203,21 @@ export const PublishedBooksRequestPage = () => {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => navigate(`/dashboard/book-requests/${item.id}`)}
-                className="p-2 rounded-lg bg-violet-500/10 text-violet-400 hover:bg-violet-500 hover:text-white transition"
+                className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition"
                 title="Lihat Detail Buku"
               >
                 <Eye className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handleOpenModal("approve", item.id, item.title)}
-                className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition"
+                className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition"
                 title="Approve Book"
               >
                 <CheckCircle className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handleOpenModal("reject", item.id, item.title)}
-                className="p-2 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition"
+                className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition"
                 title="Reject Book"
               >
                 <XCircle className="w-4 h-4" />
@@ -226,7 +227,7 @@ export const PublishedBooksRequestPage = () => {
         } else if (item.status === "approved") {
           return (
             <div className="flex justify-end">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success/10 text-success text-xs font-medium border border-success/20">
                 <CheckCircle className="w-3.5 h-3.5" />
                 Approved
               </span>
@@ -235,7 +236,7 @@ export const PublishedBooksRequestPage = () => {
         } else if (item.status === "rejected") {
           return (
             <div className="flex justify-end">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-medium border border-rose-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/10 text-destructive text-xs font-medium border border-destructive/20">
                 <XCircle className="w-3.5 h-3.5" />
                 Rejected
               </span>
@@ -250,13 +251,7 @@ export const PublishedBooksRequestPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-deep-universe text-white font-primary max-w-7xl mx-auto p-6 md:p-10">
-      {/* Background Elements */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl" />
-      </div>
-
+    <div className="relative min-h-screen bg-background text-foreground font-primary max-w-7xl mx-auto p-6 md:p-10">
       {/* Sidebar Integration */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
@@ -271,25 +266,25 @@ export const PublishedBooksRequestPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-violet-500/50 transition text-violet-400"
+            className="p-2 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border transition text-foreground"
           >
             <Menu className="w-6 h-6" />
           </button>
           <p className="text-sm font-mono tracking-widest md:inline">MENU</p>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                <BookOpen className="w-5 h-5 text-violet-400" />
+              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                <BookOpen className="w-5 h-5 text-primary" />
               </div>
-              <h1 className="text-2xl md:text-3xl font-display font-bold text-white tracking-wide">
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-wide">
                 PUBLISHED BOOKS{" "}
-                <span className="text-violet-400">REQUESTS</span>
+                <span className="text-primary">REQUESTS</span>
               </h1>
             </div>
-            <p className="text-gray-400 text-sm max-w-lg">
+            <p className="text-muted-foreground text-sm max-w-lg">
               Review book publish requests submitted by teachers. Approve or
               reject books to control what gets shared in the global library.
             </p>
@@ -299,11 +294,11 @@ export const PublishedBooksRequestPage = () => {
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-gray-400 hover:text-white group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border transition text-muted-foreground hover:text-foreground group disabled:opacity-50 disabled:cursor-not-allowed"
               title="Refresh Data"
             >
               <RefreshCw
-                className={`w-5 h-5 group-hover:text-violet-400 transition-transform ${isRefreshing ? "animate-spin" : ""}`}
+                className={`w-5 h-5 group-hover:text-primary transition-transform ${isRefreshing ? "animate-spin" : ""}`}
               />
             </button>
           </div>
@@ -311,51 +306,51 @@ export const PublishedBooksRequestPage = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-amber-500/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <Clock className="w-32 h-32 text-amber-500" />
+          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
+              <Clock className="w-32 h-32 text-primary" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-amber-500/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
                 Pending Review
               </p>
-              <h3 className="text-4xl font-display font-bold text-white">
+              <h3 className="text-4xl font-display font-bold text-foreground">
                 {stats.pending}
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Awaiting decision</p>
+              <p className="text-xs text-muted-foreground mt-2">Awaiting decision</p>
             </div>
           </div>
 
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-blue-500/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <CalendarPlus className="w-32 h-32 text-blue-400" />
+          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
+              <CalendarPlus className="w-32 h-32 text-primary" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-blue-400/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
                 Submitted Today
               </p>
-              <h3 className="text-4xl font-display font-bold text-white">
+              <h3 className="text-4xl font-display font-bold text-foreground">
                 {stats.submittedToday}
               </h3>
-              <p className="text-xs text-gray-500 mt-2">Buku masuk hari ini</p>
+              <p className="text-xs text-muted-foreground mt-2">Buku masuk hari ini</p>
             </div>
           </div>
 
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-orange-500/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <Hourglass className="w-32 h-32 text-orange-400" />
+          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
+              <Hourglass className="w-32 h-32 text-primary" />
             </div>
             <div className="relative z-10">
-              <p className="text-sm font-medium text-orange-400/80 mb-2 uppercase tracking-wider">
+              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
                 Oldest Pending
               </p>
-              <h3 className="text-4xl font-display font-bold text-white">
+              <h3 className="text-4xl font-display font-bold text-foreground">
                 {stats.oldestPendingDays}
-                <span className="text-lg font-normal text-gray-400 ml-1">
+                <span className="text-lg font-normal text-muted-foreground ml-1">
                   d
                 </span>
               </h3>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Hari sejak request terlama
               </p>
             </div>
@@ -374,15 +369,15 @@ export const PublishedBooksRequestPage = () => {
         />
 
         {/* Mobile empty state placeholder */}
-        <div className="md:hidden glass-panel rounded-2xl border border-white/5 p-6 text-center">
+        <div className="md:hidden bg-card rounded-2xl border border-border p-6 text-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="p-4 rounded-full bg-white/5 border border-white/10">
-              <BookOpen className="w-12 h-12 text-gray-600" />
+            <div className="p-4 rounded-full bg-surface-1 border border-border">
+              <BookOpen className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-display font-semibold text-white">
+            <h3 className="text-lg font-display font-semibold text-foreground">
               No Book Requests Yet
             </h3>
-            <p className="text-gray-500 text-sm max-w-md">
+            <p className="text-muted-foreground text-sm max-w-md">
               Once teachers submit books for publication, they will appear here
               for your review.
             </p>

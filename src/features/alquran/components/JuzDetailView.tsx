@@ -143,61 +143,58 @@ export const JuzDetailView = ({
   };
 
   return (
-    <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <div className="animate-fadeIn pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Premium Header */}
-      <div className="relative mb-8 md:mb-12 p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] bg-linear-to-br from-amber-500/20 via-purple-500/10 to-transparent border border-white/10 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 p-12 opacity-[0.03] transform translate-x-1/3 -translate-y-1/3 pointer-events-none">
-          <BookOpen className="w-64 h-64 md:w-96 md:h-96 text-white" />
-        </div>
-
+      <div className="relative mb-8 md:mb-12 p-6 md:p-10 rounded-2xl bg-card border border-border overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8 text-center md:text-left">
           <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center md:items-start">
             <button
-              className="mt-0 md:mt-1 p-3 rounded-2xl cursor-pointer bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/30 hover:shadow-amber-500/20 hover:scale-105 transition-all group backdrop-blur-sm shrink-0 self-start md:self-auto hidden md:block"
+              className="mt-0 md:mt-1 p-3 rounded-2xl cursor-pointer bg-surface-1 border border-border hover:bg-surface-2 hover:border-primary/30 hover:scale-105 transition-all group shrink-0 self-start md:self-auto hidden md:block"
               onClick={backToDashboard}
             >
-              <ArrowLeft className="w-6 h-6 text-gray-400 group-hover:text-amber-400 transition-colors" />
+              <ArrowLeft className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </button>
             <div className="w-full flex items-center justify-between md:hidden mb-2">
               <button
-                className="p-3 rounded-2xl cursor-pointer bg-white/5 border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm"
+                className="p-3 rounded-2xl cursor-pointer bg-surface-1 border border-border hover:bg-surface-2 transition-all"
                 onClick={backToDashboard}
               >
-                <ArrowLeft className="w-5 h-5 text-gray-400" />
+                <ArrowLeft className="w-5 h-5 text-muted-foreground" />
               </button>
-              <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
                 Juz {juzIndex}
               </span>
             </div>
 
             <div className="flex flex-col items-center md:items-start w-full">
               <div className="hidden md:flex items-center gap-3 mb-2">
-                <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
                   Juz {juzIndex}
                 </span>
-                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-medium">
+                <span className="px-3 py-1 rounded-full bg-surface-1 border border-border text-muted-foreground text-xs font-medium">
                   Al-Qur'an Tracker
                 </span>
                 {isJuzActive ? (
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                  <span className="px-3 py-1 rounded-full bg-success/10 border border-success/20 text-success text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" />
                     Aktif
                   </span>
                 ) : (
-                  <span className="px-3 py-1 rounded-full bg-gray-500/20 border border-gray-500/20 text-gray-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                  <span className="px-3 py-1 rounded-full bg-surface-1 border border-border text-muted-foreground text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                     <Power className="w-3 h-3" />
                     Nonaktif
                   </span>
                 )}
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-2 tracking-tight">
                 Hafalan{" "}
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-400">
+                <span className="text-primary">
                   Juz {juzIndex}
                 </span>
               </h1>
-              <p className="text-gray-400 text-base md:text-lg flex items-center justify-center md:justify-start gap-2">
-                <Activity className="w-4 h-4 text-green-500" />
+              <p className="text-muted-foreground text-base md:text-lg flex items-center justify-center md:justify-start gap-2">
+                <Activity className="w-4 h-4 text-primary" />
                 {juzData?.item_count || 0} Item sedang dipelajari
               </p>
             </div>
@@ -208,10 +205,10 @@ export const JuzDetailView = ({
             <button
               onClick={() => setIsAddModalOpen(true)}
               disabled={!isJuzActive}
-              className="w-full sm:w-auto shrink-0 px-6 py-4 bg-linear-to-r from-amber-500 to-orange-600 rounded-2xl text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto shrink-0 px-6 py-4 bg-primary rounded-lg text-primary-foreground font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="p-1 bg-black/20 rounded-full group-hover:rotate-90 transition-transform duration-300">
-                <Plus className="w-5 h-5 text-black" />
+              <div className="p-1 bg-primary-foreground/20 rounded-lg group-hover:rotate-90 transition-transform duration-300">
+                <Plus className="w-5 h-5 text-primary-foreground" />
               </div>
               <span>Tambah Hafalan</span>
             </button>
@@ -221,12 +218,12 @@ export const JuzDetailView = ({
               onClick={handleToggleCompleted}
               className={`w-full sm:w-auto shrink-0 px-6 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group ${
                 isJuzCompleted
-                  ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30 hover:border-emerald-400"
-                  : "bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20"
+                  ? "bg-success/10 border border-success/40 text-success hover:bg-success/20 hover:border-success/60"
+                  : "bg-surface-1 border border-border text-muted-foreground hover:bg-surface-2 hover:border-border"
               }`}
             >
               <CheckCircle2
-                className={`w-5 h-5 ${isJuzCompleted ? "fill-emerald-400" : ""}`}
+                className={`w-5 h-5 ${isJuzCompleted ? "fill-success" : ""}`}
               />
               <span>
                 {isJuzCompleted ? "Sudah Selesai ✓" : "Tandai Sudah Selesai"}
@@ -238,7 +235,7 @@ export const JuzDetailView = ({
               <button
                 onClick={() => setIsDeactivateModalOpen(true)}
                 disabled={toggleLoading}
-                className="w-full sm:w-auto shrink-0 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-gray-300 font-bold hover:bg-white/10 hover:border-red-500/30 hover:text-red-400 transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                className="w-full sm:w-auto shrink-0 px-6 py-4 bg-surface-1 border border-border rounded-2xl text-muted-foreground font-bold hover:bg-surface-2 hover:border-destructive/30 hover:text-destructive transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
               >
                 <Power className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                 <span>Nonaktifkan</span>
@@ -247,10 +244,10 @@ export const JuzDetailView = ({
               <button
                 onClick={handleActivateJuz}
                 disabled={toggleLoading}
-                className="w-full sm:w-auto shrink-0 px-6 py-4 bg-linear-to-r from-emerald-500 to-green-600 rounded-2xl text-white font-bold shadow-lg shadow-emerald-900/20 hover:shadow-emerald-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                className="w-full sm:w-auto shrink-0 px-6 py-4 bg-primary rounded-lg text-primary-foreground font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 group disabled:opacity-50"
               >
                 {toggleLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                 ) : (
                   <CheckCircle2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 )}
@@ -267,15 +264,15 @@ export const JuzDetailView = ({
           [...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="h-64 rounded-3xl bg-white/5 animate-pulse"
+              className="h-64 rounded-3xl bg-surface-1 animate-pulse"
             />
           ))
         ) : error ? (
           <div className="col-span-full py-20 text-center">
-            <div className="inline-block p-4 rounded-full bg-red-500/10 mb-4">
-              <Activity className="w-8 h-8 text-red-500" />
+            <div className="inline-block p-4 rounded-full bg-destructive/10 mb-4">
+              <Activity className="w-8 h-8 text-destructive" />
             </div>
-            <p className="text-red-400 text-lg">Gagal memuat data: {error}</p>
+            <p className="text-destructive text-lg">Gagal memuat data: {error}</p>
           </div>
         ) : !isJuzActive ? (
           <div className="col-span-full">
@@ -298,6 +295,8 @@ export const JuzDetailView = ({
         )}
       </div>
 
+      </div>
+
       {/* Add Hafalan Modal */}
       <AddHafalanModal
         isOpen={isAddModalOpen}
@@ -315,6 +314,6 @@ export const JuzDetailView = ({
         onClose={() => setIsDeactivateModalOpen(false)}
         onDeactivated={handleDeactivateSuccess}
       />
-    </div>
+    </>
   );
 };

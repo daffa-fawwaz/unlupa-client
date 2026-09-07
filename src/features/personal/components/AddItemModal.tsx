@@ -166,32 +166,30 @@ export const AddItemModal = ({
         onClick={resultState === "idle" ? onClose : undefined}
       />
       <div className="relative z-10 w-full max-w-lg max-h-[calc(100vh-2rem)] animate-in fade-in zoom-in-95 duration-300">
-        <div className="absolute -inset-px rounded-[2.5rem] bg-linear-to-br from-emerald-500/30 via-cyan-500/20 to-transparent blur-sm pointer-events-none" />
-        <div className="relative max-h-[calc(100vh-2rem)] rounded-[2.5rem] bg-[#0E1420] border border-white/10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
+        <div className="relative max-h-[calc(100vh-2rem)] rounded-2xl bg-card border border-border shadow-xl overflow-hidden flex flex-col">
 
           {/* Success */}
           {resultState === "success" && (
             <div className="p-10 flex flex-col items-center text-center gap-5">
               <div className="relative">
-                <div className="w-20 h-20 rounded-[2rem] bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                  <CheckCircle className="w-10 h-10 text-emerald-400" />
+                <div className="w-20 h-20 rounded-xl bg-success/15 border border-success/30 flex items-center justify-center">
+                  <CheckCircle className="w-10 h-10 text-success" />
                 </div>
-                <div className="absolute inset-0 bg-emerald-500/10 rounded-[2rem] blur-2xl" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">Item Berhasil Dibuat!</h3>
+                <h3 className="text-xl font-bold text-foreground mb-2">Item Berhasil Dibuat!</h3>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={handleCreateAnother}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95"
+                  className="flex items-center gap-2 px-6 py-3 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border text-foreground font-bold text-sm transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Buat Item Lagi
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-8 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                  className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-colors"
                 >
                   Lihat Item
                 </button>
@@ -203,25 +201,25 @@ export const AddItemModal = ({
           {resultState === "error" && (
             <div className="p-10 flex flex-col items-center text-center gap-5">
               <div className="relative">
-                <div className="w-20 h-20 rounded-[2rem] bg-rose-500/15 border border-rose-500/30 flex items-center justify-center">
-                  <AlertCircle className="w-10 h-10 text-rose-400" />
+                <div className="w-20 h-20 rounded-2xl bg-destructive/15 border border-destructive/30 flex items-center justify-center">
+                  <AlertCircle className="w-10 h-10 text-destructive" />
                 </div>
-                <div className="absolute inset-0 bg-rose-500/10 rounded-[2rem] blur-2xl" />
+                <div className="absolute inset-0 bg-destructive/10 rounded-2xl blur-2xl" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">Gagal Membuat Item</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{errorMsg}</p>
+                <h3 className="text-xl font-bold text-foreground mb-2">Gagal Membuat Item</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{errorMsg}</p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setResultState("idle")}
-                  className="px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm transition"
+                  className="px-6 py-3 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border text-foreground font-medium text-sm transition"
                 >
                   Coba Lagi
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 font-medium text-sm transition"
+                  className="px-6 py-3 rounded-2xl bg-destructive/10 hover:bg-destructive/20 border border-destructive/20 text-destructive font-medium text-sm transition"
                 >
                   Tutup
                 </button>
@@ -232,23 +230,22 @@ export const AddItemModal = ({
           {/* Form */}
           {resultState === "idle" && (
             <>
-              <div className="relative shrink-0 px-8 pt-8 pb-6 border-b border-white/5">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none" />
+              <div className="relative shrink-0 px-8 pt-8 pb-6 border-b border-border">
                 <button
                   onClick={onClose}
-                  className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition"
+                  className="absolute top-6 right-6 w-8 h-8 rounded-full bg-surface-1 hover:bg-surface-2 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition"
                 >
                   <X className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-primary" />
                   </div>
-                  <h2 className="text-xl font-bold text-white tracking-tight">
+                  <h2 className="text-xl font-bold text-foreground tracking-tight">
                     {moduleId ? "Tambah Item ke Modul" : "Tambah Item Hafalan"}
                   </h2>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {moduleId
                     ? "Tambahkan unit hafalan ke dalam modul ini."
                     : "Tambahkan unit hafalan langsung tanpa modul."}
@@ -257,7 +254,7 @@ export const AddItemModal = ({
 
               <form onSubmit={handleSubmit} className="overflow-y-auto px-8 py-6 space-y-5">
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                     <AlignLeft className="w-3.5 h-3.5" />Pertanyaan / Konten
                   </label>
                   <textarea
@@ -266,12 +263,12 @@ export const AddItemModal = ({
                     placeholder="Tulis pertanyaan disini"
                     value={form.content}
                     onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors resize-none"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                     <Lock className="w-3.5 h-3.5" />Jawaban
                   </label>
                   <textarea
@@ -280,17 +277,17 @@ export const AddItemModal = ({
                     placeholder="Tulis jawaban disini"
                     value={form.answer}
                     onChange={(e) => setForm((f) => ({ ...f, answer: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm placeholder:text-muted-foreground transition-colors resize-none"
                   />
                 </div>
 
                 {isPremium && (
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                       <Image className="w-3.5 h-3.5" />Gambar
                     </label>
                     {imagePreview ? (
-                      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                      <div className="relative overflow-hidden rounded-xl border border-border bg-surface-1">
                         <img
                           src={imagePreview}
                           alt="Preview gambar item"
@@ -299,19 +296,19 @@ export const AddItemModal = ({
                         <button
                           type="button"
                           onClick={() => setImageFile(null)}
-                          className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition"
+                          className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-background/85 text-foreground hover:bg-background transition"
                           disabled={loading}
                         >
                           <X className="h-4 w-4" />
                         </button>
                       </div>
                     ) : (
-                      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center hover:border-emerald-500/40 hover:bg-white/8 transition">
-                        <Upload className="h-6 w-6 text-emerald-400" />
-                        <span className="text-sm font-semibold text-white">
+                      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-surface-1 px-4 py-6 text-center hover:border-primary/40 hover:bg-surface-2 transition-colors">
+                        <Upload className="h-6 w-6 text-primary" />
+                        <span className="text-sm font-semibold text-foreground">
                           Pilih gambar item
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                           JPG, PNG, atau format gambar lain
                         </span>
                         <input
@@ -329,10 +326,10 @@ export const AddItemModal = ({
                 {/* Estimasi Waktu Review — Slider */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                       <Clock className="w-3.5 h-3.5" />Estimasi Waktu Review
                     </label>
-                    <span className="text-sm font-bold text-white tabular-nums">
+                    <span className="text-sm font-bold text-foreground tabular-nums">
                       {formatEstimateLabel(form.estimateValue, form.estimate_unit)}
                     </span>
                   </div>
@@ -346,8 +343,8 @@ export const AddItemModal = ({
                         onClick={() => handleUnitChange(unit)}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                           form.estimate_unit === unit
-                            ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400"
-                            : "bg-white/5 border border-white/10 text-gray-500 hover:text-gray-300 hover:bg-white/8"
+                            ? "bg-primary/20 border border-primary/40 text-primary"
+                            : "bg-surface-1 border border-border text-muted-foreground hover:text-foreground hover:bg-surface-2"
                         }`}
                       >
                         {unit === "seconds" ? "Detik" : "Menit"}
@@ -357,11 +354,11 @@ export const AddItemModal = ({
 
                   {/* Slider */}
                   <div className="relative pt-1">
-                    <div className="relative h-2 rounded-full bg-white/10">
+                    <div className="relative h-2 rounded-full bg-surface-2">
                       <div
-                        className="absolute left-0 top-0 h-full rounded-full bg-linear-to-r from-emerald-500 to-cyan-500 transition-all"
-                        style={{ width: `${sliderPercent}%` }}
-                      />
+                      className="absolute left-0 top-0 h-full rounded-full bg-primary transition-all"
+                      style={{ width: `${sliderPercent}%` }}
+                    />
                     </div>
                     <input
                       type="range"
@@ -376,20 +373,20 @@ export const AddItemModal = ({
                     />
                     {/* Thumb visual */}
                     <div
-                      className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-lg border-2 border-emerald-400 transition-all pointer-events-none"
+                      className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-foreground shadow-lg border-2 border-primary transition-all pointer-events-none"
                       style={{ left: `calc(${sliderPercent}% - 10px)` }}
                     />
                   </div>
 
                   {/* Min / Max labels */}
-                  <div className="flex justify-between text-[10px] text-gray-600 font-medium">
+                  <div className="flex justify-between text-[10px] text-muted-foreground font-medium">
                     <span>{formatEstimateLabel(sliderMin, form.estimate_unit)}</span>
                     <span>{formatEstimateLabel(sliderMax, form.estimate_unit)}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                  <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
                     <Hash className="w-3.5 h-3.5" />Urutan
                   </label>
                   <input
@@ -399,22 +396,22 @@ export const AddItemModal = ({
                     onChange={(e) =>
                       setForm((f) => ({ ...f, orderStr: e.target.value }))
                     }
-                    className="w-32 px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-emerald-500/50 focus:outline-none text-white text-sm transition-colors"
+                    className="w-32 px-4 py-3 rounded-xl bg-surface-1 border border-border focus:border-primary/50 focus:outline-none text-foreground text-sm transition-colors"
                   />
                 </div>
 
-                <div className="sticky bottom-0 -mx-8 -mb-6 flex justify-end gap-3 border-t border-white/5 bg-[#0E1420]/95 px-8 py-4 backdrop-blur">
+                <div className="sticky bottom-0 -mx-8 -mb-6 flex justify-end gap-3 border-t border-border bg-card/95 px-8 py-4">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-sm font-medium transition"
+                    className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-muted-foreground hover:text-foreground text-sm font-medium transition"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
                     disabled={loading || !form.content.trim()}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-linear-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {loading ? (
                       <>

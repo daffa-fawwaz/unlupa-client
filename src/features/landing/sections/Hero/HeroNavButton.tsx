@@ -21,8 +21,8 @@ export const HeroNavButton = ({
         absolute top-1/2 -translate-y-1/2 ${
           direction === "left" ? "left-0 md:-left-16" : "right-0 md:-right-16"
         }
-        z-20 p-4 rounded-full border border-white/10
-        bg-black/40 backdrop-blur-md
+        z-20 p-4 rounded-full border border-border
+        bg-card
         hover:bg-primary/20 hover:border-primary/50
         transition-all active:scale-95
         disabled:opacity-30 disabled:cursor-not-allowed

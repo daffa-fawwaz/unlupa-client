@@ -34,27 +34,25 @@ export const JoinClassSection = () => {
 
   return (
     <section className="mt-8">
-      <div className="group relative overflow-hidden rounded-2xl border border-white/5 bg-linear-to-br from-[#172231] via-[#101722] to-[#080B10] p-6 shadow-[0_24px_70px_-38px_rgba(0,0,0,0.95)] transition-all duration-500 hover:border-indigo-400/25 sm:p-8">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-indigo-500 via-blue-400 to-cyan-400" />
-        <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-indigo-400/10 blur-[90px] transition-opacity duration-700 group-hover:opacity-80" />
-        <div className="pointer-events-none absolute -bottom-32 left-10 h-64 w-64 rounded-full bg-blue-400/8 blur-[90px]" />
+      <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-500 hover:border-primary/25 sm:p-8">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-primary/70 to-primary/40" />
 
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex min-w-0 flex-1 flex-col gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.35rem] border border-indigo-400/25 bg-indigo-400/10 shadow-[0_20px_50px_-28px_rgba(99,102,241,0.95)]">
-                <GraduationCap className="h-7 w-7 text-indigo-300" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.35rem] border border-primary/25 bg-primary/10">
+                <GraduationCap className="h-7 w-7 text-primary" />
               </div>
               <div>
                 <div className="mb-1 flex flex-wrap items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Bergabung
                   </span>
                 </div>
-                <h2 className="text-xl font-black tracking-tight text-white sm:text-2xl">
+                <h2 className="text-xl font-black tracking-tight text-foreground sm:text-2xl">
                   Masuk ke Kelas
                 </h2>
-                <p className="mt-1 text-sm leading-relaxed text-gray-400">
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                   Masukkan kode kelas yang diberikan pengajar untuk bergabung.
                 </p>
               </div>
@@ -62,7 +60,7 @@ export const JoinClassSection = () => {
 
             <form onSubmit={handleSubmit} className="mt-2">
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-gray-400">
+                <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-muted-foreground">
                   <Hash className="h-5 w-5" />
                 </div>
                 <input
@@ -73,19 +71,19 @@ export const JoinClassSection = () => {
                     setError(null);
                   }}
                   placeholder="Contoh: ABC123"
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-12 pr-4 text-white placeholder:text-gray-500 outline-none transition focus:border-indigo-400 focus:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full rounded-2xl border border-border bg-surface-1 py-4 pl-12 pr-4 text-foreground placeholder:text-muted-foreground outline-none transition focus:border-primary focus:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60"
                 />
               </div>
 
-              {error && <p className="mt-2 text-sm text-rose-400">{error}</p>}
+              {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
               {success && (
-                <p className="mt-2 text-sm text-emerald-400">{success}</p>
+                <p className="mt-2 text-sm text-success">{success}</p>
               )}
 
               <button
                 type="submit"
                 disabled={isPending || !code.trim()}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-indigo-600 to-blue-600 px-5 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition-all hover:from-indigo-500 hover:to-blue-500 hover:-translate-y-0.5 hover:shadow-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-8"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary hover:bg-primary/90 px-5 py-4 text-sm font-bold text-primary-foreground transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-8"
               >
                 {isPending ? (
                   <>
@@ -99,44 +97,44 @@ export const JoinClassSection = () => {
             </form>
           </div>
 
-          <div className="shrink-0 rounded-2xl border border-white/5 bg-white/4 p-4 sm:p-5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+          <div className="shrink-0 rounded-2xl border border-border bg-surface-1 p-4 sm:p-5">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
               Panduan
             </p>
             <div className="mt-3 space-y-3">
               <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-300">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Sparkles className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-200">Minta kode</p>
-                  <p className="text-[11px] leading-relaxed text-gray-500">
+                  <p className="text-xs font-bold text-foreground">Minta kode</p>
+                  <p className="text-[11px] leading-relaxed text-muted-foreground">
                     Tanyakan kode kelas kepada pengajar
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-info/10 text-info">
                   <Hash className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-200">
+                  <p className="text-xs font-bold text-foreground">
                     Masukkan kode
                   </p>
-                  <p className="text-[11px] leading-relaxed text-gray-500">
+                  <p className="text-[11px] leading-relaxed text-muted-foreground">
                     Ketik kode pada kolom di atas
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-300">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-success/10 text-success">
                   <Users className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-200">
+                  <p className="text-xs font-bold text-foreground">
                     Gabung kelas
                   </p>
-                  <p className="text-[11px] leading-relaxed text-gray-500">
+                  <p className="text-[11px] leading-relaxed text-muted-foreground">
                     Klik gabung dan mulai mengakses materi
                   </p>
                 </div>

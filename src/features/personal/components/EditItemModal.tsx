@@ -124,27 +124,27 @@ export const EditItemModal = ({
       <div className="relative w-full max-w-2xl max-h-[calc(100vh-2rem)]">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors z-10"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full bg-surface-1 border border-border text-muted-foreground hover:text-foreground hover:bg-surface-2 transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="max-h-[calc(100vh-2rem)] rounded-[2.5rem] border border-white/10 bg-[#0E1420] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
+        <div className="max-h-[calc(100vh-2rem)] rounded-2xl border border-border bg-card shadow-xl overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="shrink-0 px-6 sm:px-8 py-5 sm:py-6 border-b border-white/10 pr-14 sm:pr-8">
-            <h3 className="text-xl sm:text-2xl font-black text-white mb-1">
+          <div className="shrink-0 px-6 sm:px-8 py-5 sm:py-6 border-b border-border pr-14 sm:pr-8">
+            <h3 className="text-xl sm:text-2xl font-black text-foreground mb-1">
               Edit Item
             </h3>
-            <p className="text-gray-400 text-xs sm:text-sm">
+            <p className="text-muted-foreground text-xs sm:text-sm">
               Ubah data item ini
             </p>
           </div>
 
           {/* Error Alert */}
           {error && (
-            <div className="mx-6 sm:mx-8 mt-6 p-4 rounded-xl border border-rose-400/30 bg-rose-500/10 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-              <p className="text-rose-300 text-sm">{error}</p>
+            <div className="mx-6 sm:mx-8 mt-6 p-4 rounded-xl border border-destructive/30 bg-destructive/10 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+              <p className="text-destructive text-sm">{error}</p>
             </div>
           )}
 
@@ -152,11 +152,11 @@ export const EditItemModal = ({
           <form onSubmit={handleSubmit} className="overflow-y-auto px-6 sm:px-8 py-6 space-y-5">
             {/* Content (Question) */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-muted-foreground mb-2">
                 Pertanyaan
               </label>
               <div className="relative">
-                <div className="absolute top-4 left-4 text-gray-500">
+                <div className="absolute top-4 left-4 text-muted-foreground">
                   <FileText className="w-5 h-5" />
                 </div>
                 <textarea
@@ -164,7 +164,7 @@ export const EditItemModal = ({
                   value={formData.content}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none text-sm sm:text-base"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all resize-none text-sm sm:text-base"
                   placeholder="Masukkan pertanyaan"
                   disabled={loading}
                 />
@@ -173,11 +173,11 @@ export const EditItemModal = ({
 
             {/* Answer */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-muted-foreground mb-2">
                 Jawaban
               </label>
               <div className="relative">
-                <div className="absolute top-4 left-4 text-gray-500">
+                <div className="absolute top-4 left-4 text-muted-foreground">
                   <Lock className="w-5 h-5" />
                 </div>
                 <textarea
@@ -185,7 +185,7 @@ export const EditItemModal = ({
                   value={formData.answer}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none text-sm sm:text-base"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-lg bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-colors resize-none text-sm sm:text-base"
                   placeholder="Masukkan jawaban"
                   disabled={loading}
                 />
@@ -194,17 +194,17 @@ export const EditItemModal = ({
 
             {isPremium && (
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-muted-foreground mb-2">
                   Gambar
                 </label>
                 {imagePreview ? (
-                  <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                  <div className="relative overflow-hidden rounded-xl border border-border bg-surface-1">
                     <img
                       src={imagePreview}
                       alt="Preview gambar item"
                       className="h-48 w-full object-cover"
                     />
-                    <label className="absolute bottom-3 left-3 flex cursor-pointer items-center gap-2 rounded-full bg-black/65 px-3 py-2 text-xs font-semibold text-white hover:bg-black/80 transition">
+                    <label className="absolute bottom-3 left-3 flex cursor-pointer items-center gap-2 rounded-full bg-background/85 px-3 py-2 text-xs font-semibold text-foreground hover:bg-background transition">
                       <Upload className="h-3.5 w-3.5" />
                       Ganti gambar
                       <input
@@ -223,19 +223,19 @@ export const EditItemModal = ({
                           setImagePreview(item.image ?? null);
                         }}
                         disabled={loading}
-                        className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-50"
+                        className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-background/85 text-foreground hover:bg-background transition disabled:opacity-50"
                       >
                         <X className="h-4 w-4" />
                       </button>
                     )}
                   </div>
                 ) : (
-                  <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-6 text-center hover:border-blue-500/40 hover:bg-white/8 transition">
-                    <Upload className="h-6 w-6 text-blue-400" />
-                    <span className="text-sm font-semibold text-white">
+                  <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-surface-1 px-4 py-6 text-center hover:border-primary/40 hover:bg-surface-2 transition">
+                    <Upload className="h-6 w-6 text-primary" />
+                    <span className="text-sm font-semibold text-foreground">
                       Pilih gambar item
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       JPG, PNG, atau format gambar lain
                     </span>
                     <input
@@ -248,7 +248,7 @@ export const EditItemModal = ({
                   </label>
                 )}
                 {imagePreview && !imageFile && (
-                  <p className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                  <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                     <Image className="h-3.5 w-3.5" />
                     Menggunakan gambar yang tersimpan.
                   </p>
@@ -258,11 +258,11 @@ export const EditItemModal = ({
 
             {/* Order */}
             <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-muted-foreground mb-2">
                 Urutan
               </label>
               <div className="relative">
-                <div className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-500">
+                <div className="absolute top-1/2 -translate-y-1/2 left-4 text-muted-foreground">
                   <ListOrdered className="w-5 h-5" />
                 </div>
                 <input
@@ -271,7 +271,7 @@ export const EditItemModal = ({
                   value={formData.order}
                   onChange={handleChange}
                   min="1"
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm sm:text-base"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all text-sm sm:text-base"
                   placeholder="1"
                   disabled={loading}
                 />
@@ -281,11 +281,11 @@ export const EditItemModal = ({
             {/* Estimate Value & Unit */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-muted-foreground mb-2">
                   Estimasi Nilai
                 </label>
                 <div className="relative">
-                  <div className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-500">
+                  <div className="absolute top-1/2 -translate-y-1/2 left-4 text-muted-foreground">
                     <Clock className="w-5 h-5" />
                   </div>
                   <input
@@ -294,7 +294,7 @@ export const EditItemModal = ({
                     value={formData.estimate_value}
                     onChange={handleChange}
                     min="1"
-                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm sm:text-base"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-surface-1 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all text-sm sm:text-base"
                     placeholder="1"
                     disabled={loading}
                   />
@@ -302,14 +302,14 @@ export const EditItemModal = ({
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-muted-foreground mb-2">
                   Satuan Waktu
                 </label>
                 <select
                   name="estimate_unit"
                   value={formData.estimate_unit}
                   onChange={handleChange}
-                  className="w-full px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm sm:text-base"
+                  className="w-full px-4 py-3.5 rounded-xl bg-surface-1 border border-border text-foreground focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all text-sm sm:text-base"
                   disabled={loading}
                 >
                   <option value="minutes">Menit</option>
@@ -319,19 +319,19 @@ export const EditItemModal = ({
             </div>
 
             {/* Actions */}
-            <div className="sticky bottom-0 -mx-6 sm:-mx-8 -mb-6 flex flex-col sm:flex-row gap-3 border-t border-white/5 bg-[#0E1420]/95 px-6 sm:px-8 py-4 backdrop-blur">
+            <div className="sticky bottom-0 -mx-6 sm:-mx-8 -mb-6 flex flex-col sm:flex-row gap-3 border-t border-border bg-card/95 px-6 sm:px-8 py-4">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-semibold hover:bg-white/10 transition-colors disabled:opacity-50 cursor-pointer text-sm sm:text-base"
+                className="flex-1 px-5 py-3.5 rounded-xl bg-surface-1 border border-border text-muted-foreground font-semibold hover:bg-surface-2 transition-colors disabled:opacity-50 cursor-pointer text-sm sm:text-base"
               >
                 Batal
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-5 py-3.5 rounded-xl bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
+                className="flex-1 px-5 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
               >
                 {loading ? (
                   <>

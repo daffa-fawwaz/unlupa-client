@@ -54,12 +54,7 @@ const classroomSamples = [
 
 export const ClassroomCardSandbox = () => {
   return (
-    <main className="min-h-screen bg-[#090A0F] px-4 py-8 text-white sm:px-6 lg:px-10">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute right-[-12%] top-[-18%] h-155 w-155 rounded-full bg-blue-500/6 blur-[120px]" />
-        <div className="absolute bottom-[-20%] left-[-14%] h-130 w-130 rounded-full bg-emerald-500/6 blur-[120px]" />
-      </div>
-
+    <main className="min-h-screen bg-background px-4 py-8 text-foreground sm:px-6 lg:px-10">
       <section className="relative z-10 mx-auto max-w-6xl">
         <ClassroomHeader
           title="Preview Classroom"

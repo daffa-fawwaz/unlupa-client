@@ -87,39 +87,39 @@ export const DualRangeSlider = ({
 
       <div className="relative w-full">
         {/* Track Background */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-2 bg-white/10 rounded-full z-1" />
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-2 bg-surface-1 rounded-full z-1" />
 
         {/* Selected Range */}
         <div
           ref={range}
-          className="absolute top-1/2 -translate-y-1/2 h-2 bg-amber-500 rounded-full z-2"
+          className="absolute top-1/2 -translate-y-1/2 h-2 bg-primary rounded-full z-2"
         />
 
         {/* Thumb Left Visual */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-amber-500 border-2 border-[#0B0E14] rounded-full shadow-lg z-3 -ml-3 flex items-center justify-center transform transition-transform hover:scale-110"
+          className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-primary border-2 border-background rounded-full shadow-sm z-3 -ml-3 flex items-center justify-center transform transition-transform hover:scale-110"
           style={{ left: `${getPercent(minVal)}%` }}
         >
-          <div className="w-1.5 h-1.5 bg-black rounded-full/50" />
+          <div className="w-1.5 h-1.5 bg-background rounded-full" />
         </div>
 
         {/* Thumb Right Visual */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-amber-500 border-2 border-[#0B0E14] rounded-full shadow-lg z-3 -ml-3 flex items-center justify-center transform transition-transform hover:scale-110"
+          className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-primary border-2 border-background rounded-full shadow-sm z-3 -ml-3 flex items-center justify-center transform transition-transform hover:scale-110"
           style={{ left: `${getPercent(maxVal)}%` }}
         >
-          <div className="w-1.5 h-1.5 bg-black rounded-full/50" />
+          <div className="w-1.5 h-1.5 bg-background rounded-full" />
         </div>
 
         {/* Floating Labels */}
         <div
-          className="absolute -top-10 -ml-3 px-2 py-1 bg-white/10 backdrop-blur-md rounded-lg text-xs font-mono text-white border border-white/10 z-4"
+          className="absolute -top-10 -ml-3 px-2 py-1 bg-surface-2 rounded-lg text-xs font-mono text-foreground border border-border z-4"
           style={{ left: `${getPercent(minVal)}%` }}
         >
           {minVal}
         </div>
         <div
-          className="absolute -top-10 -ml-3 px-2 py-1 bg-white/10 backdrop-blur-md rounded-lg text-xs font-mono text-white border border-white/10 z-4"
+          className="absolute -top-10 -ml-3 px-2 py-1 bg-surface-2 rounded-lg text-xs font-mono text-foreground border border-border z-4"
           style={{ left: `${getPercent(maxVal)}%` }}
         >
           {maxVal}

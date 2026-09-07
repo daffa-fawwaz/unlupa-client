@@ -8,27 +8,27 @@ const STATUS_CONFIG: Record<ItemStatus, { label: string; className: string }> =
   {
     new: {
       label: "Belum Mulai",
-      className: "bg-blue-500/10 text-blue-400 border-blue-500/30",
+      className: "bg-info/10 text-info border-info/30",
     },
     memorizing: {
       label: "Proses Hafal",
-      className: "bg-orange-500/10 text-orange-400 border-orange-500/30",
+      className: "bg-warning/10 text-warning border-warning/30",
     },
     consolidation: {
       label: "Penguatan",
-      className: "bg-red-500/10 text-red-400 border-red-500/30",
+      className: "bg-destructive/10 text-destructive border-destructive/30",
     },
     active: {
       label: "Ujian Ketahanan",
-      className: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+      className: "bg-warning/10 text-warning border-warning/30",
     },
     maintenance: {
       label: "Terjaga",
-      className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+      className: "bg-success/10 text-success border-success/30",
     },
     graduated: {
       label: "Selesai",
-      className: "bg-purple-500/10 text-purple-400 border-purple-500/30",
+      className: "bg-primary/10 text-primary border-primary/30",
     },
   };
 

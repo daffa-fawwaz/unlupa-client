@@ -4,21 +4,15 @@ import { Link } from "react-router";
 export const NotFoundPage = () => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return (
-    <div className="bg-deep-universe min-h-screen text-white relative flex flex-col items-center justify-center overflow-hidden">
-      {/* Background Stars */}
-      <div className="stars-overlay"></div>
-
-      {/* Nebula Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[100px] -z-10 animate-pulse"></div>
-
+    <div className="bg-background min-h-screen text-foreground relative flex flex-col items-center justify-center overflow-hidden">
       <div className="relative z-10 text-center px-4">
         {/* Large 404 Text */}
-        <h1 className="text-[150px] md:text-[200px] font-display font-bold leading-none text-transparent bg-clip-text bg-linear-to-br from-white via-white/50 to-transparent opacity-20 select-none">
+        <h1 className="text-[150px] md:text-[200px] font-display font-bold leading-none text-transparent bg-clip-text bg-linear-to-br from-foreground via-foreground/50 to-transparent opacity-20 select-none">
           404
         </h1>
 
         <div className="-mt-16 md:-mt-24 space-y-6">
-          <h2 className="text-3xl md:text-5xl font-serif text-gold-premium drop-shadow-lg">
+          <h2 className="text-3xl md:text-5xl font-serif text-warning">
             Halaman Tidak Ditemukan
           </h2>
 
@@ -30,7 +24,7 @@ export const NotFoundPage = () => {
           <div className="pt-8">
             <Link
               to={isAuthenticated ? "/dashboard" : "/"}
-              className="btn-start inline-flex group"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-foreground text-sm font-semibold uppercase tracking-wider hover:bg-primary/90 transition group"
             >
               <span>Kembali ke {isAuthenticated ? "Dashboard" : "Home"}</span>
               <svg

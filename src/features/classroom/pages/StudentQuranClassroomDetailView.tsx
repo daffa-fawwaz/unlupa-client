@@ -12,6 +12,7 @@ import MobileSidebarOverlay from "@/features/classroom/components/navigation/Mob
 import { TopNavigationBar } from "@/features/classroom/components/navigation/TopNavigationBar";
 
 import { toneStyles, tones, statusLabel } from "@/features/classroom/constants";
+import { resolveAssetUrl } from "@/lib/assets";
 
 interface StudentQuranClassroomDetailViewProps {
   classroom: any;
@@ -45,7 +46,7 @@ export const StudentQuranClassroomDetailView = ({
   const theme = toneStyles[tones[toneIndex]];
 
   return (
-    <div className="min-h-screen bg-[#06080C] text-slate-200 font-sans antialiased selection:bg-indigo-500/40 pb-12">
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/30 pb-12">
       <BackgroundAmbience />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <MobileSidebarOverlay
@@ -54,7 +55,7 @@ export const StudentQuranClassroomDetailView = ({
       />
 
       {/* Top Nav Bar */}
-      <div className="sticky z-40 bg-[#06080C]/80 backdrop-blur-md border-b border-white/[0.06] px-4 sm:px-6 lg:px-10 py-4">
+      <div className="sticky z-40 bg-background/90 backdrop-blur-md border-b border-border px-4 sm:px-6 lg:px-10 py-4">
         <div className="max-w-7xl mx-auto gap-4 mb-4 mt-4 px-6">
           <TopNavigationBar
             info={classroom.name}
@@ -65,27 +66,24 @@ export const StudentQuranClassroomDetailView = ({
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
         {/* HERO BANNER */}
-        <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] bg-[#0B0F19] min-h-[180px] md:min-h-[220px] flex items-center shadow-2xl">
+        <div className="relative rounded-2xl overflow-hidden border border-border bg-card min-h-[180px] md:min-h-[220px] flex items-center">
           {classroom.cover_image ? (
             <>
               <img
-                src={classroom.cover_image}
+                src={resolveAssetUrl(classroom.cover_image)}
                 alt={classroom.name}
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent z-10" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#06080C] via-transparent to-transparent z-10" />
+              <div className="absolute inset-0 bg-linear-to-r from-background via-background/70 to-transparent z-10" />
+              <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent z-10" />
             </>
           ) : (
             <>
               <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:32px_32px]" />
-              <div
-                className={`absolute -right-12 -top-12 h-56 w-56 rounded-full bg-gradient-to-br ${theme.softBg} blur-[80px] opacity-30`}
-              />
-              <div className="absolute right-8 md:right-16 bottom-0 top-0 my-auto h-24 w-24 md:h-32 md:w-32 flex items-center justify-center text-white/[0.03] pointer-events-none">
+              <div className="absolute right-8 md:right-16 bottom-0 top-0 my-auto h-24 w-24 md:h-32 md:w-32 flex items-center justify-center text-foreground/5 pointer-events-none">
                 <ImageIcon className="w-full h-full stroke-[1]" />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent z-10" />
+              <div className="absolute inset-0 bg-linear-to-r from-background via-background/40 to-transparent z-10" />
             </>
           )}
 
@@ -93,19 +91,19 @@ export const StudentQuranClassroomDetailView = ({
             <div className="space-y-3 max-w-3xl">
               <div className="flex items-center gap-2.5">
                 <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border backdrop-blur-md ${theme.border} ${theme.softBg} ${theme.text}`}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${theme.border} ${theme.softBg} ${theme.text}`}
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
                   {classroom.is_active ? statusLabel.active : statusLabel.draft}
                 </span>
-                <span className="text-xs text-slate-400/80 font-medium">
+                <span className="text-xs text-muted-foreground font-medium">
                   Kelas Al-Quran
                 </span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight leading-tight">
                 {classroom.name}
               </h2>
-              <p className="text-sm text-slate-300/90 leading-relaxed max-w-2xl">
+              <p className="text-sm text-foreground/80 leading-relaxed max-w-2xl">
                 {classroom.description ||
                   "Belum ada deskripsi detail yang disematkan untuk kelas ini."}
               </p>
@@ -117,52 +115,52 @@ export const StudentQuranClassroomDetailView = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* PANEL KIRI: Metadata */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="p-5 rounded-xl border border-white/[0.06] bg-[#0E131F]/40 backdrop-blur-xl space-y-4 shadow-md">
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+            <div className="p-5 rounded-xl border border-border bg-surface-1 space-y-4">
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                 Pengajar / Muhaffizh
               </p>
               <div className="flex items-center gap-3">
                 <div
-                  className={`h-11 w-11 flex items-center justify-center rounded-xl border ${theme.border} ${theme.iconBg} text-white shadow-inner`}
+                  className={`h-11 w-11 flex items-center justify-center rounded-xl border ${theme.border} ${theme.iconBg} text-foreground`}
                 >
                   <Sparkles className={`h-5 w-5 ${theme.text}`} />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-sm text-white truncate">
+                  <p className="font-bold text-sm text-foreground truncate">
                     {classroom.owner_name}
                   </p>
-                  <p className="text-xs text-indigo-400/80 font-medium mt-0.5">
+                  <p className="text-xs text-primary/80 font-medium mt-0.5">
                     Guru Pembimbing Hafalan
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 rounded-xl border border-white/[0.06] bg-[#0E131F]/20 text-center space-y-1">
-              <p className="text-2xl font-bold text-white tracking-tight">
+            <div className="p-5 rounded-xl border border-border bg-surface-1 text-center space-y-1">
+              <p className="text-2xl font-bold text-foreground tracking-tight">
                 {juzData?.data?.length || 0}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Juz Hafalan Terdaftar
               </p>
             </div>
           </div>
 
           {/* PANEL KANAN: Ruang Kerja Tab */}
-          <div className="lg:col-span-8 p-6 rounded-xl border border-white/[0.08] bg-[#0A0E17]/60 backdrop-blur-2xl shadow-xl space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-center border-b border-white/[0.08] pb-4">
+          <div className="lg:col-span-8 p-6 rounded-xl border border-border bg-card space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-center border-b border-border pb-4">
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                   Daftar Juz Hafalan Kelas
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Tambahkan dan pantau progres hafalan juz Anda di kelas ini.
                 </p>
               </div>
 
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg h-9 px-4 self-start sm:self-center flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/20"
+                className="bg-success hover:bg-success/90 text-success-foreground text-xs font-bold rounded-lg h-9 px-4 self-start sm:self-center flex items-center gap-2 transition-all"
               >
                 <Plus className="h-4 w-4" /> Tambah Juz
               </button>
@@ -175,7 +173,7 @@ export const StudentQuranClassroomDetailView = ({
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="h-40 rounded-2xl bg-white/5 animate-pulse"
+                      className="h-40 rounded-2xl bg-surface-1 animate-pulse"
                     />
                   ))}
                 </div>
@@ -199,9 +197,9 @@ export const StudentQuranClassroomDetailView = ({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 border border-dashed border-white/5 rounded-xl bg-slate-950/10">
-                  <BookOpen className="h-8 w-8 text-slate-600 mx-auto mb-2" />
-                  <p className="text-xs text-slate-400">
+                <div className="text-center py-12 border border-dashed border-border rounded-xl bg-surface-1">
+                  <BookOpen className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground">
                     Belum ada juz hafalan yang ditambahkan di kelas ini.
                   </p>
                 </div>

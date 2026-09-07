@@ -59,23 +59,23 @@ export const StartIntervalModal = ({
       />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-sm bg-[#0F1218] border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-sm bg-background border border-border rounded-2xl shadow-xl overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-500">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <CalendarDays className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">Mulai Latihan Interval</h2>
-              <p className="text-xs text-gray-400 truncate max-w-[180px]">
+              <h2 className="text-base font-bold text-foreground">Mulai Latihan Interval</h2>
+              <p className="text-xs text-muted-foreground truncate max-w-[180px]">
                 {itemTitle}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+            className="p-2 rounded-full hover:bg-surface-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -85,15 +85,15 @@ export const StartIntervalModal = ({
         <div className="p-6 space-y-6">
           {/* Tampilan angka hari yang dipilih */}
           <div className="text-center">
-            <span className="text-6xl font-mono font-bold text-white">
+            <span className="text-6xl font-mono font-bold text-foreground">
               {intervalDays}
             </span>
-            <p className="text-sm text-gray-400 mt-1">hari sekali murajaah</p>
+            <p className="text-sm text-muted-foreground mt-1">hari sekali murajaah</p>
           </div>
 
           {/* Preset buttons — UX shortcut */}
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 block">
               Pilih cepat
             </label>
             <div className="flex flex-wrap gap-2">
@@ -101,10 +101,10 @@ export const StartIntervalModal = ({
                 <button
                   key={preset}
                   onClick={() => setIntervalDays(preset)}
-                  className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all ${
+                  className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${
                     intervalDays === preset
-                      ? "bg-amber-500/20 border-amber-500/50 text-amber-400"
-                      : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10"
+                      ? "bg-primary/10 border-primary/40 text-primary"
+                      : "bg-surface-1 border-border text-muted-foreground hover:bg-surface-2"
                   }`}
                 >
                   {preset}h
@@ -115,7 +115,7 @@ export const StartIntervalModal = ({
 
           {/* Input manual — untuk nilai kustom */}
           <div>
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 block">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 block">
               Atau masukkan manual
             </label>
             <input
@@ -126,14 +126,14 @@ export const StartIntervalModal = ({
               onChange={(e) =>
                 setIntervalDays(Math.max(1, parseInt(e.target.value) || 1))
               }
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-lg font-mono focus:outline-none focus:border-amber-500/50 focus:bg-amber-500/5 transition-all"
+              className="w-full px-4 py-3 rounded-lg bg-surface-1 border border-border text-foreground text-center text-lg font-mono focus:outline-none focus:border-primary/50 focus:bg-primary/5 transition-all"
             />
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-              <p className="text-red-400 text-sm text-center">{error}</p>
+            <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+              <p className="text-destructive text-sm text-center">{error}</p>
             </div>
           )}
 
@@ -141,7 +141,7 @@ export const StartIntervalModal = ({
           <button
             onClick={handleSubmit}
             disabled={loading || intervalDays < 1}
-            className="w-full py-4 rounded-xl bg-linear-to-r from-amber-500 to-orange-600 text-black font-bold shadow-lg shadow-amber-900/20 hover:shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-lg bg-primary text-primary-foreground font-bold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

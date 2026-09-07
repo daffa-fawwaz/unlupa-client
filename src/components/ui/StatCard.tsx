@@ -45,6 +45,20 @@ export const stats = [
   },
 ];
 
+const statIconStyles: Record<string, string> = {
+  blue: "text-info",
+  emerald: "text-success",
+  gold: "text-warning",
+  purple: "text-primary",
+};
+
+const statChipStyles: Record<string, string> = {
+  blue: "bg-info/10 border border-info/20 text-info",
+  emerald: "bg-success/10 border border-success/20 text-success",
+  gold: "bg-warning/10 border border-warning/20 text-warning",
+  purple: "bg-primary/10 border border-primary/20 text-primary",
+};
+
 export const StatCard = ({
   title,
   value,
@@ -54,17 +68,14 @@ export const StatCard = ({
   color,
 }: StatCardProps) => {
   return (
-    <div className={`monolith-card ${color} p-6 rounded-2xl group`}>
-      <div className="card-nebula bg-current opacity-20"></div>
-
+    <div className="bg-card border border-border p-6 rounded-2xl group">
       <div className="flex justify-between items-start mb-4">
-        <div className={`icon-orb text-${color}-400`}>
-          <Icon className="w-6 h-6 neon-icon" />
+        <div className={`${statIconStyles[color]}`}>
+          <Icon className="w-6 h-6" />
         </div>
 
         <div
-          className={`flex items-center gap-1 text-xs font-mono px-2 py-1 rounded
-          bg-${color}-500/10 border border-${color}-500/20 text-${color}-400`}
+          className={`flex items-center gap-1 text-xs font-mono px-2 py-1 rounded ${statChipStyles[color]}`}
         >
           <ArrowUpRight className="w-3 h-3" />
           {change}
@@ -72,11 +83,11 @@ export const StatCard = ({
       </div>
 
       <div>
-        <h3 className="text-3xl font-bold text-white mb-1 tracking-tight group-hover:scale-105 transition-transform origin-left">
+        <h3 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
           {value}
         </h3>
-        <p className="text-sm text-gray-400 mb-1">{title}</p>
-        <p className="text-[10px] text-gray-500 uppercase tracking-widest">
+        <p className="text-sm text-muted-foreground mb-1">{title}</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
           {desc}
         </p>
       </div>

@@ -22,6 +22,7 @@ import { CreateClassModal } from "@/features/classroom/components/dashboard/moda
 import { SuccessModal } from "@/components/ui/SuccessModal";
 import { EditClassModal } from "@/features/classroom/components/dashboard/modals/EditClassModal";
 import { ConfirmModal } from "@/features/classroom/components/dashboard/modals/ConfirmModal";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export const TeacherDashboardPage = () => {
   const navigate = useNavigate();
@@ -64,10 +65,7 @@ export const TeacherDashboardPage = () => {
   const { mutate, isPending: isCreating } = useCreateClass();
 
   return (
-    <div className="min-h-screen bg-deep-universe text-white relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
-      {/* Background Elements */}
-      <div className="stars-overlay"></div>
-
+    <div className="min-h-screen bg-background text-foreground relative overflow-hidden font-primary max-w-7xl mx-auto p-6 md:p-10 transition-all duration-300">
       {/* Sidebar Integration */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
@@ -84,30 +82,31 @@ export const TeacherDashboardPage = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/50 transition text-amber-500"
+              className="p-2 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border transition text-foreground"
             >
               <Menu className="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <div>
-              <h1 className="text-xl md:text-3xl font-display font-bold text-white tracking-widest">
-                DASHBOARD <span className="text-gold-premium">PENGAJAR</span>
+              <h1 className="text-xl md:text-3xl font-display font-bold text-foreground tracking-widest">
+                DASHBOARD <span className="text-primary">PENGAJAR</span>
               </h1>
-              <p className="text-xs md:text-sm text-gray-400">
+              <p className="text-xs md:text-sm text-muted-foreground">
                 Pusat Monitoring & Bimbingan Siswa
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <div className="text-right">
-              <p className="text-sm text-white font-serif font-medium">
+              <p className="text-sm text-foreground font-serif font-medium">
                 {name}
               </p>
-              <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
+              <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
                 Pengajar UnLupa
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-linear-to-b from-amber-500 to-amber-700 flex items-center justify-center font-serif font-bold text-black border-2 border-amber-400/50 shadow-lg shadow-amber-500/20">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center font-serif font-bold text-primary-foreground">
               {initialLetter}
             </div>
           </div>

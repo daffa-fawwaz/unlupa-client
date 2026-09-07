@@ -39,28 +39,24 @@ export const StudentDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-deep-universe text-white font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen relative bg-background text-foreground font-sans selection:bg-primary/30">
       {/* Background Ambience */}
       <BackgroundAmbience />
+      <DynamicBackgroundAtmosphere />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="min-h-screen relative rounded-3xl overflow-hidden selection:bg-blue-500/30">
-          {/* --- Dynamic Background Atmosphere --- */}
-          <DynamicBackgroundAtmosphere />
+      {/* Sidebar */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
-          {/* Sidebar */}
-          <Sidebar
-            isOpen={isSidebarOpen}
-            onClose={() => setIsSidebarOpen(false)}
-          />
+      {/* Overlay for mobile sidebar */}
+      <MobileSidebarOverlay
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
 
-          {/* Overlay for mobile sidebar */}
-          <MobileSidebarOverlay
-            isSidebarOpen={isSidebarOpen}
-            setIsSidebarOpen={setIsSidebarOpen}
-          />
-
-          <div className="p-4 sm:p-6 lg:p-8 animate-fadeIn max-w-400 mx-auto relative z-10">
+      <div className="p-4 sm:p-6 lg:p-8 animate-fadeIn max-w-[1600px] mx-auto relative z-10">
             <TopNavigationBar
               info="Ruang Kelas"
               setIsSidebarOpen={setIsSidebarOpen}
@@ -113,11 +109,6 @@ export const StudentDashboard = () => {
                   // Debug log removed for production
                 }}
                 // Optional Styling
-                mainBgColor="bg-[#020817]"
-                wrapperGradient="bg-gradient-to-b from-[#081225] to-[#030712]"
-                glowColor="bg-blue-500/10"
-                borderColor="border-blue-500/10"
-                // Optional Button Styling
                 buttonClassName="hover:scale-[1.02]"
               >
                 {classes && (
@@ -147,8 +138,6 @@ export const StudentDashboard = () => {
               </EmptyStateWrapper>
             </div>
           </div>
-        </div>
-      </div>
     </div>
   );
 };
