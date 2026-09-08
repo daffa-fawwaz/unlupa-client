@@ -102,7 +102,10 @@ export const LoginForm = ({
             </div>
 
             {error && (
-              <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-6 flex items-start gap-4">
+              <div
+                role="alert"
+                className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-6 flex items-start gap-4"
+              >
                 <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
                 <div className="flex-1 text-left">
                   <h4 className="text-destructive font-medium text-xs uppercase tracking-widest mb-1 font-mono">
