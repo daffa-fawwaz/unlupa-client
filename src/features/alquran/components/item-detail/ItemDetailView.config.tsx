@@ -67,18 +67,17 @@ const ACTION_CONFIG: Record<ActionPhase, ActionConfig> = {
   },
   terjaga: {
     sectionTitle: "Mode Ujian FSRS Aktif",
-    href: "/dashboard/alquran",
     description:
-      "Bagus, hafalan ini sekarang sedang di mode ujian FSRS. Sistem akan mengatur kapan kamu perlu review berikutnya berdasarkan performa terakhir.",
-    label: "Ke Dashboard",
+      "Bagus, hafalan ini sekarang sedang di mode ujian FSRS. Lanjut ke langkah berikutnya untuk melihat ringkasan penyelesaian fase ini.",
+    label: "Lanjut ke Langkah 3",
     icon: <ArrowRight className="w-5 h-5" />,
-    buttonClass: "bg-surface-1 text-foreground border border-border hover:bg-surface-2",
+    buttonClass: "bg-primary text-primary-foreground hover:bg-primary/90",
   },
   graduate: {
     sectionTitle: "Selamat! Anda Telah Menyelesaikan Fase Ini",
     description:
       "Alhamdulillah, hafalan ini telah selesai dan mencapai tingkat kelulusan. Pertahankan konsistensi murajaah agar hafalan tetap melekat selamanya.",
-    label: "Lihat Progress",
+    label: "Selesai",
     href: "/dashboard/alquran",
     icon: <Trophy className="w-5 h-5" />,
     buttonClass: "bg-primary text-primary-foreground",

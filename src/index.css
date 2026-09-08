@@ -330,3 +330,24 @@
   pointer-events: all;
   position: relative;
 }
+
+/* ======================================================
+   FLAME BURST (on-click spark particles)
+====================================================== */
+@keyframes flameBurst {
+  0% {
+    transform: scale(0.6) translate(0, 0) rotate(-12deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.9) translate(var(--burst-x, 0px), var(--burst-y, 0px)) rotate(-12deg);
+    opacity: 0;
+  }
+}
+
+.animate-flame-burst {
+  animation: flameBurst 0.6s ease-out both;
+}

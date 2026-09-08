@@ -42,10 +42,12 @@ const REVIEW_BUTTONS = [
     header: "Lemah",
     icon: Frown,
     descriptions: ["Blank", "Banyak Lupa", "Berpikir Lama", "Banyak Salah"],
-    bg: "bg-red-600 border-red-500/70 hover:bg-red-700",
-    headerBg: "bg-red-700",
-    dot: "bg-white/80",
-    textColor: "text-white",
+    accent: "text-destructive",
+    accentBg: "bg-destructive/10",
+    accentBorder: "border-destructive/20",
+    hoverBorder: "hover:border-destructive/40",
+    hoverBg: "hover:bg-destructive/5",
+    dot: "bg-destructive/60",
   },
   {
     id: 2 as const,
@@ -53,10 +55,12 @@ const REVIEW_BUTTONS = [
     header: "Sedang",
     icon: Meh,
     descriptions: ["Sering Lupa", "Sering Salah", "Tersendat", "Lambat"],
-    bg: "bg-warning border-warning/50 hover:bg-warning/90",
-    headerBg: "bg-warning",
-    dot: "bg-warning-foreground",
-    textColor: "text-warning-foreground",
+    accent: "text-warning",
+    accentBg: "bg-warning/10",
+    accentBorder: "border-warning/20",
+    hoverBorder: "hover:border-warning/40",
+    hoverBg: "hover:bg-warning/5",
+    dot: "bg-warning/60",
   },
   {
     id: 3 as const,
@@ -64,10 +68,12 @@ const REVIEW_BUTTONS = [
     header: "Baik",
     icon: Smile,
     descriptions: ["Lancar", "Cepat", "Yakin", "Benar"],
-    bg: "bg-emerald-600 border-emerald-500/70 hover:bg-emerald-700",
-    headerBg: "bg-emerald-700",
-    dot: "bg-white/80",
-    textColor: "text-white",
+    accent: "text-success",
+    accentBg: "bg-success/10",
+    accentBorder: "border-success/20",
+    hoverBorder: "hover:border-success/40",
+    hoverBg: "hover:bg-success/5",
+    dot: "bg-success/60",
   },
   {
     id: 4 as const,
@@ -75,10 +81,12 @@ const REVIEW_BUTTONS = [
     header: "Sempurna",
     icon: Flame,
     descriptions: ["Reflek", "Tanpa Salah", "Sangat Lancar", "Sempurna"],
-    bg: "bg-sky-600 border-sky-500/70 hover:bg-sky-700",
-    headerBg: "bg-sky-700",
-    dot: "bg-white/80",
-    textColor: "text-white",
+    accent: "text-info",
+    accentBg: "bg-info/10",
+    accentBorder: "border-info/20",
+    hoverBorder: "hover:border-info/40",
+    hoverBg: "hover:bg-info/5",
+    dot: "bg-info/60",
   },
 ] as const;
 
@@ -235,7 +243,7 @@ export const BookDailyReviewFlashcardModal = ({
           >
 
             {/* Scrollable content area */}
-            <div className="flex-1 overflow-y-auto scrollbar-hide px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide min-h-0 px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-9 h-9 rounded-xl bg-info/20 border border-info/30 flex items-center justify-center">
                   <Brain className="w-5 h-5 text-info" />
@@ -260,7 +268,7 @@ export const BookDailyReviewFlashcardModal = ({
                   <div className="w-8 h-8 rounded-lg bg-info/20 border border-info/30 flex items-center justify-center shrink-0 mt-0.5">
                     <Lightbulb className="w-4 h-4 text-info" />
                   </div>
-                  <p className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground leading-snug whitespace-pre-wrap wrap-break-word">
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground leading-snug whitespace-pre-wrap break-words max-w-full">
                     {itemContent}
                   </p>
                 </div>
@@ -293,7 +301,7 @@ export const BookDailyReviewFlashcardModal = ({
               transform: "rotateY(180deg)",
             }}
           >
-            <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide min-h-0 flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
               {/* Answer */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-9 h-9 rounded-xl bg-success/20 border border-success/30 flex items-center justify-center">
@@ -315,7 +323,7 @@ export const BookDailyReviewFlashcardModal = ({
               )}
 
               <div className="p-5 sm:p-6 rounded-2xl border border-success/20 bg-success/10 mb-6">
-                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-relaxed whitespace-pre-wrap wrap-break-word">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-relaxed whitespace-pre-wrap break-words max-w-full">
                   {itemAnswer}
                 </p>
               </div>
@@ -328,7 +336,7 @@ export const BookDailyReviewFlashcardModal = ({
                 <p className="text-muted-foreground text-sm">Pilih satu — nilai langsung tersimpan.</p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+              <div className="grid grid-cols-2 gap-3 mb-6 md:grid-cols-4">
                 {REVIEW_BUTTONS.map((btn) => {
                   const isSubmitting = submittingButtonId === btn.id;
                   return (
@@ -337,22 +345,25 @@ export const BookDailyReviewFlashcardModal = ({
                       type="button"
                       onClick={() => void handleRatingClick(btn)}
                       disabled={submittingButtonId !== null}
-                      className={`relative overflow-hidden rounded-2xl border-2 flex flex-col text-left transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none ${btn.bg} ${btn.textColor}`}
+                      className={`relative group min-w-0 overflow-hidden rounded-xl border bg-card border-border flex flex-col text-left transition-all duration-200 active:scale-95 disabled:opacity-60 disabled:pointer-events-none ${btn.hoverBorder} ${btn.hoverBg}`}
                     >
-                      <div className={`flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-black uppercase tracking-wide border-b border-border ${btn.headerBg}`}>
-                        <btn.icon className="w-4 h-4" />
-                        <span>{btn.header}</span>
+                      <div className="flex items-center gap-2 p-3 border-b border-border">
+                        <span className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 group-active:scale-110 transition-transform ${btn.accentBg}`}>
+                          <btn.icon className={`w-3.5 h-3.5 ${btn.accent}${btn.id === 4 ? " animate-pulse" : ""}`} />
+                        </span>
+                        <span className={`text-xs font-semibold ${btn.accent}`}>{btn.header}</span>
+                        <span className={`ml-auto shrink-0 w-1.5 h-1.5 rounded-full ${btn.dot}`} />
                       </div>
                       <div className="flex-1 p-3">
                         {isSubmitting ? (
                           <div className="flex flex-col items-center justify-center gap-2 py-3">
-                            <Loader2 className="w-5 h-5 animate-spin opacity-80" />
-                            <span className="text-xs opacity-80">Menyimpan...</span>
+                            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">Menyimpan...</span>
                           </div>
                         ) : (
-                          <ul className="space-y-1.5">
+                          <ul className="space-y-1">
                             {btn.descriptions.map((d) => (
-                              <li key={d} className="flex items-center gap-2 text-xs font-medium">
+                              <li key={d} className="flex items-center gap-1.5 text-[11px] font-normal text-muted-foreground">
                                 <span className={`shrink-0 w-1.5 h-1.5 rounded-full ${btn.dot}`} />
                                 {d}
                               </li>
