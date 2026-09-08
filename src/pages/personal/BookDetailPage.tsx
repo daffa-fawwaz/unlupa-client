@@ -379,7 +379,7 @@ const ModuleCard = ({
   return (
     <button
       onClick={onClick}
-      className="group relative bg-surface-1 border border-border rounded-2xl sm:rounded-2xl p-3 sm:p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-border flex flex-col overflow-hidden"
+      className="group relative bg-surface-1 border border-border rounded-2xl p-4 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 flex flex-col overflow-hidden"
     >
       {/* Background Gradient/Glow */}
       <div className="absolute inset-0 bg-linear-to-b from-foreground/2 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-300" />
@@ -391,18 +391,18 @@ const ModuleCard = ({
       </div>
 
       {/* Large Order Number Watermark */}
-      <div className="absolute top-2 right-4 text-7xl font-serif font-bold text-foreground/5 group-hover:text-primary/5 transition-colors duration-500 pointer-events-none select-none">
+      <div className="absolute top-2 right-4 text-6xl font-serif font-bold text-foreground/5 group-hover:text-primary/5 transition-colors duration-500 pointer-events-none select-none">
         {module.order}
       </div>
 
       {/* Header */}
-      <div className="relative z-10 mb-4">
+      <div className="relative z-10 mb-2.5">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="text-sm sm:text-xl font-bold text-foreground mb-1 group-hover:text-info transition-colors duration-300 line-clamp-2">
+            <h3 className="text-sm sm:text-base font-bold text-foreground group-hover:text-info transition-colors duration-300 line-clamp-2 leading-snug">
               {module.title}
             </h3>
-            <p className="text-muted-foreground text-xs font-medium tracking-wide">
+            <p className="text-muted-foreground text-[10px] font-medium tracking-widest mt-0.5">
               MODUL
             </p>
           </div>
@@ -410,47 +410,37 @@ const ModuleCard = ({
       </div>
 
       {/* Description */}
-      <div className="relative z-10 flex-1 mb-4">
+      <div className="relative z-10 mb-3">
         {module.description ? (
-          <div className="p-3 rounded-xl bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <AlignLeft className="w-3 h-3 text-muted-foreground" />
-              <span className="text-[0.6rem] text-muted-foreground uppercase tracking-wider font-bold">
-                Deskripsi
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 whitespace-pre-wrap break-words">
-              {module.description}
-            </p>
-          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 whitespace-pre-wrap break-words">
+            {module.description}
+          </p>
         ) : (
-          <div className="p-3 rounded-xl bg-surface-1 border border-dashed border-border flex items-center justify-center h-full">
-            <p className="text-xs text-muted-foreground italic">Tidak ada deskripsi</p>
-          </div>
+          <p className="text-xs text-muted-foreground/70 italic">Tidak ada deskripsi</p>
         )}
       </div>
 
       {/* Footer */}
-      <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto pt-4 border-t border-border">
-        <div className="flex flex-col p-2 rounded-xl bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
-          <div className="flex items-center gap-1.5 mb-1">
-            <FileText className="w-3 h-3 text-info" />
-            <span className="text-[0.6rem] text-muted-foreground uppercase tracking-wider font-bold">
+      <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto pt-3 border-t border-border">
+        <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
+          <span className="flex items-center gap-1.5 min-w-0">
+            <FileText className="w-3 h-3 text-info shrink-0" />
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold truncate">
               Item
             </span>
-          </div>
-          <span className="text-base font-mono font-bold text-info leading-none">
+          </span>
+          <span className="text-sm font-mono font-bold text-info leading-none shrink-0">
             {itemCount}
           </span>
         </div>
-        <div className="flex flex-col p-2 rounded-xl bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
-          <div className="flex items-center gap-1.5 mb-1">
-            <Layers className="w-3 h-3 text-primary" />
-            <span className="text-[0.6rem] text-muted-foreground uppercase tracking-wider font-bold">
+        <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-surface-1 group-hover:bg-surface-2 transition-colors border border-transparent group-hover:border-border">
+          <span className="flex items-center gap-1.5 min-w-0">
+            <Layers className="w-3 h-3 text-primary shrink-0" />
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold truncate">
               Sub-modul
             </span>
-          </div>
-          <span className="text-base font-mono font-bold text-primary leading-none">
+          </span>
+          <span className="text-sm font-mono font-bold text-primary leading-none shrink-0">
             {childCount}
           </span>
         </div>
@@ -579,7 +569,7 @@ export const BookDetailPage = () => {
               <LayoutList className="w-5 h-5" />
             </button>
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/dashboard")}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4" />

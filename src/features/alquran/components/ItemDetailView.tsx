@@ -167,6 +167,8 @@ export const ItemDetailView = ({
         }
         break;
       case "terjaga":
+        transitionTo("graduate");
+        break;
       case "graduate":
         if (onRedirect) {
           onRedirect();

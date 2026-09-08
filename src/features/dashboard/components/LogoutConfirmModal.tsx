@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/features/auth/stores/auth.store";
+import { createPortal } from "react-dom";
 import { LogOut } from "lucide-react";
 
 export const LogoutConfirmModal = ({
@@ -8,12 +9,12 @@ export const LogoutConfirmModal = ({
 }) => {
   const logout = useAuthStore((state) => state.logout);
 
-  return (
-    <div className="fixed inset-0 z-99 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+  return createPortal(
+    <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-fadeIn">
       <div className="bg-card border border-border rounded-xl p-6 max-w-sm w-full shadow-xl space-y-4">
         <div className="flex items-center gap-3 text-destructive">
           <LogOut className="w-6 h-6" />
-          <h3 className="font-serif font-bold text-lg">Konfirmasi Keluar</h3>
+          <h3 className="font-serif font-bold text-lg text-foreground">Konfirmasi Keluar</h3>
         </div>
 
         <p className="text-muted-foreground text-sm">
@@ -35,6 +36,7 @@ export const LogoutConfirmModal = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

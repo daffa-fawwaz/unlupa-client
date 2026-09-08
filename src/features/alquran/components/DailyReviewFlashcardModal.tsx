@@ -40,11 +40,12 @@ const REVIEW_BUTTONS = [
     header: "Lemah",
     icon: Frown,
     descriptions: ["Blank", "Banyak Lupa", "Berpikir Lama", "Banyak Salah"],
-    bg: "bg-destructive/10 border-destructive/50 hover:bg-destructive/15",
-    headerBg: "bg-red-600",
-    headerText: "text-white",
-    dot: "bg-destructive",
-    textColor: "text-destructive",
+    accent: "text-destructive",
+    accentBg: "bg-destructive/10",
+    accentBorder: "border-destructive/20",
+    hoverBorder: "hover:border-destructive/40",
+    hoverBg: "hover:bg-destructive/5",
+    dot: "bg-destructive/60",
   },
   {
     id: 2 as const,
@@ -52,11 +53,12 @@ const REVIEW_BUTTONS = [
     header: "Sedang",
     icon: Meh,
     descriptions: ["Sering Lupa", "Sering Salah", "Tersendat", "Lambat"],
-    bg: "bg-warning/10 border-warning/50 hover:bg-warning/15",
-    headerBg: "bg-warning",
-    headerText: "text-warning-foreground",
-    dot: "bg-warning",
-    textColor: "text-warning",
+    accent: "text-warning",
+    accentBg: "bg-warning/10",
+    accentBorder: "border-warning/20",
+    hoverBorder: "hover:border-warning/40",
+    hoverBg: "hover:bg-warning/5",
+    dot: "bg-warning/60",
   },
   {
     id: 3 as const,
@@ -64,11 +66,12 @@ const REVIEW_BUTTONS = [
     header: "Baik",
     icon: Smile,
     descriptions: ["Lancar", "Cepat", "Yakin", "Benar"],
-    bg: "bg-success/10 border-success/50 hover:bg-success/15",
-    headerBg: "bg-emerald-600",
-    headerText: "text-white",
-    dot: "bg-success",
-    textColor: "text-success",
+    accent: "text-success",
+    accentBg: "bg-success/10",
+    accentBorder: "border-success/20",
+    hoverBorder: "hover:border-success/40",
+    hoverBg: "hover:bg-success/5",
+    dot: "bg-success/60",
   },
   {
     id: 4 as const,
@@ -76,11 +79,12 @@ const REVIEW_BUTTONS = [
     header: "Sempurna",
     icon: Flame,
     descriptions: ["Reflek", "Tanpa Salah", "Sangat Lancar", "Sempurna"],
-    bg: "bg-info/10 border-info/50 hover:bg-info/15",
-    headerBg: "bg-sky-600",
-    headerText: "text-white",
-    dot: "bg-info",
-    textColor: "text-info",
+    accent: "text-info",
+    accentBg: "bg-info/10",
+    accentBorder: "border-info/20",
+    hoverBorder: "hover:border-info/40",
+    hoverBg: "hover:bg-info/5",
+    dot: "bg-info/60",
   },
 ] as const;
 
@@ -226,7 +230,7 @@ export const DailyReviewFlashcardModal = ({
         >
           {/* FRONT — Question */}
           <div className="w-1/2 h-full flex flex-col bg-background">
-            <div className="flex-1 overflow-y-auto scrollbar-hide px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide min-h-0 px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-9 h-9 rounded-xl bg-success/10 border border-success/20 flex items-center justify-center">
                   <Lightbulb className="w-5 h-5 text-success" />
@@ -247,11 +251,11 @@ export const DailyReviewFlashcardModal = ({
                     </span>
                   )}
                 </div>
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground leading-snug wrap-break-word mb-2">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground leading-snug break-words max-w-full mb-2">
                   {title}
                 </h3>
                 {subtitle && (
-                  <p className="text-success/80 text-base sm:text-lg wrap-break-word">
+                  <p className="text-success/80 text-base sm:text-lg break-words max-w-full">
                     {subtitle}
                   </p>
                 )}
@@ -281,7 +285,7 @@ export const DailyReviewFlashcardModal = ({
 
           {/* BACK — Answer + Feedback */}
           <div className="w-1/2 h-full flex flex-col bg-background">
-            <div className="flex-1 flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide min-h-0 flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-9 h-9 rounded-xl bg-info/10 border border-info/20 flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-info" />
@@ -307,7 +311,7 @@ export const DailyReviewFlashcardModal = ({
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 {REVIEW_BUTTONS.map((btn) => {
                   const isSubmitting = submittingButtonId === btn.id;
                   return (
@@ -316,28 +320,29 @@ export const DailyReviewFlashcardModal = ({
                       type="button"
                       onClick={() => void handleRatingClick(btn)}
                       disabled={submittingButtonId !== null}
-                      className={`relative overflow-hidden rounded-2xl border-2 flex flex-col text-left transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none ${btn.bg} ${btn.textColor}`}
+                      className={`relative group min-w-0 overflow-hidden rounded-xl border bg-card border-border flex flex-col text-left transition-all duration-200 active:scale-95 disabled:opacity-60 disabled:pointer-events-none ${btn.hoverBorder} ${btn.hoverBg}`}
                     >
-                      <div
-                        className={`flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-black uppercase tracking-wide border-b border-black/10 ${btn.headerBg} ${btn.headerText}`}
-                      >
-                        <btn.icon className="w-4 h-4" />
-                        <span>{btn.header}</span>
+                      <div className="flex items-center gap-2 p-3 border-b border-border">
+                        <span className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 group-active:scale-110 transition-transform ${btn.accentBg}`}>
+                          <btn.icon className={`w-3.5 h-3.5 ${btn.accent}${btn.id === 4 ? " animate-pulse" : ""}`} />
+                        </span>
+                        <span className={`text-xs font-semibold ${btn.accent}`}>{btn.header}</span>
+                        <span className={`ml-auto shrink-0 w-1.5 h-1.5 rounded-full ${btn.dot}`} />
                       </div>
                       <div className="flex-1 p-3">
                         {isSubmitting ? (
                           <div className="flex flex-col items-center justify-center gap-2 py-3">
-                            <Loader2 className="w-5 h-5 animate-spin opacity-80" />
-                            <span className="text-xs opacity-80">
+                            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
                               Menyimpan...
                             </span>
                           </div>
                         ) : (
-                          <ul className="space-y-1.5">
+                          <ul className="space-y-1">
                             {btn.descriptions.map((d) => (
                               <li
                                 key={d}
-                                className="flex items-center gap-2 text-xs font-medium"
+                                className="flex items-center gap-1.5 text-[11px] font-normal text-muted-foreground"
                               >
                                 <span
                                   className={`shrink-0 w-1.5 h-1.5 rounded-full ${btn.dot}`}

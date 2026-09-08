@@ -32,12 +32,21 @@ export const useLogin = () => {
       useDashboardModeStore.getState().setActiveRole(user.role)
 
       return setView("success");
-    } catch (error: any) {
-      const message =
-        (error as AxiosError<{ message: string }>).response?.data?.message ||
-        "Terjadi kesalahan";
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      const status = axiosError.response?.status;
+      const backendMessage = axiosError.response?.data?.message || "";
+      const isCredentialError =
+        status === 401 ||
+        /password|email|kredensial|credential|invalid|salah|tidak terdaftar|belum terdaftar/i.test(
+          backendMessage,
+        );
 
-      setError(message);
+      setError(
+        isCredentialError
+          ? "Kata sandi atau email yang Anda masukkan salah"
+          : backendMessage || "Terjadi kesalahan",
+      );
       setLoading(false);
       setView("form");
       // Keep email and password - don't clear them

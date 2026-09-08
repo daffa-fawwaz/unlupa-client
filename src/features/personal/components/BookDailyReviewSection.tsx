@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Play,
-  Flame,
   Star,
   BookOpen,
   Layers,
@@ -9,6 +8,7 @@ import {
   CheckCircle2,
   Clock,
 } from "lucide-react";
+import { FlameBurst } from "@/components/ui/FlameBurst";
 import { useGetDailyBooks } from "@/features/personal/hooks/useGetDailyBooks";
 import { useParentGroupedReview } from "@/features/personal/hooks/useParentGroupedReview";
 import { BookDailyReviewFlashcardModal } from "@/features/personal/components/BookDailyReviewFlashcardModal";
@@ -180,9 +180,7 @@ export const BookDailyReviewSection = () => {
 
         <div className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-border pb-6">
-            <div className="w-16 h-16 rounded-xl bg-primary flex items-center justify-center shrink-0">
-              <Flame className="w-8 h-8 text-primary-foreground" />
-            </div>
+            <FlameBurst solid />
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase mb-2">
                 <Star className="w-3.5 h-3.5" /> Review Harian

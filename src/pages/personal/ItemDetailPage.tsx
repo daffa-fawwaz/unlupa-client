@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   LayoutList,
@@ -157,7 +158,7 @@ export const ItemDetailPage = () => {
     try {
       await deleteItemFn(itemId, bookId || undefined);
       setIsDeleteModalOpen(false);
-      navigate(-1);
+      navigate("/dashboard");
     } catch (err: unknown) {
       // avoid logging raw error objects to prevent leaking internal details
       console.error(
@@ -248,21 +249,37 @@ export const ItemDetailPage = () => {
 
   const handleReactivate = async () => {
     if (!itemId) return;
-    const itemIdToUse = realItemId;
+
+    let itemIdToUse = realItemId;
+    if (!itemIdToUse && bookId) {
+      try {
+        const map = await fetchStatusMap();
+        const entry = map.get(contentRefForItem(bookId, itemId));
+        itemIdToUse = entry?.item_id ?? null;
+      } catch {
+        itemIdToUse = null;
+      }
+    }
+
     if (!itemIdToUse) {
-      console.error("[handleReactivate] No real item_id available");
+      toast.error(
+        "Data item tidak ditemukan. Silakan muat ulang halaman lalu coba lagi.",
+      );
       return;
     }
+
     try {
       await personalService.reactivateItem(itemIdToUse);
       pendingStatusRef.current = "fsrs_active";
       apiStatusRef.current = "fsrs_active";
       setItem((prev) => (prev ? { ...prev, status: "fsrs_active" } : null));
       setIsReactivateModalOpen(false);
+      toast.success("Item berhasil diaktifkan kembali.");
     } catch (err: unknown) {
-      console.error(
-        "[handleReactivate] Terjadi kesalahan saat mengaktifkan kembali item",
-      );
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Gagal mengaktifkan kembali item.";
+      toast.error(msg);
     }
   };
 
@@ -358,7 +375,7 @@ export const ItemDetailPage = () => {
             <LayoutList className="w-5 h-5" />
           </button>
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate("/dashboard")}
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -406,7 +423,7 @@ export const ItemDetailPage = () => {
               Item tidak ditemukan
             </p>
             <button
-              onClick={() => window.history.back()}
+              onClick={() => navigate("/dashboard")}
               className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               Kembali
@@ -423,7 +440,7 @@ export const ItemDetailPage = () => {
 
               <div className="px-8 sm:px-10 py-8">
                 {/* Status Badge */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
                   <div
                     className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusConfig.bg} border ${statusConfig.border}`}
                   >
@@ -437,7 +454,7 @@ export const ItemDetailPage = () => {
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Flame className="w-4 h-4 text-primary" />
                     <span className="text-primary font-bold">
-                      {item.review_count ?? 0}x
+                      {itemDetail?.review_count ?? item.review_count ?? 0}x
                     </span>
                     <span>review</span>
                   </div>

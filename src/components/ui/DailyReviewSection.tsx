@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Flame, Star, Clock, BookOpen, Play, CheckCircle2 } from "lucide-react";
+import { Star, Clock, BookOpen, Play, CheckCircle2 } from "lucide-react";
+import { FlameBurst } from "@/components/ui/FlameBurst";
 import { useMyJoinedClass } from "@/features/classroom/hooks/useClassroom";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import type {
@@ -595,9 +596,7 @@ export const DailyReviewSection = () => {
         <div className="p-6 md:p-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row gap-4 mb-8 border-b border-border pb-6">
-            <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Flame className="w-8 h-8 text-primary" />
-            </div>
+            <FlameBurst />
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wide uppercase mb-2">
                 <Star className="w-3.5 h-3.5" /> Prioritas Kelas

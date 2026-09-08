@@ -1,9 +1,20 @@
+import { useEffect } from "react";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 
+const REDIRECT_DELAY_MS = 1700;
+
 export const LoginSuccess = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => navigate("/dashboard"),
+      REDIRECT_DELAY_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <div className="w-full flex justify-center items-center p-6">
@@ -44,6 +55,13 @@ export const LoginSuccess = () => {
           >
             Masuk ke Dashboard
           </Button>
+
+          <div className="flex items-center justify-center gap-2 mt-4 text-[10px] text-muted-foreground">
+            <div className="w-3 h-3 border border-muted-foreground/30 border-t-primary rounded-full animate-spin" />
+            <span className="animate-pulse">
+              Mengalihkan Anda ke dashboard...
+            </span>
+          </div>
 
           <p className="text-center mt-4 text-[10px] text-muted-foreground">
             Semoga hari ini penuh dengan keberkahan ilmu.
