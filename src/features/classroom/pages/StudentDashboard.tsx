@@ -60,6 +60,7 @@ export const StudentDashboard = () => {
             <TopNavigationBar
               info="Ruang Kelas"
               setIsSidebarOpen={setIsSidebarOpen}
+              backTo="/dashboard"
             />
 
             <HeaderSection
@@ -69,7 +70,7 @@ export const StudentDashboard = () => {
               subtitle="Akses jadwal belajar, bergabung dengan kelas, dan pantau progres hafalan harian secara real-time."
             />
 
-            <div className="grid mt-6 grid-cols-2 gap-2">
+            <div className="grid mt-6 grid-cols-1 sm:grid-cols-2 gap-2">
               <QuickAccessCard
                 title="Masuk Kelas"
                 description="Masukkan kode untuk bergabung dengan kelas."

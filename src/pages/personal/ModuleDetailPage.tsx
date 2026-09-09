@@ -24,6 +24,7 @@ import { useDeleteModule } from "@/features/personal/hooks/useDeleteModule";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { EditModuleModal } from "@/features/personal/components/EditModuleModal";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
+import { rememberScroll, takeScroll } from "@/features/personal/utils/scrollMemory";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
 import { invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
 import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
@@ -318,6 +319,45 @@ export const ModuleDetailPage = () => {
   const module = tree && moduleId ? findModule(tree.modules, moduleId) : null;
   const items = module?.items ?? [];
 
+  // Cari modul induk (modul yang memiliki moduleId sebagai children) — untuk
+  // kembali kontekstual: sub-modul kembali ke induknya, modul level-1 ke buku.
+  const findParentModule = (
+    modules: Module[],
+    childId: string,
+  ): Module | null => {
+    for (const mod of modules) {
+      if (mod.children?.some((c) => c.id === childId)) return mod;
+      if (mod.children?.length) {
+        const found = findParentModule(mod.children, childId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const parentModule = tree && moduleId
+    ? findParentModule(tree.modules, moduleId)
+    : null;
+
+  // Arah kembali = modul induk (bila modul ini bersarang) else halaman buku.
+  const handleBack = () => {
+    const target = parentModule
+      ? `/dashboard/pribadi/book/${bookId}/module/${parentModule.id}`
+      : `/dashboard/pribadi/book/${bookId}`;
+    navigate(target);
+  };
+
+  // Restore posisi scroll saat kembali dari item/sub-modul. Key = pathname
+  // halaman ini, disimpan via rememberScroll() sebelum user membuka detail.
+  // useEffect (passive) berjalan setelah ScrollRestoration (layout effect),
+  // sehingga nilai restore selalu menang.
+  useEffect(() => {
+    if (!loading && module) {
+      const saved = takeScroll(window.location.pathname);
+      if (saved != null) window.scrollTo({ top: saved });
+    }
+  }, [loading, module]);
+
   const handleEditSuccess = () => {
     if (bookId) fetchBookTree(bookId, true); // force refresh setelah edit
   };
@@ -386,7 +426,7 @@ export const ModuleDetailPage = () => {
               <LayoutList className="w-5 h-5" />
             </button>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={handleBack}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -468,7 +508,7 @@ className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-
             </div>
             <p className="text-muted-foreground text-sm">Modul tidak ditemukan.</p>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(`/dashboard/pribadi/book/${bookId}`)}
               className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               Kembali
@@ -568,11 +608,12 @@ className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-
                     .map((child) => (
                       <button
                         key={child.id}
-                        onClick={() =>
+                        onClick={() => {
+                          rememberScroll(window.location.pathname);
                           navigate(
                             `/dashboard/pribadi/book/${bookId}/module/${child.id}`,
-                          )
-                        }
+                          );
+                        }}
                         className="w-full group flex items-center gap-4 p-4 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border transition-all duration-300 text-left"
                       >
                         <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
@@ -654,13 +695,14 @@ className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-
               </div>
 
               {items.length > 0 ? (
-                <div className="p-3 sm:p-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                <div className="p-3 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {items.map((item: BookItem) => (
                     <BookItemCard
                       key={item.id}
                       item={item}
                       bookId={bookId!}
                       realItemId={statusMap.get(contentRefForItem(bookId!, item.id))?.item_id}
+                      onOpen={() => rememberScroll(window.location.pathname)}
                     />
                   ))}
                 </div>

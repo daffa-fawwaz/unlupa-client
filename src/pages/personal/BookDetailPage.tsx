@@ -28,6 +28,7 @@ import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
+import { rememberScroll, takeScroll } from "@/features/personal/utils/scrollMemory";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
 import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
 import type { Module } from "@/features/personal/types/personal.types";
@@ -456,9 +457,14 @@ export const BookDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { book, loading, error, fetchBookDetail } = useBookDetail();
-  const { tree, fetchBookTree, addModuleToTree, addItemToTree } = useBookTree();
+  const { tree, loading: treeLoading, fetchBookTree, addModuleToTree, addItemToTree } = useBookTree();
   const { statusMap, fetchStatusMap } = useBookItemStatusMap();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Konteks halaman ini selalu ruang pribadi (route /dashboard/pribadi/...),
+  // jadi tombol kembali mengarahkan deterministik ke workspace pribadi.
+  // Hindari history.back()/navigate(-1) agar tidak bolak-balik ke modul/item.
+  const handleBack = () => navigate("/dashboard/pribadi");
 
   // Modal flow: null | "picker" | "module" | "item"
   const [modalStep, setModalStep] = useState<
@@ -544,6 +550,17 @@ export const BookDetailPage = () => {
   const items = tree?.items ?? [];
   const nextOrder = modules.length + 1;
 
+  // Restore posisi scroll saat kembali dari modul/item. Key = pathname halaman
+  // ini, disimpan via rememberScroll() sebelum user membuka detail. useEffect
+  // (passive) berjalan setelah ScrollRestoration (layout effect), sehingga
+  // nilai restore selalu menang.
+  useEffect(() => {
+    if (!treeLoading && tree) {
+      const saved = takeScroll(window.location.pathname);
+      if (saved != null) window.scrollTo({ top: saved });
+    }
+  }, [treeLoading, tree]);
+
   return (
     <div className="min-h-screen bg-background text-foreground font-primary selection:bg-primary/30">
       {/* Ambient background */}
@@ -569,7 +586,7 @@ export const BookDetailPage = () => {
               <LayoutList className="w-5 h-5" />
             </button>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={handleBack}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -754,7 +771,7 @@ export const BookDetailPage = () => {
                       Modul ({modules.length})
                     </h3>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {modules
                       .slice()
                       .sort((a, b) => a.order - b.order)
@@ -763,11 +780,12 @@ export const BookDetailPage = () => {
                           key={mod.id}
                           module={mod}
                           bookId={id!}
-                          onClick={() =>
+                          onClick={() => {
+                            rememberScroll(window.location.pathname);
                             navigate(
                               `/dashboard/pribadi/book/${id}/module/${mod.id}`,
-                            )
-                          }
+                            );
+                          }}
                         />
                       ))}
                   </div>
@@ -786,7 +804,7 @@ export const BookDetailPage = () => {
                     </div>
                   </div>
                   <div className="p-8 pt-2">
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       {items
                         .slice()
                         .sort((a, b) => a.order - b.order)
@@ -796,6 +814,7 @@ export const BookDetailPage = () => {
                             item={item}
                             bookId={id!}
                             realItemId={statusMap.get(contentRefForItem(id!, item.id))?.item_id}
+                            onOpen={() => rememberScroll(window.location.pathname)}
                           />
                         ))}
                     </div>

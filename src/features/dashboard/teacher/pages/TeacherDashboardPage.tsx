@@ -139,7 +139,7 @@ export const TeacherDashboardPage = () => {
               }
             />
           ) : (
-            <div className="grid md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {classrooms?.map((classroom, index) => {
                 const toneIndex = index % tones.length;
                 return (

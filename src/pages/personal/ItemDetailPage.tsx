@@ -42,6 +42,7 @@ import {
 import type {
   BookItem,
   CreatedItem,
+  Module,
 } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
@@ -79,6 +80,34 @@ export const ItemDetailPage = () => {
   const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
   const { fetchStatusMap } = useBookItemStatusMap();
   const itemImage = item?.image || itemDetail?.image;
+
+  // Cari modul (terdalam) yang benar-benar menaungi itemId pada BookTree.
+  const findContainingModule = (
+    modules: Module[],
+    itemId: string,
+  ): Module | null => {
+    for (const mod of modules) {
+      if (mod.items?.some((i) => i.id === itemId)) return mod;
+      if (mod.children?.length) {
+        const found = findContainingModule(mod.children, itemId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const parentModule = tree
+    ? findContainingModule(tree.modules ?? [], itemId!)
+    : null;
+
+  // Arah kembali = modul asal item (agar tetap di daftar item untuk melanjutkan
+  // aktivasi item berikutnya); fallback ke halaman buku bila item langsung di bawah buku.
+  const getParentUrl = () =>
+    parentModule
+      ? `/dashboard/pribadi/book/${bookId}/module/${parentModule.id}`
+      : `/dashboard/pribadi/book/${bookId}`;
+
+  const handleBack = () => navigate(getParentUrl());
 
   // Load item: fetch tree for content, fetch statusMap for status
   useEffect(() => {
@@ -158,7 +187,7 @@ export const ItemDetailPage = () => {
     try {
       await deleteItemFn(itemId, bookId || undefined);
       setIsDeleteModalOpen(false);
-      navigate("/dashboard");
+      navigate(getParentUrl());
     } catch (err: unknown) {
       // avoid logging raw error objects to prevent leaking internal details
       console.error(
@@ -375,7 +404,7 @@ export const ItemDetailPage = () => {
             <LayoutList className="w-5 h-5" />
           </button>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={handleBack}
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -423,7 +452,7 @@ export const ItemDetailPage = () => {
               Item tidak ditemukan
             </p>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(`/dashboard/pribadi/book/${bookId}`)}
               className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               Kembali
