@@ -771,7 +771,7 @@ export const BookDetailPage = () => {
                       Modul ({modules.length})
                     </h3>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {modules
                       .slice()
                       .sort((a, b) => a.order - b.order)
@@ -804,7 +804,7 @@ export const BookDetailPage = () => {
                     </div>
                   </div>
                   <div className="p-8 pt-2">
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       {items
                         .slice()
                         .sort((a, b) => a.order - b.order)

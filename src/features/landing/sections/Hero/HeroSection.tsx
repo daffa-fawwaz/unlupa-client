@@ -141,13 +141,13 @@ export const HeroSection = () => {
                 Otomatis
               </span>
             </div>
-            <div className="grid grid-cols-3 mt-6 border-t border-border">
-              <div className="px-4 py-6 text-center border-r border-border">
+            <div className="grid grid-cols-1 sm:grid-cols-3 mt-6 border-t border-border">
+              <div className="px-4 py-6 text-center border-b sm:border-b-0 sm:border-r border-border">
                 <p className="text-4xl font-bold font-serif text-primary leading-none">24</p>
                 <p className="text-sm font-medium text-foreground mt-2">Review Hari Ini</p>
                 <p className="text-xs text-muted-foreground mt-1">Item Perlu Ditinjau</p>
               </div>
-              <div className="px-4 py-6 text-center border-r border-border">
+              <div className="px-4 py-6 text-center border-b sm:border-b-0 sm:border-r border-border">
                 <p className="text-4xl font-bold font-serif text-success leading-none">18</p>
                 <p className="text-sm font-medium text-foreground mt-2">Selesai Hari Ini</p>
                 <p className="text-xs text-muted-foreground mt-1">Item Telah Diselesaikan</p>
@@ -191,7 +191,7 @@ export const HeroSection = () => {
     <main className="relative min-h-screen bg-background overflow-hidden">
       {/* Hero Content */}
       <section className="relative min-h-screen flex flex-col pt-24 pb-24 md:pb-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex-1 flex flex-col w-full">
           {/* Hero Header */}
           <div className="mb-16 md:mb-24 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
@@ -209,7 +209,7 @@ export const HeroSection = () => {
           {/* Hero Slider - single active slide, no horizontal scroll */}
           <div className="relative flex-1 flex flex-col items-center w-full">
             <div className="relative w-full max-w-5xl mx-auto min-h-[500px] md:min-h-[600px] flex items-center justify-center">
-              <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                 {/* Text Content */}
                 <div className="min-w-0 w-full max-w-xl text-center lg:text-left order-2 lg:order-1 mx-auto lg:mx-0">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">

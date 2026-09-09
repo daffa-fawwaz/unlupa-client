@@ -21,7 +21,7 @@ export const LandingNavbar = () => {
         scrolled ? "bg-background/80 backdrop-blur-xl border-border" : "bg-transparent border-transparent"
       }`}
     >
-      <div className="container mx-auto px-6 flex items-center justify-between">
+      <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Left: Logo & Title */}
         <div className="flex items-center gap-3 group cursor-pointer">
           <div className="relative w-10 h-10 flex items-center justify-center">
@@ -39,7 +39,7 @@ export const LandingNavbar = () => {
         </div>
 
         {/* Center: Navigation Links */}
-        <div className="hidden md:flex items-center gap-12 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div className="hidden lg:flex items-center gap-12 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
           {["Metode", "Fitur", "Biaya"].map((item) => (
             <a
               key={item}
@@ -53,7 +53,7 @@ export const LandingNavbar = () => {
         </div>
 
         {/* Right: Buttons */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <ThemeToggle />
           <Link
             to="/login"
@@ -71,7 +71,7 @@ export const LandingNavbar = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+          className="lg:hidden p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? (
@@ -84,8 +84,8 @@ export const LandingNavbar = () => {
 
       {/* Mobile Menu Dropdown */}
       <div
-        className={`md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border transition-all duration-300 ease-in-out overflow-hidden ${
-          isMenuOpen ? "max-h-100 opacity-100" : "max-h-0 opacity-0"
+        className={`lg:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border transition-all duration-300 ease-in-out overflow-hidden overflow-y-auto ${
+          isMenuOpen ? "max-h-[85vh] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div className="flex flex-col p-6 gap-4">

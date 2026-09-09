@@ -21,7 +21,7 @@ export const LandingFooter = () => {
   return (
     <footer className="border-t border-border bg-background py-16">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row gap-12 md:gap-16">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-16">
           <div className="md:w-72 shrink-0">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded border border-border flex items-center justify-center overflow-hidden bg-muted">
@@ -40,7 +40,7 @@ export const LandingFooter = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 flex-1">
             <div>
               <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">
                 Jelajahi

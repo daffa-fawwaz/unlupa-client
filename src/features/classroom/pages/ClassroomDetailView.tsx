@@ -216,7 +216,7 @@ export const ClassroomDetailView = () => {
             </div>
 
             {isTeacher ? (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={() => setActiveTab("books")}
                   className={`p-5 rounded-xl border text-left transition-all group ${activeTab === "books" ? "bg-success/10 border-success/40 ring-1 ring-success/20" : "border-border bg-surface-1 hover:bg-surface-2"}`}
@@ -310,7 +310,7 @@ export const ClassroomDetailView = () => {
                 </div>
 
                 {filteredBooks.length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {filteredBooks.map((book, idx) => (
                       <BookCard
                         classroomId={classroomId}

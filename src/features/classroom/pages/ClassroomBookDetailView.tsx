@@ -767,7 +767,7 @@ export const ClassroomBookDetailView = () => {
               className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
             >
               <ListPlus className="w-4 h-4" />
-              <span>Tambah Hafalan</span>
+              <span className="hidden sm:inline">Tambah Hafalan</span>
             </button>
           )}
         </div>
@@ -929,7 +929,7 @@ export const ClassroomBookDetailView = () => {
                       Modul ({modules.length})
                     </h3>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {modules
                       .slice()
                       .sort((a, b) => a.order - b.order)
@@ -959,7 +959,7 @@ export const ClassroomBookDetailView = () => {
                     </div>
                   </div>
                   <div className="p-8 pt-2">
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       {items
                         .slice()
                         .sort((a, b) => a.order - b.order)
