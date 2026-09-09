@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -50,6 +50,7 @@ import type {
 export const ItemDetailPage = () => {
   const { itemId, bookId } = useParams<{ itemId: string; bookId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
   const [realItemId, setRealItemId] = useState<string | null>(null);
@@ -79,6 +80,16 @@ export const ItemDetailPage = () => {
   const { activateFsrs, loading: isActivatingFsrs } = useActivateFsrsPhase();
   const { fetchStatusMap } = useBookItemStatusMap();
   const itemImage = item?.image || itemDetail?.image;
+
+  const handleBack = () => {
+    // Kembali ke konteks sebelumnya bila ada riwayat navigasi;
+    // fallback ke halaman induk (buku) saat user mendarat langsung.
+    if (window.history.length > 1 && location.key !== "default") {
+      navigate(-1);
+    } else {
+      navigate(`/dashboard/pribadi/book/${bookId}`);
+    }
+  };
 
   // Load item: fetch tree for content, fetch statusMap for status
   useEffect(() => {
@@ -375,7 +386,7 @@ export const ItemDetailPage = () => {
             <LayoutList className="w-5 h-5" />
           </button>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={handleBack}
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -423,7 +434,7 @@ export const ItemDetailPage = () => {
               Item tidak ditemukan
             </p>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(`/dashboard/pribadi/book/${bookId}`)}
               className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               Kembali

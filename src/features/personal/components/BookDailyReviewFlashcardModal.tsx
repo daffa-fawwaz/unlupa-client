@@ -9,11 +9,11 @@ import {
   BookOpen,
   Lightbulb,
   Brain,
-  Image,
   Frown,
   Meh,
   Smile,
   Flame,
+  MapPin,
 } from "lucide-react";
 import type {
   BookDailyTask,
@@ -22,6 +22,8 @@ import type {
 } from "@/features/personal/types/personal.types";
 import { useReviewIntervalBook } from "@/features/personal/hooks/useReviewIntervalBook";
 import { useReviewFsrsBook } from "@/features/personal/hooks/useReviewFsrsBook";
+import { useBookItemOrigin } from "@/features/personal/hooks/useBookItemOrigin";
+import type { BookItemOrigin } from "@/features/personal/utils/bookReviewUtils";
 import { personalService } from "@/features/personal/services/personal.services";
 
 interface BookDailyReviewFlashcardModalProps {
@@ -110,6 +112,7 @@ export const BookDailyReviewFlashcardModal = ({
 
   const { reviewInterval, loading: loadingInterval } = useReviewIntervalBook();
   const { reviewFsrs, loading: loadingFsrs } = useReviewFsrsBook();
+  const origin = useBookItemOrigin(task?.content_ref);
 
   useEffect(() => {
     if (!isOpen || !task) return;
@@ -197,6 +200,30 @@ export const BookDailyReviewFlashcardModal = ({
 
   const progressPct = Math.round((queuePosition / queueTotal) * 100);
 
+  const renderOriginBadge = (itemOrigin: BookItemOrigin | null) => {
+    if (!itemOrigin) return null;
+
+    const label = [
+      itemOrigin.bookTitle,
+      itemOrigin.halaqah?.order != null
+        ? `Halaqah ke-${itemOrigin.halaqah.order}`
+        : null,
+      itemOrigin.subModule?.title,
+      itemOrigin.order != null ? `Urutan ke-${itemOrigin.order}` : null,
+    ]
+      .filter(Boolean)
+      .join(" • ");
+
+    return (
+      <div className="flex flex-wrap items-center gap-1.5 mb-6">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-1 border border-border text-[11px] font-semibold text-muted-foreground">
+          <MapPin className="w-3 h-3 text-primary shrink-0" />
+          <span className="truncate">{label}</span>
+        </span>
+      </div>
+    );
+  };
+
   return createPortal(
     <div className="fixed inset-0 z-9999 bg-background flex flex-col">
       {/* Top bar */}
@@ -243,7 +270,9 @@ export const BookDailyReviewFlashcardModal = ({
           >
 
             {/* Scrollable content area */}
-            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide min-h-0 px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
+            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide scroll-smooth min-h-0 max-h-[80vh] px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
+              {renderOriginBadge(origin)}
+
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-9 h-9 rounded-xl bg-info/20 border border-info/30 flex items-center justify-center">
                   <Brain className="w-5 h-5 text-info" />
@@ -301,7 +330,9 @@ export const BookDailyReviewFlashcardModal = ({
               transform: "rotateY(180deg)",
             }}
           >
-            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide min-h-0 flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
+            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide scroll-smooth min-h-0 max-h-[80vh] flex flex-col px-4 sm:px-8 md:px-16 py-8 max-w-3xl mx-auto w-full [-webkit-overflow-scrolling:touch]">
+              {renderOriginBadge(origin)}
+
               {/* Answer */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-9 h-9 rounded-xl bg-success/20 border border-success/30 flex items-center justify-center">

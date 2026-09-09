@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import {
   AlertCircle,
   AlignLeft,
@@ -287,6 +287,7 @@ export const ModuleDetailPage = () => {
     moduleId: string;
   }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { tree, loading, error, fetchBookTree, addItemToModule, addChildModuleToTree } = useBookTree();
   const { statusMap, fetchStatusMap } = useBookItemStatusMap();
   const { deleteModule } = useDeleteModule();
@@ -317,6 +318,16 @@ export const ModuleDetailPage = () => {
 
   const module = tree && moduleId ? findModule(tree.modules, moduleId) : null;
   const items = module?.items ?? [];
+
+  const handleBack = () => {
+    // Kembali ke konteks sebelumnya bila ada riwayat navigasi;
+    // fallback ke halaman induk (buku) saat user mendarat langsung.
+    if (window.history.length > 1 && location.key !== "default") {
+      navigate(-1);
+    } else {
+      navigate(`/dashboard/pribadi/book/${bookId}`);
+    }
+  };
 
   const handleEditSuccess = () => {
     if (bookId) fetchBookTree(bookId, true); // force refresh setelah edit
@@ -386,7 +397,7 @@ export const ModuleDetailPage = () => {
               <LayoutList className="w-5 h-5" />
             </button>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={handleBack}
               className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border text-muted-foreground hover:text-foreground transition-all duration-300 text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -468,7 +479,7 @@ className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-
             </div>
             <p className="text-muted-foreground text-sm">Modul tidak ditemukan.</p>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(`/dashboard/pribadi/book/${bookId}`)}
               className="px-5 py-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               Kembali
