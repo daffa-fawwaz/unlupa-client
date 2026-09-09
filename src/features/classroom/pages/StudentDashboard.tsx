@@ -60,6 +60,7 @@ export const StudentDashboard = () => {
             <TopNavigationBar
               info="Ruang Kelas"
               setIsSidebarOpen={setIsSidebarOpen}
+              backTo="/dashboard"
             />
 
             <HeaderSection

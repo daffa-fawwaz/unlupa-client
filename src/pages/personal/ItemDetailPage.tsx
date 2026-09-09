@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useParams, useNavigate, useLocation } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -42,6 +42,7 @@ import {
 import type {
   BookItem,
   CreatedItem,
+  Module,
 } from "@/features/personal/types/personal.types";
 
 /* ------------------------------------------------------------------ */
@@ -50,7 +51,6 @@ import type {
 export const ItemDetailPage = () => {
   const { itemId, bookId } = useParams<{ itemId: string; bookId: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
   const [realItemId, setRealItemId] = useState<string | null>(null);
@@ -81,15 +81,33 @@ export const ItemDetailPage = () => {
   const { fetchStatusMap } = useBookItemStatusMap();
   const itemImage = item?.image || itemDetail?.image;
 
-  const handleBack = () => {
-    // Kembali ke konteks sebelumnya bila ada riwayat navigasi;
-    // fallback ke halaman induk (buku) saat user mendarat langsung.
-    if (window.history.length > 1 && location.key !== "default") {
-      navigate(-1);
-    } else {
-      navigate(`/dashboard/pribadi/book/${bookId}`);
+  // Cari modul (terdalam) yang benar-benar menaungi itemId pada BookTree.
+  const findContainingModule = (
+    modules: Module[],
+    itemId: string,
+  ): Module | null => {
+    for (const mod of modules) {
+      if (mod.items?.some((i) => i.id === itemId)) return mod;
+      if (mod.children?.length) {
+        const found = findContainingModule(mod.children, itemId);
+        if (found) return found;
+      }
     }
+    return null;
   };
+
+  const parentModule = tree
+    ? findContainingModule(tree.modules ?? [], itemId!)
+    : null;
+
+  // Arah kembali = modul asal item (agar tetap di daftar item untuk melanjutkan
+  // aktivasi item berikutnya); fallback ke halaman buku bila item langsung di bawah buku.
+  const getParentUrl = () =>
+    parentModule
+      ? `/dashboard/pribadi/book/${bookId}/module/${parentModule.id}`
+      : `/dashboard/pribadi/book/${bookId}`;
+
+  const handleBack = () => navigate(getParentUrl());
 
   // Load item: fetch tree for content, fetch statusMap for status
   useEffect(() => {
@@ -169,7 +187,7 @@ export const ItemDetailPage = () => {
     try {
       await deleteItemFn(itemId, bookId || undefined);
       setIsDeleteModalOpen(false);
-      navigate("/dashboard");
+      navigate(getParentUrl());
     } catch (err: unknown) {
       // avoid logging raw error objects to prevent leaking internal details
       console.error(

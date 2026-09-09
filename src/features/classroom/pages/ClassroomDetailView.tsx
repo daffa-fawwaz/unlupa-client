@@ -84,7 +84,7 @@ export const ClassroomDetailView = () => {
             Akses Ditolak atau Kelas Tidak Tersedia
           </p>
           <Button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/dashboard/kelas")}
             variant="outline"
             size="sm"
             className="border-border text-foreground"
@@ -138,6 +138,7 @@ export const ClassroomDetailView = () => {
           <TopNavigationBar
             info={classroom.name}
             setIsSidebarOpen={setIsSidebarOpen}
+            backTo="/dashboard/kelas"
           />
         </div>
       </div>

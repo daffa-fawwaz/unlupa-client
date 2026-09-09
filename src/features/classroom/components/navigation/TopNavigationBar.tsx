@@ -4,11 +4,15 @@ import { useNavigate } from "react-router";
 interface TopNavigationBarProps {
   setIsSidebarOpen: (open: boolean) => void;
   info: string;
+  /** Rute tujuan tombol Kembali. Navigasi eksplisit (bukan history.back) agar
+   *  tidak bolak-balik ke halaman detail yang sebelumnya dikunjungi. */
+  backTo: string;
 }
 
 export const TopNavigationBar = ({
   setIsSidebarOpen,
   info,
+  backTo,
 }: TopNavigationBarProps) => {
   const navigate = useNavigate();
 
@@ -19,7 +23,7 @@ export const TopNavigationBar = ({
         {/* Tombol Kembali */}
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(backTo)}
           className="flex items-center gap-3 text-gray-400 hover:text-white transition-all group cursor-pointer"
         >
           <div className="p-2.5 rounded-2xl border border-white/5 group-hover:border-white/20 bg-white/5 group-hover:bg-white/10 transition-all duration-300 backdrop-blur-xl shadow-lg">

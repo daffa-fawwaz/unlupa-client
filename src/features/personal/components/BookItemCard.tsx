@@ -9,9 +9,12 @@ interface BookItemCardProps {
   /** Real item_id from the `items` table (state ID). If provided, stability &
    *  next_review_at will be fetched. If omitted the card renders without those stats. */
   realItemId?: string;
+  /** Dipanggil tepat sebelum membuka halaman item — digunakan halaman induk
+   *  untuk menyimpan posisi scroll sebelum navigasi ke detail. */
+  onOpen?: () => void;
 }
 
-export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) => {
+export const BookItemCard = ({ item, bookId, realItemId, onOpen }: BookItemCardProps) => {
   const navigate = useNavigate();
   // Only fetch detail when we have the correct item state ID
   const detail = useItemDetailCached(realItemId ?? "");
@@ -21,9 +24,14 @@ export const BookItemCard = ({ item, bookId, realItemId }: BookItemCardProps) =>
   // Fall back to detail fetch only if the tree didn't include it.
   const stability = item.stability ?? detail?.stability;
 
+  const handleOpen = () => {
+    onOpen?.();
+    navigate(`/dashboard/pribadi/book/${bookId}/item/${item.id}`);
+  };
+
   return (
     <button
-      onClick={() => navigate(`/dashboard/pribadi/book/${bookId}/item/${item.id}`)}
+      onClick={handleOpen}
       className="group relative bg-card border border-border rounded-xl p-3 sm:p-6 cursor-pointer transition-colors hover:-translate-y-1 hover:border-primary/40 flex flex-col overflow-hidden text-left"
     >
       {/* Background */}

@@ -208,7 +208,7 @@ export const BookDailyReviewFlashcardModal = ({
       itemOrigin.halaqah?.order != null
         ? `Halaqah ke-${itemOrigin.halaqah.order}`
         : null,
-      itemOrigin.subModule?.title,
+      ...(itemOrigin.subModules ?? []).map((m) => m.title),
       itemOrigin.order != null ? `Urutan ke-${itemOrigin.order}` : null,
     ]
       .filter(Boolean)

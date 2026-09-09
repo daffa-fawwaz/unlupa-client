@@ -60,6 +60,7 @@ export const StudentQuranClassroomDetailView = ({
           <TopNavigationBar
             info={classroom.name}
             setIsSidebarOpen={setIsSidebarOpen}
+            backTo="/dashboard/kelas"
           />
         </div>
       </div>

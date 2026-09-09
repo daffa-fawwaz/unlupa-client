@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import {
   AlertCircle,
   AlignLeft,
@@ -28,6 +28,7 @@ import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
+import { rememberScroll, takeScroll } from "@/features/personal/utils/scrollMemory";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
 import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
 import type { Module } from "@/features/personal/types/personal.types";
@@ -455,21 +456,15 @@ const ModuleCard = ({
 export const BookDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const { book, loading, error, fetchBookDetail } = useBookDetail();
-  const { tree, fetchBookTree, addModuleToTree, addItemToTree } = useBookTree();
+  const { tree, loading: treeLoading, fetchBookTree, addModuleToTree, addItemToTree } = useBookTree();
   const { statusMap, fetchStatusMap } = useBookItemStatusMap();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleBack = () => {
-    // Kembali ke konteks sebelumnya bila ada riwayat navigasi;
-    // fallback ke workspace pribadi saat user mendarat langsung.
-    if (window.history.length > 1 && location.key !== "default") {
-      navigate(-1);
-    } else {
-      navigate("/dashboard/pribadi");
-    }
-  };
+  // Konteks halaman ini selalu ruang pribadi (route /dashboard/pribadi/...),
+  // jadi tombol kembali mengarahkan deterministik ke workspace pribadi.
+  // Hindari history.back()/navigate(-1) agar tidak bolak-balik ke modul/item.
+  const handleBack = () => navigate("/dashboard/pribadi");
 
   // Modal flow: null | "picker" | "module" | "item"
   const [modalStep, setModalStep] = useState<
@@ -554,6 +549,17 @@ export const BookDetailPage = () => {
   const modules = tree?.modules ?? [];
   const items = tree?.items ?? [];
   const nextOrder = modules.length + 1;
+
+  // Restore posisi scroll saat kembali dari modul/item. Key = pathname halaman
+  // ini, disimpan via rememberScroll() sebelum user membuka detail. useEffect
+  // (passive) berjalan setelah ScrollRestoration (layout effect), sehingga
+  // nilai restore selalu menang.
+  useEffect(() => {
+    if (!treeLoading && tree) {
+      const saved = takeScroll(window.location.pathname);
+      if (saved != null) window.scrollTo({ top: saved });
+    }
+  }, [treeLoading, tree]);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-primary selection:bg-primary/30">
@@ -774,11 +780,12 @@ export const BookDetailPage = () => {
                           key={mod.id}
                           module={mod}
                           bookId={id!}
-                          onClick={() =>
+                          onClick={() => {
+                            rememberScroll(window.location.pathname);
                             navigate(
                               `/dashboard/pribadi/book/${id}/module/${mod.id}`,
-                            )
-                          }
+                            );
+                          }}
                         />
                       ))}
                   </div>
@@ -807,6 +814,7 @@ export const BookDetailPage = () => {
                             item={item}
                             bookId={id!}
                             realItemId={statusMap.get(contentRefForItem(id!, item.id))?.item_id}
+                            onOpen={() => rememberScroll(window.location.pathname)}
                           />
                         ))}
                     </div>

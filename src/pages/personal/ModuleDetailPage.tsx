@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import {
   AlertCircle,
   AlignLeft,
@@ -24,6 +24,7 @@ import { useDeleteModule } from "@/features/personal/hooks/useDeleteModule";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { EditModuleModal } from "@/features/personal/components/EditModuleModal";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
+import { rememberScroll, takeScroll } from "@/features/personal/utils/scrollMemory";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
 import { invalidateBookTreeCache } from "@/features/personal/hooks/useBookTree";
 import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
@@ -287,7 +288,6 @@ export const ModuleDetailPage = () => {
     moduleId: string;
   }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const { tree, loading, error, fetchBookTree, addItemToModule, addChildModuleToTree } = useBookTree();
   const { statusMap, fetchStatusMap } = useBookItemStatusMap();
   const { deleteModule } = useDeleteModule();
@@ -319,15 +319,44 @@ export const ModuleDetailPage = () => {
   const module = tree && moduleId ? findModule(tree.modules, moduleId) : null;
   const items = module?.items ?? [];
 
-  const handleBack = () => {
-    // Kembali ke konteks sebelumnya bila ada riwayat navigasi;
-    // fallback ke halaman induk (buku) saat user mendarat langsung.
-    if (window.history.length > 1 && location.key !== "default") {
-      navigate(-1);
-    } else {
-      navigate(`/dashboard/pribadi/book/${bookId}`);
+  // Cari modul induk (modul yang memiliki moduleId sebagai children) — untuk
+  // kembali kontekstual: sub-modul kembali ke induknya, modul level-1 ke buku.
+  const findParentModule = (
+    modules: Module[],
+    childId: string,
+  ): Module | null => {
+    for (const mod of modules) {
+      if (mod.children?.some((c) => c.id === childId)) return mod;
+      if (mod.children?.length) {
+        const found = findParentModule(mod.children, childId);
+        if (found) return found;
+      }
     }
+    return null;
   };
+
+  const parentModule = tree && moduleId
+    ? findParentModule(tree.modules, moduleId)
+    : null;
+
+  // Arah kembali = modul induk (bila modul ini bersarang) else halaman buku.
+  const handleBack = () => {
+    const target = parentModule
+      ? `/dashboard/pribadi/book/${bookId}/module/${parentModule.id}`
+      : `/dashboard/pribadi/book/${bookId}`;
+    navigate(target);
+  };
+
+  // Restore posisi scroll saat kembali dari item/sub-modul. Key = pathname
+  // halaman ini, disimpan via rememberScroll() sebelum user membuka detail.
+  // useEffect (passive) berjalan setelah ScrollRestoration (layout effect),
+  // sehingga nilai restore selalu menang.
+  useEffect(() => {
+    if (!loading && module) {
+      const saved = takeScroll(window.location.pathname);
+      if (saved != null) window.scrollTo({ top: saved });
+    }
+  }, [loading, module]);
 
   const handleEditSuccess = () => {
     if (bookId) fetchBookTree(bookId, true); // force refresh setelah edit
@@ -579,11 +608,12 @@ className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-
                     .map((child) => (
                       <button
                         key={child.id}
-                        onClick={() =>
+                        onClick={() => {
+                          rememberScroll(window.location.pathname);
                           navigate(
                             `/dashboard/pribadi/book/${bookId}/module/${child.id}`,
-                          )
-                        }
+                          );
+                        }}
                         className="w-full group flex items-center gap-4 p-4 rounded-2xl bg-surface-1 hover:bg-surface-2 border border-border hover:border-border transition-all duration-300 text-left"
                       >
                         <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
@@ -672,6 +702,7 @@ className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-1 hover:bg-
                       item={item}
                       bookId={bookId!}
                       realItemId={statusMap.get(contentRefForItem(bookId!, item.id))?.item_id}
+                      onOpen={() => rememberScroll(window.location.pathname)}
                     />
                   ))}
                 </div>
