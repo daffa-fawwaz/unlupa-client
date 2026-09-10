@@ -196,7 +196,7 @@ export const DailyReviewFlashcardModal = ({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-9999 bg-background flex flex-col">
+    <div className="fixed inset-x-0 top-0 z-9999 bg-background flex flex-col h-[100dvh]">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center gap-3 flex-1 min-w-0">
