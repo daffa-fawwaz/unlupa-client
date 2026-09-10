@@ -1,5 +1,6 @@
 import { LoginForm } from "@/features/auth/login/components/LoginForm";
 import { LoginLoading } from "@/features/auth/login/components/LoginLoading";
+import { LoginSuccess } from "@/features/auth/login/components/LoginSuccess";
 import { useLogin } from "@/features/auth/login/hooks/useLogin";
 
 export const LoginPage = () => {
@@ -19,6 +20,7 @@ export const LoginPage = () => {
           />
         )}
         {view === "loading" && <LoginLoading />}
+        {view === "success" && <LoginSuccess />}
       </div>
     </>
   );

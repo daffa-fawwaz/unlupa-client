@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import type {
   LoginPayload,
@@ -8,6 +8,7 @@ import { loginService } from "@/features/auth/login/services/login.services";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { useDashboardModeStore } from "@/features/dashboard/stores/dashboard-mode.store";
+import { toast } from "sonner";
 
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -15,9 +16,16 @@ export const useLogin = () => {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const login = async (payload: LoginPayload) => {
     setLoading(true);
@@ -31,11 +39,17 @@ export const useLogin = () => {
       const token = response.data.data.token;
       setAuth(user, token);
 
-      useDashboardModeStore.getState().setActiveRole(user.role)
+      useDashboardModeStore.getState().setActiveRole(user.role);
 
-      // Langsung alihkan ke dashboard — tanpa modal "Selamat Datang Kembali".
-      // Sapaan kini tampil sebagai greeting di halaman dashboard utama.
-      navigate("/dashboard");
+      setView("success");
+
+      timeoutRef.current = setTimeout(() => {
+        navigate("/dashboard");
+        toast.success(`Berhasil masuk. Selamat datang kembali, ${user.name}!`, {
+          duration: 4000,
+        });
+      }, 1500);
+
       return true;
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
