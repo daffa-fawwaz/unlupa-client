@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import type {
   LoginPayload,
   LoginView,
@@ -16,6 +17,7 @@ export const useLogin = () => {
   const [password, setPassword] = useState("");
 
   const setAuth = useAuthStore((state) => state.setAuth);
+  const navigate = useNavigate();
 
   const login = async (payload: LoginPayload) => {
     setLoading(true);
@@ -31,7 +33,10 @@ export const useLogin = () => {
 
       useDashboardModeStore.getState().setActiveRole(user.role)
 
-      return setView("success");
+      // Langsung alihkan ke dashboard — tanpa modal "Selamat Datang Kembali".
+      // Sapaan kini tampil sebagai greeting di halaman dashboard utama.
+      navigate("/dashboard");
+      return true;
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       const status = axiosError.response?.status;
