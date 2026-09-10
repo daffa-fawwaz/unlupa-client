@@ -2,16 +2,45 @@ import { useState } from "react";
 import type { CSSProperties } from "react";
 import { Flame } from "lucide-react";
 
-const SPARKS = [
-  { x: -13, y: -8, delay: 0, color: "bg-linear-to-br from-amber-400 to-orange-500" },
-  { x: 13, y: -10, delay: 40, color: "bg-linear-to-br from-orange-400 to-red-500" },
-  { x: -16, y: 4, delay: 80, color: "bg-linear-to-br from-amber-300 to-orange-500" },
-  { x: 16, y: 5, delay: 20, color: "bg-linear-to-br from-red-400 to-orange-500" },
-  { x: -8, y: -15, delay: 60, color: "bg-linear-to-br from-amber-400 to-orange-500" },
-  { x: 9, y: -16, delay: 100, color: "bg-linear-to-br from-orange-400 to-red-500" },
-  { x: -5, y: 8, delay: 120, color: "bg-linear-to-br from-amber-400 to-orange-500" },
-  { x: 5, y: 9, delay: 50, color: "bg-linear-to-br from-red-400 to-amber-400" },
-] as const;
+interface BurstParticle {
+  angle: number;
+  dist: number;
+  size: number;
+  color: string;
+  delay: number;
+}
+
+const PARTICLE_COLORS = [
+  "#ffd166",
+  "#ffb84d",
+  "#ff9f43",
+  "#ff8a3d",
+  "#ff6b35",
+  "#ff512f",
+].map((hex) => hex + "cc");
+
+const BURST_COUNT = 16;
+
+const buildBurst = (): BurstParticle[] =>
+  Array.from({ length: BURST_COUNT }, (_, i) => {
+    const angle = (360 / BURST_COUNT) * i + (i % 2 === 0 ? 7 : 0);
+    const dist = 40 + (i % 3) * 12;
+    const size = 4 + (i % 4);
+    const color = PARTICLE_COLORS[i % PARTICLE_COLORS.length];
+    const delay = (i % 4) * 35;
+    return { angle, dist, size, color, delay };
+  });
+
+const BURST = buildBurst();
+
+const EMBERS = [
+  { drift: 10, delay: 90 },
+  { drift: -14, delay: 170 },
+  { drift: 24, delay: 250 },
+  { drift: -6, delay: 330 },
+  { drift: 14, delay: 430 },
+  { drift: -22, delay: 520 },
+];
 
 interface FlameBurstProps {
   solid?: boolean;
@@ -36,36 +65,57 @@ export const FlameBurst = ({ solid = false }: FlameBurstProps) => {
     : "text-orange-600 dark:text-orange-400";
 
   const blazedState =
-    "text-red-500 dark:text-red-400 drop-shadow-[0_0_12px_rgba(239,68,68,0.4)]";
+    "text-red-500 dark:text-red-400 drop-shadow-[0_0_6px_rgba(255,150,60,0.8)] drop-shadow-[0_0_18px_rgba(239,68,68,0.55)]";
 
   return (
     <button
       type="button"
       aria-label="Ikon api menyala"
       onClick={handleClick}
-      className={`group relative w-16 h-16 rounded-xl ${containerClass} flex items-center justify-center shrink-0 cursor-pointer transition-colors duration-300 group-hover:border-red-400/40`}
+      className={`group relative w-16 h-16 rounded-xl ${containerClass} flex items-center justify-center shrink-0 cursor-pointer transition-all duration-300 ${
+        isBlazing
+          ? "shadow-[0_0_0_1px_rgba(239,68,68,0.35),0_0_26px_rgba(239,68,68,0.45)] border-red-400/50"
+          : "group-hover:border-red-400/40 group-hover:shadow-[0_0_18px_rgba(239,68,68,0.25)]"
+      }`}
     >
       <Flame
-        className={`w-8 h-8 transition-colors duration-300 ${
+        className={`w-8 h-8 transition-[color,filter] duration-300 ${
           isBlazing
             ? blazedState
             : `${flameColor} group-hover:text-red-500 dark:group-hover:text-red-400 group-hover:drop-shadow-[0_0_12px_rgba(239,68,68,0.4)]`
         }`}
       />
       {isBlazing && (
-        <span key={burstKey} className="absolute inset-0 pointer-events-none">
-          <span className="absolute inset-1 rounded-full bg-red-400/20 blur-md animate-flame-burst" />
-          {SPARKS.map((spark, i) => (
+        <span
+          key={burstKey}
+          aria-hidden="true"
+          className="absolute inset-0 z-10 pointer-events-none"
+        >
+          <span className="firework-flash" />
+          {BURST.map((p, i) => (
             <span
               key={i}
-              className={`absolute w-1 h-1 rounded-full ${spark.color} animate-flame-burst`}
+              className="firework-spark"
               style={
                 {
-                  left: "50%",
-                  top: "50%",
-                  animationDelay: `${spark.delay}ms`,
-                  "--burst-x": `${spark.x}px`,
-                  "--burst-y": `${spark.y}px`,
+                  "--angle": `${p.angle}deg`,
+                  "--dist": `${p.dist}px`,
+                  "--size": `${p.size}px`,
+                  "--color": p.color,
+                  animationDelay: `${p.delay}ms`,
+                } as CSSProperties
+              }
+            />
+          ))}
+          {EMBERS.map((e, i) => (
+            <span
+              key={`ember-${i}`}
+              className="firework-ember"
+              style={
+                {
+                  "--drift": `${e.drift}px`,
+                  "--color": "#ff8a3d",
+                  animationDelay: `${e.delay}ms`,
                 } as CSSProperties
               }
             />

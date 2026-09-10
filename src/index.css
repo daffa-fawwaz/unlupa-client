@@ -370,3 +370,121 @@
 .animate-flame-burst {
   animation: flameBurst 0.6s ease-out both;
 }
+
+/* ======================================================
+   FIREWORK BURST (FlameBurst premium ember explosion)
+   Pure CSS fireworks: radial sparks flying outward,
+   rising/falling embers, and a central flash — driven
+   by CSS custom properties per particle. No layout
+   impact (absolute + pointer-events: none).
+====================================================== */
+@keyframes firework-spark {
+  0% {
+    transform: rotate(var(--angle, 0deg)) translateX(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  52% {
+    opacity: 1;
+  }
+  72% {
+    transform: rotate(var(--angle, 0deg)) translateX(calc(var(--dist, 40px) * 0.9));
+    opacity: 0.85;
+  }
+  90% {
+    transform: rotate(var(--angle, 0deg)) translateX(calc(var(--dist, 40px) * 1.08));
+    opacity: 0.55;
+  }
+  100% {
+    transform: rotate(var(--angle, 0deg)) translateX(calc(var(--dist, 40px) * 1.2));
+    opacity: 0;
+  }
+}
+
+.firework-spark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--size, 5px);
+  height: var(--size, 5px);
+  margin-left: calc(var(--size, 5px) / -2);
+  margin-top: calc(var(--size, 5px) / -2);
+  border-radius: 9999px;
+  background: var(--color, #ffb84d);
+  box-shadow:
+    0 0 6px 2px color-mix(in oklch, var(--color, #ffb84d) 70%, transparent),
+    0 0 2px 0 rgba(255, 255, 255, 0.65);
+  pointer-events: none;
+  animation: firework-spark 0.9s ease-out both;
+}
+
+@keyframes firework-ember {
+  0% {
+    transform: translate(0, 0) scaleX(1);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(calc(var(--drift, 6px) * -0.4), -28px) scaleX(1);
+    opacity: 0.95;
+  }
+  78% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(var(--drift, 6px), 18px) scaleX(0.6);
+    opacity: 0;
+  }
+}
+
+.firework-ember {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 9px;
+  margin-left: -1.5px;
+  border-radius: 9999px;
+  background: linear-gradient(to top, transparent, var(--color, #ff8a3d));
+  pointer-events: none;
+  animation: firework-ember 1.5s ease-out both;
+}
+
+@keyframes firework-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  20% {
+    opacity: 0.85;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+.firework-flash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  margin-top: -28px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 214, 130, 0.9) 0%,
+    rgba(255, 130, 60, 0.4) 45%,
+    transparent 70%
+  );
+  filter: blur(2px);
+  pointer-events: none;
+  animation: firework-flash 0.55s ease-out both;
+}
