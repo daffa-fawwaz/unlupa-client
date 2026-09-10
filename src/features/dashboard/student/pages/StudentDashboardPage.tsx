@@ -1,7 +1,6 @@
 import {
   Menu,
   ShieldCheck,
-  Sun,
   Target,
   Trophy,
   UserCheck,
@@ -165,20 +164,6 @@ export const StudentDashboardPage = () => {
           </div>
         </div>
       </nav>
-
-      {/* 1. QUOTE BANNER */}
-      <div className="fade-in-up mb-12 text-center md:text-left border-l-4 border-primary bg-surface-1 p-6 rounded-r-xl">
-        <p className="text-xl md:text-2xl font-serif text-foreground italic leading-relaxed">
-          "Menjaga hafalan itu lebih ringan <br /> daripada mengulang hafalan
-          yang hilang."
-        </p>
-        <p className="text-xs text-primary mt-3 font-mono uppercase tracking-widest flex items-center gap-2 md:justify-start justify-center">
-          <Sun className="w-3 h-3" />
-          <span>
-            Istiqomah Hari Ini = Kemudahan Esok Hari
-          </span>
-        </p>
-      </div>
 
       {/* QUICK ACCESS CARDS */}
       <QuickAccessCards role="student" />
