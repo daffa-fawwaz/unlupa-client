@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import {
   AlertCircle,
   AlignLeft,
@@ -288,6 +288,8 @@ export const ModuleDetailPage = () => {
     moduleId: string;
   }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const backFrom = (location.state as { from?: string } | null)?.from;
   const { tree, loading, error, fetchBookTree, addItemToModule, addChildModuleToTree } = useBookTree();
   const { statusMap, fetchStatusMap } = useBookItemStatusMap();
   const { deleteModule } = useDeleteModule();
@@ -339,8 +341,13 @@ export const ModuleDetailPage = () => {
     ? findParentModule(tree.modules, moduleId)
     : null;
 
-  // Arah kembali = modul induk (bila modul ini bersarang) else halaman buku.
+  // Arah kembali = halaman asal (kondisi kontekstual kelas) bila tersedia,
+  // else modul induk (bila modul ini bersarang) else halaman buku.
   const handleBack = () => {
+    if (backFrom) {
+      navigate(backFrom);
+      return;
+    }
     const target = parentModule
       ? `/dashboard/pribadi/book/${bookId}/module/${parentModule.id}`
       : `/dashboard/pribadi/book/${bookId}`;

@@ -31,6 +31,7 @@ import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";
 import { useCreateModule } from "@/features/personal/hooks/useCreateModule";
 import { useBookItemStatusMap, contentRefForItem } from "@/features/personal/hooks/useBookItemStatusMap";
+import { rememberScroll, takeScroll } from "@/features/personal/utils/scrollMemory";
 import { useStartItemPhase } from "@/features/personal/hooks/useStartItemPhase";
 import { AddItemModal } from "@/features/personal/components/AddItemModal";
 import { BookItemCard } from "@/features/personal/components/BookItemCard";
@@ -509,12 +510,14 @@ interface ClassroomBookStudentProgressSectionProps {
   classroomId: string;
   bookId: string;
   bookTitle: string;
+  onLoaded?: () => void;
 }
 
 const ClassroomBookStudentProgressSection = ({
   classroomId,
   bookId,
   bookTitle,
+  onLoaded,
 }: ClassroomBookStudentProgressSectionProps) => {
   const { data, isLoading, isError } = useGetClassBookStudentProgress(
     classroomId,
@@ -522,6 +525,12 @@ const ClassroomBookStudentProgressSection = ({
   );
   const [selectedStudent, setSelectedStudent] =
     useState<StudentBookProgress | null>(null);
+
+  // Beri tahu halaman induk ketika section selesai memuat, agar scroll restore
+  // ditunda sampai layout penuh (progress tinggi → posisi modul stabil).
+  useEffect(() => {
+    if (!isLoading) onLoaded?.();
+  }, [isLoading, onLoaded]);
 
   if (isLoading) {
     return (
@@ -648,6 +657,19 @@ export const ClassroomBookDetailView = () => {
     null | "picker" | "module" | "item"
   >(null);
 
+  // Scroll restore: kembalikan posisi daftar modul saat user kembali dari
+  // modul/item (mis. membuka halaqah ke-29 lalu balik). Key = pathname halaman
+  // ini, disimpan via rememberScroll() sebelum navigasi ke detail.
+  const [classProgressLoaded, setClassProgressLoaded] = useState(false);
+  const handleProgressLoaded = () => setClassProgressLoaded(true);
+
+  useEffect(() => {
+    if (!loading && tree && (isTeacher ? classProgressLoaded : true)) {
+      const saved = takeScroll(window.location.pathname);
+      if (saved != null) window.scrollTo({ top: saved });
+    }
+  }, [loading, tree, isTeacher, classProgressLoaded]);
+
   useEffect(() => {
     if (bookId) {
       fetchBookDetail(bookId);
@@ -689,8 +711,10 @@ export const ClassroomBookDetailView = () => {
     if (!bookId) return;
     try {
       await startPhase(bookId, itemId);
+      rememberScroll(window.location.pathname);
       navigate(
         `/dashboard/pribadi/book/${bookId}/item/${itemId}`,
+        { state: { from: window.location.pathname } },
       );
     } catch {
       toast.error("Gagal memulai item.");
@@ -895,6 +919,7 @@ export const ClassroomBookDetailView = () => {
                 classroomId={classroomId}
                 bookId={bookId}
                 bookTitle={book.title}
+                onLoaded={handleProgressLoaded}
               />
             )}
 
@@ -937,11 +962,13 @@ export const ClassroomBookDetailView = () => {
                         <ModuleCard
                           key={mod.id}
                           module={mod}
-                          onClick={() =>
+                          onClick={() => {
+                            rememberScroll(window.location.pathname);
                             navigate(
                               `/dashboard/pribadi/book/${bookId}/module/${mod.id}`,
-                            )
-                          }
+                              { state: { from: window.location.pathname } },
+                            );
+                          }}
                         />
                       ))}
                   </div>
@@ -969,6 +996,7 @@ export const ClassroomBookDetailView = () => {
                             item={item}
                             bookId={bookId!}
                             realItemId={statusMap.get(contentRefForItem(bookId!, item.id))?.item_id}
+                            onOpen={() => rememberScroll(window.location.pathname)}
                           />
                           {!isTeacher && (
                             <button

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -51,6 +51,8 @@ import type {
 export const ItemDetailPage = () => {
   const { itemId, bookId } = useParams<{ itemId: string; bookId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const backFrom = (location.state as { from?: string } | null)?.from;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [item, setItem] = useState<BookItem | null>(null);
   const [realItemId, setRealItemId] = useState<string | null>(null);
@@ -107,7 +109,13 @@ export const ItemDetailPage = () => {
       ? `/dashboard/pribadi/book/${bookId}/module/${parentModule.id}`
       : `/dashboard/pribadi/book/${bookId}`;
 
-  const handleBack = () => navigate(getParentUrl());
+  const handleBack = () => {
+    if (backFrom) {
+      navigate(backFrom);
+      return;
+    }
+    navigate(getParentUrl());
+  };
 
   // Load item: fetch tree for content, fetch statusMap for status
   useEffect(() => {
