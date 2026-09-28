@@ -1,495 +1,67 @@
-/* ======================================================
-   TAILWIND CORE
-====================================================== */
 @import "tailwindcss";
-@import "tw-animate-css";
+@import "./styles/theme.css";
 
-/* ======================================================
-   DARK VARIANT
-====================================================== */
-@custom-variant dark (&:is(.dark *));
+@plugin "tailwindcss-animate";
+@plugin "tailwindcss-react-aria-components";
 
-/* ======================================================
-   DESIGN TOKENS (SOURCE OF TRUTH)
-   → JANGAN pakai ini langsung di HTML
-   → Dipakai lewat utility Tailwind
-====================================================== */
-@theme inline {
-  /* ---------- FONT SYSTEM ---------- */
-  --font-primary:
-    "Plus Jakarta Sans", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: "Playfair Display", serif;
-  --font-mono: "JetBrains Mono", monospace;
-  --font-display: "Cinzel", serif;
-  --font-arabic: 'Amiri', 'Scheherazade New', 'Traditional Arabic', 'Noto Naskh Arabic', serif;
+@custom-variant dark (&:where(.dark-mode, .dark-mode *));
+@custom-variant label (& [data-label]);
+@custom-variant focus-input-within (&:has(input:focus));
 
-  /* ---------- RADIUS ---------- */
-  --radius: 0.75rem;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-
-  /* ---------- COLOR MAPPING (TAILWIND) ---------- */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-
-  --color-destructive: var(--destructive);
-
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
-
-  --color-surface-1: var(--surface-1);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-}
-
-/* ======================================================
-   LIGHT MODE — UNLUPA DEFAULT
-====================================================== */
-:root {
-  color-scheme: light;
-
-  --background: oklch(0.99 0.005 95);
-  --foreground: oklch(0.17 0.02 250);
-
-  --card: oklch(1 0.004 95);
-  --card-foreground: oklch(0.17 0.02 250);
-
-  --popover: oklch(1 0.004 95);
-  --popover-foreground: oklch(0.17 0.02 250);
-
-  --primary: oklch(0.45 0.12 175);
-  --primary-foreground: oklch(0.99 0 0);
-
-  --secondary: oklch(0.96 0.01 95);
-  --secondary-foreground: oklch(0.17 0.02 250);
-
-  --accent: oklch(0.75 0.14 85);
-  --accent-foreground: oklch(0.17 0.02 250);
-
-  --muted: oklch(0.96 0.005 95);
-  --muted-foreground: oklch(0.45 0.02 250);
-
-  --success: oklch(0.60 0.12 150);
-  --success-foreground: oklch(0.99 0 0);
-  --warning: oklch(0.75 0.12 85);
-  --warning-foreground: oklch(0.17 0.02 250);
-  --destructive: oklch(0.60 0.18 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --info: oklch(0.60 0.12 240);
-  --info-foreground: oklch(0.99 0 0);
-
-  --surface-1: oklch(0.99 0.004 95);
-  --surface-2: oklch(0.97 0.004 95);
-  --surface-3: oklch(0.94 0.008 95);
-
-  --border: oklch(0.90 0.01 95);
-  --input: oklch(0.90 0.01 95);
-  --ring: oklch(0.45 0.12 175);
-}
-
-/* ======================================================
-   DARK MODE — DEEP UNIVERSE
-====================================================== */
-.dark {
-  color-scheme: dark;
-
-  --background: oklch(0.15 0.015 250);
-  --foreground: oklch(0.96 0.01 95);
-
-  --card: oklch(0.19 0.015 250);
-  --card-foreground: oklch(0.96 0.01 95);
-
-  --popover: oklch(0.19 0.015 250);
-  --popover-foreground: oklch(0.96 0.01 95);
-
-  --primary: oklch(0.72 0.12 175);
-  --primary-foreground: oklch(0.15 0.02 250);
-
-  --secondary: oklch(0.22 0.015 250);
-  --secondary-foreground: oklch(0.96 0.01 95);
-
-  --accent: oklch(0.75 0.14 85);
-  --accent-foreground: oklch(0.15 0.02 250);
-
-  --muted: oklch(0.22 0.015 250);
-  --muted-foreground: oklch(0.65 0.02 250);
-
-  --success: oklch(0.60 0.12 150);
-  --success-foreground: oklch(0.15 0.02 250);
-  --warning: oklch(0.75 0.12 85);
-  --warning-foreground: oklch(0.15 0.02 250);
-  --destructive: oklch(0.62 0.18 25);
-  --destructive-foreground: oklch(0.96 0.01 95);
-  --info: oklch(0.60 0.12 240);
-  --info-foreground: oklch(0.96 0.01 95);
-
-  --surface-1: oklch(0.19 0.015 250);
-  --surface-2: oklch(0.22 0.015 250);
-  --surface-3: oklch(0.25 0.015 250);
-
-  --border: oklch(0.28 0.015 250);
-  --input: oklch(0.28 0.015 250);
-  --ring: oklch(0.72 0.12 175);
-}
-
-/* ======================================================
-   BASE LAYER (GLOBAL APPLICATION)
-====================================================== */
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+@utility scrollbar-hide {
+  /* For Webkit-based browsers (Chrome, Safari and Opera) */
+  &::-webkit-scrollbar {
+    display: none;
+    -webkit-appearance: none;
   }
 
-  body {
-    font-family: var(--font-primary);
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "calt" "kern" "liga" "ss03";
-    overflow-x: hidden;
-  }
-
-  select option {
-    background-color: var(--surface-1);
-    color: var(--foreground);
-  }
+  /* For IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-/* ======================================================
-   UTILITIES — UNLUPA SHARED HELPERS
-====================================================== */
+@utility transition-inherit-all {
+  transition-property: inherit;
+  transition-duration: inherit;
+  transition-timing-function: inherit;
+}
 
-/* Hide scrollbar but allow scrolling */
-.scrollbar-hide::-webkit-scrollbar {
+html,
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-variant-ligatures: contextual;
+  font-variant-ligatures: contextual;
+  -webkit-font-kerning: normal;
+  font-kerning: normal;
+}
+
+/* Hide the default expand arrow on Safari.  */
+details summary::-webkit-details-marker {
   display: none;
 }
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
 
-/* --- INFINITE SCROLL (MARQUEE) --- */
-.scroller {
-  max-width: 100%;
-  overflow: hidden;
-  -webkit-mask: linear-gradient(
-    90deg,
-    transparent,
-    white 10%,
-    white 90%,
-    transparent
-  );
-  mask: linear-gradient(90deg, transparent, white 10%, white 90%, transparent);
-}
-
-.scroller__inner {
-  padding-block: 1rem;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 2rem;
-  width: max-content;
-}
-
-/* Animation Keyframes */
-@keyframes scroll-left {
-  to {
-    transform: translate(calc(-50% - 1rem));
-  }
-}
-@keyframes scroll-right {
-  from {
-    transform: translate(calc(-50% - 1rem));
-  }
-  to {
-    transform: translate(0);
-  }
-}
-
-/* Directions */
-.scroller[data-direction="left"] .scroller__inner {
-  animation: scroll-left 60s linear infinite;
-}
-.scroller[data-direction="right"] .scroller__inner {
-  animation: scroll-right 60s linear infinite;
-}
-
-/* PAUSE ON HOVER/TOUCH (Critical Interaction) */
-.scroller:hover .scroller__inner {
-  animation-play-state: paused;
-}
-.scroller:active .scroller__inner {
-  animation-play-state: paused;
-}
-
-/* --- REVIEW BADGE RUNNING TEXT (MARQUEE) --- */
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 12s linear infinite;
-}
-
-.animate-marquee:hover,
-.animate-marquee:focus-within {
-  animation-play-state: paused;
-}
-
-/* ======================================================
-   SIDEBAR DRAWER (MOBILE)
-====================================================== */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 320px;
-  background: var(--background);
-  border-right: 1px solid var(--border);
-  transform: translateX(-100%);
-  transition:
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    visibility 0.4s;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 10px 0 50px rgba(0, 0, 0, 0.4);
-  padding: 24px;
-  visibility: hidden;
-}
-.sidebar.active {
-  transform: translateX(0);
-  visibility: visible;
-}
-
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background: color-mix(in oklch, var(--foreground) 50%, transparent);
-  backdrop-filter: blur(4px);
-  z-index: 90;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.sidebar-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ======================================================
-   DUAL RANGE SLIDER
-====================================================== */
-.thumb {
-  pointer-events: none;
-  position: absolute;
-  height: 0;
-  width: 100%;
-  outline: none;
-  z-index: 10;
-}
-
-.thumb::-webkit-slider-thumb {
+/* Hide default arrows from number inputs. */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  background-color: transparent;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 0 1px 1px #ced4da;
-  cursor: pointer;
-  height: 24px;
-  width: 24px;
-  margin-top: 4px;
-  pointer-events: all;
-  position: relative;
+  margin: 0;
+}
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
-.thumb::-moz-range-thumb {
-  background-color: transparent;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 0 1px 1px #ced4da;
-  cursor: pointer;
-  height: 24px;
-  width: 24px;
-  margin-top: 4px;
-  pointer-events: all;
-  position: relative;
+/* Hide the default clear button (X) from search inputs. */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
 }
 
-/* ======================================================
-   FLAME BURST (on-click spark particles)
-====================================================== */
-@keyframes flameBurst {
-  0% {
-    transform: scale(0.6) translate(0, 0) rotate(-12deg);
-    opacity: 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.9) translate(var(--burst-x, 0px), var(--burst-y, 0px)) rotate(-12deg);
-    opacity: 0;
-  }
-}
-
-.animate-flame-burst {
-  animation: flameBurst 0.6s ease-out both;
-}
-
-/* ======================================================
-   FIREWORK BURST (FlameBurst premium ember explosion)
-   Pure CSS fireworks: radial sparks flying outward,
-   rising/falling embers, and a central flash — driven
-   by CSS custom properties per particle. No layout
-   impact (absolute + pointer-events: none).
-====================================================== */
-@keyframes firework-spark {
-  0% {
-    transform: rotate(var(--angle, 0deg)) translateX(0);
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  52% {
-    opacity: 1;
-  }
-  72% {
-    transform: rotate(var(--angle, 0deg)) translateX(calc(var(--dist, 40px) * 0.9));
-    opacity: 0.85;
-  }
-  90% {
-    transform: rotate(var(--angle, 0deg)) translateX(calc(var(--dist, 40px) * 1.08));
-    opacity: 0.55;
-  }
-  100% {
-    transform: rotate(var(--angle, 0deg)) translateX(calc(var(--dist, 40px) * 1.2));
-    opacity: 0;
-  }
-}
-
-.firework-spark {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--size, 5px);
-  height: var(--size, 5px);
-  margin-left: calc(var(--size, 5px) / -2);
-  margin-top: calc(var(--size, 5px) / -2);
-  border-radius: 9999px;
-  background: var(--color, #ffb84d);
-  box-shadow:
-    0 0 6px 2px color-mix(in oklch, var(--color, #ffb84d) 70%, transparent),
-    0 0 2px 0 rgba(255, 255, 255, 0.65);
-  pointer-events: none;
-  animation: firework-spark 0.9s ease-out both;
-}
-
-@keyframes firework-ember {
-  0% {
-    transform: translate(0, 0) scaleX(1);
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  50% {
-    transform: translate(calc(var(--drift, 6px) * -0.4), -28px) scaleX(1);
-    opacity: 0.95;
-  }
-  78% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translate(var(--drift, 6px), 18px) scaleX(0.6);
-    opacity: 0;
-  }
-}
-
-.firework-ember {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 3px;
-  height: 9px;
-  margin-left: -1.5px;
-  border-radius: 9999px;
-  background: linear-gradient(to top, transparent, var(--color, #ff8a3d));
-  pointer-events: none;
-  animation: firework-ember 1.5s ease-out both;
-}
-
-@keyframes firework-flash {
-  0% {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-  20% {
-    opacity: 0.85;
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.7);
-  }
-}
-
-.firework-flash {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 56px;
-  height: 56px;
-  margin-left: -28px;
-  margin-top: -28px;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 214, 130, 0.9) 0%,
-    rgba(255, 130, 60, 0.4) 45%,
-    transparent 70%
-  );
-  filter: blur(2px);
-  pointer-events: none;
-  animation: firework-flash 0.55s ease-out both;
-}
-
-.font-arabic {
-  font-family: 'Amiri', 'Scheherazade New', 'Traditional Arabic', 'Noto Naskh Arabic', serif;
+/* Hide the default outline on chart elements. */
+.recharts-surface,
+.recharts-surface g,
+.recharts-surface path {
+  outline: none;
 }

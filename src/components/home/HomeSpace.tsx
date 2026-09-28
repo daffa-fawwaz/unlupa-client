@@ -2,17 +2,15 @@ import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import { 
-  Flame, 
   Sparkles, 
   Quote, 
-  CheckCircle2, 
   Crown,
   ArrowRight,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { VisualReviewCalendar } from './VisualReviewCalendar';
 import { ConsistencyJourneyWidget } from './ConsistencyJourneyWidget';
-import { WeeklyStreakWidget } from './WeeklyStreakWidget';
+import { StreakOverviewCard } from './StreakOverviewCard';
 import { WeakSpotsWidget } from './WeakSpotsWidget';
 import { QuickActionsBar } from './QuickActionsBar';
 import { StudentReportModal } from './StudentReportModal';
@@ -21,6 +19,8 @@ import { QuranAttendanceModal } from '../attendance/QuranAttendanceModal';
 import { MushafPageViewerModal } from '../quran/MushafPageViewerModal';
 
 import { useAuthStore } from '@/features/auth/stores/auth.store';
+
+const dailyWisdomIndex = Math.floor(Date.now() / 86_400_000);
 
 /**
  * OPTIMIZED HOME SPACE (BERANDA)
@@ -32,7 +32,6 @@ export const HomeSpace: React.FC = () => {
   const {
     quranPages,
     quranStats,
-    personalStats,
     items,
     books,
     chapters,
@@ -62,9 +61,6 @@ export const HomeSpace: React.FC = () => {
   const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
   const [previewPageNumber, setPreviewPageNumber] = useState<number | null>(null);
 
-  // Computed data
-  const totalDueToday = (quranStats?.dueToday || 0) + (personalStats?.dueToday || 0);
-
   const dailyWisdom = useMemo(() => {
     const quotes = language === 'en' ? [
       "Knowledge is not what is memorized, but what benefits.",
@@ -79,7 +75,7 @@ export const HomeSpace: React.FC = () => {
       "Barangsiapa menempuh jalan untuk mencari ilmu, maka Allah mudahkan jalan baginya menuju surga.",
       "Jagalah hafalan Al-Qur'an, demi Dzat yang jiwaku berada di tangan-Nya, ia lebih cepat lepas daripada unta dari ikatannya."
     ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
+    return quotes[dailyWisdomIndex % quotes.length];
   }, [language]);
 
   return (
@@ -151,8 +147,8 @@ export const HomeSpace: React.FC = () => {
         </motion.div>
       ) : null}
 
-      {/* 1.5 WEEKLY STREAK WIDGET */}
-      <WeeklyStreakWidget />
+      {/* 1.5 STREAK OVERVIEW */}
+      <StreakOverviewCard />
 
       {/* 3. VISUAL PLANNED REVIEW & RETENTION CALENDAR */}
       <VisualReviewCalendar

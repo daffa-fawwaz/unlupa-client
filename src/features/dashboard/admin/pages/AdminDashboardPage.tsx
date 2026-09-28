@@ -18,16 +18,13 @@ import { useTeacherRequests } from "@/features/dashboard/admin/hooks/useTeacherR
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
-
 export const AdminDashboardPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { name } = useCurrentUser();
 
   const { data: users, loading: usersLoading } = useUsers();
-  const {
-    data: teacherRequests,
-    loading: teacherLoading,
-  } = useTeacherRequests();
+  const { data: teacherRequests, loading: teacherLoading } =
+    useTeacherRequests();
 
   const loading = usersLoading || teacherLoading;
 
