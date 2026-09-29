@@ -21,11 +21,9 @@ function applyTheme(theme: Theme) {
   const resolved = theme === "system" ? getSystemTheme() : theme;
   const root = document.documentElement;
   
-  if (resolved === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
+  root.classList.toggle("dark-mode", resolved === "dark");
+  root.classList.remove("dark");
+  root.style.colorScheme = resolved;
   
   return resolved;
 }

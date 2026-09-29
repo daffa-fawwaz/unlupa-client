@@ -28,8 +28,16 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 export const StudentDashboardPage = () => {
   const { name } = useCurrentUser();
 
-  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useDashboardStats();
-  const { data: myItems, loading: myItemsLoading, getMyItems } = useGetMyItems();
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    refetch: refetchStats,
+  } = useDashboardStats();
+  const {
+    data: myItems,
+    loading: myItemsLoading,
+    getMyItems,
+  } = useGetMyItems();
   const { data: dailyTasks, loading: dailyLoading, getDaily } = useGetDaily();
 
   const { sendTeacherRequest } = useTeacherRequest();
@@ -49,8 +57,8 @@ export const StudentDashboardPage = () => {
     0;
 
   const totalSelesai = stats?.total_memorized ?? 0;
-  const reviewHariIni = stats?.due_reviews_today ?? (dailyTasks?.length ?? 0);
-  const focusTime = stats?.estimated_focus_minutes ?? (reviewHariIni * 3);
+  const reviewHariIni = stats?.due_reviews_today ?? dailyTasks?.length ?? 0;
+  const focusTime = stats?.estimated_focus_minutes ?? reviewHariIni * 3;
 
   const initialLetter = name ? name.charAt(0).toUpperCase() : "U";
 
@@ -200,7 +208,10 @@ export const StudentDashboardPage = () => {
             </div>
           </div>
           <h3 className="text-3xl font-bold text-foreground font-mono mb-1">
-            ±{focusTime} <span className="text-sm font-sans font-normal text-muted-foreground">menit</span>
+            ±{focusTime}{" "}
+            <span className="text-sm font-sans font-normal text-muted-foreground">
+              menit
+            </span>
           </h3>
           <p className="text-xs text-muted-foreground">
             Investasi waktu murajaah
@@ -248,7 +259,8 @@ export const StudentDashboardPage = () => {
         <div className="bg-card border border-border/60 rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left shadow-xs">
           <div>
             <p className="font-serif italic text-foreground text-base mb-1">
-              "Sebaik-baik kalian adalah orang yang belajar Al-Qur'an dan mengajarkannya."
+              "Sebaik-baik kalian adalah orang yang belajar Al-Qur'an dan
+              mengajarkannya."
             </p>
             <p className="text-xs text-muted-foreground font-mono">
               HR. Bukhari • Terus jaga konsistensi dengan Spaced Repetition

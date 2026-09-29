@@ -29,12 +29,15 @@
 html,
 body {
   font-family: var(--font-body);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-variant-ligatures: contextual;
   font-variant-ligatures: contextual;
   -webkit-font-kerning: normal;
   font-kerning: normal;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 /* Hide the default expand arrow on Safari.  */

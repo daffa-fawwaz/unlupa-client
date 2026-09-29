@@ -13,11 +13,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           : "light"
         : theme;
 
-    if (resolved === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    root.classList.toggle("dark-mode", resolved === "dark");
+    root.classList.remove("dark");
+    root.style.colorScheme = resolved;
   }, [theme]);
 
   // Listen for system theme changes
@@ -27,11 +25,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = () => {
       const root = document.documentElement;
-      if (mq.matches) {
-        root.classList.add("dark");
-      } else {
-        root.classList.remove("dark");
-      }
+      const resolved = mq.matches ? "dark" : "light";
+      root.classList.toggle("dark-mode", resolved === "dark");
+      root.classList.remove("dark");
+      root.style.colorScheme = resolved;
     };
 
     mq.addEventListener("change", handler);

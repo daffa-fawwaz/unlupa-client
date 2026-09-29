@@ -37,7 +37,7 @@ export const useLogin = () => {
 
       const user = response.data.data;
       const token = response.data.data.token;
-      setAuth(user, token);
+      setAuth(user, token, Boolean(payload.rememberFor30Days));
 
       useDashboardModeStore.getState().setActiveRole(user.role);
 

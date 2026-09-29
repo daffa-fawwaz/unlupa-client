@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { Check, ChevronDown, Flame } from "lucide-react";
 
 import { useApp } from "@/context/AppContext";
+import { useDashboardStats } from "@/features/dashboard/student/hooks/useDashboardStats";
 import { cx } from "@/utils/cx";
 
 const DAY_IN_MS = 86_400_000;
 
 function getLocalDateKey(value: string | Date | null | undefined): string | null {
   if (!value) return null;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
 
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return null;
@@ -35,24 +37,36 @@ function getLongestStreak(dateKeys: string[]): number {
 }
 
 export function StreakOverviewCard() {
-  const { quranPages, items, currentStreak, language } = useApp();
+  const { quranPages, items, currentStreak: localCurrentStreak, language } = useApp();
+  const { data: dashboardStats, isLoading } = useDashboardStats();
   const [showDetails, setShowDetails] = useState(false);
 
   const streakData = useMemo(() => {
-    const activityDates = new Set<string>();
-    const addActivity = (value: string | Date | null | undefined) => {
+    const activityByDate = new Map<string, number>();
+    const addActivity = (value: string | Date | null | undefined, count = 1) => {
       const dateKey = getLocalDateKey(value);
-      if (dateKey) activityDates.add(dateKey);
+      if (!dateKey) return;
+
+      activityByDate.set(dateKey, Math.max(activityByDate.get(dateKey) ?? 0, count));
     };
 
+    // Preserve all activity sources used by the previous weekly streak widget.
     quranPages.forEach((page) => {
       page.reviewLogs?.forEach((log) => addActivity(log.date));
+      addActivity(page.activatedAt);
+
+      // Backend-synced pages may only contain the latest review timestamp.
       addActivity(page.fsrsData.lastReview);
     });
 
     items.forEach((item) => {
       item.reviewLogs?.forEach((log) => addActivity(log.date));
       addActivity(item.fsrsData.lastReview);
+    });
+
+    // The dashboard endpoint is authoritative when local review logs are incomplete.
+    dashboardStats?.consistency_heatmap?.forEach((activity) => {
+      if (activity.count > 0) addActivity(activity.date, activity.count);
     });
 
     const today = new Date();
@@ -71,25 +85,31 @@ export function StreakOverviewCard() {
 
       return {
         label,
-        isActive: activityDates.has(getLocalDateKey(date) ?? ""),
+        date,
+        activityCount: activityByDate.get(getLocalDateKey(date) ?? "") ?? 0,
+        isActive: (activityByDate.get(getLocalDateKey(date) ?? "") ?? 0) > 0,
         isToday: date.toDateString() === today.toDateString(),
         isFuture: date.getTime() > today.getTime(),
       };
     });
 
-    const dateKeys = Array.from(activityDates);
+    const dateKeys = Array.from(activityByDate.keys());
+    const localLongestStreak = getLongestStreak(dateKeys);
+    const totalActivities = Array.from(activityByDate.values()).reduce((total, count) => total + count, 0);
 
     return {
       weekDays,
-      longestStreak: getLongestStreak(dateKeys),
-      totalActiveDays: activityDates.size,
+      currentStreak: dashboardStats?.current_streak ?? localCurrentStreak,
+      longestStreak: Math.max(dashboardStats?.longest_streak ?? 0, localLongestStreak),
+      totalActivities,
     };
-  }, [items, language, quranPages]);
+  }, [dashboardStats, items, language, localCurrentStreak, quranPages]);
 
   const isEnglish = language === "en";
 
   return (
     <section
+      aria-busy={isLoading}
       className="rounded-3xl border border-secondary bg-secondary p-2 shadow-xs sm:p-4"
       style={{
         backgroundImage:
@@ -107,7 +127,7 @@ export function StreakOverviewCard() {
             </div>
 
             <p className="mt-3 text-display-sm font-semibold tracking-tight text-primary sm:text-display-md">
-              {currentStreak}
+              {streakData.currentStreak}
               <span className="ml-1.5 text-lg font-semibold text-secondary sm:text-xl">
                 {isEnglish ? "days" : "hari"}
               </span>
@@ -129,6 +149,12 @@ export function StreakOverviewCard() {
           {streakData.weekDays.map((day) => (
             <div key={day.label} className="flex min-w-0 flex-col items-center gap-2">
               <div
+                title={
+                  day.activityCount > 0
+                    ? `${day.activityCount} ${isEnglish ? "activities" : "aktivitas"}`
+                    : isEnglish ? "No activity" : "Belum ada aktivitas"
+                }
+                aria-label={`${day.label}: ${day.activityCount} ${isEnglish ? "activities" : "aktivitas"}`}
                 className={cx(
                   "flex aspect-square w-full max-w-12 items-center justify-center rounded-full border transition-colors",
                   day.isActive && "border-primary-solid bg-primary-solid text-white shadow-xs",
@@ -171,7 +197,7 @@ export function StreakOverviewCard() {
           <div className="text-right">
             <p className="text-sm text-secondary">{isEnglish ? "Total" : "Total"}</p>
             <p className="mt-1 text-display-xs font-semibold tracking-tight text-primary">
-              {streakData.totalActiveDays}
+              {streakData.totalActivities}
             </p>
           </div>
         </div>

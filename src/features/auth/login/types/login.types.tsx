@@ -3,6 +3,7 @@ import type { LoginUser } from "@/features/auth/domain/user.types";
 export interface LoginPayload {
   email: string;
   password: string;
+  rememberFor30Days?: boolean;
 }
 
 export interface LoginResponse {
@@ -11,10 +12,6 @@ export interface LoginResponse {
   data: LoginUser;
 }
 
-export interface LoginSuccessResponse {
-  
-}
-  
 export interface LoginFormProps {
   onSubmit: (payload: LoginPayload) => void;
   error?: string | null;

@@ -281,11 +281,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEYS.THEME, theme);
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      document.documentElement.classList.toggle('dark-mode', theme === 'dark');
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = theme;
     } catch (e) {
       console.error('Error setting theme class', e);
     }
