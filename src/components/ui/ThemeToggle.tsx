@@ -1,6 +1,6 @@
 import { Sun, Moon } from "lucide-react";
-import { useThemeStore } from "@/stores/theme.store";
-import { cn } from "@/lib/utils";
+import { useApp } from "@/context/AppContext";
+import { cx } from "@/utils/cx";
 
 const themes = [
   { value: "light" as const, icon: Sun, label: "Light" },
@@ -8,20 +8,20 @@ const themes = [
 ];
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useThemeStore();
+  const { theme, setTheme } = useApp();
 
   return (
-    <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50 border border-border">
+    <div className="flex items-center gap-1 rounded-lg border border-secondary bg-secondary p-1">
       {themes.map(({ value, icon: Icon, label }) => (
         <button
           key={value}
           onClick={() => setTheme(value)}
           title={label}
-          className={cn(
-            "flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 cursor-pointer",
+          className={cx(
+            "flex size-8 cursor-pointer items-center justify-center rounded-md outline-focus-ring transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2",
             theme === value
-              ? "bg-background text-foreground shadow-sm border border-border"
-              : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+              ? "border border-secondary bg-primary text-primary shadow-xs"
+              : "text-quaternary hover:bg-primary_hover hover:text-secondary"
           )}
         >
           <Icon className="w-4 h-4" />

@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { useApp } from "@/context/AppContext";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Share01Icon } from "@hugeicons/core-free-icons";
+import { Share01 } from "@untitledui/icons";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
-import { 
-  Home, 
-  BookOpen, 
-  Library, 
-  Users, 
-  ShieldAlert, 
-  Sparkles, 
-  Crown, 
-  Share2, 
-  WifiOff, 
-  ChevronDown, 
-  User as UserIcon, 
+import {
+  Home,
+  BookOpen,
+  Library,
+  Users,
+  ShieldAlert,
+  Sparkles,
+  Crown,
+  Share2,
+  WifiOff,
   LogOut,
   Moon,
   Sun,
-  Flame
+  Flame,
 } from "lucide-react";
 import { PWAInstallButton } from "@/components/common/PWAInstallButton";
 import { StudentReportModal } from "@/components/home/StudentReportModal";
 import { BillingHistoryModal } from "@/components/profile/BillingHistoryModal";
 import { AchievementReportModal } from "@/components/common/AchievementReportModal";
+import { Avatar } from "@/components/base/avatar/avatar";
 
 export const DashboardLayout: React.FC = () => {
   const location = useLocation();
@@ -33,7 +35,6 @@ export const DashboardLayout: React.FC = () => {
   const {
     quranStats,
     personalStats,
-    myClassesStats,
     language,
     theme,
     toggleTheme,
@@ -121,31 +122,41 @@ export const DashboardLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#070A12] text-slate-100 flex flex-col font-sans selection:bg-blue-500 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-primary font-sans text-primary transition-colors selection:bg-brand-500 selection:text-white">
       {/* Top Application Bar */}
-      <header className="print:hidden sticky top-0 z-40 bg-[#090D18]/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 transition-colors">
+      <header className="sticky top-0 z-40 border-b border-secondary bg-primary/95 backdrop-blur-md transition-colors print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => navigate(userRole === "teacher" ? "/dashboard/kelas" : "/dashboard")}
+              onClick={() =>
+                navigate(
+                  userRole === "teacher" ? "/dashboard/kelas" : "/dashboard",
+                )
+              }
               className="flex items-center gap-2.5 text-left group cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#121315] border border-[#2A2B2E] flex items-center justify-center shadow-lg shadow-amber-500/10 group-hover:scale-105 transition-transform overflow-hidden relative">
+              <div className="relative flex size-8 items-center justify-center overflow-hidden rounded-lg border border-secondary bg-primary-solid shadow-lg shadow-amber-500/10 transition-transform group-hover:scale-105">
                 {/* Custom CSS Logo */}
                 <div className="w-4 h-5 relative flex flex-col justify-between">
                   <div
                     className="absolute left-0 top-1 bottom-0 w-2 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-600 rounded-sm"
-                    style={{ clipPath: "polygon(0 15%, 100% 0, 100% 100%, 0 85%)" }}
+                    style={{
+                      clipPath: "polygon(0 15%, 100% 0, 100% 100%, 0 85%)",
+                    }}
                   />
                   <div
                     className="absolute right-0 top-0 bottom-1 w-2 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-600 rounded-sm"
-                    style={{ clipPath: "polygon(0 0, 100% 15%, 100% 85%, 0 100%)" }}
+                    style={{
+                      clipPath: "polygon(0 0, 100% 15%, 100% 85%, 0 100%)",
+                    }}
                   />
                   <div
                     className="absolute bottom-0 left-1 right-1 h-2 bg-gradient-to-r from-amber-600 to-amber-500"
-                    style={{ clipPath: "polygon(0 100%, 100% 0, 100% 100%, 0 100%)" }}
+                    style={{
+                      clipPath: "polygon(0 100%, 100% 0, 100% 100%, 0 100%)",
+                    }}
                   />
                   <div
                     className="absolute top-0 left-1 right-1 h-2 bg-gradient-to-r from-amber-400 to-amber-300"
@@ -155,8 +166,11 @@ export const DashboardLayout: React.FC = () => {
               </div>
               <div>
                 <span
-                  className="font-bold text-lg tracking-tight text-white uppercase"
-                  style={{ fontFamily: "system-ui, sans-serif", letterSpacing: "-0.02em" }}
+                  className="text-lg font-bold uppercase tracking-tight text-primary"
+                  style={{
+                    fontFamily: "system-ui, sans-serif",
+                    letterSpacing: "-0.02em",
+                  }}
                 >
                   Unlupa
                   <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-400 to-orange-500">
@@ -169,12 +183,6 @@ export const DashboardLayout: React.FC = () => {
 
           {/* Right Action Tools */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Adaptive Engine Active Pill */}
-            <div className="hidden md:inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[#101b33] border border-blue-500/40 text-blue-300 text-xs font-bold shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span>{language === "en" ? "ADAPTIVE ENGINE ACTIVE" : "MESIN ADAPTIF AKTIF"}</span>
-            </div>
-
             <PWAInstallButton />
 
             {/* Quick Upgrade / Plan Indicator */}
@@ -184,7 +192,7 @@ export const DashboardLayout: React.FC = () => {
                 onClick={() =>
                   openUpgradeModal(
                     "Top Bar Navigation",
-                    "Upgrade ke Unlupa Pro untuk membuka Mushaf 30 Juz, AI Builder, dan kelas tak terbatas."
+                    "Upgrade ke Unlupa Pro untuk membuka Mushaf 30 Juz, AI Builder, dan kelas tak terbatas.",
                   )
                 }
                 className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[#2a1d0f] border border-amber-500/50 hover:border-amber-400 text-amber-300 text-xs font-black tracking-wider shadow-md shadow-amber-500/10 transition-all cursor-pointer active:scale-95"
@@ -210,105 +218,16 @@ export const DashboardLayout: React.FC = () => {
               type="button"
               onClick={() => setIsReportModalOpen(true)}
               className="hidden sm:inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[#161f30] border border-slate-700/80 hover:border-slate-600 text-xs font-bold text-slate-200 shadow-2xs transition-all cursor-pointer active:scale-95 whitespace-nowrap"
-              title={language === "en" ? "Share Progress Report" : "Bagikan Rapor Progres"}
+              title={
+                language === "en"
+                  ? "Share Progress Report"
+                  : "Bagikan Rapor Progres"
+              }
             >
-              <Share2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+              {/* <Share2 className="w-3.5 h-3.5 text-blue-400 shrink-0" /> */}
+              <HugeiconsIcon icon={Share01Icon} />
               <span>{language === "en" ? "Share Report" : "Bagi Rapor"}</span>
             </button>
-
-            {/* Online / Offline Status Badge */}
-            <div className="flex items-center">
-              {isOnline ? (
-                <div
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-semibold bg-[#101b33] border border-blue-500/40 text-blue-300 shadow-2xs"
-                  title="Aplikasi siap & tersinkronisasi"
-                >
-                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span>Online</span>
-                </div>
-              ) : (
-                <div
-                  className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-semibold bg-amber-950/60 text-amber-300 border border-amber-800/70 shadow-2xs"
-                  title="Mode Offline"
-                >
-                  <WifiOff className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span>Offline</span>
-                </div>
-              )}
-            </div>
-
-            {/* User Profile Menu */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-2 px-2.5 h-8.5 rounded-full border border-slate-700/80 hover:border-slate-600 transition-all bg-[#161f30] shadow-2xs cursor-pointer active:scale-95 text-slate-200"
-              >
-                <img
-                  src={userProfile?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256"}
-                  alt={userProfile?.fullName || user?.name || "User"}
-                  className="w-5.5 h-5.5 rounded-full object-cover border border-slate-600 shrink-0"
-                />
-                <span className="text-xs font-bold text-slate-200 hidden lg:inline max-w-[110px] truncate">
-                  {userProfile?.fullName || user?.name || "Tamu / Murid"}
-                </span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              </button>
-
-              {showProfileMenu && (
-                <div
-                  className="absolute right-0 mt-2 w-64 bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-2 z-50 text-xs animate-in fade-in zoom-in-95"
-                  onMouseLeave={() => setShowProfileMenu(false)}
-                >
-                  <div className="px-3 py-2.5 border-b border-slate-800 bg-slate-800/40 rounded-xl mb-1">
-                    <p className="font-bold text-white truncate text-sm">
-                      {userProfile?.fullName || user?.name || "Tamu / Murid"}
-                    </p>
-                    <p className="text-[10px] text-slate-400 truncate">
-                      {userProfile?.email || user?.email}
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-2">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800">
-                        {userRole === "admin" ? "Admin" : userRole === "teacher" ? "Guru / Asatidz" : "Santri / Murid"}
-                      </span>
-                      {currentStreak > 0 && (
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">
-                          <Flame className="w-3 h-3 text-amber-500 fill-amber-500" />
-                          <span>{currentStreak} Hari</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      toggleTheme();
-                      setShowProfileMenu(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 rounded-xl flex items-center justify-between cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      {theme === "dark" ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-400" />}
-                      <span>{theme === "dark" ? "Mode Terang" : "Mode Gelap"}</span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      setShowProfileMenu(false);
-                      await logout();
-                      navigate("/login");
-                    }}
-                    className="w-full text-left px-3 py-2 text-rose-400 hover:bg-rose-950/40 rounded-xl flex items-center gap-2 cursor-pointer mt-1"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Keluar</span>
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </header>
@@ -318,36 +237,125 @@ export const DashboardLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* Persistent Bottom Navigation Bar (5 Space Icons) */}
+      {/* Floating workspace navigation and profile */}
       <nav
         id="bottom-app-navigation"
-        className="print:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#090D18]/95 dark:bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/80 px-2 pt-1.5 pb-[calc(0.45rem+env(safe-area-inset-bottom,0px))] shadow-[0_-4px_25px_rgba(0,0,0,0.4)] select-none"
+        aria-label={language === "en" ? "Main navigation" : "Navigasi utama"}
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[100] px-2 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] print:hidden select-none sm:px-4"
       >
-        <div className="grid grid-cols-5 gap-1 max-w-lg md:max-w-xl lg:max-w-2xl mx-auto items-center">
-          {navItems.map((item) => (
-            <button
-              key={item.path}
-              type="button"
-              onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center py-1 sm:py-1.5 px-2 sm:px-4 rounded-2xl transition-all relative cursor-pointer active:scale-95 ${
-                item.isActive
-                  ? "bg-[#132244] text-blue-400 font-extrabold border border-blue-500/30 shadow-md shadow-blue-500/10"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 font-medium"
-              }`}
-            >
-              <div className="relative">
-                {item.icon}
-                {item.badge > 0 && (
-                  <span className="absolute -top-1 -right-2.5 min-w-[17px] h-4 px-1 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black flex items-center justify-center shadow-md shadow-amber-500/30 leading-none">
-                    {item.badge}
+        <div className="mx-auto flex w-full max-w-md items-end justify-center gap-3">
+          <div
+            className={`pointer-events-auto grid min-w-0 flex-1 items-center rounded-full border border-secondary bg-primary/90 p-1.5 shadow-[0_12px_35px_rgba(15,23,42,0.18)] backdrop-blur-xl ${
+              navItems.length > 4 ? "grid-cols-5" : "grid-cols-4"
+            }`}
+          >
+            {navItems.map((item) => {
+              const label = language === "en" ? item.labelEn : item.labelId;
+
+              return (
+                <button
+                  key={item.path}
+                  type="button"
+                  aria-label={label}
+                  aria-current={item.isActive ? "page" : undefined}
+                  title={label}
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    navigate(item.path);
+                  }}
+                  className={`relative flex h-12 min-w-0 w-full items-center justify-center rounded-3xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-950 active:scale-95 ${
+                    item.isActive
+                      ? "bg-primary text-primary shadow-[0_3px_12px_rgba(15,23,42,0.14)] ring-1 ring-secondary"
+                      : "text-quaternary hover:bg-primary_hover hover:text-secondary"
+                  }`}
+                >
+                  {item.icon}
+                  {item.badge > 0 && (
+                    <span className="absolute right-1 top-1 flex min-w-4.5 items-center justify-center rounded-full bg-primary-solid px-1 text-[9px] font-bold leading-4 text-white ring-2 ring-primary">
+                      {item.badge > 99 ? "99+" : item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pointer-events-auto relative shrink-0">
+            {showProfileMenu && (
+              <div className="absolute bottom-full right-0 mb-3 w-72 origin-bottom-right rounded-3xl border border-secondary bg-primary p-2 text-xs text-secondary shadow-[0_20px_45px_rgba(15,23,42,0.22)] animate-in fade-in zoom-in-95">
+                <div className="mb-1 rounded-2xl bg-secondary px-3 py-3">
+                  <p className="truncate text-sm font-bold text-primary">
+                    {userProfile?.fullName || user?.name || "Tamu / Murid"}
+                  </p>
+                  <p className="mt-0.5 truncate text-[11px] text-secondary">
+                    {userProfile?.email || user?.email}
+                  </p>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <span className="rounded-full border border-secondary bg-primary px-2 py-0.5 text-[10px] font-bold text-secondary">
+                      {userRole === "admin"
+                        ? "Admin"
+                        : userRole === "teacher"
+                          ? "Guru / Asatidz"
+                          : "Santri / Murid"}
+                    </span>
+                    {currentStreak > 0 && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                        <Flame className="size-3 fill-amber-500 text-amber-500" />
+                        {currentStreak} Hari
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    toggleTheme();
+                    setShowProfileMenu(false);
+                  }}
+                  className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left font-medium transition-colors hover:bg-primary_hover"
+                >
+                  <span className="flex items-center gap-2">
+                    {theme === "dark" ? (
+                      <Sun className="size-4 text-amber-500" />
+                    ) : (
+                      <Moon className="size-4 text-fg-quaternary" />
+                    )}
+                    {theme === "dark" ? "Mode Terang" : "Mode Gelap"}
                   </span>
-                )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setShowProfileMenu(false);
+                    await logout();
+                    navigate("/login");
+                  }}
+                  className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left font-medium text-error-primary transition-colors hover:bg-error-primary"
+                >
+                  <LogOut className="size-4" />
+                  <span>Keluar</span>
+                </button>
               </div>
-              <span className="text-[10px] sm:text-[11px] mt-0.5 tracking-tight truncate max-w-full">
-                {language === "en" ? item.labelEn : item.labelId}
-              </span>
+            )}
+
+            <button
+              type="button"
+              aria-label={language === "en" ? "Open profile" : "Buka profil"}
+              aria-expanded={showProfileMenu}
+              onClick={() => setShowProfileMenu((isOpen) => !isOpen)}
+              className="group flex size-15 items-center justify-center rounded-full bg-primary-solid shadow-[0_12px_35px_rgba(15,23,42,0.28)] ring-1 ring-secondary transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:scale-95"
+            >
+              <Avatar
+                size="lg"
+                src={userProfile?.avatarUrl}
+                alt={userProfile?.fullName || user?.name || "User"}
+                border
+                className="transition-transform group-hover:scale-105"
+              />
             </button>
-          ))}
+          </div>
         </div>
       </nav>
 

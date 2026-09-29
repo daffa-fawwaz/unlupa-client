@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { AlertCircle, Moon, Eye, EyeOff } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Link } from "react-router";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/base/buttons/button";
+import { Checkbox } from "@/components/base/checkbox/checkbox";
+import { Input } from "@/components/base/input/input";
 import type {
   LoginFormProps,
   LoginPayload,
 } from "@/features/auth/login/types/login.types";
+
+// ====================================== Interface ===================================== //
 
 interface ExtendedLoginFormProps extends LoginFormProps {
   email: string;
@@ -14,6 +17,8 @@ interface ExtendedLoginFormProps extends LoginFormProps {
   password: string;
   setPassword: (password: string) => void;
 }
+
+// ====================================== Page Section ===================================== //
 
 export const LoginForm = ({
   onSubmit,
@@ -24,7 +29,7 @@ export const LoginForm = ({
   password,
   setPassword,
 }: ExtendedLoginFormProps) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,124 +37,137 @@ export const LoginForm = ({
     const payload: LoginPayload = {
       email,
       password,
+      rememberFor30Days: rememberMe,
     };
 
     onSubmit(payload);
   };
 
   return (
-    <div className="w-full flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-card border border-border rounded-xl p-10 relative overflow-hidden transition-all duration-500 mx-auto">
-        {/* TOP ACCENT LINE */}
-        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/30 to-transparent"></div>
+    <div className="grid min-h-screen bg-primary text-primary lg:grid-cols-2">
+      <section className="flex min-h-screen flex-col px-6 py-8 sm:px-10 lg:px-12">
 
-        {/* LOGIN FORM */}
-        <div id="state-login" className="animate-fade-in text-left">
-          <div className="text-center mb-10">
-            <Moon className="w-8 h-8 text-primary mx-auto mb-4 opacity-80" />
-            <h1 className="font-serif text-2xl text-foreground mb-3">
-              Selamat Datang Kembali
-            </h1>
-            <p className="text-muted-foreground text-sm font-light leading-relaxed">
-              Ruang belajar Anda tersimpan rapi. <br />
-              <span className="text-muted-foreground italic">
-                Segala pencapaian Anda terjaga utuh...
-              </span>
-            </p>
-          </div>
+        <div className="flex flex-1 items-center justify-center py-12">
+          <div
+            id="state-login"
+            className="w-full max-w-90 animate-in fade-in slide-in-from-bottom-2 duration-500"
+          >
+            <div className="mb-8 text-center">
+              <div className="mx-auto mb-6 flex size-10 items-center justify-center rounded-xl border border-secondary bg-primary shadow-xs">
+                <img
+                  src="/unlupa.logo.png"
+                  alt=""
+                  className="size-6 object-contain"
+                />
+              </div>
+              <h1 className="text-display-xs font-semibold tracking-tight text-primary">
+                Selamat Datang Kembali!
+              </h1>
+              <p className="mt-3 text-md text-secondary">
+                Masuk ke akun mu untuk melanjutkan perjalanan kita
+              </p>
+            </div>
 
-          <form id="loginForm" onSubmit={handleSubmit}>
-            <div className="mb-5 relative">
-              <label className="block font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground mb-2">
-                Email
-              </label>
+            <form id="loginForm" onSubmit={handleSubmit} className="space-y-5">
               <Input
+                label="Email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="alamat@email.com"
-                required
+                onChange={setEmail}
+                placeholder="Enter your email"
+                isRequired
+                size="md"
               />
-            </div>
 
-            <div className="mb-5 relative">
-              <div className="flex justify-between items-center mb-2">
-                <label className="block font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground mb-0">
-                  Kata Sandi
-                </label>
-              </div>
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  className="pr-12"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+              <Input
+                label="Password"
+                type="password"
+                value={password}
+                onChange={setPassword}
+                placeholder="••••••••"
+                isRequired
+                size="md"
+              />
+
+              {error && (
+                <div
+                  role="alert"
+                  className="flex items-start gap-3 rounded-xl border border-error_subtle bg-error-primary p-4"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div
-                role="alert"
-                className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-6 flex items-start gap-4"
-              >
-                <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
-                <div className="flex-1 text-left">
-                  <h4 className="text-destructive font-medium text-xs uppercase tracking-widest mb-1 font-mono">
-                    Kendala Terdeteksi
-                  </h4>
-                  <p className="text-destructive/90 text-xs leading-relaxed font-light">
-                    {error}
-                  </p>
+                  <AlertCircle className="mt-0.5 size-5 shrink-0 text-error-primary" />
+                  <div className="flex-1 text-left">
+                    <h4 className="mb-1 text-sm font-semibold text-error-primary">
+                      Kendala Terdeteksi
+                    </h4>
+                    <p className="text-sm leading-relaxed text-error-primary">
+                      {error}
+                    </p>
+                  </div>
                 </div>
+              )}
+
+              <div className="flex items-center justify-between gap-4">
+                <Checkbox
+                  isSelected={rememberMe}
+                  onChange={setRememberMe}
+                  label="Remember for 30 days"
+                  size="sm"
+                />
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-semibold text-brand-secondary transition-colors hover:text-brand-secondary_hover"
+                >
+                  Forgot password
+                </Link>
               </div>
-            )}
 
-            <Button
-              disabled={loading}
-              type="submit"
-              className="w-full mt-2"
-            >
-              {loading ? "Loading..." : "Masuk ke Ruang Belajar"}
-            </Button>
-
-            <div className="flex justify-between items-center mt-6 px-1">
-              <Link
-                to="/forgot-password"
-                className="text-[0.75rem] text-muted-foreground hover:text-primary transition-colors no-underline"
+              <Button
+                isDisabled={loading}
+                isLoading={loading}
+                type="submit"
+                size="lg"
+                className="w-full"
               >
-                Lupa kata sandi?
-              </Link>
-              <Link
-                to="/register"
-                className="text-[0.75rem] text-muted-foreground hover:text-primary transition-colors no-underline"
-              >
-                Belum punya akun? Daftar
-              </Link>
-            </div>
-          </form>
+                Sign in
+              </Button>
 
-          <div className="mt-12 pt-6 border-t border-border text-center">
-            <p className="text-[10px] text-muted-foreground font-light italic">
-              "Masuklah dengan tenang. Ruang belajar Anda selalu terbuka untuk
-              Anda."
-            </p>
+              <Button
+                type="button"
+                color="secondary"
+                size="lg"
+                className="w-full"
+              >
+                <span className="mr-2 inline-flex size-5 items-center justify-center rounded-full bg-white text-sm font-bold text-[#4285f4] shadow-xs">
+                  G
+                </span>
+                Sign in with Google
+              </Button>
+
+              <p className="pt-2 text-center text-sm text-secondary">
+                Don't have an account?{" "}
+                <Link
+                  to="/register"
+                  className="font-semibold text-brand-secondary transition-colors hover:text-brand-secondary_hover"
+                >
+                  Sign up
+                </Link>
+              </p>
+            </form>
           </div>
         </div>
-      </div>
+
+        <p className="text-sm text-secondary">© Unlupa 2025</p>
+      </section>
+
+      <aside className="hidden min-h-screen p-3 lg:block">
+        <div className="relative size-full overflow-hidden rounded-[2rem] border border-secondary bg-secondary">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_17%,rgba(127,86,217,0.75),transparent_21%),radial-gradient(circle_at_28%_77%,rgba(127,86,217,0.78),transparent_24%),radial-gradient(circle_at_60%_67%,rgba(14,165,233,0.45),transparent_20%),linear-gradient(135deg,#f7f7fb_0%,#d7d8df_42%,#f4f4f8_100%)]" />
+          <div className="absolute -left-28 top-8 h-72 w-[140%] rotate-[-28deg] rounded-full border-[18px] border-white/75 bg-white/10" />
+          <div className="absolute -right-40 bottom-24 h-72 w-72 rounded-full border-[18px] border-white/70 bg-white/10" />
+          <div className="absolute -bottom-24 left-6 h-64 w-[78%] rotate-[-18deg] rounded-full border-[16px] border-white/70 bg-white/10" />
+          <div className="absolute inset-0 bg-linear-to-br from-white/45 via-transparent to-black/5" />
+        </div>
+      </aside>
     </div>
   );
 };
