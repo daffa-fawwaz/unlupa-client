@@ -257,6 +257,19 @@ export const PersonalReviewModal: React.FC<Props> = ({
                         />
                       </div>
                     )}
+                    {currentItem.explanation && (
+                      <div className="mt-4 pt-3 border-t border-indigo-200/60 dark:border-indigo-800/60 text-xs text-slate-700 dark:text-slate-300 text-left">
+                        <span className="font-bold text-indigo-600 dark:text-indigo-400 block mb-1 flex items-center gap-1.5">
+                          <BookOpen className="w-3.5 h-3.5" />
+                          {language === 'en' ? 'Explanation' : 'Penjelasan'}:
+                        </span>
+                        <BilingualCardText 
+                          text={currentItem.explanation}
+                          type="answer"
+                          variant="review"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Soft confirmation micro-banner */}

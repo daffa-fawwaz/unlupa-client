@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BookItem, Chapter, Language } from '../../types';
-import { Image as ImageIcon, X, UploadCloud } from 'lucide-react';
+import { X, UploadCloud, BookOpen, ChevronDown } from 'lucide-react';
 import { uploadImageToStorage } from '../../lib/imageUtils';
 
 interface ItemFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { question: string; answer: string; imageQ?: string; imageA?: string; chapterId?: string }, keepOpen?: boolean) => void;
+  onSubmit: (data: { question: string; answer: string; explanation?: string; imageQ?: string; imageA?: string; chapterId?: string }, keepOpen?: boolean) => void;
   chapters: Chapter[];
   initialData?: Partial<BookItem>;
   initialChapterId?: string;
@@ -19,10 +19,12 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
   const [form, setForm] = useState({
     question: '',
     answer: '',
+    explanation: '',
     imageQ: '',
     imageA: '',
     chapterId: ''
   });
+  const [showExplanation, setShowExplanation] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const fileInputQ = useRef<HTMLInputElement>(null);
@@ -30,9 +32,12 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      const hasExp = Boolean(initialData?.explanation);
+      setShowExplanation(hasExp);
       setForm({
         question: initialData?.question || '',
         answer: initialData?.answer || '',
+        explanation: initialData?.explanation || '',
         imageQ: initialData?.imageQ || '',
         imageA: initialData?.imageA || '',
         chapterId: initialData?.chapterId || initialChapterId || ''
@@ -49,6 +54,7 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
     onSubmit({
       question: form.question,
       answer: form.answer,
+      explanation: form.explanation.trim() || undefined,
       imageQ: form.imageQ || undefined,
       imageA: form.imageA || undefined,
       chapterId: form.chapterId || undefined
@@ -59,9 +65,11 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
         ...prev,
         question: '',
         answer: '',
+        explanation: '',
         imageQ: '',
         imageA: ''
       }));
+      setShowExplanation(false);
     }
   };
 
@@ -144,7 +152,8 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputQ.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-200 dark:border-slate-700"
+                disabled={isUploading}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer disabled:opacity-50"
               >
                 <UploadCloud className="w-4 h-4" />
                 {language === 'en' ? 'Upload Image' : 'Unggah Gambar'}
@@ -174,33 +183,72 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
               className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
             />
             
-            <div className="flex items-center gap-3 mt-2">
+            <div className="flex items-center gap-2.5 mt-2 flex-wrap">
               <button
                 type="button"
                 onClick={() => fileInputA.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-200 dark:border-slate-700"
+                disabled={isUploading}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer disabled:opacity-50"
               >
                 <UploadCloud className="w-4 h-4" />
                 {language === 'en' ? 'Upload Image' : 'Unggah Gambar'}
               </button>
               <input type="file" accept="image/*" className="hidden" ref={fileInputA} onChange={e => handleImageUpload(e, 'imageA')} />
-              
-              {form.imageA && (
-                <div className="relative w-12 h-12 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden group">
-                  <img src={form.imageA} alt="Preview A" className="w-full h-full object-cover" />
-                  <button type="button" onClick={() => setForm({...form, imageA: ''})} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <X className="w-4 h-4 text-white" />
+
+              <button
+                type="button"
+                onClick={() => setShowExplanation(prev => !prev)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50/90 hover:bg-indigo-100/90 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-semibold transition-colors border border-indigo-200/80 dark:border-indigo-800 cursor-pointer"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>{language === 'en' ? '+ Insert Explanation' : '+ Sisipkan Penjelasan'}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-indigo-500 transition-transform duration-200 ${showExplanation ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+
+            {form.imageA && (
+              <div className="relative w-12 h-12 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden group mt-2">
+                <img src={form.imageA} alt="Preview A" className="w-full h-full object-cover" />
+                <button type="button" onClick={() => setForm({...form, imageA: ''})} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            )}
+
+            {showExplanation && (
+              <div className="space-y-1.5 mt-3 p-3 rounded-2xl bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-indigo-900 dark:text-indigo-300">
+                    <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    {language === 'en' ? 'Explanation (Optional)' : 'Penjelasan (Opsional)'}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowExplanation(false);
+                      setForm(prev => ({ ...prev, explanation: '' }));
+                    }}
+                    className="text-[11px] text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                  >
+                    {language === 'en' ? 'Remove' : 'Hapus'}
                   </button>
                 </div>
-              )}
-            </div>
+                <textarea
+                  rows={2}
+                  placeholder={language === 'en' ? 'Add extra explanation, notes, or tips...' : 'Tuliskan penjelasan tambahan, tips, atau catatan konteks...'}
+                  value={form.explanation}
+                  onChange={e => setForm({ ...form, explanation: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-indigo-200/70 dark:border-indigo-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+                />
+              </div>
+            )}
           </div>
 
           <div className="pt-4 flex justify-end gap-3 flex-wrap">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             >
               {language === 'en' ? 'Cancel' : 'Tutup Keluar'}
             </button>
@@ -209,7 +257,7 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
                 type="button"
                 onClick={() => submitForm(true)}
                 disabled={(!form.question.trim() && !form.imageQ) || (!form.answer.trim() && !form.imageA)}
-                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm border border-emerald-200 dark:border-emerald-800"
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm border border-emerald-200 dark:border-emerald-800 cursor-pointer"
               >
                 {language === 'en' ? 'Save & Add Another' : 'Simpan & Tambah Lagi'}
               </button>
@@ -217,7 +265,7 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
             <button
               type="submit"
               disabled={(!form.question.trim() && !form.imageQ) || (!form.answer.trim() && !form.imageA)}
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"
             >
               {language === 'en' ? 'Save Card' : (initialData ? 'Simpan Perubahan' : 'Simpan & Tutup')}
             </button>
@@ -227,3 +275,4 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
     </div>
   );
 };
+
