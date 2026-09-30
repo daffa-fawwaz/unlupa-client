@@ -112,6 +112,7 @@ export interface BookItem {
   chapterId?: string | null;
   question: string;
   answer: string;
+  explanation?: string;
   imageQ?: string;
   imageA?: string;
   tags: string[];

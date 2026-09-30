@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookItem, Language } from '../../types';
-import { X, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, CheckCircle2, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import { AudioRecorderPlayer } from '../shared/AudioRecorderPlayer';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import { BilingualCardText } from '../common/BilingualCardText';
@@ -138,6 +138,23 @@ export const ItemPreviewModal: React.FC<Props> = ({
               />
             )}
           </div>
+
+          {/* Explanation (Optional) */}
+          {item.explanation && (
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400 flex items-center gap-1.5 mb-1.5">
+                <BookOpen className="w-3.5 h-3.5" />
+                {language === 'en' ? 'Explanation' : 'Penjelasan'}
+              </span>
+              <div className="bg-indigo-50/40 dark:bg-indigo-950/20 p-4 sm:p-5 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 select-text text-slate-800 dark:text-slate-200">
+                <BilingualCardText 
+                  text={item.explanation} 
+                  type="answer" 
+                  variant="detail-modal"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Voice Note Recorder */}
           <div className="pt-2">

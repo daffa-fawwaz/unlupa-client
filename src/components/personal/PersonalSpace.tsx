@@ -3069,6 +3069,18 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
               emptyFallback={language === 'en' ? '[No text answer]' : '[Tidak ada teks jawaban]'}
             />
 
+            {item.explanation && (
+              <div className="mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 text-xs text-slate-600 dark:text-slate-400">
+                <span className="font-semibold text-indigo-600 dark:text-indigo-400">
+                  {language === 'en' ? 'Explanation' : 'Penjelasan'}:{' '}
+                </span>
+                <BilingualCardText 
+                  text={item.explanation}
+                  type="answer"
+                  variant="card-list"
+                />
+              </div>
+            )}
           </div>
 
         </div>

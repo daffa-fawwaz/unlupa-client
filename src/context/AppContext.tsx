@@ -159,7 +159,7 @@ interface AppContextType {
   updateChapter: (id: string, data: Partial<Chapter>) => Promise<void> | void;
   deleteChapter: (chapterId: string) => Promise<void> | void;
   
-  createItem: (data: { bookId: string; chapterId?: string; question: string; answer: string; tags?: string[]; imageQ?: string; imageA?: string; order?: number }) => Promise<BookItem> | BookItem;
+  createItem: (data: { bookId: string; chapterId?: string; question: string; answer: string; explanation?: string; tags?: string[]; imageQ?: string; imageA?: string; order?: number }) => Promise<BookItem> | BookItem;
   updateItem: (id: string, data: Partial<BookItem>) => Promise<void> | void;
   reorderItems: (newItems: BookItem[]) => void;
   deleteItem: (itemId: string) => Promise<void> | void;
@@ -2187,6 +2187,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     chapterId?: string; 
     question: string; 
     answer: string; 
+    explanation?: string;
     tags?: string[];
     imageQ?: string;
     imageA?: string;
@@ -2196,12 +2197,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const qText = typeof data.question === 'string' ? data.question : '';
       const aText = typeof data.answer === 'string' ? data.answer : '';
+      const expText = typeof data.explanation === 'string' ? data.explanation : '';
       if (data.chapterId) {
         const res = await personalService.createModuleItem(data.chapterId, {
           book_id: data.bookId,
           title: qText.slice(0, 60) || 'Card',
           content: qText,
           answer: aText,
+          explanation: expText,
           image: data.imageQ,
           order: data.order ?? 0,
           estimate_value: 0,
@@ -2215,6 +2218,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           title: qText.slice(0, 60) || 'Card',
           content: qText,
           answer: aText,
+          explanation: expText,
           image: data.imageQ,
           order: data.order ?? 0,
         });
@@ -2233,6 +2237,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       chapterId: data.chapterId,
       question: data.question ? normalizeBilingualText(data.question) : data.question,
       answer: data.answer ? normalizeBilingualText(data.answer) : data.answer,
+      explanation: data.explanation ? normalizeBilingualText(data.explanation) : data.explanation,
       imageQ: data.imageQ,
       imageA: data.imageA,
       tags: data.tags || [],
@@ -2254,10 +2259,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const qText = typeof data.question === 'string' ? data.question : (data.question ? String(data.question) : '');
       const aText = typeof data.answer === 'string' ? data.answer : (data.answer ? String(data.answer) : '');
+      const expText = typeof data.explanation === 'string' ? data.explanation : (data.explanation ? String(data.explanation) : undefined);
       await personalService.updateItem(id, {
         title: qText.slice(0, 60) || 'Card',
         content: qText,
         answer: aText,
+        explanation: expText,
         image: data.imageQ,
         order: 0,
         estimate_value: 0,
@@ -2273,6 +2280,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ...data,
           question: data.question !== undefined ? normalizeBilingualText(data.question) : i.question,
           answer: data.answer !== undefined ? normalizeBilingualText(data.answer) : i.answer,
+          explanation: data.explanation !== undefined ? (data.explanation ? normalizeBilingualText(data.explanation) : undefined) : i.explanation,
         };
       }
       return i;
