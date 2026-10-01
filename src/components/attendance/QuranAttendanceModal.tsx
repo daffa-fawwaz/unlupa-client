@@ -1,7 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Language } from '../../types';
-import { CalendarDays, CheckCircle2, XCircle, AlertCircle, X, Check, Undo2 } from 'lucide-react';
+import type { Language } from '../../types';
+import { CalendarDays, CheckCircle2, XCircle, AlertCircle, Check, Undo2, Info, TrendingUp } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../context/AppContext';
+import { Badge } from '@/components/base/badges/badges';
+import { Button } from '@/components/base/buttons/button';
+import { CloseButton } from '@/components/base/buttons/close-button';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 interface Props {
   isOpen: boolean;
@@ -10,6 +15,7 @@ interface Props {
 }
 
 export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, language }) => {
+  const isDesktop = useBreakpoint('sm');
   const { quranPages, attendanceExceptions, markAttendanceException } = useApp();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'absent' | 'excused'>('overview');
@@ -80,8 +86,6 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
     };
   }, [quranPages, attendanceExceptions]);
 
-  if (!isOpen) return null;
-
   const formatDate = (dateStr: string) => {
     try {
       const date = new Date(dateStr + 'T00:00:00');
@@ -96,249 +100,260 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
     }
   };
 
+  const attendanceRate = stats.totalDays > 0 ? Math.round((stats.present / stats.totalDays) * 100) : 0;
+  const tabs = [
+    {
+      id: 'overview' as const,
+      label: language === 'en' ? 'Present' : 'Hadir',
+      value: stats.present,
+      hint: language === 'en' ? 'Recorded' : 'Tercatat',
+      icon: CheckCircle2,
+      activeClass: 'border-emerald-300 bg-emerald-50 text-emerald-700 ring-emerald-500/15',
+      iconClass: 'bg-emerald-100 text-emerald-700',
+    },
+    {
+      id: 'absent' as const,
+      label: language === 'en' ? 'Absent' : 'Alpa',
+      value: stats.absent,
+      hint: language === 'en' ? 'Needs review' : 'Perlu ditinjau',
+      icon: XCircle,
+      activeClass: 'border-error_subtle bg-error-primary text-error-primary ring-error/15',
+      iconClass: 'bg-error-primary text-error-primary',
+    },
+    {
+      id: 'excused' as const,
+      label: language === 'en' ? 'Excused' : 'Berhalangan',
+      value: stats.excused,
+      hint: language === 'en' ? 'Confirmed' : 'Dikonfirmasi',
+      icon: AlertCircle,
+      activeClass: 'border-warning/30 bg-warning/10 text-warning ring-warning/15',
+      iconClass: 'bg-warning/15 text-warning',
+    },
+  ];
+
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col max-h-[85vh]">
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-850/50">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl flex items-center justify-center border bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-900/50 text-purple-600 dark:text-purple-400">
-              <CalendarDays className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">
-                {language === 'en' ? 'Attendance History' : 'Riwayat Kehadiran'}
-              </h3>
-              <p className="text-[11px] text-slate-500">
-                {language === 'en' ? `Tracked since Day 1 (${stats.totalDays} days recorded)` : `Terdata sejak hari pertama aktivasi (${stats.totalDays} hari)`}
-              </p>
-            </div>
-          </div>
-          <button 
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* 3 Interactive Cards */}
-        <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30">
-          <div className="grid grid-cols-3 gap-2.5">
-            {/* Hadir */}
-            <div 
-              onClick={() => setActiveTab('overview')}
-              className={`p-3 rounded-2xl border flex flex-col items-center justify-center transition-all cursor-pointer ${
-                activeTab === 'overview'
-                  ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
-                  : 'border-emerald-200/60 dark:border-emerald-900/40 bg-white dark:bg-slate-850 hover:bg-emerald-50/40'
-              }`}
-            >
-              <div className="flex items-center gap-1 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold uppercase mb-1">
-                <CheckCircle2 className="w-3 h-3" /> {language === 'en' ? 'Present' : 'Hadir'}
-              </div>
-              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{stats.present}</div>
-              <span className="text-[9px] text-emerald-600/70 dark:text-emerald-400/70 font-semibold mt-0.5">
-                {language === 'en' ? 'Auto-recorded' : 'Otomatis'}
-              </span>
-            </div>
-
-            {/* Alpa */}
-            <div 
-              onClick={() => setActiveTab('absent')}
-              className={`p-3 rounded-2xl border flex flex-col items-center justify-center transition-all cursor-pointer ${
-                activeTab === 'absent'
-                  ? 'border-rose-500 bg-rose-50 dark:bg-rose-950/30 ring-2 ring-rose-500/20'
-                  : 'border-rose-200/60 dark:border-rose-900/40 bg-white dark:bg-slate-850 hover:bg-rose-50/40'
-              }`}
-            >
-              <div className="flex items-center gap-1 text-[10px] text-rose-700 dark:text-rose-400 font-bold uppercase mb-1">
-                <XCircle className="w-3 h-3" /> {language === 'en' ? 'Absent' : 'Alpa'}
-              </div>
-              <div className="text-2xl font-black text-rose-600 dark:text-rose-400">{stats.absent}</div>
-              <span className="text-[9px] text-rose-600/80 dark:text-rose-400/80 font-bold mt-0.5">
-                {stats.absent > 0 ? (language === 'en' ? 'Click to resolve' : 'Klik konfirmasi') : (language === 'en' ? 'Zero' : 'Nihil')}
-              </span>
-            </div>
-
-            {/* Berhalangan */}
-            <div 
-              onClick={() => setActiveTab('excused')}
-              className={`p-3 rounded-2xl border flex flex-col items-center justify-center transition-all cursor-pointer ${
-                activeTab === 'excused'
-                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30 ring-2 ring-amber-500/20'
-                  : 'border-amber-200/60 dark:border-amber-900/40 bg-white dark:bg-slate-850 hover:bg-amber-50/40'
-              }`}
-            >
-              <div className="flex items-center gap-1 text-[10px] text-amber-700 dark:text-amber-400 font-bold uppercase mb-1">
-                <AlertCircle className="w-3 h-3" /> {language === 'en' ? 'Excused' : 'Berhalangan'}
-              </div>
-              <div className="text-2xl font-black text-amber-600 dark:text-amber-400">{stats.excused}</div>
-              <span className="text-[9px] text-amber-600/80 dark:text-amber-400/80 font-bold mt-0.5">
-                {stats.excused > 0 ? (language === 'en' ? 'View list' : 'Lihat daftar') : (language === 'en' ? 'Zero' : 'Nihil')}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Body */}
-        <div className="p-4 overflow-y-auto flex-1 space-y-3">
-          {activeTab === 'overview' && (
-            <div className="space-y-3">
-              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                <p className="font-bold text-slate-800 dark:text-white mb-1">
-                  {language === 'en' ? 'Attendance Tracking Mechanism' : 'Mekanisme Pencatatan Kehadiran'}
-                </p>
-                <p>
-                  {language === 'en' 
-                    ? 'Attendance is automatically recorded whenever new pages are activated or scheduled reviews are marked. If a day had pending reviews or active learning but no action was recorded, it is initially flagged as Absent.' 
-                    : 'Kehadiran otomatis tercatat ketika ada penambahan ziyadah atau penyelesaian murajaah. Hari yang tidak ada pengerjaan awalnya tercatat sebagai Alpa, namun dapat Anda konfirmasi sebagai Berhalangan (Izin/Sakit) kapan saja.'}
-                </p>
-              </div>
-
-              {stats.absent > 0 && (
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40">
-                  <div className="flex items-center gap-2 text-rose-700 dark:text-rose-300 text-xs font-semibold">
-                    <XCircle className="w-4 h-4 shrink-0" />
-                    <span>
-                      {language === 'en' 
-                        ? `${stats.absent} days need excuse confirmation.` 
-                        : `Ada ${stats.absent} hari alpa yang dapat dikonfirmasi.`}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab('absent')}
-                    className="px-3 py-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-2xs"
-                  >
-                    {language === 'en' ? 'Resolve' : 'Konfirmasi'}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'absent' && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <h4 className="text-xs font-bold uppercase text-slate-500">
-                  {language === 'en' ? 'Unexcused Absences' : 'Daftar Alpa (Belum Ada Keterangan)'}
-                </h4>
-                <span className="text-xs text-slate-400">
-                  {stats.absentDays.length} {language === 'en' ? 'days' : 'hari'}
-                </span>
-              </div>
-
-              {stats.absentDays.length === 0 ? (
-                <div className="text-center py-10 text-slate-400">
-                  <Check className="w-8 h-8 mx-auto text-emerald-500 mb-2" />
-                  <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                    {language === 'en' ? 'Alhamdulillah! No unexcused absences.' : 'Alhamdulillah! Tidak ada alpa tanpa keterangan.'}
-                  </p>
-                </div>
-              ) : (
-                stats.absentDays.map(item => (
-                  <div 
-                    key={item.date} 
-                    className="flex items-center justify-between p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 shadow-2xs"
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                        {formatDate(item.date)}
-                      </div>
-                      <div className="text-[10px] text-rose-500 font-semibold">
-                        {language === 'en' ? 'Alpa (No task activity)' : 'Alpa (Tidak ada pengerjaan)'}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => markAttendanceException(item.date, 'sakit')}
-                        className="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-transform active:scale-95 shadow-2xs cursor-pointer"
-                        title="Tandai sebagai Sakit"
-                      >
-                        {language === 'en' ? 'Sick' : 'Sakit'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => markAttendanceException(item.date, 'izin')}
-                        className="px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-transform active:scale-95 shadow-2xs cursor-pointer"
-                        title="Tandai sebagai Izin"
-                      >
-                        {language === 'en' ? 'Permit' : 'Izin'}
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-
-          {activeTab === 'excused' && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <h4 className="text-xs font-bold uppercase text-slate-500">
-                  {language === 'en' ? 'Excused Records' : 'Riwayat Berhalangan'}
-                </h4>
-                <span className="text-xs text-slate-400">
-                  {stats.excusedDays.length} {language === 'en' ? 'records' : 'hari'}
-                </span>
-              </div>
-
-              {stats.excusedDays.length === 0 ? (
-                <div className="text-center py-10 text-slate-400">
-                  <p className="text-sm font-semibold text-slate-500">
-                    {language === 'en' ? 'No excused records registered.' : 'Belum ada data izin atau sakit.'}
-                  </p>
-                </div>
-              ) : (
-                stats.excusedDays.map(item => (
-                  <div 
-                    key={item.date} 
-                    className="flex items-center justify-between p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 shadow-2xs"
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                        {formatDate(item.date)}
-                      </div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase ${
-                          item.status === 'sakit' 
-                            ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300' 
-                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
-                        }`}>
-                          {item.status === 'sakit' ? (language === 'en' ? 'Sick' : 'Sakit') : (language === 'en' ? 'Permit' : 'Izin')}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => markAttendanceException(item.date, null)}
-                      className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 font-bold text-xs flex items-center gap-1 transition-colors cursor-pointer"
-                      title={language === 'en' ? 'Revert back to Absent' : 'Batalkan status ini (Kembalikan ke Alpa)'}
-                    >
-                      <Undo2 className="w-3 h-3" />
-                      <span>{language === 'en' ? 'Revert' : 'Batalkan'}</span>
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-end">
-          <button
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[250] flex items-end justify-center sm:items-center sm:p-4">
+          <motion.button
             type="button"
+            aria-label={language === 'en' ? 'Close attendance history' : 'Tutup riwayat kehadiran'}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+            className="absolute inset-0 bg-overlay/70 backdrop-blur-sm"
+          />
+
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="attendance-history-title"
+            initial={isDesktop ? { opacity: 0, y: 24, scale: 0.98 } : { y: '100%' }}
+            animate={isDesktop ? { opacity: 1, y: 0, scale: 1 } : { y: 0 }}
+            exit={isDesktop ? { opacity: 0, y: 24, scale: 0.98 } : { y: '100%' }}
+            transition={isDesktop ? { duration: 0.2 } : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="relative flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl border border-secondary bg-primary shadow-2xl sm:rounded-3xl"
           >
-            {language === 'en' ? 'Close' : 'Tutup'}
-          </button>
+            <header className="flex shrink-0 items-center justify-between gap-4 border-b border-secondary px-4 py-3 sm:px-6 sm:py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+                  <CalendarDays className="size-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 id="attendance-history-title" className="truncate text-lg font-semibold tracking-tight text-primary">
+                      {language === 'en' ? 'Attendance History' : 'Riwayat Kehadiran'}
+                    </h3>
+                    <Badge color="success" size="sm" className="hidden sm:flex">{attendanceRate}%</Badge>
+                  </div>
+                  <p className="truncate text-xs text-secondary sm:text-sm">
+                    {language === 'en' ? `${stats.totalDays} learning days recorded` : `${stats.totalDays} hari belajar tercatat`}
+                  </p>
+                </div>
+              </div>
+              <CloseButton slot={null} size="md" onPress={onClose} label="Close attendance history" />
+            </header>
+
+            <div className="shrink-0 border-b border-secondary bg-secondary/30 p-3 sm:p-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                {tabs.map(({ id, label, value, hint, icon: Icon, activeClass, iconClass }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={activeTab === id}
+                    onClick={() => setActiveTab(id)}
+                    className={`rounded-2xl border p-2 text-left ring-2 ring-transparent transition-all sm:p-3 ${activeTab === id ? activeClass : 'border-secondary bg-primary text-secondary hover:bg-primary_hover'}`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className={`flex size-9 items-center justify-center rounded-xl ${iconClass}`}>
+                        <Icon className="size-4.5" />
+                      </div>
+                      <span className="text-xl font-semibold tracking-tight text-primary sm:text-2xl">{value}</span>
+                    </div>
+                    <p className="mt-3 truncate text-xs font-semibold sm:text-sm">{label}</p>
+                    <p className="mt-0.5 hidden truncate text-xs opacity-70 sm:block">{hint}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
+              {activeTab === 'overview' && (
+                <div className="space-y-4">
+                  <section className="rounded-2xl border border-brand-200 bg-brand-50 p-4 sm:p-5">
+                    <div className="flex items-start gap-3">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+                        <TrendingUp className="size-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-end justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-semibold text-primary">{language === 'en' ? 'Attendance rate' : 'Tingkat kehadiran'}</p>
+                            <p className="mt-0.5 text-xs text-secondary">{language === 'en' ? 'Based on your recorded learning days' : 'Berdasarkan hari belajar yang tercatat'}</p>
+                          </div>
+                          <p className="text-2xl font-semibold tracking-tight text-brand-700">{attendanceRate}%</p>
+                        </div>
+                        <div className="mt-4 h-2 overflow-hidden rounded-full bg-brand-100">
+                          <div className="h-full rounded-full bg-brand-solid" style={{ width: `${attendanceRate}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="rounded-2xl border border-secondary bg-secondary/30 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-secondary bg-primary text-fg-quaternary">
+                        <Info className="size-4.5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-primary">
+                          {language === 'en' ? 'How attendance is recorded' : 'Cara kehadiran dicatat'}
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-secondary">
+                          {language === 'en'
+                            ? 'A day is marked present when you add memorization or complete a scheduled review. Days without activity are marked absent and can be updated to sick or permitted.'
+                            : 'Hari ditandai hadir ketika kamu menambah hafalan atau menyelesaikan murajaah. Hari tanpa aktivitas ditandai alpa dan dapat diperbarui menjadi sakit atau izin.'}
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+
+                  {stats.absent > 0 && (
+                    <section className="flex flex-col gap-3 rounded-2xl border border-error_subtle bg-error-primary p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-error-primary text-error-primary ring-1 ring-error_subtle ring-inset">
+                          <XCircle className="size-4.5" />
+                        </div>
+                        <p className="text-sm font-medium text-error-primary">
+                          {language === 'en' ? `${stats.absent} days need confirmation.` : `${stats.absent} hari alpa perlu dikonfirmasi.`}
+                        </p>
+                      </div>
+                      <Button size="sm" color="secondary-destructive" onPress={() => setActiveTab('absent')} className="w-full sm:w-auto">
+                        {language === 'en' ? 'Review days' : 'Tinjau hari'}
+                      </Button>
+                    </section>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'absent' && (
+                <section className="space-y-3">
+                  <div className="flex items-center justify-between gap-3 px-1">
+                    <div>
+                      <h4 className="text-sm font-semibold text-primary">{language === 'en' ? 'Unexcused absences' : 'Alpa tanpa keterangan'}</h4>
+                      <p className="text-xs text-secondary">{language === 'en' ? 'Confirm each day as sick or permitted.' : 'Konfirmasi setiap hari sebagai sakit atau izin.'}</p>
+                    </div>
+                    <Badge color="error" size="sm">{stats.absentDays.length} {language === 'en' ? 'days' : 'hari'}</Badge>
+                  </div>
+
+                  {stats.absentDays.length === 0 ? (
+                    <div className="rounded-2xl border border-secondary bg-secondary/30 px-5 py-10 text-center">
+                      <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-success/10 text-success">
+                        <Check className="size-5" />
+                      </div>
+                      <p className="mt-3 text-sm font-semibold text-primary">{language === 'en' ? 'No unexcused absences' : 'Tidak ada alpa tanpa keterangan'}</p>
+                      <p className="mt-1 text-xs text-secondary">{language === 'en' ? 'All recorded days are accounted for.' : 'Semua hari yang tercatat sudah memiliki status.'}</p>
+                    </div>
+                  ) : (
+                    stats.absentDays.map((item) => (
+                      <article key={item.date} className="flex flex-col gap-3 rounded-2xl border border-secondary bg-primary p-3 shadow-xs sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-error-primary text-error-primary">
+                            <CalendarDays className="size-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-primary">{formatDate(item.date)}</p>
+                            <p className="mt-0.5 text-xs text-secondary">{language === 'en' ? 'No learning activity recorded' : 'Tidak ada aktivitas belajar tercatat'}</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 sm:flex">
+                          <Button size="sm" color="secondary" onPress={() => markAttendanceException(item.date, 'sakit')}>
+                            {language === 'en' ? 'Sick' : 'Sakit'}
+                          </Button>
+                          <Button size="sm" onPress={() => markAttendanceException(item.date, 'izin')}>
+                            {language === 'en' ? 'Permit' : 'Izin'}
+                          </Button>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </section>
+              )}
+
+              {activeTab === 'excused' && (
+                <section className="space-y-3">
+                  <div className="flex items-center justify-between gap-3 px-1">
+                    <div>
+                      <h4 className="text-sm font-semibold text-primary">{language === 'en' ? 'Excused records' : 'Riwayat berhalangan'}</h4>
+                      <p className="text-xs text-secondary">{language === 'en' ? 'Confirmed sick and permitted days.' : 'Hari sakit dan izin yang telah dikonfirmasi.'}</p>
+                    </div>
+                    <Badge color="warning" size="sm">{stats.excusedDays.length} {language === 'en' ? 'days' : 'hari'}</Badge>
+                  </div>
+
+                  {stats.excusedDays.length === 0 ? (
+                    <div className="rounded-2xl border border-secondary bg-secondary/30 px-5 py-10 text-center">
+                      <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-warning/10 text-warning">
+                        <AlertCircle className="size-5" />
+                      </div>
+                      <p className="mt-3 text-sm font-semibold text-primary">{language === 'en' ? 'No excused records' : 'Belum ada riwayat berhalangan'}</p>
+                      <p className="mt-1 text-xs text-secondary">{language === 'en' ? 'Sick and permitted days will appear here.' : 'Hari sakit dan izin akan tampil di sini.'}</p>
+                    </div>
+                  ) : (
+                    stats.excusedDays.map((item) => (
+                      <article key={item.date} className="flex items-center justify-between gap-3 rounded-2xl border border-secondary bg-primary p-3 shadow-xs">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 text-warning">
+                            <CalendarDays className="size-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-primary">{formatDate(item.date)}</p>
+                            <Badge color={item.status === 'sakit' ? 'warning' : 'blue'} size="sm" className="mt-1">
+                              {item.status === 'sakit' ? (language === 'en' ? 'Sick' : 'Sakit') : (language === 'en' ? 'Permit' : 'Izin')}
+                            </Badge>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          color="secondary-destructive"
+                          iconLeading={Undo2}
+                          onPress={() => markAttendanceException(item.date, null)}
+                        >
+                          <span className="hidden sm:inline">{language === 'en' ? 'Revert' : 'Batalkan'}</span>
+                        </Button>
+                      </article>
+                    ))
+                  )}
+                </section>
+              )}
+            </div>
+
+            <footer className="flex shrink-0 justify-end border-t border-secondary bg-primary px-4 py-3 sm:px-5">
+              <Button color="secondary" size="md" onPress={onClose}>{language === 'en' ? 'Close' : 'Tutup'}</Button>
+            </footer>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 };

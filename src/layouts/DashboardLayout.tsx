@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { useApp } from "@/context/AppContext";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Share01Icon } from "@hugeicons/core-free-icons";
-import { Share01 } from "@untitledui/icons";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import {
   Home,
@@ -11,20 +10,26 @@ import {
   Library,
   Users,
   ShieldAlert,
-  Sparkles,
   Crown,
-  Share2,
-  WifiOff,
+  ChevronDown,
   LogOut,
   Moon,
   Sun,
   Flame,
+  Download,
+  Languages,
+  Smartphone,
+  CheckCircle2,
 } from "lucide-react";
-import { PWAInstallButton } from "@/components/common/PWAInstallButton";
 import { StudentReportModal } from "@/components/home/StudentReportModal";
 import { BillingHistoryModal } from "@/components/profile/BillingHistoryModal";
 import { AchievementReportModal } from "@/components/common/AchievementReportModal";
 import { Avatar } from "@/components/base/avatar/avatar";
+import { Badge } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { CloseButton } from "@/components/base/buttons/close-button";
+import { Toggle } from "@/components/base/toggle/toggle";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 
 export const DashboardLayout: React.FC = () => {
   const location = useLocation();
@@ -36,8 +41,9 @@ export const DashboardLayout: React.FC = () => {
     quranStats,
     personalStats,
     language,
+    setLanguage,
     theme,
-    toggleTheme,
+    setTheme,
     userProfile,
     openUpgradeModal,
     logout,
@@ -52,24 +58,21 @@ export const DashboardLayout: React.FC = () => {
     totalMasteredMaterials,
   } = useApp();
 
-  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isBillingModalOpen, setIsBillingModalOpen] = useState(false);
   const [isAchievementModalOpen, setIsAchievementModalOpen] = useState(false);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  const [showIOSInstallGuide, setShowIOSInstallGuide] = useState(false);
+  const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
+  const profileName = userProfile?.fullName || user?.name || "Tamu / Murid";
+  const profileInitials = profileName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
+  const hasPaidPlan = userProfile?.plan === "premium" || userProfile?.plan === "institutional";
+  const hasProAccess = hasPaidPlan || userProfile?.role === "admin" || userProfile?.role === "superadmin" || userRole === "admin";
 
   const navItems = [
     {
@@ -183,36 +186,6 @@ export const DashboardLayout: React.FC = () => {
 
           {/* Right Action Tools */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            <PWAInstallButton />
-
-            {/* Quick Upgrade / Plan Indicator */}
-            {userProfile?.plan === "free" ? (
-              <button
-                type="button"
-                onClick={() =>
-                  openUpgradeModal(
-                    "Top Bar Navigation",
-                    "Upgrade ke Unlupa Pro untuk membuka Mushaf 30 Juz, AI Builder, dan kelas tak terbatas.",
-                  )
-                }
-                className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[#2a1d0f] border border-amber-500/50 hover:border-amber-400 text-amber-300 text-xs font-black tracking-wider shadow-md shadow-amber-500/10 transition-all cursor-pointer active:scale-95"
-                title="Upgrade ke Unlupa Pro"
-              >
-                <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span>PRO</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setIsBillingModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[#2a1d0f] border border-amber-500/50 text-amber-300 text-xs font-black tracking-wider transition-all cursor-pointer active:scale-95"
-                title="Klik untuk melihat status paket Pro & riwayat invoice"
-              >
-                <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span>PRO</span>
-              </button>
-            )}
-
             {/* Share Report Trigger */}
             <button
               type="button"
@@ -224,10 +197,217 @@ export const DashboardLayout: React.FC = () => {
                   : "Bagikan Rapor Progres"
               }
             >
-              {/* <Share2 className="w-3.5 h-3.5 text-blue-400 shrink-0" /> */}
               <HugeiconsIcon icon={Share01Icon} />
               <span>{language === "en" ? "Share Report" : "Bagi Rapor"}</span>
             </button>
+
+            {/* User Profile Menu */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowProfileMenu((isOpen) => !isOpen)}
+                className={`flex h-9 items-center rounded-full border shadow-xs transition active:scale-95 ${hasProAccess ? "gap-1.5 border-[#f59e0b]/60 bg-[#24170d] py-1 pl-1 pr-2 shadow-[#ef6905]/15 hover:bg-[#302014]" : "gap-2 border-secondary bg-primary px-2 hover:bg-primary_hover"}`}
+                aria-expanded={showProfileMenu}
+              >
+                <span className={`inline-flex shrink-0 rounded-full ${hasProAccess ? "ring-2 ring-[#ef6905] ring-offset-1 ring-offset-[#24170d]" : ""}`}>
+                  <Avatar
+                    size="xs"
+                    src={userProfile?.avatarUrl}
+                    alt={profileName}
+                    initials={profileInitials}
+                    border
+                  />
+                </span>
+                <span className={`hidden max-w-[120px] truncate text-sm font-semibold lg:inline ${hasProAccess ? "text-white" : "text-primary"}`}>
+                  {profileName}
+                </span>
+                {hasProAccess && (
+                  <>
+                    <Crown className="size-3.5 fill-[#fbbf24] text-[#fbbf24] sm:hidden" />
+                    <span className="hidden rounded-full bg-[#ef6905] px-1.5 py-0.5 text-[9px] font-black tracking-wider text-white sm:inline">
+                      PRO
+                    </span>
+                  </>
+                )}
+                <ChevronDown className={`size-3.5 shrink-0 ${hasProAccess ? "text-[#fbbf24]" : "text-fg-quaternary"}`} />
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 max-h-[calc(100dvh-4.5rem)] w-[min(22rem,calc(100vw-1rem))] origin-top-right space-y-2 overflow-y-auto rounded-3xl border border-secondary bg-primary p-2 text-xs text-secondary shadow-xl animate-in fade-in zoom-in-95">
+                  <section className="rounded-2xl bg-secondary/50 p-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar
+                        size="md"
+                        src={userProfile?.avatarUrl}
+                        alt={profileName}
+                        initials={profileInitials}
+                        border
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-primary">{profileName}</p>
+                        <p className="mt-0.5 truncate text-xs text-secondary">{userProfile?.email || user?.email}</p>
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                          <Badge color="gray" size="sm">
+                            {userRole === "admin"
+                              ? "Admin"
+                              : userRole === "teacher"
+                                ? language === "en" ? "Teacher" : "Guru / Asatidz"
+                                : language === "en" ? "Student" : "Santri / Murid"}
+                          </Badge>
+                          {currentStreak > 0 && (
+                            <Badge color="warning" size="sm" className="gap-1">
+                              <Flame className="size-3 fill-current" />
+                              {currentStreak} {language === "en" ? "days" : "hari"}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section
+                    className={`relative overflow-hidden rounded-2xl border ${hasProAccess ? "border-[#f59e0b]/50 p-4 shadow-lg shadow-[#ef6905]/15" : "border-secondary bg-primary p-3"}`}
+                    style={hasProAccess ? { background: "radial-gradient(circle at 100% 0%, rgba(239,105,5,0.35), transparent 45%), linear-gradient(135deg, #26170c 0%, #130d09 100%)" } : undefined}
+                  >
+                    {hasProAccess && <div className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full border border-white/10" />}
+                    <div className="relative flex items-start gap-3">
+                      <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${hasProAccess ? "bg-[#ef6905] text-white shadow-md shadow-[#ef6905]/30" : "bg-brand-50 text-brand-700"}`}>
+                        <Crown className="size-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className={`text-sm font-semibold ${hasProAccess ? "text-white" : "text-primary"}`}>{hasProAccess ? "Unlupa Pro" : language === "en" ? "Free plan" : "Paket gratis"}</p>
+                          {hasProAccess ? (
+                            <span className="rounded-full border border-[#fbbf24]/70 bg-[#ef6905] px-2.5 py-0.5 text-[10px] font-black tracking-wider text-white shadow-sm shadow-black/20">
+                              PRO
+                            </span>
+                          ) : (
+                            <Badge color="gray" size="sm">FREE</Badge>
+                          )}
+                        </div>
+                        <p className={`mt-1 text-xs leading-relaxed ${hasProAccess ? "text-[#fed7aa]" : "text-secondary"}`}>
+                          {hasProAccess
+                            ? language === "en" ? "Full feature access is active on this account." : "Akses penuh fitur aktif pada akun ini."
+                            : language === "en" ? "Upgrade for full Quran, AI, and teaching access." : "Upgrade untuk akses penuh Quran, AI, dan fitur mengajar."}
+                        </p>
+                      </div>
+                    </div>
+
+                    {!hasProAccess ? (
+                      <Button
+                        size="sm"
+                        iconLeading={Crown}
+                        onPress={() => {
+                          setShowProfileMenu(false);
+                          openUpgradeModal(
+                            "Profile Dropdown",
+                            "Upgrade ke Unlupa Pro untuk membuka Mushaf 30 Juz, AI Builder, dan kelas tak terbatas.",
+                          );
+                        }}
+                        className="mt-3 w-full"
+                      >
+                        {language === "en" ? "Upgrade to Pro" : "Upgrade ke Pro"}
+                      </Button>
+                    ) : hasPaidPlan ? (
+                      <Button
+                        size="sm"
+                        color="secondary"
+                        onPress={() => {
+                          setShowProfileMenu(false);
+                          setIsBillingModalOpen(true);
+                        }}
+                        className="relative mt-3 w-full bg-white/10 text-white ring-white/20 hover:bg-white/15 hover:text-white"
+                      >
+                        {language === "en" ? "Manage subscription" : "Kelola langganan"}
+                      </Button>
+                    ) : (
+                      <div className="relative mt-3 flex items-center gap-2 rounded-xl border border-white/10 bg-white/8 px-3 py-2.5 text-xs font-medium text-[#fde68a]">
+                        <CheckCircle2 className="size-4 text-[#fbbf24]" />
+                        {language === "en" ? "Pro access via account role" : "Akses Pro melalui peran akun"}
+                      </div>
+                    )}
+                  </section>
+
+                  {!isInstalled && (isInstallable || isIOS) && (
+                    <section className="flex items-center gap-3 rounded-2xl border border-secondary bg-primary p-3">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                        <Smartphone className="size-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-primary">{language === "en" ? "Install Unlupa" : "Instal Unlupa"}</p>
+                        <p className="mt-0.5 text-xs text-secondary">{language === "en" ? "Faster access from your device." : "Akses lebih cepat dari perangkatmu."}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        color="secondary"
+                        iconLeading={Download}
+                        onPress={async () => {
+                          if (isIOS && !isInstallable) {
+                            setShowProfileMenu(false);
+                            setShowIOSInstallGuide(true);
+                            return;
+                          }
+                          const installed = await install();
+                          if (installed) setShowProfileMenu(false);
+                        }}
+                      >
+                        {language === "en" ? "Install" : "Instal"}
+                      </Button>
+                    </section>
+                  )}
+
+                  <section className="overflow-hidden rounded-2xl border border-secondary bg-primary">
+                    <div className="flex items-center gap-3 border-b border-secondary p-3">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-fg-quaternary">
+                        {theme === "dark" ? <Moon className="size-4.5" /> : <Sun className="size-4.5" />}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-primary">{language === "en" ? "Dark theme" : "Tema gelap"}</p>
+                        <p className="text-xs text-secondary">{theme === "dark" ? (language === "en" ? "Enabled" : "Aktif") : (language === "en" ? "Disabled" : "Nonaktif")}</p>
+                      </div>
+                      <Toggle
+                        size="md"
+                        aria-label={language === "en" ? "Toggle dark theme" : "Ubah tema gelap"}
+                        isSelected={theme === "dark"}
+                        onChange={(isSelected) => setTheme(isSelected ? "dark" : "light")}
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-fg-quaternary">
+                        <Languages className="size-4.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-primary">{language === "en" ? "Language" : "Bahasa"}</p>
+                        <p className="text-xs text-secondary">{language === "en" ? "English" : "Indonesia"}</p>
+                      </div>
+                      <span className="text-[10px] font-semibold text-tertiary">ID</span>
+                      <Toggle
+                        size="md"
+                        aria-label={language === "en" ? "Switch to Indonesian" : "Ganti ke bahasa Inggris"}
+                        isSelected={language === "en"}
+                        onChange={(isEnglish) => setLanguage(isEnglish ? "en" : "id")}
+                      />
+                      <span className="text-[10px] font-semibold text-tertiary">EN</span>
+                    </div>
+                  </section>
+
+                  <Button
+                    size="md"
+                    color="tertiary-destructive"
+                    iconLeading={LogOut}
+                    onPress={async () => {
+                      setShowProfileMenu(false);
+                      await logout();
+                      navigate("/login");
+                    }}
+                    className="w-full justify-start"
+                  >
+                    {language === "en" ? "Sign out" : "Keluar"}
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -237,18 +417,17 @@ export const DashboardLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* Floating workspace navigation and profile */}
+      {/* Mobile workspace navigation */}
       <nav
         id="bottom-app-navigation"
         aria-label={language === "en" ? "Main navigation" : "Navigasi utama"}
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-[100] px-2 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] print:hidden select-none sm:px-4"
+        className="fixed inset-x-0 bottom-0 z-[100] border-t border-secondary bg-primary/95 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] pt-2 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl print:hidden"
       >
-        <div className="mx-auto flex w-full max-w-md items-end justify-center gap-3">
-          <div
-            className={`pointer-events-auto grid min-w-0 flex-1 items-center rounded-full border border-secondary bg-primary/90 p-1.5 shadow-[0_12px_35px_rgba(15,23,42,0.18)] backdrop-blur-xl ${
-              navItems.length > 4 ? "grid-cols-5" : "grid-cols-4"
-            }`}
-          >
+        <div
+          className={`mx-auto grid w-full max-w-lg items-center gap-1 ${
+            navItems.length > 4 ? "grid-cols-5" : "grid-cols-4"
+          }`}
+        >
             {navItems.map((item) => {
               const label = language === "en" ? item.labelEn : item.labelId;
 
@@ -263,99 +442,24 @@ export const DashboardLayout: React.FC = () => {
                     setShowProfileMenu(false);
                     navigate(item.path);
                   }}
-                  className={`relative flex h-12 min-w-0 w-full items-center justify-center rounded-3xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-950 active:scale-95 ${
+                  className={`relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-center transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:scale-95 ${
                     item.isActive
-                      ? "bg-primary text-primary shadow-[0_3px_12px_rgba(15,23,42,0.14)] ring-1 ring-secondary"
-                      : "text-quaternary hover:bg-primary_hover hover:text-secondary"
+                      ? "bg-brand-50 text-brand-700"
+                      : "text-tertiary hover:bg-primary_hover hover:text-secondary"
                   }`}
                 >
                   {item.icon}
+                  <span className="max-w-full truncate text-[11px] font-semibold leading-none">
+                    {label}
+                  </span>
                   {item.badge > 0 && (
-                    <span className="absolute right-1 top-1 flex min-w-4.5 items-center justify-center rounded-full bg-primary-solid px-1 text-[9px] font-bold leading-4 text-white ring-2 ring-primary">
+                    <span className="absolute right-2 top-1 flex min-w-4.5 items-center justify-center rounded-full bg-primary-solid px-1 text-[9px] font-bold leading-4 text-white ring-2 ring-primary">
                       {item.badge > 99 ? "99+" : item.badge}
                     </span>
                   )}
                 </button>
               );
             })}
-          </div>
-
-          <div className="pointer-events-auto relative shrink-0">
-            {showProfileMenu && (
-              <div className="absolute bottom-full right-0 mb-3 w-72 origin-bottom-right rounded-3xl border border-secondary bg-primary p-2 text-xs text-secondary shadow-[0_20px_45px_rgba(15,23,42,0.22)] animate-in fade-in zoom-in-95">
-                <div className="mb-1 rounded-2xl bg-secondary px-3 py-3">
-                  <p className="truncate text-sm font-bold text-primary">
-                    {userProfile?.fullName || user?.name || "Tamu / Murid"}
-                  </p>
-                  <p className="mt-0.5 truncate text-[11px] text-secondary">
-                    {userProfile?.email || user?.email}
-                  </p>
-                  <div className="mt-2 flex items-center gap-1.5">
-                    <span className="rounded-full border border-secondary bg-primary px-2 py-0.5 text-[10px] font-bold text-secondary">
-                      {userRole === "admin"
-                        ? "Admin"
-                        : userRole === "teacher"
-                          ? "Guru / Asatidz"
-                          : "Santri / Murid"}
-                    </span>
-                    {currentStreak > 0 && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
-                        <Flame className="size-3 fill-amber-500 text-amber-500" />
-                        {currentStreak} Hari
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    toggleTheme();
-                    setShowProfileMenu(false);
-                  }}
-                  className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left font-medium transition-colors hover:bg-primary_hover"
-                >
-                  <span className="flex items-center gap-2">
-                    {theme === "dark" ? (
-                      <Sun className="size-4 text-amber-500" />
-                    ) : (
-                      <Moon className="size-4 text-fg-quaternary" />
-                    )}
-                    {theme === "dark" ? "Mode Terang" : "Mode Gelap"}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={async () => {
-                    setShowProfileMenu(false);
-                    await logout();
-                    navigate("/login");
-                  }}
-                  className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left font-medium text-error-primary transition-colors hover:bg-error-primary"
-                >
-                  <LogOut className="size-4" />
-                  <span>Keluar</span>
-                </button>
-              </div>
-            )}
-
-            <button
-              type="button"
-              aria-label={language === "en" ? "Open profile" : "Buka profil"}
-              aria-expanded={showProfileMenu}
-              onClick={() => setShowProfileMenu((isOpen) => !isOpen)}
-              className="group flex size-15 items-center justify-center rounded-full bg-primary-solid shadow-[0_12px_35px_rgba(15,23,42,0.28)] ring-1 ring-secondary transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:scale-95"
-            >
-              <Avatar
-                size="lg"
-                src={userProfile?.avatarUrl}
-                alt={userProfile?.fullName || user?.name || "User"}
-                border
-                className="transition-transform group-hover:scale-105"
-              />
-            </button>
-          </div>
         </div>
       </nav>
 
@@ -386,6 +490,46 @@ export const DashboardLayout: React.FC = () => {
         isOpen={isAchievementModalOpen}
         onClose={() => setIsAchievementModalOpen(false)}
       />
+
+      {showIOSInstallGuide && (
+        <div className="fixed inset-0 z-[400] flex items-end justify-center sm:items-center sm:p-4">
+          <button
+            type="button"
+            aria-label={language === "en" ? "Close installation guide" : "Tutup panduan instalasi"}
+            onClick={() => setShowIOSInstallGuide(false)}
+            className="absolute inset-0 bg-overlay/70 backdrop-blur-sm"
+          />
+          <div role="dialog" aria-modal="true" className="relative w-full max-w-sm rounded-t-3xl border border-secondary bg-primary p-5 shadow-2xl sm:rounded-3xl">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                  <Smartphone className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-primary">{language === "en" ? "Install on iPhone or iPad" : "Instal di iPhone atau iPad"}</h2>
+                  <p className="mt-0.5 text-sm text-secondary">{language === "en" ? "Add Unlupa to your Home Screen." : "Tambahkan Unlupa ke Layar Utama."}</p>
+                </div>
+              </div>
+              <CloseButton slot={null} size="sm" onPress={() => setShowIOSInstallGuide(false)} label="Close installation guide" />
+            </div>
+
+            <div className="mt-5 space-y-3">
+              <div className="flex gap-3 rounded-2xl bg-secondary/50 p-3">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-brand-700 shadow-xs">1</span>
+                <p className="pt-1.5 text-sm text-secondary">{language === "en" ? "Tap Share in the Safari toolbar." : "Ketuk Bagikan pada toolbar Safari."}</p>
+              </div>
+              <div className="flex gap-3 rounded-2xl bg-secondary/50 p-3">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-brand-700 shadow-xs">2</span>
+                <p className="pt-1.5 text-sm text-secondary">{language === "en" ? "Choose Add to Home Screen." : "Pilih Tambahkan ke Layar Utama."}</p>
+              </div>
+            </div>
+
+            <Button size="lg" onPress={() => setShowIOSInstallGuide(false)} className="mt-5 w-full">
+              {language === "en" ? "Understood" : "Mengerti"}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

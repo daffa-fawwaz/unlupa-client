@@ -147,17 +147,22 @@
   --color-alpha-white: rgb(255 255 255);
   --color-alpha-black: rgb(0 0 0);
 
-  --color-brand-50: rgb(249 245 255);
-  --color-brand-100: rgb(244 235 255);
-  --color-brand-200: rgb(233 215 254);
-  --color-brand-300: rgb(214 187 251);
-  --color-brand-400: rgb(182 146 246);
-  --color-brand-500: rgb(158 119 237);
-  --color-brand-600: rgb(127 86 217);
-  --color-brand-700: rgb(105 65 198);
-  --color-brand-800: rgb(83 56 158);
-  --color-brand-900: rgb(66 48 125);
-  --color-brand-950: rgb(44 28 95);
+  --color-brand-50: rgb(255 247 237);
+  --color-brand-100: rgb(255 237 213);
+  --color-brand-200: rgb(254 215 170);
+  --color-brand-300: rgb(253 186 116);
+  --color-brand-400: rgb(251 146 60);
+  --color-brand-500: rgb(245 121 25);
+  --color-brand-600: rgb(239 105 5);
+  --color-brand-700: rgb(194 65 12);
+  --color-brand-800: rgb(154 52 18);
+  --color-brand-900: rgb(124 45 18);
+  --color-brand-950: rgb(67 20 7);
+
+  /* SIMPLE SEMANTIC ALIASES */
+  --color-success: rgb(7 148 85);
+  --color-success-hover: rgb(5 122 72);
+  --color-success-subtle: rgb(209 250 223);
 
   /* LIGHT MODE VARIABLES */
 
@@ -526,6 +531,9 @@
   .dark-mode {
     --color-alpha-white: rgb(12 14 18);
     --color-alpha-black: rgb(255 255 255);
+    --color-success: rgb(23 178 106);
+    --color-success-hover: rgb(71 205 137);
+    --color-success-subtle: rgb(5 79 49);
 
     /* UTILITY COLORS */
 

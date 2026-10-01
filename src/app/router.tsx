@@ -13,6 +13,7 @@ import { TeacherRequestPage } from "@/features/dashboard/admin/pages/TeacherRequ
 import { UserListPage } from "@/features/dashboard/admin/pages/UserListPage";
 import { PublishedBooksRequestPage } from "@/features/dashboard/admin/pages/PublishedBooksRequestPage";
 import { AdminBookDetailPage } from "@/features/dashboard/admin/pages/AdminBookDetailPage";
+import { AdminSectionLayout } from "@/features/dashboard/admin/layout/AdminSectionLayout";
 import { AlquranPage } from "@/pages/alquran/AlquranPage";
 import { StatusItemsByJuzPage } from "@/features/alquran/pages/StatusItemsByJuzPage";
 import { StatusItemsView } from "@/features/alquran/pages/StatusItemsView";
@@ -92,20 +93,25 @@ export const router = createBrowserRouter([
                 element: <ProtectedRoute allowedRoles={["admin"]} />,
                 children: [
                   {
-                    path: "/dashboard/teacher-requests",
-                    element: <TeacherRequestPage />,
-                  },
-                  {
-                    path: "/dashboard/user-list",
-                    element: <UserListPage />,
-                  },
-                  {
-                    path: "/dashboard/book-requests",
-                    element: <PublishedBooksRequestPage />,
-                  },
-                  {
-                    path: "/dashboard/book-requests/:id",
-                    element: <AdminBookDetailPage />,
+                    element: <AdminSectionLayout />,
+                    children: [
+                      {
+                        path: "/dashboard/teacher-requests",
+                        element: <TeacherRequestPage />,
+                      },
+                      {
+                        path: "/dashboard/user-list",
+                        element: <UserListPage />,
+                      },
+                      {
+                        path: "/dashboard/book-requests",
+                        element: <PublishedBooksRequestPage />,
+                      },
+                      {
+                        path: "/dashboard/book-requests/:id",
+                        element: <AdminBookDetailPage />,
+                      },
+                    ],
                   },
                 ],
               },

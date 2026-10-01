@@ -8,4 +8,6 @@ export interface User {
 export interface LoginUser extends User {
   name: string;
   token: string;
+  created_at?: string;
+  createdAt?: string;
 }

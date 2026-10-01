@@ -204,6 +204,7 @@ export interface UserProfile {
   avatarUrl: string;
   plan: 'free' | 'premium' | 'institutional';
   role?: 'user' | 'admin' | 'superadmin';
+  createdAt?: string;
   onboardingPreferences?: UserOnboardingPreferences;
 }
 

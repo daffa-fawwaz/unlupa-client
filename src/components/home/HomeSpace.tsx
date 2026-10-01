@@ -47,6 +47,12 @@ export const HomeSpace: React.FC = () => {
       ? userProfile.fullName
       : "") ||
     "Akhi";
+  const hasProAccess =
+    userProfile.plan === "premium" ||
+    userProfile.plan === "institutional" ||
+    userProfile.role === "admin" ||
+    userProfile.role === "superadmin" ||
+    authUser?.role === "admin";
 
   // Navigation Gesture (Global swipe to Quran space)
   useSwipeGesture(null, {
@@ -111,29 +117,42 @@ export const HomeSpace: React.FC = () => {
       </section>
 
       {/* PRO UPGRADE SPOTLIGHT BANNER */}
-      {userProfile.plan === "free" ? (
+      {!hasProAccess ? (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 p-4 sm:p-5 text-white shadow-lg shadow-amber-500/15"
+          className="relative overflow-hidden rounded-3xl border border-[#fb923c]/50 p-5 text-white shadow-xl shadow-[#ef6905]/15 sm:p-6"
+          style={{ background: "radial-gradient(circle at 90% 10%, rgba(251,191,36,0.34), transparent 34%), linear-gradient(135deg, #ef6905 0%, #c2410c 100%)" }}
         >
-          <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-[11px] font-black tracking-wide text-amber-100 uppercase">
-                <Crown className="w-3.5 h-3.5 text-amber-200" />
-                <span>Unlupa Pro Upgrade</span>
+          <div className="pointer-events-none absolute -right-10 -top-12 size-40 rounded-full border border-white/15" />
+          <div className="pointer-events-none absolute -right-3 top-14 size-20 rounded-full border border-white/10" />
+
+          <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-start gap-4">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#1d140d] text-[#fbbf24] shadow-lg shadow-black/20 ring-1 ring-white/15 ring-inset">
+                <Crown className="size-6 fill-current" />
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                {language === "en"
-                  ? "Unlock Complete 30 Juz & Unlimited AI"
-                  : "Buka Hafalan 30 Juz & AI Builder Tanpa Batas"}
-              </h3>
-              <p className="text-xs text-amber-100/90 max-w-xl leading-relaxed">
-                {language === "en"
-                  ? "Upgrade today to access all 604 Mushaf pages, unlimited personal books, voice recording, and teaching reports."
-                  : "Tingkatkan akun Anda untuk membuka seluruh 604 halaman mushaf, buat buku tak terbatas, dan kelola kelas santri."}
-              </p>
+              <div className="min-w-0">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                  <Sparkles className="size-3" />
+                  Unlupa Pro
+                </div>
+                <h3 className="mt-2 text-lg font-semibold tracking-tight text-white sm:text-xl">
+                  {language === "en" ? "Unlock your complete learning journey" : "Buka seluruh perjalanan belajarmu"}
+                </h3>
+                <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-[#ffedd5]">
+                  {language === "en"
+                    ? "Access all 30 Juz, unlimited AI tools, personal books, voice recording, and complete teaching reports."
+                    : "Akses seluruh 30 Juz, AI tanpa batas, buku pribadi, rekaman suara, dan laporan mengajar lengkap."}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {[language === "en" ? "604 Mushaf pages" : "604 halaman Mushaf", language === "en" ? "Unlimited AI" : "AI tanpa batas", language === "en" ? "Teaching tools" : "Fitur mengajar"].map((benefit) => (
+                    <span key={benefit} className="rounded-full bg-[#1d140d]/25 px-2.5 py-1 text-[10px] font-semibold text-white ring-1 ring-white/15 ring-inset">
+                      {benefit}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <button
@@ -144,7 +163,7 @@ export const HomeSpace: React.FC = () => {
                   "Upgrade ke Unlupa Pro untuk akses penuh tanpa batasan fitur.",
                 )
               }
-              className="px-5 py-2.5 rounded-xl bg-slate-900 text-amber-400 hover:bg-slate-800 active:scale-95 font-black text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+              className="flex h-11 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#111827] px-5 text-sm font-semibold text-[#fbbf24] shadow-lg shadow-black/20 ring-1 ring-white/10 ring-inset transition-all hover:bg-[#1f2937] active:scale-[0.98] sm:w-auto"
             >
               <span>
                 {language === "en" ? "Upgrade to Pro" : "Tingkatkan ke Pro"}

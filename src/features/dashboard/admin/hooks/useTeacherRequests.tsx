@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { teacherRequestService } from "../services/teacherRequest.service";
 import type { TeacherRequest } from "../types/teacherRequest.types";
 
@@ -7,18 +7,18 @@ export const useTeacherRequests = () => {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<TeacherRequest[] | null>(null);
 
-  const getTeacherRequests = async () => {
+  const getTeacherRequests = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await teacherRequestService.getTeacherRequests();
       setData(response.data);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to fetch teacher requests");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return {
     loading,

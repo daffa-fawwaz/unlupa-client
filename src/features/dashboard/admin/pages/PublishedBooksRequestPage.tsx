@@ -1,54 +1,69 @@
+import { useEffect, useMemo, useState } from "react";
 import {
-  CheckCircle,
-  XCircle,
-  Clock,
+  AlertCircle,
+  BookCheck,
   BookOpen,
-  RefreshCw,
-  Menu,
-  BookMarked,
-  ImageOff,
   CalendarPlus,
-  Hourglass,
+  CheckCircle2,
+  Clock3,
   Eye,
+  Hourglass,
+  ImageOff,
+  Loader2,
+  RefreshCw,
+  Search,
+  XCircle,
 } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { usePendingBooks } from "@/features/dashboard/admin/hooks/usePendingBooks";
-import { useApproveBook } from "@/features/dashboard/admin/hooks/useApproveBook";
-import { useRejectBook } from "@/features/dashboard/admin/hooks/useRejectBook";
-import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
-import { StatusBadge } from "@/components/ui/StatusBadge";
-import type { PendingBook } from "@/features/dashboard/admin/types/pendingBook.types";
-import type { TableColumn } from "@/features/dashboard/types/table.types";
+import { Table, TableCard } from "@/components/application/table/table";
+import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { Input } from "@/components/base/input/input";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { Sidebar } from "@/components/ui/Sidebar";
+import { useApproveBook } from "@/features/dashboard/admin/hooks/useApproveBook";
+import { usePendingBooks } from "@/features/dashboard/admin/hooks/usePendingBooks";
+import { useRejectBook } from "@/features/dashboard/admin/hooks/useRejectBook";
+import type { PendingBook } from "@/features/dashboard/admin/types/pendingBook.types";
 import { resolveAssetUrl } from "@/lib/assets";
 
-const pendingBookColumns: TableColumn[] = [
-  { key: "id", label: "No." },
-  { key: "cover", label: "Cover" },
-  { key: "title", label: "Book Info" },
-  { key: "description", label: "Description" },
-  { key: "status", label: "Status" },
-  { key: "actions", label: "Actions", align: "right" },
-];
-
-const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString("id-ID", {
+const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString("id-ID", {
     day: "2-digit",
     month: "short",
     year: "numeric",
   });
+
+const formatRelativeAge = (dateStr: string) => {
+  const days = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24)),
+  );
+
+  if (days === 0) return "Today";
+  if (days === 1) return "1 day ago";
+  return `${days} days ago`;
+};
+
+const StatusBadge = ({ status }: { status: PendingBook["status"] }) => {
+  if (status === "approved") {
+    return <BadgeWithDot color="success" size="sm">Approved</BadgeWithDot>;
+  }
+
+  if (status === "rejected") {
+    return <BadgeWithDot color="error" size="sm">Rejected</BadgeWithDot>;
+  }
+
+  return <BadgeWithDot color="warning" size="sm">Pending review</BadgeWithDot>;
 };
 
 export const PublishedBooksRequestPage = () => {
   const navigate = useNavigate();
-  const { data, getPendingBooks } = usePendingBooks();
-  const { approveBook } = useApproveBook();
-  const { rejectBook } = useRejectBook();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { data, loading, error, getPendingBooks } = usePendingBooks();
+  const { approveBook, loading: approving } = useApproveBook();
+  const { rejectBook, loading: rejecting } = useRejectBook();
+  const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
-
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: "approve" | "reject" | null;
@@ -63,51 +78,53 @@ export const PublishedBooksRequestPage = () => {
 
   useEffect(() => {
     getPendingBooks();
-  }, []);
+  }, [getPendingBooks]);
 
-  // Stats hitung dari data asli
+  const books = useMemo(() => data ?? [], [data]);
+  const filteredBooks = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    if (!query) return books;
+
+    return books.filter(
+      (book) =>
+        book.title.toLowerCase().includes(query) ||
+        book.description?.toLowerCase().includes(query),
+    );
+  }, [books, searchQuery]);
+
   const stats = useMemo(() => {
-    if (!data || data.length === 0) {
-      return { pending: 0, submittedToday: 0, oldestPendingDays: 0 };
-    }
-
+    const pendingBooks = books.filter((book) => book.status === "pending");
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const submittedToday = data.filter((b) => {
-      const created = new Date(b.created_at);
-      created.setHours(0, 0, 0, 0);
-      return created.getTime() === today.getTime();
+    const submittedToday = books.filter((book) => {
+      const createdAt = new Date(book.created_at);
+      createdAt.setHours(0, 0, 0, 0);
+      return createdAt.getTime() === today.getTime();
     }).length;
 
-    const oldest = data.reduce<Date | null>((acc, b) => {
-      const created = new Date(b.created_at);
-      return acc === null || created < acc ? created : acc;
+    const oldestTimestamp = pendingBooks.reduce<number | null>((oldest, book) => {
+      const timestamp = new Date(book.created_at).getTime();
+      return oldest === null || timestamp < oldest ? timestamp : oldest;
     }, null);
 
-    const oldestPendingDays = oldest
-      ? Math.floor(
-          (new Date().getTime() - oldest.getTime()) / (1000 * 60 * 60 * 24),
-        )
-      : 0;
-
     return {
-      pending: data.filter((b) => b.status === "pending").length,
+      pending: pendingBooks.length,
       submittedToday,
-      oldestPendingDays,
+      oldestPendingDays:
+        oldestTimestamp === null
+          ? 0
+          : Math.max(0, Math.floor((Date.now() - oldestTimestamp) / (1000 * 60 * 60 * 24))),
     };
-  }, [data]);
+  }, [books]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
       await getPendingBooks();
-    } catch (error) {
-      console.error("Terjadi kesalahan saat menyegarkan data");
     } finally {
-      setTimeout(() => {
-        setIsRefreshing(false);
-      }, 500);
+      setIsRefreshing(false);
     }
   };
 
@@ -120,291 +137,277 @@ export const PublishedBooksRequestPage = () => {
   };
 
   const handleCloseModal = () => {
+    if (approving || rejecting) return;
     setModalState({ isOpen: false, type: null, bookId: null, bookTitle: "" });
   };
 
   const handleConfirm = async () => {
-    if (modalState.bookId && modalState.type) {
-      try {
-        if (modalState.type === "approve") {
-          await approveBook(modalState.bookId);
-        } else {
-          await rejectBook(modalState.bookId);
-        }
-        await getPendingBooks();
-        handleCloseModal();
-      } catch (error) {
-        console.error("Terjadi kesalahan saat memproses permintaan buku");
-      }
+    if (!modalState.bookId || !modalState.type) return;
+
+    if (modalState.type === "approve") {
+      await approveBook(modalState.bookId);
+    } else {
+      await rejectBook(modalState.bookId);
     }
+
+    await getPendingBooks();
+    setModalState({ isOpen: false, type: null, bookId: null, bookTitle: "" });
   };
 
-  const renderBookCell = (
-    column: TableColumn,
-    item: PendingBook,
-    index: number,
-  ) => {
-    switch (column.key) {
-      case "id":
-        return (
-          <div className="text-muted-foreground font-mono text-xs">#{index + 1}</div>
-        );
-
-      case "cover":
-        return (
-          <div className="w-10 h-14 rounded-lg overflow-hidden bg-surface-1 border border-border flex items-center justify-center shrink-0">
-            {item.cover_image ? (
-              <img
-                src={resolveAssetUrl(item.cover_image)}
-                alt={item.title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <ImageOff className="w-5 h-5 text-muted-foreground" />
-            )}
-          </div>
-        );
-
-      case "title":
-        return (
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex w-8 h-8 rounded-lg bg-primary items-center justify-center text-primary-foreground shrink-0">
-              <BookMarked className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="font-medium text-foreground line-clamp-1">
-                {item.title}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {formatDate(item.created_at)}
-              </p>
-            </div>
-          </div>
-        );
-
-      case "description":
-        return (
-          <div
-            className="max-w-[200px] truncate text-muted-foreground italic text-sm"
-            title={item.description}
-          >
-            {item.description || (
-              <span className="text-muted-foreground not-italic">No description</span>
-            )}
-          </div>
-        );
-
-      case "status":
-        return <StatusBadge status={item.status} />;
-
-      case "actions":
-        if (item.status === "pending") {
-          return (
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => navigate(`/dashboard/book-requests/${item.id}`)}
-                className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition"
-                title="Lihat Detail Buku"
-              >
-                <Eye className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => handleOpenModal("approve", item.id, item.title)}
-                className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition"
-                title="Approve Book"
-              >
-                <CheckCircle className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => handleOpenModal("reject", item.id, item.title)}
-                className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition"
-                title="Reject Book"
-              >
-                <XCircle className="w-4 h-4" />
-              </button>
-            </div>
-          );
-        } else if (item.status === "approved") {
-          return (
-            <div className="flex justify-end">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-success/10 text-success text-xs font-medium border border-success/20">
-                <CheckCircle className="w-3.5 h-3.5" />
-                Approved
-              </span>
-            </div>
-          );
-        } else if (item.status === "rejected") {
-          return (
-            <div className="flex justify-end">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-destructive/10 text-destructive text-xs font-medium border border-destructive/20">
-                <XCircle className="w-3.5 h-3.5" />
-                Rejected
-              </span>
-            </div>
-          );
-        }
-        return null;
-
-      default:
-        return null;
-    }
-  };
+  const isProcessing = approving || rejecting;
+  const statCards = [
+    {
+      label: "Pending review",
+      value: stats.pending,
+      suffix: "",
+      description: "Awaiting a decision",
+      meta: stats.pending === 1 ? "1 request" : `${stats.pending} requests`,
+      icon: Clock3,
+      cardClass:
+        "border-[#f79009]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#fffaeb_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#4e1d09_100%)]",
+      iconClass: "bg-[#dc6803] text-white shadow-lg shadow-[#dc6803]/25",
+      glowClass: "bg-[#fef0c7] dark:bg-[#7a2e0e]",
+      cardStyle: { borderColor: "rgba(247, 144, 9, 0.5)" },
+    },
+    {
+      label: "Submitted today",
+      value: stats.submittedToday,
+      suffix: "",
+      description: "New requests today",
+      meta: "Daily intake",
+      icon: CalendarPlus,
+      cardClass:
+        "border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,var(--color-brand-50)_100%)]",
+      iconClass: "bg-brand-solid text-white shadow-lg shadow-brand-500/20",
+      glowClass: "bg-brand-100",
+      cardStyle: undefined,
+    },
+    {
+      label: "Oldest pending",
+      value: stats.oldestPendingDays,
+      suffix: "d",
+      description: "Since the oldest request",
+      meta: stats.oldestPendingDays === 0 ? "Up to date" : "Needs attention",
+      icon: Hourglass,
+      cardClass:
+        "border-[#9b8afb]/40 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#f4f3ff_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#2d2657_100%)]",
+      iconClass: "bg-[#6938ef] text-white shadow-lg shadow-[#6938ef]/20",
+      glowClass: "bg-[#e9e5ff] dark:bg-[#3e1c96]",
+      cardStyle: { borderColor: "rgba(155, 138, 251, 0.48)" },
+    },
+  ];
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground font-primary max-w-7xl mx-auto p-6 md:p-10">
-      {/* Sidebar Integration */}
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-
-      {/* Overlay for mobile sidebar */}
-      <div
-        className={`sidebar-overlay ${isSidebarOpen ? "active" : ""}`}
-        onClick={() => setIsSidebarOpen(false)}
-      />
-
-      <div className="relative z-10 space-y-8">
-        {/* Header Section */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="p-2 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border transition text-foreground"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <p className="text-sm font-mono tracking-widest md:inline">MENU</p>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border">
+    <div className="space-y-6">
+      <header className="flex flex-col gap-4 border-b border-secondary pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-start gap-3">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+            <BookOpen className="size-5" />
+          </div>
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                <BookOpen className="w-5 h-5 text-primary" />
-              </div>
-              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-wide">
-                PUBLISHED BOOKS{" "}
-                <span className="text-primary">REQUESTS</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
+                Book publish requests
               </h1>
+              <Badge color="brand" size="sm">{stats.pending} pending</Badge>
             </div>
-            <p className="text-muted-foreground text-sm max-w-lg">
-              Review book publish requests submitted by teachers. Approve or
-              reject books to control what gets shared in the global library.
+            <p className="mt-1 max-w-2xl text-sm text-secondary">
+              Review books submitted by teachers before they are shared in the global library.
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3 self-start md:self-center">
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="p-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border transition text-muted-foreground hover:text-foreground group disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Refresh Data"
+        <ButtonUtility
+          icon={RefreshCw}
+          tooltip="Refresh book requests"
+          size="sm"
+          onPress={handleRefresh}
+          isDisabled={isRefreshing || loading || isProcessing}
+          className={isRefreshing ? "*:data-icon:animate-spin" : undefined}
+        />
+      </header>
+
+      <section className="grid gap-3 sm:grid-cols-3">
+        {statCards.map(
+          ({ label, value, suffix, description, meta, icon: Icon, cardClass, iconClass, glowClass, cardStyle }) => (
+            <article
+              key={label}
+              style={cardStyle}
+              className={`group relative overflow-hidden rounded-3xl border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${cardClass}`}
             >
-              <RefreshCw
-                className={`w-5 h-5 group-hover:text-primary transition-transform ${isRefreshing ? "animate-spin" : ""}`}
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
-              <Clock className="w-32 h-32 text-primary" />
-            </div>
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
-                Pending Review
-              </p>
-              <h3 className="text-4xl font-display font-bold text-foreground">
-                {stats.pending}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-2">Awaiting decision</p>
-            </div>
-          </div>
-
-          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
-              <CalendarPlus className="w-32 h-32 text-primary" />
-            </div>
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
-                Submitted Today
-              </p>
-              <h3 className="text-4xl font-display font-bold text-foreground">
-                {stats.submittedToday}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-2">Buku masuk hari ini</p>
-            </div>
-          </div>
-
-          <div className="bg-card p-6 rounded-xl border border-border relative overflow-hidden group hover:border-primary/30 transition-colors">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition group-hover:scale-110 duration-500">
-              <Hourglass className="w-32 h-32 text-primary" />
-            </div>
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
-                Oldest Pending
-              </p>
-              <h3 className="text-4xl font-display font-bold text-foreground">
-                {stats.oldestPendingDays}
-                <span className="text-lg font-normal text-muted-foreground ml-1">
-                  d
+              <div className={`pointer-events-none absolute -right-8 -top-10 size-32 rounded-full opacity-70 transition-transform duration-300 group-hover:scale-110 ${glowClass}`} />
+              <div className="relative flex items-start justify-between gap-4">
+                <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${iconClass}`}>
+                  <Icon className="size-5" />
+                </div>
+                <span className="rounded-full border border-white/50 bg-primary/70 px-2.5 py-1 text-[10px] font-semibold text-secondary shadow-xs backdrop-blur-sm">
+                  {meta}
                 </span>
-              </h3>
-              <p className="text-xs text-muted-foreground mt-2">
-                Hari sejak request terlama
-              </p>
-            </div>
-          </div>
-        </div>
+              </div>
+              <div className="relative mt-5">
+                <p className="text-3xl font-semibold tracking-tight text-primary">
+                  {value}
+                  {suffix && <span className="ml-1 text-lg font-medium text-tertiary">{suffix}</span>}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-primary">{label}</p>
+                <p className="mt-0.5 text-xs text-tertiary">{description}</p>
+              </div>
+            </article>
+          ),
+        )}
+      </section>
 
-        {/* Books Table */}
-        <DashboardTable
-          title="Book Publish Requests"
-          columns={pendingBookColumns}
-          data={data}
-          getRowKey={(item) => item.id}
-          renderCell={(column, item, index) =>
-            renderBookCell(column, item, index)
+      <TableCard.Root size="md" className="rounded-3xl">
+        <TableCard.Header
+          title="Publication queue"
+          badge={<Badge color="gray" size="sm">{filteredBooks.length} shown</Badge>}
+          description="Open a book to inspect its content, or make a decision directly from the queue."
+          contentTrailing={
+            <Input
+              aria-label="Search book requests"
+              icon={Search}
+              size="sm"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search title or description"
+              className="w-full md:w-72"
+            />
           }
         />
 
-        {/* Mobile empty state placeholder */}
-        <div className="md:hidden bg-card rounded-2xl border border-border p-6 text-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="p-4 rounded-full bg-surface-1 border border-border">
-              <BookOpen className="w-12 h-12 text-muted-foreground" />
+        {error ? (
+          <div className="px-6 py-12 text-center">
+            <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-error-primary text-error-primary">
+              <AlertCircle className="size-5" />
             </div>
-            <h3 className="text-lg font-display font-semibold text-foreground">
-              No Book Requests Yet
-            </h3>
-            <p className="text-muted-foreground text-sm max-w-md">
-              Once teachers submit books for publication, they will appear here
-              for your review.
-            </p>
+            <p className="mt-3 text-sm font-semibold text-primary">Unable to load book requests</p>
+            <p className="mt-1 text-sm text-secondary">{error}</p>
+            <Button
+              color="secondary"
+              size="sm"
+              iconLeading={RefreshCw}
+              onPress={handleRefresh}
+              className="mt-4"
+            >
+              Try again
+            </Button>
           </div>
-        </div>
-      </div>
+        ) : loading && books.length === 0 ? (
+          <div className="flex flex-col items-center px-6 py-14 text-center">
+            <Loader2 className="size-6 animate-spin text-brand-600" />
+            <p className="mt-3 text-sm font-semibold text-primary">Loading publication queue</p>
+            <p className="mt-1 text-sm text-secondary">Fetching the latest teacher submissions.</p>
+          </div>
+        ) : filteredBooks.length === 0 ? (
+          <div className="px-6 py-14 text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+              {searchQuery ? <Search className="size-5" /> : <BookCheck className="size-5" />}
+            </div>
+            <p className="mt-3 text-sm font-semibold text-primary">
+              {searchQuery ? "No matching requests" : "Publication queue is clear"}
+            </p>
+            <p className="mx-auto mt-1 max-w-sm text-sm text-secondary">
+              {searchQuery
+                ? "Try another title or clear the current search."
+                : "New books submitted by teachers will appear here for review."}
+            </p>
+            {searchQuery && (
+              <Button color="secondary" size="sm" onPress={() => setSearchQuery("")} className="mt-4">
+                Clear search
+              </Button>
+            )}
+          </div>
+        ) : (
+          <Table aria-label="Book publication requests" className="min-w-[900px]">
+            <Table.Header>
+              <Table.Head id="book" isRowHeader label="Book" />
+              <Table.Head id="description" label="Description" />
+              <Table.Head id="submitted" label="Submitted" />
+              <Table.Head id="status" label="Status" />
+              <Table.Head id="actions" label="Actions" className="w-36" />
+            </Table.Header>
+            <Table.Body items={filteredBooks}>
+              {(book) => (
+                <Table.Row id={book.id}>
+                  <Table.Cell>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary ring-1 ring-secondary ring-inset">
+                        {book.cover_image ? (
+                          <img
+                            src={resolveAssetUrl(book.cover_image)}
+                            alt={`Cover of ${book.title}`}
+                            className="size-full object-cover"
+                          />
+                        ) : (
+                          <ImageOff className="size-4 text-fg-quaternary" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="max-w-64 truncate text-sm font-semibold text-primary">{book.title}</p>
+                        <p className="mt-1 font-mono text-xs text-tertiary">ID: {book.id.slice(0, 8)}</p>
+                      </div>
+                    </div>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <p className="max-w-72 truncate text-sm text-secondary" title={book.description}>
+                      {book.description || "No description provided"}
+                    </p>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <p className="whitespace-nowrap text-sm font-medium text-primary">{formatDate(book.created_at)}</p>
+                    <p className="mt-0.5 whitespace-nowrap text-xs text-tertiary">{formatRelativeAge(book.created_at)}</p>
+                  </Table.Cell>
+                  <Table.Cell><StatusBadge status={book.status} /></Table.Cell>
+                  <Table.Cell>
+                    <div className="flex justify-end gap-1">
+                      <ButtonUtility
+                        icon={Eye}
+                        color="tertiary"
+                        tooltip="Review book details"
+                        onPress={() => navigate(`/dashboard/book-requests/${book.id}`)}
+                      />
+                      {book.status === "pending" && (
+                        <>
+                          <ButtonUtility
+                            icon={CheckCircle2}
+                            color="tertiary"
+                            tooltip="Approve publication"
+                            onPress={() => handleOpenModal("approve", book.id, book.title)}
+                            isDisabled={isProcessing}
+                            className="text-[#079455] hover:bg-[#ecfdf3] hover:text-[#067647] dark:hover:bg-[#053321]"
+                          />
+                          <ButtonUtility
+                            icon={XCircle}
+                            color="tertiary"
+                            tooltip="Reject publication"
+                            onPress={() => handleOpenModal("reject", book.id, book.title)}
+                            isDisabled={isProcessing}
+                            className="text-error-primary hover:bg-error-primary hover:text-error-primary"
+                          />
+                        </>
+                      )}
+                    </div>
+                  </Table.Cell>
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table>
+        )}
+      </TableCard.Root>
 
-      {/* Confirmation Modal */}
       <ConfirmModal
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         onConfirm={handleConfirm}
-        title={
-          modalState.type === "approve"
-            ? "Setujui Publikasi Buku"
-            : "Tolak Publikasi Buku"
-        }
+        title={modalState.type === "approve" ? "Setujui Publikasi Buku" : "Tolak Publikasi Buku"}
         message={
           modalState.type === "approve"
             ? `Apakah Anda yakin ingin menyetujui buku "${modalState.bookTitle}" untuk dipublikasikan?`
             : `Apakah Anda yakin ingin menolak permintaan publikasi buku "${modalState.bookTitle}"?`
         }
-        confirmText={
-          modalState.type === "approve" ? "Ya, Setujui" : "Ya, Tolak"
-        }
+        confirmText={modalState.type === "approve" ? "Ya, Setujui" : "Ya, Tolak"}
         cancelText="Batal"
-        icon={modalState.type === "approve" ? CheckCircle : XCircle}
+        icon={modalState.type === "approve" ? CheckCircle2 : XCircle}
         variant={modalState.type === "approve" ? "success" : "danger"}
       />
     </div>

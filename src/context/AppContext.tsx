@@ -43,6 +43,18 @@ import { classroomService } from '@/features/classroom/services/classroom.servic
 import type { ClassItem } from '@/features/classroom/types';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 
+const LEGACY_DEFAULT_AVATAR_URL = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80';
+
+const getAccountAvatarUrl = (seed?: string | null) =>
+  seed
+    ? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ef6905&textColor=ffffff`
+    : '';
+
+const getProfileAvatarUrl = (currentAvatar: string | undefined, seed?: string | null) =>
+  currentAvatar && currentAvatar !== LEGACY_DEFAULT_AVATAR_URL
+    ? currentAvatar
+    : getAccountAvatarUrl(seed);
+
 interface PersonalStats {
   totalBooks: number;
   totalItems: number;
@@ -269,7 +281,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
-    return (saved as Language) || 'en';
+    return saved === 'id' ? 'id' : 'en';
   });
 
   const [theme, setTheme] = useState<Theme>(() => {
@@ -350,6 +362,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ...parsed,
           fullName: authState?.name || (parsed.fullName && parsed.fullName !== 'Tamu / Murid' ? parsed.fullName : (authState?.name || 'Santri')),
           email: authState?.email || parsed.email,
+          avatarUrl: getProfileAvatarUrl(parsed.avatarUrl, authState?.email || authState?.name || parsed.email || parsed.fullName),
+          createdAt: authState?.created_at || authState?.createdAt || parsed.createdAt,
           onboardingPreferences: {
             ...defaultOnboardingPreferences,
             ...(parsed.onboardingPreferences || {})
@@ -362,7 +376,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       quranSpaceCode: authState?.id ? `UNL-QRN-${String(authState.id).slice(0, 4).toUpperCase()}` : 'UNL-QRN-GUEST',
       fullName: authState?.name || 'Santri',
       email: authState?.email || '',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      avatarUrl: getAccountAvatarUrl(authState?.email || authState?.name || authState?.id),
+      createdAt: authState?.created_at || authState?.createdAt,
       plan: authState?.is_premium ? 'premium' : 'free',
       onboardingPreferences: defaultOnboardingPreferences,
     };
@@ -370,6 +385,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const authUser = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    const accountAvatarUrl = getAccountAvatarUrl(authUser.email || authUser.name || authUser.id);
+    const accountCreatedAt = authUser.created_at || authUser.createdAt;
+    const needsAvatar = !userProfile.avatarUrl || userProfile.avatarUrl === LEGACY_DEFAULT_AVATAR_URL;
+    const needsCreatedAt = Boolean(accountCreatedAt && !userProfile.createdAt);
+    if ((!accountAvatarUrl || !needsAvatar) && !needsCreatedAt) return;
+
+    setUserProfile(prev => ({
+      ...prev,
+      avatarUrl: needsAvatar ? accountAvatarUrl : prev.avatarUrl,
+      createdAt: accountCreatedAt || prev.createdAt,
+    }));
+  }, [authUser, userProfile.avatarUrl, userProfile.createdAt]);
 
   useEffect(() => {
     try {
@@ -807,7 +838,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         quranSpaceCode: 'UNL-QRN-GUEST',
         fullName: 'Tamu / Murid',
         email: '',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        avatarUrl: '',
         plan: 'free',
       };
       loadedUserIdRef.current = guestId;
@@ -845,7 +876,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           id: targetId,
           email: user.email || prev.email,
           fullName: user.displayName || user.email?.split('@')[0] || prev.fullName,
-          avatarUrl: user.photoURL || prev.avatarUrl,
+          avatarUrl: user.photoURL || getProfileAvatarUrl(prev.avatarUrl, user.email || user.displayName || user.uid),
+          createdAt: user.metadata.creationTime || prev.createdAt,
           quranSpaceCode: `UNL-QRN-${String(targetId).slice(0, 4).toUpperCase()}`,
         }));
 
@@ -1182,7 +1214,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           quranSpaceCode: `UNL-QRN-${String(targetId).slice(0, 4).toUpperCase()}`,
           fullName: authUser.name || 'Santri',
           email: authUser.email || '',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+          avatarUrl: getAccountAvatarUrl(authUser.email || authUser.name || authUser.id),
+          createdAt: authUser.created_at || authUser.createdAt,
           plan: authUser.is_premium ? 'premium' : 'free',
           role: (authUser.role as any) || 'student',
           onboardingPreferences: defaultOnboardingPreferences,
@@ -1215,7 +1248,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         quranSpaceCode: 'UNL-QRN-GUEST',
         fullName: 'Tamu / Murid',
         email: '',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        avatarUrl: '',
         plan: 'free',
         onboardingPreferences: defaultOnboardingPreferences,
       };

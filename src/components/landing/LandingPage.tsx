@@ -5,7 +5,6 @@ import {
   Sparkles, 
   BookOpen, 
   Library, 
-  GraduationCap, 
   Users, 
   CheckCircle2, 
   ArrowRight, 
@@ -14,10 +13,8 @@ import {
   ShieldCheck, 
   Globe, 
   ChevronRight,
-  Star,
   LogIn,
   Lock,
-  Smartphone,
   KeyRound,
   ShieldAlert
 } from 'lucide-react';
@@ -31,8 +28,7 @@ export const LandingPage: React.FC = () => {
     openLoginModal,
     openRegisterModal,
     currentUser,
-    userProfile,
-    logout
+    userProfile
   } = useApp();
 
   const handleEnterApp = (space: AppSpace = 'quran') => {
@@ -63,7 +59,7 @@ export const LandingPage: React.FC = () => {
 
           <div className="flex items-center gap-2 sm:gap-2.5">
             <button
-              onClick={() => setLanguage(language === 'en' ? 'id' : language === 'id' ? 'ar' : 'en')}
+              onClick={() => setLanguage(language === 'en' ? 'id' : 'en')}
               className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center gap-1.5"
             >
               <Globe className="w-3.5 h-3.5 text-slate-500" />

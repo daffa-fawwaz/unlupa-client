@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/theme.css";
+@import "./C:\Users\dzaak\Videos\projek\unlupa-client/src/styles/untitledui.css";
 
 @plugin "tailwindcss-animate";
 @plugin "tailwindcss-react-aria-components";

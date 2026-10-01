@@ -1,52 +1,108 @@
+import { useEffect, useMemo, useState } from "react";
 import {
-  Users,
-  Filter,
-  RefreshCw,
-  Menu,
-  CheckCircle,
-  XCircle,
-  Shield,
+  CheckCircle2,
   Crown,
+  RefreshCw,
+  Search,
+  Shield,
+  UserCheck,
   UserCircle,
+  Users,
+  UserX,
+  XCircle,
 } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
-import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
+import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
+import { Table, TableCard } from "@/components/application/table/table";
+import { Avatar } from "@/components/base/avatar/avatar";
+import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { CloseButton } from "@/components/base/buttons/close-button";
+import { Input } from "@/components/base/input/input";
+import { Select } from "@/components/base/select/select";
 import { useActivateUser } from "@/features/dashboard/admin/hooks/useActivateUser";
 import { useDeactivateUser } from "@/features/dashboard/admin/hooks/useDeactivateUser";
-import { DashboardTable } from "@/features/dashboard/components/DashboardTable";
+import { useUsers } from "@/features/dashboard/admin/hooks/useUsers";
 import type { User } from "@/features/dashboard/admin/types/user.types";
-import type { TableColumn } from "@/features/dashboard/types/table.types";
-import { ConfirmModal } from "@/components/ui/ConfirmModal";
-import { Sidebar } from "@/components/ui/Sidebar";
 
-const userColumns: TableColumn[] = [
-  { key: "id", label: "ID" },
-  { key: "name", label: "Name" },
-  { key: "email", label: "Email" },
-  { key: "role", label: "Role" },
-  { key: "plan", label: "Plan" },
-  { key: "status", label: "Status" },
-  { key: "actions", label: "Actions", align: "right" },
+type RoleFilter = "all" | "admin" | "teacher" | "student";
+type StatusFilter = "all" | "active" | "inactive";
+
+const roleOptions = [
+  { id: "all", label: "All roles", icon: Users },
+  { id: "admin", label: "Admin", icon: Shield },
+  { id: "teacher", label: "Teacher", icon: Crown },
+  { id: "student", label: "Student", icon: UserCircle },
 ];
 
+const statusOptions = [
+  { id: "all", label: "All statuses", icon: Users },
+  { id: "active", label: "Active", icon: CheckCircle2 },
+  { id: "inactive", label: "Inactive", icon: XCircle },
+];
+
+const getInitials = (name: string) =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
+
+const RoleBadge = ({ role }: { role: string }) => {
+  if (role === "admin") {
+    return (
+      <Badge color="purple" size="sm" className="gap-1.5 capitalize">
+        <Shield className="size-3.5" />
+        Admin
+      </Badge>
+    );
+  }
+
+  if (role === "teacher") {
+    return (
+      <Badge color="warning" size="sm" className="gap-1.5 capitalize">
+        <Crown className="size-3.5" />
+        Teacher
+      </Badge>
+    );
+  }
+
+  return (
+    <Badge color="blue" size="sm" className="gap-1.5 capitalize">
+      <UserCircle className="size-3.5" />
+      Student
+    </Badge>
+  );
+};
+
+const PlanBadge = ({ plan }: { plan?: string }) => {
+  const normalizedPlan = plan?.toLowerCase() || "free";
+
+  if (normalizedPlan === "premium" || normalizedPlan === "pro") {
+    return (
+      <Badge color="orange" size="sm" className="gap-1.5 uppercase">
+        <Crown className="size-3.5" />
+        Pro
+      </Badge>
+    );
+  }
+
+  if (normalizedPlan === "institutional") {
+    return <Badge color="purple" size="sm">Institutional</Badge>;
+  }
+
+  return <Badge color="gray" size="sm">Free</Badge>;
+};
+
 export const UserListPage = () => {
-  const { data, getUsers } = useUsers();
-  const { activateUser } = useActivateUser();
-  const { deactivateUser } = useDeactivateUser();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Filter state
-  const [roleFilter, setRoleFilter] = useState<
-    "all" | "admin" | "teacher" | "student"
-  >("all");
-  const [statusFilter, setStatusFilter] = useState<
-    "all" | "active" | "inactive"
-  >("all");
-
-  // Loading state untuk refresh button
+  const { data, loading, error, getUsers } = useUsers();
+  const { activateUser, loading: activating } = useActivateUser();
+  const { deactivateUser, loading: deactivating } = useDeactivateUser();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  // Modal state
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: "activate" | "deactivate" | null;
@@ -58,83 +114,54 @@ export const UserListPage = () => {
     userId: null,
     userName: "",
   });
+  const isUpdating = activating || deactivating;
 
   useEffect(() => {
     getUsers();
-  }, []);
+  }, [getUsers]);
 
-  // Filter data berdasarkan role dan status
+  const users = useMemo(() => data ?? [], [data]);
   const filteredData = useMemo(() => {
-    if (!data) return null;
+    const query = searchQuery.trim().toLowerCase();
 
-    let filtered = data;
+    return users.filter((user) => {
+      const matchesQuery = !query || user.full_name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query);
+      const matchesRole = roleFilter === "all" || user.role === roleFilter;
+      const matchesStatus = statusFilter === "all" || (statusFilter === "active" ? user.is_active : !user.is_active);
 
-    // Filter by role
-    if (roleFilter !== "all") {
-      filtered = filtered.filter((user) => user.role === roleFilter);
-    }
+      return matchesQuery && matchesRole && matchesStatus;
+    });
+  }, [roleFilter, searchQuery, statusFilter, users]);
 
-    // Filter by status
-    if (statusFilter === "active") {
-      filtered = filtered.filter((user) => user.is_active === true);
-    } else if (statusFilter === "inactive") {
-      filtered = filtered.filter((user) => user.is_active === false);
-    }
+  const stats = useMemo(
+    () => ({
+      total: users.length,
+      active: users.filter((user) => user.is_active).length,
+      inactive: users.filter((user) => !user.is_active).length,
+    }),
+    [users],
+  );
 
-    return filtered;
-  }, [data, roleFilter, statusFilter]);
-
-  // Calculate statistics
-  const stats = useMemo(() => {
-    if (!data || data.length === 0) {
-      return {
-        total: 0,
-        active: 0,
-        inactive: 0,
-        admins: 0,
-        teachers: 0,
-        students: 0,
-      };
-    }
-
-    return {
-      total: data.length,
-      active: data.filter((user) => user.is_active).length,
-      inactive: data.filter((user) => !user.is_active).length,
-      admins: data.filter((user) => user.role === "admin").length,
-      teachers: data.filter((user) => user.role === "teacher").length,
-      students: data.filter((user) => user.role === "student").length,
-    };
-  }, [data]);
-
-  // Handler untuk refresh data
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
       await getUsers();
-    } catch (error) {
-      console.error("Terjadi kesalahan saat menyegarkan data");
     } finally {
-      setTimeout(() => {
-        setIsRefreshing(false);
-      }, 500);
+      setIsRefreshing(false);
     }
   };
 
-  const handleOpenModal = (
-    type: "activate" | "deactivate",
-    userId: string,
-    userName: string,
-  ) => {
+  const handleOpenModal = (type: "activate" | "deactivate", user: User) => {
     setModalState({
       isOpen: true,
       type,
-      userId,
-      userName,
+      userId: user.id,
+      userName: user.full_name,
     });
   };
 
   const handleCloseModal = () => {
+    if (isUpdating) return;
     setModalState({
       isOpen: false,
       type: null,
@@ -144,307 +171,293 @@ export const UserListPage = () => {
   };
 
   const handleConfirm = async () => {
-    if (modalState.userId && modalState.type) {
-      try {
-        if (modalState.type === "activate") {
-          await activateUser(modalState.userId);
-        } else {
-          await deactivateUser(modalState.userId);
-        }
+    if (!modalState.userId || !modalState.type) return;
 
-        await getUsers();
-        handleCloseModal();
-      } catch (error) {
-        console.error("Terjadi kesalahan saat memproses permintaan pengguna");
-      }
+    if (modalState.type === "activate") {
+      await activateUser(modalState.userId);
+    } else {
+      await deactivateUser(modalState.userId);
     }
+
+    await getUsers();
+    handleCloseModal();
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "admin":
-        return <Shield className="w-4 h-4" />;
-      case "teacher":
-        return <Crown className="w-4 h-4" />;
-      default:
-        return <UserCircle className="w-4 h-4" />;
-    }
-  };
-
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case "admin":
-        return "bg-primary/10 text-primary border-primary/20";
-      case "teacher":
-        return "bg-warning/10 text-warning border-warning/20";
-      default:
-        return "bg-info/10 text-info border-info/20";
-    }
-  };
-
-  const renderUserCell = (column: TableColumn, item: User, index: number) => {
-    switch (column.key) {
-      case "id":
-        return (
-          <div className="text-muted-foreground font-mono text-xs">#{index + 1}</div>
-        );
-
-      case "name":
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 hidden md:flex rounded-xl bg-primary items-center justify-center text-primary-foreground font-bold text-sm">
-              {item.full_name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="font-medium text-foreground">{item.full_name}</p>
-              <p className="text-xs text-muted-foreground capitalize">{item.role}</p>
-            </div>
-          </div>
-        );
-
-      case "email":
-        return (
-          <div className="text-muted-foreground font-mono text-xs">{item.email}</div>
-        );
-
-      case "role":
-        return (
-          <div className="flex items-center gap-2">
-            <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${getRoleBadgeColor(item.role)}`}
-            >
-              {getRoleIcon(item.role)}
-              <span className="capitalize">{item.role}</span>
-            </span>
-          </div>
-        );
-
-      case "plan":
-        return (
-          <div className="text-muted-foreground text-sm capitalize">
-            {item.plan || "Free"}
-          </div>
-        );
-
-      case "status":
-        return (
-          <div className="flex items-center gap-2">
-            {item.is_active ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-success/10 text-success text-xs font-medium border border-success/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                Active
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted/10 text-muted-foreground text-xs font-medium border border-muted/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-                Inactive
-              </span>
-            )}
-          </div>
-        );
-
-      case "actions":
-        return (
-          <div className="flex justify-end gap-2">
-            {item.is_active ? (
-              <button
-                onClick={() =>
-                  handleOpenModal("deactivate", item.id, item.full_name)
-                }
-                className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition"
-                title="Deactivate User"
-              >
-                <XCircle className="w-4 h-4" />
-              </button>
-            ) : (
-              <button
-                onClick={() =>
-                  handleOpenModal("activate", item.id, item.full_name)
-                }
-                className="p-2 rounded-lg bg-success/10 text-success hover:bg-success hover:text-success-foreground transition"
-                title="Activate User"
-              >
-                <CheckCircle className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
+  const statCards = [
+    {
+      label: "Total users",
+      value: stats.total,
+      description: "Registered accounts",
+      meta: "All platform users",
+      icon: Users,
+      cardClass: "border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,var(--color-brand-50)_100%)]",
+      iconClass: "bg-brand-solid text-white shadow-lg shadow-brand-500/20",
+      glowClass: "bg-brand-100",
+      cardStyle: undefined,
+      iconStyle: undefined,
+    },
+    {
+      label: "Active users",
+      value: stats.active,
+      description: "Currently active",
+      meta: stats.total > 0 ? `${Math.round((stats.active / stats.total) * 100)}% of total` : "No users yet",
+      icon: UserCheck,
+      cardClass: "border-[#12b76a]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#ecfdf3_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#053321_100%)]",
+      iconClass: "bg-[#079455] text-white shadow-lg shadow-[#079455]/25",
+      glowClass: "bg-[#d1fadf] dark:bg-[#054f31]",
+      cardStyle: { borderColor: "rgba(18, 183, 106, 0.55)" },
+      iconStyle: { backgroundColor: "#079455", color: "#ffffff" },
+    },
+    {
+      label: "Inactive users",
+      value: stats.inactive,
+      description: "Deactivated accounts",
+      meta: stats.total > 0 ? `${Math.round((stats.inactive / stats.total) * 100)}% of total` : "No users yet",
+      icon: UserX,
+      cardClass: "border-error_subtle bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,rgba(240,68,56,0.08)_100%)]",
+      iconClass: "bg-error-solid text-white shadow-lg shadow-error/20",
+      glowClass: "bg-error-primary",
+      cardStyle: undefined,
+      iconStyle: undefined,
+    },
+  ];
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground font-primary max-w-7xl mx-auto p-6 md:p-10">
-      {/* Sidebar Integration */}
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-
-      {/* Overlay for mobile sidebar */}
-      <div
-        className={`sidebar-overlay ${isSidebarOpen ? "active" : ""}`}
-        onClick={() => setIsSidebarOpen(false)}
-      />
-
-      <div className="relative z-10 space-y-8">
-        {/* Header Section */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="p-2 rounded-lg bg-surface-1 hover:bg-surface-2 border border-border transition text-foreground"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <p className="text-sm font-mono tracking-widest md:inline">MENU</p>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border">
+    <div className="space-y-6">
+      <header className="flex flex-col gap-4 border-b border-secondary pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-start gap-3">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+            <Users className="size-5" />
+          </div>
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                <Users className="w-5 h-5 text-primary" />
-              </div>
-              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-wide">
-                USER <span className="text-primary">MANAGEMENT</span>
-              </h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">User management</h1>
+              <Badge color="brand" size="sm">{stats.total} users</Badge>
             </div>
-            <p className="text-muted-foreground text-sm max-w-lg">
-              Manage all users in the platform. Activate or deactivate user
-              accounts as needed.
+            <p className="mt-1 max-w-2xl text-sm text-secondary">
+              Manage account access, roles, plans, and activation status across the platform.
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3 self-start md:self-center flex-wrap">
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="p-2.5 rounded-xl bg-surface-1 hover:bg-surface-2 border border-border transition text-muted-foreground hover:text-foreground group disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Refresh Data"
-            >
-              <RefreshCw
-                className={`w-5 h-5 group-hover:text-primary transition-transform ${isRefreshing ? "animate-spin" : ""}`}
+        <ButtonUtility
+          icon={RefreshCw}
+          tooltip="Refresh users"
+          size="sm"
+          onPress={handleRefresh}
+          isDisabled={isRefreshing || loading}
+          className={isRefreshing ? "*:data-icon:animate-spin" : undefined}
+        />
+      </header>
+
+      <section className="grid gap-3 sm:grid-cols-3">
+        {statCards.map(({ label, value, description, meta, icon: Icon, cardClass, iconClass, glowClass, cardStyle, iconStyle }) => (
+          <article key={label} style={cardStyle} className={`group relative overflow-hidden rounded-3xl border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${cardClass}`}>
+            <div className={`pointer-events-none absolute -right-8 -top-10 size-32 rounded-full opacity-70 transition-transform duration-300 group-hover:scale-110 ${glowClass}`} />
+            <div className="relative flex items-start justify-between gap-4">
+              <div style={iconStyle} className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${iconClass}`}>
+                <Icon className="size-5" />
+              </div>
+              <span className="rounded-full border border-white/50 bg-primary/70 px-2.5 py-1 text-[10px] font-semibold text-secondary shadow-xs backdrop-blur-sm">
+                {meta}
+              </span>
+            </div>
+            <div className="relative mt-5">
+              <p className="text-3xl font-semibold tracking-tight text-primary">{value}</p>
+              <p className="mt-1 text-sm font-semibold text-primary">{label}</p>
+              <p className="mt-0.5 text-xs text-tertiary">{description}</p>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <TableCard.Root size="md" className="rounded-3xl">
+        <TableCard.Header
+          title="All users"
+          badge={<Badge color="gray" size="sm">{filteredData.length} shown</Badge>}
+          description="Search, filter, and manage registered accounts."
+          contentTrailing={
+            <div className="grid w-full gap-2 sm:grid-cols-3 md:w-auto">
+              <Input
+                aria-label="Search users"
+                icon={Search}
+                size="sm"
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="Search name or email"
+                className="sm:col-span-3 md:col-span-1 md:w-60"
               />
-            </button>
-
-            <div className="relative group">
-              <Filter className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 group-hover:text-primary transition" />
-              <select
+              <Select
+                aria-label="Filter by role"
+                size="sm"
                 value={roleFilter}
-                onChange={(e) =>
-                  setRoleFilter(
-                    e.target.value as "all" | "admin" | "teacher" | "student",
-                  )
-                }
-                className="pl-10 pr-5 py-2.5 bg-surface-1 border border-border rounded-xl text-sm text-foreground focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-surface-2 transition min-w-[140px] font-medium"
+                onChange={(value) => setRoleFilter(value as RoleFilter)}
+                items={roleOptions}
+                className="min-w-40"
+                popoverClassName="min-w-44"
               >
-                <option value="all">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="teacher">Teacher</option>
-                <option value="student">Student</option>
-              </select>
-            </div>
-
-            <div className="relative group">
-              <Filter className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 group-hover:text-primary transition" />
-              <select
+                {(item) => (
+                  <Select.Item id={item.id} icon={item.icon} supportingText={item.id === "all" ? "No filter" : undefined}>
+                    {item.label}
+                  </Select.Item>
+                )}
+              </Select>
+              <Select
+                aria-label="Filter by status"
+                size="sm"
                 value={statusFilter}
-                onChange={(e) =>
-                  setStatusFilter(
-                    e.target.value as "all" | "active" | "inactive",
-                  )
-                }
-                className="pl-10 pr-5 py-2.5 bg-surface-1 border border-border rounded-xl text-sm text-foreground focus:outline-none focus:border-primary/50 appearance-none cursor-pointer hover:bg-surface-2 transition min-w-[140px] font-medium"
+                onChange={(value) => setStatusFilter(value as StatusFilter)}
+                items={statusOptions}
+                className="min-w-40"
+                popoverClassName="min-w-44"
               >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
+                {(item) => (
+                  <Select.Item id={item.id} icon={item.icon} supportingText={item.id === "all" ? "No filter" : undefined}>
+                    {item.label}
+                  </Select.Item>
+                )}
+              </Select>
             </div>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-primary/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <Users className="w-32 h-32 text-primary" />
-            </div>
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-primary/80 mb-2 uppercase tracking-wider">
-                Total Users
-              </p>
-              <h3 className="text-4xl font-display font-bold text-foreground">
-                {stats.total}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-2">Registered accounts</p>
-            </div>
-          </div>
-
-          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group hover:border-success/30 transition-all duration-300">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <CheckCircle className="w-32 h-32 text-success" />
-            </div>
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-success/80 mb-2 uppercase tracking-wider">
-                Active Users
-              </p>
-              <h3 className="text-4xl font-display font-bold text-foreground">
-                {stats.active}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-2">Currently active</p>
-            </div>
-          </div>
-
-          <div className="bg-card p-6 rounded-2xl border border-border relative overflow-hidden group">
-            <div className="absolute right-0 top-0 p-6 opacity-5 group-hover:opacity-10 transition transform group-hover:scale-110 duration-500">
-              <XCircle className="w-32 h-32 text-muted-foreground" />
-            </div>
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-muted-foreground/80 mb-2 uppercase tracking-wider">
-                Inactive Users
-              </p>
-              <h3 className="text-4xl font-display font-bold text-foreground">
-                {stats.inactive}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-2">Deactivated accounts</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Users Table */}
-        <DashboardTable
-          title="All Users"
-          columns={userColumns}
-          data={filteredData}
-          getRowKey={(item) => item.id}
-          renderCell={(column, item, index) =>
-            renderUserCell(column, item, index)
           }
         />
-      </div>
 
-      {/* Confirmation Modal */}
-      <ConfirmModal
+        {error ? (
+          <div className="px-6 py-12 text-center">
+            <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-error-primary text-error-primary">
+              <XCircle className="size-5" />
+            </div>
+            <p className="mt-3 text-sm font-semibold text-primary">Unable to load users</p>
+            <p className="mt-1 text-sm text-secondary">{error}</p>
+          </div>
+        ) : loading && users.length === 0 ? (
+          <div className="px-6 py-12 text-center text-sm text-secondary">Loading users...</div>
+        ) : filteredData.length === 0 ? (
+          <div className="px-6 py-12 text-center">
+            <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-secondary text-fg-quaternary">
+              <Search className="size-5" />
+            </div>
+            <p className="mt-3 text-sm font-semibold text-primary">No users found</p>
+            <p className="mt-1 text-sm text-secondary">Try changing the search or filters.</p>
+          </div>
+        ) : (
+          <Table aria-label="User management table" className="min-w-[880px]">
+            <Table.Header>
+              <Table.Head id="user" isRowHeader label="User" />
+              <Table.Head id="email" label="Email" />
+              <Table.Head id="role" label="Role" />
+              <Table.Head id="plan" label="Plan" />
+              <Table.Head id="status" label="Status" />
+              <Table.Head id="actions" label="Actions" className="w-24" />
+            </Table.Header>
+            <Table.Body items={filteredData}>
+              {(user) => (
+                <Table.Row id={user.id}>
+                  <Table.Cell>
+                    <div className="flex items-center gap-3">
+                      <Avatar size="sm" initials={getInitials(user.full_name)} alt={user.full_name} />
+                      <div className="min-w-0">
+                        <p className="max-w-52 truncate text-sm font-semibold text-primary">{user.full_name}</p>
+                        <p className="mt-0.5 text-xs capitalize text-tertiary">ID: {user.id.slice(0, 8)}</p>
+                      </div>
+                    </div>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span className="block max-w-64 truncate text-sm text-secondary">{user.email}</span>
+                  </Table.Cell>
+                  <Table.Cell><RoleBadge role={user.role} /></Table.Cell>
+                  <Table.Cell><PlanBadge plan={user.plan} /></Table.Cell>
+                  <Table.Cell>
+                    <BadgeWithDot color={user.is_active ? "success" : "gray"} size="sm">
+                      {user.is_active ? "Active" : "Inactive"}
+                    </BadgeWithDot>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <div className="flex justify-end">
+                      {user.is_active ? (
+                        <ButtonUtility
+                          icon={XCircle}
+                          color="tertiary"
+                          tooltip="Deactivate user"
+                          onPress={() => handleOpenModal("deactivate", user)}
+                          className="text-error-primary hover:bg-error-primary hover:text-error-primary"
+                        />
+                      ) : (
+                        <ButtonUtility
+                          icon={CheckCircle2}
+                          color="tertiary"
+                          tooltip="Activate user"
+                          onPress={() => handleOpenModal("activate", user)}
+                          className="text-success hover:bg-success/10 hover:text-success"
+                        />
+                      )}
+                    </div>
+                  </Table.Cell>
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table>
+        )}
+      </TableCard.Root>
+
+      <ModalOverlay
         isOpen={modalState.isOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirm}
-        title={
-          modalState.type === "activate"
-            ? "Activate User Account"
-            : "Deactivate User Account"
-        }
-        message={
-          modalState.type === "activate"
-            ? `Are you sure you want to activate ${modalState.userName}'s account?`
-            : `Are you sure you want to deactivate ${modalState.userName}'s account? They will not be able to access the platform.`
-        }
-        confirmText={
-          modalState.type === "activate" ? "Yes, Activate" : "Yes, Deactivate"
-        }
-        cancelText="Cancel"
-        icon={modalState.type === "activate" ? CheckCircle : XCircle}
-        variant={modalState.type === "activate" ? "success" : "danger"}
-      />
+        isDismissable={!isUpdating}
+        onOpenChange={(isOpen) => !isOpen && handleCloseModal()}
+      >
+        <Modal className="max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl">
+          <Dialog aria-label={modalState.type === "activate" ? "Activate user account" : "Deactivate user account"}>
+            {({ close }) => {
+              const isDeactivate = modalState.type === "deactivate";
+              const Icon = isDeactivate ? XCircle : CheckCircle2;
+
+              return (
+                <>
+                  <div className="relative px-5 pb-5 pt-6 sm:px-6 sm:pt-6">
+                    <CloseButton
+                      label="Close confirmation"
+                      onPress={close}
+                      isDisabled={isUpdating}
+                      className="absolute right-4 top-4"
+                    />
+                    <div
+                      className={`flex size-12 items-center justify-center rounded-xl ring-1 ring-inset ${
+                        isDeactivate
+                          ? "bg-error-primary text-error-primary ring-error_subtle"
+                          : "bg-[#ecfdf3] text-[#079455] ring-[#abefc6] dark:bg-[#053321] dark:text-[#47cd89] dark:ring-[#085d3a]"
+                      }`}
+                    >
+                      <Icon className="size-6" />
+                    </div>
+                    <h2 className="mt-4 pr-10 text-lg font-semibold text-primary">
+                      {isDeactivate ? "Deactivate user account?" : "Activate user account?"}
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-secondary">
+                      {isDeactivate
+                        ? `${modalState.userName} will lose access to the platform until their account is activated again.`
+                        : `${modalState.userName} will regain access to the platform and can sign in again.`}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                    <Button color="secondary" size="md" onPress={close} isDisabled={isUpdating} className="w-full sm:w-auto">
+                      Cancel
+                    </Button>
+                    <Button
+                      color={isDeactivate ? "primary-destructive" : "primary"}
+                      size="md"
+                      onPress={handleConfirm}
+                      isLoading={isUpdating}
+                      className="w-full sm:w-auto"
+                    >
+                      {isDeactivate ? "Yes, deactivate" : "Yes, activate"}
+                    </Button>
+                  </div>
+                </>
+              );
+            }}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
     </div>
   );
 };
