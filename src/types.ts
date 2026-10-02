@@ -181,6 +181,7 @@ export interface ClassGroup {
   requiredJuzList?: number[];
   assignedBookIds?: string[];
   students: ClassStudent[];
+  studentCount?: number;
   createdAt: string;
   status?: 'active' | 'closed';
   closedAt?: string;

@@ -1,9 +1,23 @@
-import React from 'react';
-import { BookItem, Language } from '../../types';
-import { X, CheckCircle2, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
-import { AudioRecorderPlayer } from '../shared/AudioRecorderPlayer';
-import { useSwipeGesture } from '../../hooks/useSwipeGesture';
-import { BilingualCardText } from '../common/BilingualCardText';
+import { useState } from "react";
+import {
+  BookOpen,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Power,
+  RotateCw,
+  Sparkles,
+  WalletCards,
+  X,
+} from "@/components/foundations/hugeicons";
+import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
+import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import type { BookItem, Language } from "../../types";
+import { AudioRecorderPlayer } from "../shared/AudioRecorderPlayer";
+import { useSwipeGesture } from "../../hooks/useSwipeGesture";
+import { BilingualCardText } from "../common/BilingualCardText";
 
 interface Props {
   item: BookItem | null;
@@ -16,7 +30,7 @@ interface Props {
   language: Language;
 }
 
-export const ItemPreviewModal: React.FC<Props> = ({
+export const ItemPreviewModal = ({
   item,
   isOpen,
   onClose,
@@ -25,184 +39,102 @@ export const ItemPreviewModal: React.FC<Props> = ({
   onActivate,
   onDeactivate,
   language,
-}) => {
-  // Swipe to navigate between flashcards inside modal preview
+}: Props) => {
+  const [flippedItemId, setFlippedItemId] = useState<string | null>(null);
+  const showAnswer = Boolean(item && flippedItemId === item.id);
+  const toggleAnswer = () => {
+    if (!item) return;
+    setFlippedItemId((current) => (current === item.id ? null : item.id));
+  };
+
   useSwipeGesture(null, {
     disabled: !isOpen,
-    onSwipeLeft: () => {
-      if (onNavigateNext) onNavigateNext();
-    },
-    onSwipeRight: () => {
-      if (onNavigatePrev) {
-        onNavigatePrev();
-      } else {
-        onClose();
-      }
-    },
+    onSwipeLeft: () => onNavigateNext?.(),
+    onSwipeRight: () => (onNavigatePrev ? onNavigatePrev() : onClose()),
     threshold: 40,
   });
 
   if (!isOpen || !item) return null;
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header: Clean & Focused with Previous / Next Stepper */}
-        <div className="px-5 py-3.5 sm:px-6 sm:py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/50">
-          <div className="flex items-center gap-2.5">
-            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-              item.isActive 
-                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300' 
-                : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
-            }`}>
-              {item.isActive ? (language === 'en' ? 'Active' : 'Aktif') : (language === 'en' ? 'Inactive' : 'Nonaktif')}
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              {language === 'en' ? 'Flashcard Detail' : 'Detail Kartu'}
-            </span>
-          </div>
+    <ModalOverlay isOpen isDismissable onOpenChange={(open) => !open && onClose()}>
+      <Modal className="max-w-2xl overflow-hidden rounded-t-3xl sm:rounded-3xl">
+        <Dialog aria-label={language === "en" ? "Card preview" : "Pratinjau kartu"} className="!overflow-hidden">
+          {({ close }) => (
+            <div className="flex max-h-[inherit] flex-col">
+              <header className="relative flex shrink-0 items-center justify-between gap-3 overflow-hidden border-b border-brand-200 bg-[linear-gradient(135deg,var(--color-brand-50)_0%,var(--color-bg-primary)_76%)] px-5 py-4 sm:px-6">
+                <div className="pointer-events-none absolute -right-12 -top-16 size-40 rounded-full bg-brand-200/40 blur-3xl" />
+                <div className="relative flex min-w-0 items-center gap-3">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-xs"><WalletCards className="size-4.5" /></div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-base font-semibold text-primary">{language === "en" ? "Card preview" : "Pratinjau kartu"}</h2>
+                      {item.isActive ? <BadgeWithDot color="success" size="sm">{language === "en" ? "Active" : "Aktif"}</BadgeWithDot> : <Badge color="gray" size="sm">{language === "en" ? "Inactive" : "Nonaktif"}</Badge>}
+                    </div>
+                    <p className="mt-0.5 text-xs text-secondary">{language === "en" ? "Click the card to flip between both sides." : "Klik kartu untuk membalik kedua sisinya."}</p>
+                  </div>
+                </div>
 
-          <div className="flex items-center gap-1.5">
-            {(onNavigatePrev || onNavigateNext) && (
-              <div className="flex items-center gap-0.5 bg-slate-200/70 dark:bg-slate-700/60 p-0.5 rounded-lg mr-1">
-                <button
-                  disabled={!onNavigatePrev}
-                  onClick={onNavigatePrev}
-                  className="p-1 rounded-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-600 disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"
-                  title={language === 'en' ? 'Previous Card (Swipe Right)' : 'Kartu Sebelumnya (Usap Kanan)'}
-                >
-                  <ChevronLeft className="w-4 h-4" />
+                <div className="relative flex items-center gap-1">
+                  {(onNavigatePrev || onNavigateNext) && (
+                    <div className="mr-1 flex rounded-xl border border-secondary bg-primary p-1 shadow-xs">
+                      <ButtonUtility icon={ChevronLeft} color="tertiary" size="xs" tooltip={language === "en" ? "Previous card" : "Kartu sebelumnya"} onPress={onNavigatePrev} isDisabled={!onNavigatePrev} />
+                      <ButtonUtility icon={ChevronRight} color="tertiary" size="xs" tooltip={language === "en" ? "Next card" : "Kartu berikutnya"} onPress={onNavigateNext} isDisabled={!onNavigateNext} />
+                    </div>
+                  )}
+                  <ButtonUtility icon={X} color="tertiary" tooltip={language === "en" ? "Close preview" : "Tutup pratinjau"} onPress={close} className="bg-primary/80 shadow-xs" />
+                </div>
+              </header>
+
+              <div className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-secondary/20 p-4 sm:p-6">
+                <button type="button" onClick={toggleAnswer} className="block w-full text-left [perspective:1400px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600">
+                  <div className={`relative min-h-[360px] w-full transition-transform duration-500 [transform-style:preserve-3d] sm:min-h-[420px] ${showAnswer ? "[transform:rotateY(180deg)]" : ""}`}>
+                    <section className="absolute inset-0 flex flex-col overflow-y-auto rounded-3xl border border-secondary bg-primary p-5 shadow-lg [backface-visibility:hidden] sm:p-7">
+                      <div className="flex items-center justify-between"><Badge color="brand" size="sm">{language === "en" ? "Question" : "Pertanyaan"}</Badge><RotateCw className="size-4 text-fg-quaternary" /></div>
+                      <div className="flex flex-1 flex-col justify-center py-5">
+                        <BilingualCardText text={item.question} type="question" variant="detail-modal" emptyFallback={language === "en" ? "[Image question]" : "[Pertanyaan berupa gambar]"} />
+                        {item.imageQ && <img src={item.imageQ} alt={language === "en" ? "Question visual" : "Gambar pertanyaan"} className="mt-4 max-h-60 w-full rounded-2xl bg-secondary object-contain ring-1 ring-secondary" />}
+                      </div>
+                      <div className="flex items-center justify-center gap-2 border-t border-secondary pt-3 text-xs font-medium text-brand-secondary"><RotateCw className="size-3.5" />{language === "en" ? "Flip to answer" : "Balik ke jawaban"}</div>
+                    </section>
+
+                    <section className="absolute inset-0 flex flex-col overflow-y-auto rounded-3xl border border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_0%,var(--color-brand-50)_100%)] p-5 shadow-lg [backface-visibility:hidden] [transform:rotateY(180deg)] sm:p-7">
+                      <div className="flex items-center justify-between"><Badge color="success" size="sm">{language === "en" ? "Answer" : "Jawaban"}</Badge><RotateCw className="size-4 text-brand-500" /></div>
+                      <div className="flex flex-1 flex-col justify-center py-5">
+                        <BilingualCardText text={item.answer} type="answer" variant="detail-modal" emptyFallback={language === "en" ? "[No text answer]" : "[Tidak ada teks jawaban]"} />
+                        {item.imageA && <img src={item.imageA} alt={language === "en" ? "Answer visual" : "Gambar jawaban"} className="mt-4 max-h-56 w-full rounded-2xl bg-primary object-contain ring-1 ring-brand-200" />}
+                        {item.explanation && (
+                          <div className="mt-4 rounded-2xl border border-brand-200 bg-primary/85 p-4">
+                            <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-brand-700"><Sparkles className="size-3.5" />{language === "en" ? "Explanation" : "Penjelasan"}</p>
+                            <BilingualCardText text={item.explanation} type="answer" variant="detail-modal" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-center gap-2 border-t border-brand-200 pt-3 text-xs font-medium text-brand-secondary"><RotateCw className="size-3.5" />{language === "en" ? "Flip to question" : "Balik ke pertanyaan"}</div>
+                    </section>
+                  </div>
                 </button>
-                <button
-                  disabled={!onNavigateNext}
-                  onClick={onNavigateNext}
-                  className="p-1 rounded-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-600 disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"
-                  title={language === 'en' ? 'Next Card (Swipe Left)' : 'Kartu Berikutnya (Usap Kiri)'}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+
+                <div className="rounded-2xl border border-secondary bg-primary p-3.5 shadow-xs">
+                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-secondary"><BookOpen className="size-3.5 text-brand-600" />{language === "en" ? "Voice note" : "Catatan suara"}</div>
+                  <AudioRecorderPlayer itemId={item.id} itemType="book" itemLabel={language === "en" ? "Voice note" : "Setoran suara"} language={language} compact />
+                </div>
               </div>
-            )}
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
-              title={language === 'en' ? 'Close' : 'Tutup'}
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
 
-        {/* Content: Only Question (+ image) and Answer (+ image) */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-5">
-          {/* Question */}
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1.5">
-              {language === 'en' ? 'Question' : 'Pertanyaan'}
-            </span>
-            <div className="bg-slate-50 dark:bg-slate-800/60 p-4 sm:p-5 rounded-2xl border border-slate-200/70 dark:border-slate-700 select-text">
-              <BilingualCardText 
-                text={item.question} 
-                type="question" 
-                variant="detail-modal"
-                emptyFallback={language === 'en' ? '[Image Question]' : '[Pertanyaan Berupa Gambar]'}
-              />
-            </div>
-            {item.imageQ && (
-              <img 
-                src={item.imageQ} 
-                alt="Question visual" 
-                className="mt-2.5 rounded-xl max-h-56 w-full object-contain bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
-              />
-            )}
-          </div>
-
-          {/* Answer */}
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1.5">
-              {language === 'en' ? 'Answer' : 'Jawaban'}
-            </span>
-            <div className="bg-indigo-50/50 dark:bg-indigo-950/20 p-4 sm:p-5 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 select-text">
-              <BilingualCardText 
-                text={item.answer} 
-                type="answer" 
-                variant="detail-modal"
-                emptyFallback={language === 'en' ? '[No Text Answer]' : '[Tidak Ada Teks Jawaban]'}
-              />
-            </div>
-            {item.imageA && (
-              <img 
-                src={item.imageA} 
-                alt="Answer visual" 
-                className="mt-2.5 rounded-xl max-h-56 w-full object-contain bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
-              />
-            )}
-          </div>
-
-          {/* Explanation (Optional) */}
-          {item.explanation && (
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400 flex items-center gap-1.5 mb-1.5">
-                <BookOpen className="w-3.5 h-3.5" />
-                {language === 'en' ? 'Explanation' : 'Penjelasan'}
-              </span>
-              <div className="bg-indigo-50/40 dark:bg-indigo-950/20 p-4 sm:p-5 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 select-text text-slate-800 dark:text-slate-200">
-                <BilingualCardText 
-                  text={item.explanation} 
-                  type="answer" 
-                  variant="detail-modal"
-                />
-              </div>
+              <footer className="flex shrink-0 flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div>
+                  {!item.isActive && onActivate ? (
+                    <Button color="secondary" size="sm" iconLeading={CheckCircle2} onPress={onActivate}>{language === "en" ? "Activate card" : "Aktifkan kartu"}</Button>
+                  ) : item.isActive && onDeactivate ? (
+                    <Button color="secondary" size="sm" iconLeading={Power} onPress={onDeactivate}>{language === "en" ? "Deactivate card" : "Nonaktifkan kartu"}</Button>
+                  ) : null}
+                </div>
+                <Button size="sm" iconLeading={RotateCw} onPress={toggleAnswer}>{showAnswer ? (language === "en" ? "Show question" : "Lihat pertanyaan") : language === "en" ? "Show answer" : "Lihat jawaban"}</Button>
+              </footer>
             </div>
           )}
-
-          {/* Voice Note Recorder */}
-          <div className="pt-2">
-            <AudioRecorderPlayer 
-              itemId={item.id}
-              itemType="book"
-              itemLabel={language === 'en' ? 'Voice Note' : 'Setoran Suara'}
-              language={language}
-              compact={false}
-            />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 py-3.5 sm:px-6 sm:py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            {!item.isActive && onActivate ? (
-              <button
-                onClick={() => {
-                  onActivate();
-                }}
-                className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{language === 'en' ? 'Activate Card' : 'Aktifkan Kartu'}</span>
-              </button>
-            ) : item.isActive && onDeactivate ? (
-              <button
-                onClick={() => {
-                  onDeactivate();
-                }}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-rose-100 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-700 dark:hover:text-rose-300 font-semibold text-xs transition-colors cursor-pointer"
-              >
-                <span>{language === 'en' ? 'Deactivate Card' : 'Nonaktifkan Kartu'}</span>
-              </button>
-            ) : null}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              {language === 'en' ? 'Close' : 'Tutup'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 };

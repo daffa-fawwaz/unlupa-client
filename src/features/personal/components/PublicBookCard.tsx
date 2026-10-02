@@ -1,4 +1,4 @@
-import { Calendar, Download, Box, Globe2 } from "lucide-react";
+import { Calendar, Download, Box, Globe2 } from "@/components/foundations/hugeicons";
 import type { Book } from "../types/personal.types";
 import { resolveAssetUrl } from "@/lib/assets";
 

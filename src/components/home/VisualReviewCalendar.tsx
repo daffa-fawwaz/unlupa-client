@@ -9,10 +9,10 @@ import {
   ChevronDown,
   Plus,
   Search
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { motion, AnimatePresence } from 'motion/react';
 import { QuranPageItem, BookItem } from '../../types';
-import { isDue } from '../../lib/fsrs';
+import { getNonQuranIntervalDays, isDue } from '../../lib/fsrs';
 
 interface Props {
   onOpenQuranReview?: (juzNumber?: number) => void;
@@ -38,6 +38,8 @@ function formatLocalDate(d: Date | string | number | null | undefined): string {
 }
 
 export const VisualReviewCalendar: React.FC<Props> = ({
+  onOpenQuranReview,
+  onOpenPersonalReview,
   onOpenMushafViewer,
 }) => {
   const { 
@@ -78,6 +80,26 @@ export const VisualReviewCalendar: React.FC<Props> = ({
 
   const handleAddEvent = () => {
     setActiveSpace('quran');
+  };
+
+  const openQuranReview = (juzNumber?: number) => {
+    if (onOpenQuranReview) onOpenQuranReview(juzNumber);
+    else setActiveSpace('quran');
+  };
+
+  const openPersonalReview = () => {
+    if (onOpenPersonalReview) onOpenPersonalReview();
+    else setActiveSpace('personal');
+  };
+
+  const getSafeIntervalDays = (item: BookItem) => {
+    const interval = getNonQuranIntervalDays(item.fsrsData);
+    return Number.isFinite(interval) ? Math.max(0, interval) : 0;
+  };
+
+  const getSafeQuranStabilityDays = (page: QuranPageItem) => {
+    const stability = Number(page.fsrsData?.stability);
+    return Number.isFinite(stability) ? Math.max(0, Math.round(stability * 0.4025587)) : 0;
   };
 
   // Month navigation
@@ -576,9 +598,9 @@ export const VisualReviewCalendar: React.FC<Props> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   if (selectedDateDetails.plannedQuran.length > 0) {
-                    setActiveSpace('quran');
+                    openQuranReview(selectedDateDetails.plannedQuran[0]?.juzNumber);
                   } else {
-                    setActiveSpace('personal');
+                    openPersonalReview();
                   }
                 }}
                 className="hidden items-center gap-1.5 rounded-xl bg-brand-solid px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-brand-solid_hover active:scale-95 sm:inline-flex"
@@ -616,7 +638,7 @@ export const VisualReviewCalendar: React.FC<Props> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {/* Quran Pages */}
                     {selectedDateDetails.plannedQuran.map((p) => {
-                      const stabilityDays = Math.round((p.fsrsData?.stability || 0) * 0.4025587);
+                      const stabilityDays = getSafeQuranStabilityDays(p);
                       const isMapan = p.status === 'mastered_for_now' || stabilityDays >= 30;
 
                       return (
@@ -656,7 +678,7 @@ export const VisualReviewCalendar: React.FC<Props> = ({
                             {selectedDateDetails.isDateToday && (
                               <button
                                 type="button"
-                                onClick={() => setActiveSpace('quran')}
+                                onClick={() => openQuranReview(p.juzNumber)}
                                 title={language === 'en' ? 'Open Quran Space' : 'Buka Ruang Quran'}
                                 className="cursor-pointer rounded-lg bg-brand-solid p-1.5 text-white hover:bg-brand-solid_hover"
                               >
@@ -670,7 +692,7 @@ export const VisualReviewCalendar: React.FC<Props> = ({
 
                     {/* Personal Cards */}
                     {selectedDateDetails.plannedPersonal.map(({ item: it, bookTitle }) => {
-                      const stabilityDays = Math.round((it.fsrsData?.stability || 0) * 0.4025587);
+                      const stabilityDays = getSafeIntervalDays(it);
 
                       return (
                         <div 
@@ -694,7 +716,7 @@ export const VisualReviewCalendar: React.FC<Props> = ({
                           {selectedDateDetails.isDateToday && (
                             <button
                               type="button"
-                              onClick={() => setActiveSpace('personal')}
+                              onClick={openPersonalReview}
                               title={language === 'en' ? 'Open Personal Space' : 'Buka Ruang Pribadi'}
                                 className="shrink-0 cursor-pointer rounded-lg bg-blue-600 p-1.5 text-white hover:bg-blue-700"
                             >

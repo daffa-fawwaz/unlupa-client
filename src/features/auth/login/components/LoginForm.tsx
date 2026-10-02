@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle } from "@/components/foundations/hugeicons";
 import { Link } from "react-router";
 import { Button } from "@/components/base/buttons/button";
 import { Checkbox } from "@/components/base/checkbox/checkbox";

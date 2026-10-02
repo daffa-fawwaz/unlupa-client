@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { AlertTriangle, Info, X } from "lucide-react";
+import { AlertTriangle, Info, X } from "@/components/foundations/hugeicons";
 
 export interface ConfirmModalProps {
   isOpen: boolean;

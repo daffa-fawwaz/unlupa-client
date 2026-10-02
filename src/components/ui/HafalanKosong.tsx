@@ -1,4 +1,4 @@
-import { BookOpen } from "lucide-react";
+import { BookOpen } from "@/components/foundations/hugeicons";
 
 interface HafalanKosongProps {
   hafalan: string;

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Loader2 } from "@/components/foundations/hugeicons";
 import { getQuranPageAudioUrl } from '../../data/quranData';
 
 interface Props {

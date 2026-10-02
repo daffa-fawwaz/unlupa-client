@@ -1142,6 +1142,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             requiredJuzList: c.type === 'quran' ? [1, 2, 3, 4, 5] : undefined,
             assignedBookIds: [],
             students: [],
+            studentCount: Number(c.student_count ?? 0),
             createdAt: c.created_at || new Date().toISOString(),
             status: c.is_active ? 'active' : 'closed',
           }));
@@ -1163,6 +1164,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           requiredJuzList: c.type === 'quran' ? [1, 2, 3, 4, 5] : undefined,
           assignedBookIds: [],
           students: [],
+          studentCount: Number(c.student_count ?? 0),
           createdAt: c.created_at || new Date().toISOString(),
           status: c.is_active ? 'active' : 'closed',
         }));
@@ -1193,7 +1195,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }));
         setTeachingClasses(prev => prev.map(cls => cls.id === classId ? {
           ...cls,
-          students: mappedStudents
+          students: mappedStudents,
+          studentCount: mappedStudents.length,
         } : cls));
       }
     } catch (err) {
@@ -2461,7 +2464,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     const token = useAuthStore.getState().token;
-    let backendClassItem: any = null;
+    let backendClassItem: ClassItem | null = null;
     let backendJoinedSuccess = false;
 
     if (token) {
@@ -2501,6 +2504,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         requiredJuzList: backendClassItem.type === 'quran' ? [1, 2, 3, 4, 5] : undefined,
         assignedBookIds: [],
         students: [],
+        studentCount: Number(backendClassItem.student_count ?? 0),
         createdAt: backendClassItem.created_at || new Date().toISOString(),
         status: backendClassItem.is_active ? 'active' : 'closed',
       };

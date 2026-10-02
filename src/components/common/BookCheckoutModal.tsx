@@ -23,7 +23,7 @@ import {
   ExternalLink,
   ReceiptText,
   AlertCircle
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 interface Props {
   isOpen: boolean;

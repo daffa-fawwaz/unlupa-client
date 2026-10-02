@@ -5,7 +5,7 @@ import {
   Globe2,
   Clock,
   CheckCircle,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import type { Book } from "../types/personal.types";
 import { resolveAssetUrl } from "@/lib/assets";
 

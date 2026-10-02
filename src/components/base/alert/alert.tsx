@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertCircle, CheckCircle2, Info, TriangleAlert } from "lucide-react";
+import { AlertCircle, CheckCircle2, Info, TriangleAlert } from "@/components/foundations/hugeicons";
 import { CloseButton } from "@/components/base/buttons/close-button";
 import { cx } from "@/utils/cx";
 

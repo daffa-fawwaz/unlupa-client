@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles } from "@/components/foundations/hugeicons";
 
 export type SlideContainerProps = React.HTMLAttributes<HTMLDivElement>;
 

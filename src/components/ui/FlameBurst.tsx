@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { Flame } from "lucide-react";
+import { Flame } from "@/components/foundations/hugeicons";
 
 interface BurstParticle {
   angle: number;

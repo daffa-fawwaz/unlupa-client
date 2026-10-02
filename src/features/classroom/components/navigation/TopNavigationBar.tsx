@@ -1,4 +1,4 @@
-import { Menu, Users, ArrowLeft } from "lucide-react";
+import { Menu, Users, ArrowLeft } from "@/components/foundations/hugeicons";
 import { useNavigate } from "react-router";
 
 interface TopNavigationBarProps {

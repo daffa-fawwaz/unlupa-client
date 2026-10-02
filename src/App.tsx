@@ -18,7 +18,7 @@ import { OnboardingSettingsModal } from './components/profile/OnboardingSettings
 import { PublicReportViewer } from './components/classes/PublicReportViewer';
 import { useDailyReminder } from './hooks/useDailyReminder';
 import { AuthModal } from './components/auth/AuthModal';
-import { RotateCcw, AlertCircle } from 'lucide-react';
+import { RotateCcw, AlertCircle } from "@/components/foundations/hugeicons";
 
 interface ErrorBoundaryProps {
   children: ReactNode;

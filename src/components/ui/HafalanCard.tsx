@@ -5,7 +5,7 @@ import {
   Layers,
   ChevronRight,
   Calendar,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import type { MyItemDetail } from "@/features/alquran/types/quran.types";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
 import { convertPageRangeToSurahLabel } from "@/features/alquran/utils/pageToSurahConverter";

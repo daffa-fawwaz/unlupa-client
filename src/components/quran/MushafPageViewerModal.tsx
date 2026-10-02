@@ -11,7 +11,7 @@ import {
   CheckCircle2,
   Download,
   MessageSquare
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { getSurahForPage, getJuzForPage, getQuranPageImageUrl, MUSHAF_SAMPLE_SNIPPETS } from '../../data/quranData';
 import { getOfflinePageUrl, cachePageOffline, isPageCachedOffline } from '../../lib/offlineStorage';
 import { AudioRecorderPlayer } from '../shared/AudioRecorderPlayer';

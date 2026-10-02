@@ -1,4 +1,5 @@
 import { api } from './axios';
+import { resolveAssetUrl } from './assets';
 
 export const compressImage = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -48,6 +49,7 @@ export const uploadImageToStorage = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('cover', file);
     formData.append('image', file);
+    formData.append('cover_image', file);
 
     const response = await api.post('/api/v1/books/upload-cover', formData, {
       headers: {
@@ -55,9 +57,10 @@ export const uploadImageToStorage = async (file: File): Promise<string> => {
       },
     });
 
-    const url = response.data?.data?.cover_image || response.data?.data?.url || response.data?.data?.image_url;
+    const payload = response.data?.data || response.data;
+    const url = payload?.cover_image || payload?.url || payload?.image_url;
     if (url) {
-      return url;
+      return resolveAssetUrl(url) || url;
     }
   } catch (error) {
     console.warn('Backend Supabase storage upload failed, falling back to compressed local image:', error);

@@ -7,7 +7,7 @@ import {
   Calendar,
   Box,
   MoreHorizontalIcon,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import type { Book } from "../types/personal.types";
 import { useRemoveBookFromClass } from "@/features/classroom/hooks/useClassroom";
 import { toast } from "sonner";

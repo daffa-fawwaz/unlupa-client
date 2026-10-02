@@ -11,7 +11,7 @@ import {
   MousePointerClick,
   CheckCircle2,
   Sliders
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { OnboardingPageKey } from '../../types';
 import { ONBOARDING_PAGES_DATA } from '../../data/onboardingData';
 import { useApp } from '../../context/AppContext';

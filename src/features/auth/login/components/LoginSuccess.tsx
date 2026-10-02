@@ -1,4 +1,4 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle } from "@/components/foundations/hugeicons";
 
 export const LoginSuccess = () => {
   return (

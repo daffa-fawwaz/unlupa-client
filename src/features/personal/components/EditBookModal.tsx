@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Loader2, BookOpen, FileText, Image, Upload, Save } from "lucide-react";
+import { X, Loader2, BookOpen, FileText, Image, Upload, Save } from "@/components/foundations/hugeicons";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useBooks } from "../hooks/useBooks";
 import type { Book } from "../types/personal.types";

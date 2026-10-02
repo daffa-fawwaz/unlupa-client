@@ -1,4 +1,4 @@
-import { Sparkles, Edit2, Trash2 } from "lucide-react";
+import { Sparkles, Edit2, Trash2 } from "@/components/foundations/hugeicons";
 import type { ReactNode } from "react";
 import type {
   ActionConfig,

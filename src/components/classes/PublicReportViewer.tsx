@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Award, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Award, CheckCircle2, ShieldCheck } from "@/components/foundations/hugeicons";
 
 export const PublicReportViewer: React.FC = () => {
   const [data, setData] = useState<any>(null);

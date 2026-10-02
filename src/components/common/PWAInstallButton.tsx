@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
-import { Download, X } from 'lucide-react';
+import { Download, X } from "@/components/foundations/hugeicons";
 
 export const PWAInstallButton: React.FC = () => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();

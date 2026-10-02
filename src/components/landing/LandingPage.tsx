@@ -17,7 +17,7 @@ import {
   Lock,
   KeyRound,
   ShieldAlert
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 export const LandingPage: React.FC = () => {
   const { 

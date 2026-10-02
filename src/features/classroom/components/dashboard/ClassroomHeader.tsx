@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BookOpen, GraduationCap, Layers, Users } from "lucide-react";
+import { BookOpen, GraduationCap, Layers, Users } from "@/components/foundations/hugeicons";
 
 type ClassroomHeaderProps = {
   title?: string;

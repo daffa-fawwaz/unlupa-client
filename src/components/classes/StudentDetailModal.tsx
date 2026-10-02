@@ -47,7 +47,7 @@ import {
   Brain,
   Award,
   AlertCircle
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 interface StudentDetailModalProps {
   student: ClassStudent;

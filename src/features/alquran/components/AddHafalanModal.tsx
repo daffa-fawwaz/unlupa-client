@@ -6,7 +6,7 @@ import {
   ArrowLeft,
   Check,
   ChevronRight,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import {
   SURAH_MAP,
   PAGE_DATABASE,

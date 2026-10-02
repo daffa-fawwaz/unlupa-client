@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "@/components/foundations/hugeicons";
 
 type StatCardProps = {
   title: string;

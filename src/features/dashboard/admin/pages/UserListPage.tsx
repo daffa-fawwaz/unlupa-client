@@ -10,8 +10,12 @@ import {
   Users,
   UserX,
   XCircle,
-} from "lucide-react";
-import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
+} from "@/components/foundations/hugeicons";
+import {
+  Dialog,
+  Modal,
+  ModalOverlay,
+} from "@/components/application/modals/modal";
 import { Table, TableCard } from "@/components/application/table/table";
 import { Avatar } from "@/components/base/avatar/avatar";
 import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
@@ -89,10 +93,18 @@ const PlanBadge = ({ plan }: { plan?: string }) => {
   }
 
   if (normalizedPlan === "institutional") {
-    return <Badge color="purple" size="sm">Institutional</Badge>;
+    return (
+      <Badge color="purple" size="sm">
+        Institutional
+      </Badge>
+    );
   }
 
-  return <Badge color="gray" size="sm">Free</Badge>;
+  return (
+    <Badge color="gray" size="sm">
+      Free
+    </Badge>
+  );
 };
 
 export const UserListPage = () => {
@@ -125,9 +137,14 @@ export const UserListPage = () => {
     const query = searchQuery.trim().toLowerCase();
 
     return users.filter((user) => {
-      const matchesQuery = !query || user.full_name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query);
+      const matchesQuery =
+        !query ||
+        user.full_name.toLowerCase().includes(query) ||
+        user.email.toLowerCase().includes(query);
       const matchesRole = roleFilter === "all" || user.role === roleFilter;
-      const matchesStatus = statusFilter === "all" || (statusFilter === "active" ? user.is_active : !user.is_active);
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "active" ? user.is_active : !user.is_active);
 
       return matchesQuery && matchesRole && matchesStatus;
     });
@@ -190,7 +207,8 @@ export const UserListPage = () => {
       description: "Registered accounts",
       meta: "All platform users",
       icon: Users,
-      cardClass: "border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,var(--color-brand-50)_100%)]",
+      cardClass:
+        "border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,var(--color-brand-50)_100%)]",
       iconClass: "bg-brand-solid text-white shadow-lg shadow-brand-500/20",
       glowClass: "bg-brand-100",
       cardStyle: undefined,
@@ -200,9 +218,13 @@ export const UserListPage = () => {
       label: "Active users",
       value: stats.active,
       description: "Currently active",
-      meta: stats.total > 0 ? `${Math.round((stats.active / stats.total) * 100)}% of total` : "No users yet",
+      meta:
+        stats.total > 0
+          ? `${Math.round((stats.active / stats.total) * 100)}% of total`
+          : "No users yet",
       icon: UserCheck,
-      cardClass: "border-[#12b76a]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#ecfdf3_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#053321_100%)]",
+      cardClass:
+        "border-[#12b76a]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#ecfdf3_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#053321_100%)]",
       iconClass: "bg-[#079455] text-white shadow-lg shadow-[#079455]/25",
       glowClass: "bg-[#d1fadf] dark:bg-[#054f31]",
       cardStyle: { borderColor: "rgba(18, 183, 106, 0.55)" },
@@ -212,9 +234,13 @@ export const UserListPage = () => {
       label: "Inactive users",
       value: stats.inactive,
       description: "Deactivated accounts",
-      meta: stats.total > 0 ? `${Math.round((stats.inactive / stats.total) * 100)}% of total` : "No users yet",
+      meta:
+        stats.total > 0
+          ? `${Math.round((stats.inactive / stats.total) * 100)}% of total`
+          : "No users yet",
       icon: UserX,
-      cardClass: "border-error_subtle bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,rgba(240,68,56,0.08)_100%)]",
+      cardClass:
+        "border-error_subtle bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,rgba(240,68,56,0.08)_100%)]",
       iconClass: "bg-error-solid text-white shadow-lg shadow-error/20",
       glowClass: "bg-error-primary",
       cardStyle: undefined,
@@ -231,11 +257,16 @@ export const UserListPage = () => {
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">User management</h1>
-              <Badge color="brand" size="sm">{stats.total} users</Badge>
+              <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
+                User management
+              </h1>
+              <Badge color="brand" size="sm">
+                {stats.total} users
+              </Badge>
             </div>
             <p className="mt-1 max-w-2xl text-sm text-secondary">
-              Manage account access, roles, plans, and activation status across the platform.
+              Manage account access, roles, plans, and activation status across
+              the platform.
             </p>
           </div>
         </div>
@@ -251,30 +282,60 @@ export const UserListPage = () => {
       </header>
 
       <section className="grid gap-3 sm:grid-cols-3">
-        {statCards.map(({ label, value, description, meta, icon: Icon, cardClass, iconClass, glowClass, cardStyle, iconStyle }) => (
-          <article key={label} style={cardStyle} className={`group relative overflow-hidden rounded-3xl border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${cardClass}`}>
-            <div className={`pointer-events-none absolute -right-8 -top-10 size-32 rounded-full opacity-70 transition-transform duration-300 group-hover:scale-110 ${glowClass}`} />
-            <div className="relative flex items-start justify-between gap-4">
-              <div style={iconStyle} className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${iconClass}`}>
-                <Icon className="size-5" />
+        {statCards.map(
+          ({
+            label,
+            value,
+            description,
+            meta,
+            icon: Icon,
+            cardClass,
+            iconClass,
+            glowClass,
+            cardStyle,
+            iconStyle,
+          }) => (
+            <article
+              key={label}
+              style={cardStyle}
+              className={`group relative overflow-hidden rounded-3xl border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${cardClass}`}
+            >
+              <div
+                className={`pointer-events-none absolute -right-8 -top-10 size-32 rounded-full opacity-70 transition-transform duration-300 group-hover:scale-110 ${glowClass}`}
+              />
+              <div className="relative flex items-start justify-between gap-4">
+                <div
+                  style={iconStyle}
+                  className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${iconClass}`}
+                >
+                  <Icon className="size-5" />
+                </div>
+                <span className="rounded-full border border-white/50 bg-primary/70 px-2.5 py-1 text-[10px] font-semibold text-secondary shadow-xs backdrop-blur-sm">
+                  {meta}
+                </span>
               </div>
-              <span className="rounded-full border border-white/50 bg-primary/70 px-2.5 py-1 text-[10px] font-semibold text-secondary shadow-xs backdrop-blur-sm">
-                {meta}
-              </span>
-            </div>
-            <div className="relative mt-5">
-              <p className="text-3xl font-semibold tracking-tight text-primary">{value}</p>
-              <p className="mt-1 text-sm font-semibold text-primary">{label}</p>
-              <p className="mt-0.5 text-xs text-tertiary">{description}</p>
-            </div>
-          </article>
-        ))}
+              <div className="relative mt-5">
+                <p className="text-3xl font-semibold tracking-tight text-primary">
+                  {value}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-primary">
+                  {label}
+                </p>
+                <p className="mt-0.5 text-xs text-tertiary">{description}</p>
+              </div>
+            </article>
+          ),
+        )}
       </section>
 
       <TableCard.Root size="md" className="rounded-3xl">
         <TableCard.Header
           title="All users"
-          badge={<Badge color="gray" size="sm">{filteredData.length} shown</Badge>}
+          badge={
+            <Badge color="gray" size="sm">
+              {filteredData.length} shown
+            </Badge>
+          }
           description="Search, filter, and manage registered accounts."
           contentTrailing={
             <div className="grid w-full gap-2 sm:grid-cols-3 md:w-auto">
@@ -297,7 +358,11 @@ export const UserListPage = () => {
                 popoverClassName="min-w-44"
               >
                 {(item) => (
-                  <Select.Item id={item.id} icon={item.icon} supportingText={item.id === "all" ? "No filter" : undefined}>
+                  <Select.Item
+                    id={item.id}
+                    icon={item.icon}
+                    supportingText={item.id === "all" ? "No filter" : undefined}
+                  >
                     {item.label}
                   </Select.Item>
                 )}
@@ -312,7 +377,11 @@ export const UserListPage = () => {
                 popoverClassName="min-w-44"
               >
                 {(item) => (
-                  <Select.Item id={item.id} icon={item.icon} supportingText={item.id === "all" ? "No filter" : undefined}>
+                  <Select.Item
+                    id={item.id}
+                    icon={item.icon}
+                    supportingText={item.id === "all" ? "No filter" : undefined}
+                  >
                     {item.label}
                   </Select.Item>
                 )}
@@ -326,18 +395,26 @@ export const UserListPage = () => {
             <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-error-primary text-error-primary">
               <XCircle className="size-5" />
             </div>
-            <p className="mt-3 text-sm font-semibold text-primary">Unable to load users</p>
+            <p className="mt-3 text-sm font-semibold text-primary">
+              Unable to load users
+            </p>
             <p className="mt-1 text-sm text-secondary">{error}</p>
           </div>
         ) : loading && users.length === 0 ? (
-          <div className="px-6 py-12 text-center text-sm text-secondary">Loading users...</div>
+          <div className="px-6 py-12 text-center text-sm text-secondary">
+            Loading users...
+          </div>
         ) : filteredData.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-secondary text-fg-quaternary">
               <Search className="size-5" />
             </div>
-            <p className="mt-3 text-sm font-semibold text-primary">No users found</p>
-            <p className="mt-1 text-sm text-secondary">Try changing the search or filters.</p>
+            <p className="mt-3 text-sm font-semibold text-primary">
+              No users found
+            </p>
+            <p className="mt-1 text-sm text-secondary">
+              Try changing the search or filters.
+            </p>
           </div>
         ) : (
           <Table aria-label="User management table" className="min-w-[880px]">
@@ -354,20 +431,37 @@ export const UserListPage = () => {
                 <Table.Row id={user.id}>
                   <Table.Cell>
                     <div className="flex items-center gap-3">
-                      <Avatar size="sm" initials={getInitials(user.full_name)} alt={user.full_name} />
+                      <Avatar
+                        size="sm"
+                        initials={getInitials(user.full_name)}
+                        alt={user.full_name}
+                      />
                       <div className="min-w-0">
-                        <p className="max-w-52 truncate text-sm font-semibold text-primary">{user.full_name}</p>
-                        <p className="mt-0.5 text-xs capitalize text-tertiary">ID: {user.id.slice(0, 8)}</p>
+                        <p className="max-w-52 truncate text-sm font-semibold text-primary">
+                          {user.full_name}
+                        </p>
+                        <p className="mt-0.5 text-xs capitalize text-tertiary">
+                          ID: {user.id.slice(0, 8)}
+                        </p>
                       </div>
                     </div>
                   </Table.Cell>
                   <Table.Cell>
-                    <span className="block max-w-64 truncate text-sm text-secondary">{user.email}</span>
+                    <span className="block max-w-64 truncate text-sm text-secondary">
+                      {user.email}
+                    </span>
                   </Table.Cell>
-                  <Table.Cell><RoleBadge role={user.role} /></Table.Cell>
-                  <Table.Cell><PlanBadge plan={user.plan} /></Table.Cell>
                   <Table.Cell>
-                    <BadgeWithDot color={user.is_active ? "success" : "gray"} size="sm">
+                    <RoleBadge role={user.role} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <PlanBadge plan={user.plan} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <BadgeWithDot
+                      color={user.is_active ? "success" : "gray"}
+                      size="sm"
+                    >
                       {user.is_active ? "Active" : "Inactive"}
                     </BadgeWithDot>
                   </Table.Cell>
@@ -405,7 +499,13 @@ export const UserListPage = () => {
         onOpenChange={(isOpen) => !isOpen && handleCloseModal()}
       >
         <Modal className="max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl">
-          <Dialog aria-label={modalState.type === "activate" ? "Activate user account" : "Deactivate user account"}>
+          <Dialog
+            aria-label={
+              modalState.type === "activate"
+                ? "Activate user account"
+                : "Deactivate user account"
+            }
+          >
             {({ close }) => {
               const isDeactivate = modalState.type === "deactivate";
               const Icon = isDeactivate ? XCircle : CheckCircle2;
@@ -429,7 +529,9 @@ export const UserListPage = () => {
                       <Icon className="size-6" />
                     </div>
                     <h2 className="mt-4 pr-10 text-lg font-semibold text-primary">
-                      {isDeactivate ? "Deactivate user account?" : "Activate user account?"}
+                      {isDeactivate
+                        ? "Deactivate user account?"
+                        : "Activate user account?"}
                     </h2>
                     <p className="mt-2 text-sm leading-6 text-secondary">
                       {isDeactivate
@@ -439,7 +541,13 @@ export const UserListPage = () => {
                   </div>
 
                   <div className="flex flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
-                    <Button color="secondary" size="md" onPress={close} isDisabled={isUpdating} className="w-full sm:w-auto">
+                    <Button
+                      color="secondary"
+                      size="md"
+                      onPress={close}
+                      isDisabled={isUpdating}
+                      className="w-full sm:w-auto"
+                    >
                       Cancel
                     </Button>
                     <Button

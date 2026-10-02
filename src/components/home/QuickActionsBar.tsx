@@ -1,5 +1,7 @@
-import type { ElementType } from "react";
-import { ArrowUpRight, Award, CalendarDays, FolderDown, Share2, Sparkles } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowUpRight, Sparkles } from "@/components/foundations/hugeicons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Calendar03Icon, Certificate01Icon, FileDownloadIcon, FolderDownloadIcon } from "@hugeicons/core-free-icons";
 import { useApp } from "../../context/AppContext";
 import { downloadDatabaseBackup } from "../../lib/offlineStorage";
 
@@ -16,7 +18,7 @@ type QuickAction = {
   descEn: string;
   descId: string;
   badge: string;
-  icon: ElementType;
+  icon: ReactNode;
   cardStyle: string;
   iconStyle: string;
   onClick: () => void;
@@ -45,7 +47,7 @@ export const QuickActionsBar = ({
       descEn: "Share your learning summary",
       descId: "Bagikan ringkasan pembelajaran",
       badge: "PDF",
-      icon: Share2,
+      icon: <HugeiconsIcon icon={FileDownloadIcon} className="size-5" />,
       cardStyle: "from-brand-50 to-orange-100/70 hover:border-brand/50",
       iconStyle: "bg-brand-solid text-white",
       onClick: onOpenReport,
@@ -57,7 +59,7 @@ export const QuickActionsBar = ({
       descEn: "Create a printable certificate",
       descId: "Buat sertifikat siap cetak",
       badge: "HD",
-      icon: Award,
+      icon: <HugeiconsIcon icon={Certificate01Icon} className="size-5" />,
       cardStyle: "from-amber-50 to-yellow-100/70 hover:border-amber-400/70",
       iconStyle: "bg-amber-600 text-white",
       onClick: onOpenAchievementModal,
@@ -69,7 +71,7 @@ export const QuickActionsBar = ({
       descEn: "Review attendance and permits",
       descId: "Lihat rekap kehadiran dan izin",
       badge: "LOG",
-      icon: CalendarDays,
+      icon: <HugeiconsIcon icon={Calendar03Icon} className="size-5" />,
       cardStyle: "from-blue-50 to-cyan-100/70 hover:border-blue-400/70",
       iconStyle: "bg-blue-600 text-white",
       onClick: onOpenAttendanceModal,
@@ -81,7 +83,7 @@ export const QuickActionsBar = ({
       descEn: "Export your offline data archive",
       descId: "Ekspor arsip data offline",
       badge: "JSON",
-      icon: FolderDown,
+      icon: <HugeiconsIcon icon={FolderDownloadIcon} className="size-5" />,
       cardStyle: "from-emerald-50 to-teal-100/70 hover:border-emerald-400/70",
       iconStyle: "bg-emerald-600 text-white",
       onClick: handleBackup,
@@ -109,8 +111,6 @@ export const QuickActionsBar = ({
 
       <div className="grid grid-cols-4 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
         {actions.map((action) => {
-          const Icon = action.icon;
-
           return (
             <button
               key={action.id}
@@ -122,7 +122,7 @@ export const QuickActionsBar = ({
             >
               <div className="relative flex items-center justify-center sm:items-start sm:justify-between sm:gap-3">
                 <div className={`flex size-11 items-center justify-center rounded-xl shadow-sm transition-transform duration-200 group-hover:scale-105 ${action.iconStyle}`}>
-                  <Icon className="size-5" />
+                  {action.icon}
                 </div>
                 <div className="hidden items-center gap-2 sm:flex">
                   <span className="rounded-full border border-black/5 bg-white/70 px-2 py-1 text-[10px] font-bold tracking-wider text-slate-600 backdrop-blur-sm">

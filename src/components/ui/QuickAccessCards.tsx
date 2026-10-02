@@ -1,4 +1,4 @@
-import { BookOpen, Users, User } from "lucide-react";
+import { BookOpen, Users, User } from "@/components/foundations/hugeicons";
 import { Link } from "react-router";
 
 interface QuickAccessCardProps {

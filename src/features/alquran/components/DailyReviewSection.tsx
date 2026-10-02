@@ -5,7 +5,7 @@ import {
   BookOpen,
   Play,
   CheckCircle2,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { FlameBurst } from "@/components/ui/FlameBurst";
 import { useDailyReviewEstimate, type JuzReviewEstimate } from "@/features/alquran/hooks/useDailyReviewEstimate";
 import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";

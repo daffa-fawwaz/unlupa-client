@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@/components/foundations/hugeicons";
 
 type FAQItem = {
   question: string;

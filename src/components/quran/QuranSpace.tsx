@@ -47,7 +47,7 @@ import {
   Link,
   HelpCircle,
   Users
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 const InfoTooltip: React.FC<{ text: string, textEn: string, language: string }> = ({ text, textEn, language }) => (
   <div className="relative group flex items-center">

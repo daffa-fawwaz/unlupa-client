@@ -1,5 +1,5 @@
 import { SlideContainer } from "@/components/utils/SlideContainer";
-import { AlertTriangle, ArrowDown, Siren, ShieldAlert } from "lucide-react";
+import { AlertTriangle, ArrowDown, Siren, ShieldAlert } from "@/components/foundations/hugeicons";
 
 export const Conclusion = ({ index }: { index: number }) => {
   return (

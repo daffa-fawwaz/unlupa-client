@@ -1,5 +1,5 @@
 import { SlideContainer } from "@/components/utils/SlideContainer";
-import { Clock, Hourglass, AlertTriangle, TrendingDown } from "lucide-react";
+import { Clock, Hourglass, AlertTriangle, TrendingDown } from "@/components/foundations/hugeicons";
 
 export const TimeAnalysis = ({ index }: { index: number }) => {
   return (

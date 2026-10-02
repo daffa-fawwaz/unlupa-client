@@ -7,7 +7,7 @@ import {
   ShieldCheck,
   Trophy,
   Activity,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import { useItemsByStatus } from "@/features/alquran/hooks/useItemsByStatus";
 import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";

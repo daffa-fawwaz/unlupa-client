@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle } from "@/components/foundations/hugeicons";
 
 interface SuccessModalProps {
   isOpen: boolean;

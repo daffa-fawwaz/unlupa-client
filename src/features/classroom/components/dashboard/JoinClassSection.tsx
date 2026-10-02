@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GraduationCap, Hash, Loader2, Sparkles, Users } from "lucide-react";
+import { GraduationCap, Hash, Loader2, Sparkles, Users } from "@/components/foundations/hugeicons";
 import { useJoinClass } from "@/features/classroom/hooks/useClassroom";
 
 export const JoinClassSection = () => {

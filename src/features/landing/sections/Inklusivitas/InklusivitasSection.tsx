@@ -5,7 +5,7 @@ import {
   Compass,
   Sparkles,
   ArrowRight,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 
 export const InklusivitasSection = () => {
   return (

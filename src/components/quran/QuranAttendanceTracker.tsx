@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { QuranPageItem, Language } from '../../types';
-import { CalendarDays, CheckCircle2, XCircle, AlertCircle, X, Check, ChevronRight, Undo2 } from 'lucide-react';
+import { CalendarDays, CheckCircle2, XCircle, AlertCircle, X, Check, ChevronRight, Undo2 } from "@/components/foundations/hugeicons";
 import { useApp } from '../../context/AppContext';
 
 interface Props {

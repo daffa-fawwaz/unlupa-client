@@ -24,7 +24,7 @@ import {
   KeyRound, 
   Sparkles,
   Award
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { OnboardingPageKey } from '../types';
 
 export interface OnboardingItemGuide {

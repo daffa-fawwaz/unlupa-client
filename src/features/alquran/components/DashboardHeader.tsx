@@ -1,4 +1,4 @@
-import { Menu, Moon, Sparkles } from "lucide-react";
+import { Menu, Moon, Sparkles } from "@/components/foundations/hugeicons";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;

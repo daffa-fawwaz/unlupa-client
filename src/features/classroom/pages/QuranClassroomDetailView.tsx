@@ -9,7 +9,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Clock3,
+  Clock5,
   Flame,
   GraduationCap,
   LibraryBig,
@@ -22,7 +22,7 @@ import {
   BookMarked,
   User,
   Layers3,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { tones, toneStyles, statusLabel } from "../constants";
 import type { ClassItem, PendingGraduation, StudentProgress } from "../types";
@@ -1004,7 +1004,7 @@ const GraduationCard = ({
           </div>
 
           <span className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-warning/10 border border-warning/20 text-[10px] font-bold text-warning uppercase tracking-wider">
-            <Clock3 className="h-2.5 w-2.5" />
+            <Clock5 className="h-2.5 w-2.5" />
             Menunggu
           </span>
         </div>

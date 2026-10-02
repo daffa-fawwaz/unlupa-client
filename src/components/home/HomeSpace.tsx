@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useApp } from "../../context/AppContext";
 import { useSwipeGesture } from "../../hooks/useSwipeGesture";
-import { Sparkles, Quote, Crown, ArrowRight } from "lucide-react";
+import { Sparkles, Quote, Crown, ArrowRight } from "@/components/foundations/hugeicons";
 import { motion } from "motion/react";
 import { VisualReviewCalendar } from "./VisualReviewCalendar";
 import { ConsistencyJourneyWidget } from "./ConsistencyJourneyWidget";
@@ -12,6 +12,7 @@ import { StudentReportModal } from "./StudentReportModal";
 import { AchievementReportModal } from "../common/AchievementReportModal";
 import { QuranAttendanceModal } from "../attendance/QuranAttendanceModal";
 import { MushafPageViewerModal } from "../quran/MushafPageViewerModal";
+import { useNavigate } from "react-router-dom";
 
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 
@@ -23,6 +24,7 @@ const dailyWisdomIndex = Math.floor(Date.now() / 86_400_000);
  * weak spots attention, real-data consistency journey, and quick exports.
  */
 export const HomeSpace: React.FC = () => {
+  const navigate = useNavigate();
   const authUser = useAuthStore((state) => state.user);
   const {
     quranPages,
@@ -179,6 +181,8 @@ export const HomeSpace: React.FC = () => {
 
       {/* 3. VISUAL PLANNED REVIEW & RETENTION CALENDAR */}
       <VisualReviewCalendar
+        onOpenQuranReview={() => navigate("/dashboard/alquran")}
+        onOpenPersonalReview={() => navigate("/dashboard/pribadi")}
         onOpenMushafViewer={(page) => setPreviewPageNumber(page)}
       />
 

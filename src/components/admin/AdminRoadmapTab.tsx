@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Sparkles, CheckCircle2, Clock, Cpu, CreditCard, ShieldCheck, BookCheck, ArrowRight, Layers, TrendingUp } from 'lucide-react';
+import { Compass, Sparkles, CheckCircle2, Clock, Cpu, CreditCard, ShieldCheck, BookCheck, ArrowRight, Layers, TrendingUp } from "@/components/foundations/hugeicons";
 import { useApp } from '../../context/AppContext';
 
 export const AdminRoadmapTab: React.FC = () => {

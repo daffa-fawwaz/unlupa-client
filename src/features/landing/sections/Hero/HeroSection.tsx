@@ -1,4 +1,4 @@
-import { Moon, BookOpen, Users, Shield } from "lucide-react";
+import { Moon, BookOpen, Users, Shield } from "@/components/foundations/hugeicons";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
 

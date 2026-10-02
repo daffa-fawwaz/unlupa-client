@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { X, BookOpen, Loader2, Upload, Image as ImageIcon } from "lucide-react";
+import { X, BookOpen, Loader2, Upload, Image as ImageIcon } from "@/components/foundations/hugeicons";
 import { useCreateBookInClass } from "../../hooks/useClassroom";
 import { toast } from "sonner";
 

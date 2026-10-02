@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Loader2, CalendarDays, X } from "lucide-react";
+import { Loader2, CalendarDays, X } from "@/components/foundations/hugeicons";
 
 interface IntervalModalProps {
   isOpen: boolean;

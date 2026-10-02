@@ -16,7 +16,7 @@ import {
   CheckCircle2, 
   Users,
   AlertCircle
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { useApp } from '../../context/AppContext';
 import { SystemTierConfig, TierLimitConfig, createDefaultTierConfig } from '../../types';
 

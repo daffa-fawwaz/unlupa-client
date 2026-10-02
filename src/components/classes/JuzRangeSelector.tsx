@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Layers, Sparkles } from 'lucide-react';
+import { Layers, Sparkles } from "@/components/foundations/hugeicons";
+import { useApp } from '@/context/AppContext';
 
 interface JuzRangeSelectorProps {
   value: string;
@@ -7,15 +8,14 @@ interface JuzRangeSelectorProps {
 }
 
 export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onChange }) => {
+  const { language } = useApp();
+  const isEnglish = language === 'en';
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<number | null>(null);
   const [hoverJuz, setHoverJuz] = useState<number | null>(null);
 
   // Keep refs to avoid stale closures in global listeners & fast event cycles
   const dragStartRef = useRef<number | null>(null);
-  dragStartRef.current = dragStart;
   const isDraggingRef = useRef(false);
-  isDraggingRef.current = isDragging;
 
   const parseRange = (val: string): [number, number] => {
     if (!val || val === 'all' || val === '1-30') return [1, 30];
@@ -32,17 +32,11 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
     return [1, 5];
   };
 
-  const [range, setRange] = useState<[number, number]>(() => parseRange(value));
-
-  useEffect(() => {
-    setRange(parseRange(value));
-  }, [value]);
+  const range = parseRange(value);
 
   const commitRange = useCallback((start: number, end: number) => {
     const min = Math.max(1, Math.min(start, end));
     const max = Math.min(30, Math.max(start, end));
-    setRange([min, max]);
-
     if (min === 1 && max === 30) {
       onChange('all');
     } else if (min === max) {
@@ -70,8 +64,9 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
     } catch {
       // Ignored in environments where setPointerCapture is restricted
     }
+    isDraggingRef.current = true;
+    dragStartRef.current = juz;
     setIsDragging(true);
-    setDragStart(juz);
     setHoverJuz(juz);
     commitRange(juz, juz);
   };
@@ -93,10 +88,13 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
         if (e.currentTarget.hasPointerCapture(e.pointerId)) {
           e.currentTarget.releasePointerCapture(e.pointerId);
         }
-      } catch {}
+      } catch {
+        // Pointer capture can already be released by the browser.
+      }
     }
+    isDraggingRef.current = false;
+    dragStartRef.current = null;
     setIsDragging(false);
-    setDragStart(null);
     setHoverJuz(null);
   };
 
@@ -115,8 +113,9 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
   useEffect(() => {
     const handleGlobalEnd = () => {
       if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        dragStartRef.current = null;
         setIsDragging(false);
-        setDragStart(null);
         setHoverJuz(null);
       }
     };
@@ -142,35 +141,35 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
   const PRESETS = [
     { label: 'Juz 1-5', range: [1, 5] },
     { label: 'Juz 28-30', range: [28, 30] },
-    { label: 'Juz 30 Saja', range: [30, 30] },
-    { label: 'Semua (1-30)', range: [1, 30] },
+    { label: isEnglish ? 'Juz 30 only' : 'Juz 30 saja', range: [30, 30] },
+    { label: isEnglish ? 'All (1-30)' : 'Semua (1-30)', range: [1, 30] },
   ];
 
   return (
     <div className="space-y-2 select-none">
       {/* Target summary bar */}
-      <div className="flex items-center justify-between text-xs bg-indigo-50/90 dark:bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-100 dark:border-indigo-900/50">
+      <div className="flex items-center justify-between rounded-xl border border-brand-200 bg-brand-50 p-2.5 text-xs">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs">
+          <div className="rounded-lg bg-brand-600 p-1.5 text-white shadow-xs">
             <Layers className="w-3.5 h-3.5 shrink-0" />
           </div>
           <div>
-            <div className="font-bold text-indigo-950 dark:text-indigo-200 text-xs flex items-center gap-1.5">
-              <span>{min === max ? `Juz ${min} Saja` : `Juz ${min} s.d. Juz ${max}`}</span>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-brand-900">
+              <span>{min === max ? `Juz ${min} ${isEnglish ? 'only' : 'saja'}` : `Juz ${min} - ${max}`}</span>
               {isDragging && (
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-md bg-indigo-200/80 dark:bg-indigo-900 text-[10px] font-bold text-indigo-900 dark:text-indigo-300 animate-pulse">
+                <span className="inline-flex animate-pulse items-center gap-1 rounded-md bg-brand-200 px-1.5 py-0.5 text-[10px] font-bold text-brand-900">
                   <Sparkles className="w-2.5 h-2.5" />
-                  <span>Menyapu...</span>
+                  <span>{isEnglish ? 'Selecting...' : 'Memilih...'}</span>
                 </span>
               )}
             </div>
-            <div className="text-indigo-600/80 dark:text-indigo-400/80 font-medium text-[11px] mt-0.5">
-              {count} Juz terpilih • Estimasi ~{pageCount} Halaman
+            <div className="mt-0.5 text-[11px] font-medium text-brand-700">
+              {count} {isEnglish ? 'Juz selected' : 'Juz terpilih'} · ~{pageCount} {isEnglish ? 'pages' : 'halaman'}
             </div>
           </div>
         </div>
-        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-100/70 dark:bg-indigo-900/40 px-2 py-1 rounded-lg hidden sm:inline">
-          Ketuk atau sapu rentang
+        <span className="hidden rounded-lg bg-brand-100 px-2 py-1 text-[10px] font-semibold text-brand-700 sm:inline">
+          {isEnglish ? 'Tap or drag a range' : 'Ketuk atau geser rentang'}
         </span>
       </div>
 
@@ -185,7 +184,7 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
               onClick={() => commitRange(p.range[0], p.range[1])}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                  ? 'border-brand-600 bg-brand-600 text-white shadow-xs'
                   : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850'
               }`}
             >
@@ -216,9 +215,9 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
               onPointerDown={(e) => handlePointerDown(e, juz)}
               className={`h-10 rounded-xl flex flex-col items-center justify-center text-xs font-bold transition-all cursor-pointer touch-none select-none relative ${
                 isEdge
-                  ? 'bg-indigo-600 text-white shadow-xs z-10 ring-2 ring-indigo-400/80 scale-105 font-black'
+                  ? 'z-10 scale-105 bg-brand-600 font-black text-white shadow-xs ring-2 ring-brand-300'
                   : inRange
-                  ? 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold border border-indigo-200 dark:border-indigo-800/60'
+                  ? 'border border-brand-200 bg-brand-100 font-bold text-brand-700'
                   : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800/80'
               } ${isDragHover ? 'ring-2 ring-amber-400 ring-offset-1' : ''}`}
             >
@@ -228,7 +227,11 @@ export const JuzRangeSelector: React.FC<JuzRangeSelectorProps> = ({ value, onCha
         })}
       </div>
       <p className="text-[10.5px] text-slate-400 dark:text-slate-500 text-center flex items-center justify-center gap-1.5">
-        <span>Ketuk satu juz atau sapukan jari/mouse untuk memilih rentang target hafalan secara instan.</span>
+        <span>
+          {isEnglish
+            ? 'Tap one Juz or drag across the grid to select a memorization range.'
+            : 'Ketuk satu Juz atau geser pada grid untuk memilih rentang target hafalan.'}
+        </span>
       </p>
     </div>
   );

@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "@/components/foundations/hugeicons";
 
 interface ConfirmModalProps {
   isOpen: boolean;

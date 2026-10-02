@@ -1,5 +1,5 @@
 import { SlideContainer } from "@/components/utils/SlideContainer";
-import { Stars, Sparkles, Gem, Crown } from "lucide-react";
+import { Stars, Sparkles, Gem, Crown } from "@/components/foundations/hugeicons";
 
 export const Meaning = ({ index }: { index: number }) => {
   return (

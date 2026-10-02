@@ -1,4 +1,4 @@
-import { BookOpen, BarChart2, RefreshCw, Info } from "lucide-react";
+import { BookOpen, BarChart2, RefreshCw, Info } from "@/components/foundations/hugeicons";
 
 export const MetodologiSection = () => {
   return (

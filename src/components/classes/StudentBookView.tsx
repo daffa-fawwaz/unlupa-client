@@ -4,7 +4,7 @@ import { useApp, AppContext } from '../../context/AppContext';
 import { PersonalSpace } from '../personal/PersonalSpace';
 import { createSampleStudentBookItems } from '../../data/sampleClasses';
 import { isDue } from '../../lib/fsrs';
-import { ArrowLeft, BookOpen, Clock, Award, CheckCircle2, UserMinus, Printer, Share2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock, Award, CheckCircle2, UserMinus, Printer, Share2 } from "@/components/foundations/hugeicons";
 import { TeacherReportPrintView } from './TeacherReportPrintView';
 
 interface StudentBookViewProps {

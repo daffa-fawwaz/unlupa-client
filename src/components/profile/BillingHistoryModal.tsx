@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CreditCard, CheckCircle2, Clock, AlertCircle, Download, ExternalLink, Sparkles, Crown, ArrowRight, ShieldCheck, Copy, Receipt } from 'lucide-react';
+import { X, CreditCard, CheckCircle2, Clock, AlertCircle, Download, ExternalLink, Sparkles, Crown, ArrowRight, ShieldCheck, Copy, Receipt } from "@/components/foundations/hugeicons";
 import { useApp } from '../../context/AppContext';
 import { BookTransaction } from '../../types';
 

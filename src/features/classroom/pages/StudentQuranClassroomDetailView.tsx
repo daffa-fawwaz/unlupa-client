@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { Plus, ImageIcon, Sparkles, BookOpen } from "lucide-react";
+import { Plus, ImageIcon, Sparkles, BookOpen } from "@/components/foundations/hugeicons";
 import { useGetJuz } from "@/features/alquran/hooks/useGetJuz";
 import { JuzCard } from "@/features/alquran/components/JuzCard";
 import type { CardJuzData } from "@/features/alquran/types/quran.types";

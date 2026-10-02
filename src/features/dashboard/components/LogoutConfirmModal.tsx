@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { createPortal } from "react-dom";
-import { LogOut } from "lucide-react";
+import { LogOut } from "@/components/foundations/hugeicons";
 
 export const LogoutConfirmModal = ({
   setShowLogoutConfirm,

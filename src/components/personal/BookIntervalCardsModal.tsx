@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BookItem, Book, Chapter, ClassGroup, Language } from '../../types';
-import { X, Sparkles, Search, BookOpen, Clock, Calendar, CheckCircle2, ArrowRight, GraduationCap, Library } from 'lucide-react';
+import { X, Sparkles, Search, BookOpen, Clock, Calendar, CheckCircle2, ArrowRight, GraduationCap, Library } from "@/components/foundations/hugeicons";
 import { getBookItemClusterKey, BookIntervalClusterKey, getNonQuranIntervalDays } from '../../lib/fsrs';
 import { BilingualCardText } from '../common/BilingualCardText';
 

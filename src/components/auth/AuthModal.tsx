@@ -14,7 +14,7 @@ import {
   UserCheck,
   Zap,
   Globe
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { 
   loginWithGoogle, 
   loginWithEmail, 

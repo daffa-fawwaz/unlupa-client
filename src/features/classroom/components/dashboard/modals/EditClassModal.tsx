@@ -8,7 +8,7 @@ import {
   ChevronDown,
   Save,
   Upload,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 
 export interface EditClassModalProps {
   isOpen: boolean;

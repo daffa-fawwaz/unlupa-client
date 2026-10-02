@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { X, GraduationCap, Users, BookOpen, Sparkles } from "lucide-react";
+import { X, GraduationCap, Users, BookOpen, Sparkles } from "@/components/foundations/hugeicons";
 import { resolveAssetUrl } from "@/lib/assets";
 
 export interface JoinClassModalProps {

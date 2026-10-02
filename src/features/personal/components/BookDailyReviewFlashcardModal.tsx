@@ -13,7 +13,7 @@ import {
   Meh,
   Smile,
   Flame,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import type {
   BookDailyTask,
   ReviewIntervalResponse,

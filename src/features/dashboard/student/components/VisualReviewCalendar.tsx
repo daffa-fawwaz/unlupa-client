@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Search } from "@/components/foundations/hugeicons";
 import type { UpcomingReviewForecast } from "../types";
 
 interface VisualReviewCalendarProps {

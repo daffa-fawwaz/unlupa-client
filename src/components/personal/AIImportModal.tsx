@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
-import { X, Sparkles, Loader2, BookOpen } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { Language } from '../../types';
-import { personalService } from '@/features/personal/services/personal.services';
+import { useState, type FormEvent } from "react";
+import { BookOpen, Sparkles, X } from "@/components/foundations/hugeicons";
+import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
+import { InlineAlert } from "@/components/base/alert/alert";
+import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { Input } from "@/components/base/input/input";
+import { TextArea } from "@/components/base/textarea/textarea";
+import { personalService } from "@/features/personal/services/personal.services";
+import type { Language } from "../../types";
 
 interface AIImportModalProps {
   onClose: () => void;
@@ -11,17 +16,18 @@ interface AIImportModalProps {
 }
 
 export function AIImportModal({ onClose, onImport, language }: AIImportModalProps) {
-  const [topic, setTopic] = useState('');
-  const [text, setText] = useState('');
-  
+  const [topic, setTopic] = useState("");
+  const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (event: FormEvent) => {
+    event.preventDefault();
     if (!topic.trim() && !text.trim()) {
-      setError(language === 'en' ? 'Please provide a topic or text' : 'Harap berikan topik atau teks');
+      setError(language === "en" ? "Please provide a topic or text." : "Masukkan topik atau bahan catatan terlebih dahulu.");
       return;
     }
+
     setIsLoading(true);
     setError(null);
     try {
@@ -30,107 +36,139 @@ export function AIImportModal({ onClose, onImport, language }: AIImportModalProp
         text: text.trim(),
         language,
       });
-
       const cards = response?.data?.cards;
-      if (cards && Array.isArray(cards) && cards.length > 0) {
+
+      if (Array.isArray(cards) && cards.length > 0) {
         onImport(cards);
       } else {
-        setError(language === 'en' ? 'No cards could be generated.' : 'Gagal menghasilkan kartu.');
+        setError(language === "en" ? "No cards could be generated." : "AI belum dapat menghasilkan kartu dari bahan tersebut.");
       }
-    } catch (err: any) {
-      console.error(err);
-      const msg = err?.response?.data?.message || err?.message || 'Error communicating with AI service';
-      setError(msg);
+    } catch (caughtError: unknown) {
+      console.error(caughtError);
+      const requestError = caughtError as {
+        message?: string;
+        response?: { data?: { message?: string } };
+      };
+      setError(requestError.response?.data?.message || requestError.message || (language === "en" ? "Could not connect to the AI service." : "Tidak dapat terhubung ke layanan AI."));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm sm:p-6">
-      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-                {language === 'en' ? 'Generate Flashcards with AI' : 'Buat Kartu Hafalan dengan AI'}
-              </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'en' ? 'Let AI create cards from your topic or notes.' : 'Biarkan AI membuatkan kartu dari topik atau catatan Anda.'}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-full transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <ModalOverlay
+      isOpen
+      isDismissable={!isLoading}
+      onOpenChange={(open) => {
+        if (!open && !isLoading) onClose();
+      }}
+    >
+      <Modal className="max-w-2xl overflow-hidden rounded-t-3xl sm:rounded-3xl">
+        <Dialog aria-label={language === "en" ? "Generate flashcards with AI" : "Buat kartu dengan AI"}>
+          {({ close }) => (
+            <form onSubmit={handleGenerate} className="flex max-h-[inherit] flex-col">
+              <div className="relative shrink-0 overflow-hidden border-b border-brand-200 bg-[linear-gradient(135deg,var(--color-brand-50)_0%,var(--color-bg-primary)_72%)] px-5 py-5 sm:px-6">
+                <div className="pointer-events-none absolute -right-12 -top-16 size-40 rounded-full bg-brand-200/40 blur-3xl" />
+                <div className="relative flex items-start gap-3 pr-10">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-xs ring-1 ring-brand-600 ring-inset">
+                    <Sparkles className="size-5" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-lg font-semibold text-primary">
+                        {language === "en" ? "Generate flashcards with AI" : "Buat kartu dengan AI"}
+                      </h2>
+                      <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-semibold text-brand-700 ring-1 ring-brand-200 ring-inset">
+                        AI assistant
+                      </span>
+                    </div>
+                    <p className="mt-1 max-w-lg text-sm leading-5 text-secondary">
+                      {language === "en"
+                        ? "Describe a topic, paste your notes, or combine both for more focused cards."
+                        : "Tuliskan topik, tempel catatan, atau gunakan keduanya agar kartu lebih terarah."}
+                    </p>
+                  </div>
+                </div>
+                <ButtonUtility
+                  icon={X}
+                  color="tertiary"
+                  tooltip={language === "en" ? "Close AI generator" : "Tutup generator AI"}
+                  onPress={close}
+                  isDisabled={isLoading}
+                  className="absolute right-4 top-4 bg-primary/80 shadow-xs backdrop-blur-sm"
+                />
+              </div>
 
-        <div className="p-6 overflow-y-auto">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm border border-red-100 dark:border-red-900/30">
-              {error}
-            </div>
+              <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-5 sm:px-6">
+                {error && <InlineAlert variant="error" title={error} onDismiss={() => setError(null)} />}
+
+                <Input
+                  label={language === "en" ? "Topic" : "Topik"}
+                  value={topic}
+                  onChange={setTopic}
+                  placeholder={language === "en" ? "Example: Basic Arabic vocabulary" : "Contoh: Kosakata dasar Bahasa Arab"}
+                  hint={language === "en" ? "Optional when source notes are provided below." : "Opsional jika bahan catatan di bawah sudah diisi."}
+                  icon={BookOpen}
+                  isDisabled={isLoading}
+                />
+
+                <TextArea
+                  label={language === "en" ? "Source notes or Q&A pairs" : "Bahan catatan atau pasangan tanya-jawab"}
+                  value={text}
+                  onChange={setText}
+                  placeholder={
+                    language === "en"
+                      ? "Paste lesson notes, a short article, or Q: ... / A: ... pairs"
+                      : "Tempel ringkasan materi, artikel pendek, atau pasangan T: ... / J: ..."
+                  }
+                  rows={7}
+                  hint={language === "en" ? "The generated cards will be added to the currently selected chapter." : "Kartu hasil AI akan dimasukkan ke bab yang sedang dipilih."}
+                  isDisabled={isLoading}
+                />
+
+                <div className="flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-50/60 p-3.5">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-brand-700 shadow-xs ring-1 ring-brand-200 ring-inset">
+                    <Sparkles className="size-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-primary">
+                      {language === "en" ? "For better results" : "Agar hasil lebih baik"}
+                    </p>
+                    <p className="mt-0.5 text-xs leading-5 text-secondary">
+                      {language === "en"
+                        ? "Use specific terms and include the facts that must appear in the answers."
+                        : "Gunakan topik yang spesifik dan sertakan fakta penting yang wajib muncul pada jawaban."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                <Button color="secondary" size="md" onPress={close} isDisabled={isLoading} className="w-full sm:w-auto">
+                  {language === "en" ? "Cancel" : "Batal"}
+                </Button>
+                <Button
+                  type="submit"
+                  size="md"
+                  iconLeading={Sparkles}
+                  isLoading={isLoading}
+                  showTextWhileLoading
+                  isDisabled={!topic.trim() && !text.trim()}
+                  className="w-full sm:w-auto"
+                >
+                  {isLoading
+                    ? language === "en"
+                      ? "Generating cards..."
+                      : "Sedang membuat kartu..."
+                    : language === "en"
+                      ? "Generate flashcards"
+                      : "Buat kartu"}
+                </Button>
+              </div>
+            </form>
           )}
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                {language === 'en' ? 'Topic (Optional)' : 'Topik (Opsional)'}
-              </label>
-              <input
-                type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                placeholder={language === 'en' ? 'e.g., Photosynthesis, World War 2' : 'Cth: Fotosintesis, Sejarah Kemerdekaan'}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                {language === 'en' ? 'Q&A Text / Pairs' : 'Teks Q&A (Tanya Jawab)'}
-              </label>
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder={language === 'en' ? 'Paste your Q&A pairs here (e.g. Q: What is X?\nA: It is Y.)' : 'Tempelkan pasangan tanya jawab (Cth: T: Apa itu X?\nJ: Itu Y.)'}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all outline-none resize-none h-40"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 shrink-0">
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors"
-          >
-            {language === 'en' ? 'Cancel' : 'Batal'}
-          </button>
-          <button
-            onClick={handleGenerate}
-            disabled={isLoading || (!topic.trim() && !text.trim())}
-            className="px-6 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors shadow-sm flex items-center gap-2"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>{language === 'en' ? 'Generating...' : 'Membuat...'}</span>
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4" />
-                <span>{language === 'en' ? 'Generate Flashcards' : 'Buat Kartu'}</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 }

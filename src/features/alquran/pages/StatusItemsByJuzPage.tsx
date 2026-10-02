@@ -7,7 +7,7 @@ import {
   ShieldCheck,
   Trophy,
   ChevronRight,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import type {
   MyItemsQuranResponse,

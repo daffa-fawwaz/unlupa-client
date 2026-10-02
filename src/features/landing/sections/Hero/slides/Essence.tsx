@@ -1,5 +1,5 @@
 import { SlideContainer } from "@/components/utils/SlideContainer";
-import { Search, Database, FileSearch, ScanSearch } from "lucide-react";
+import { Search, Database, FileSearch, ScanSearch } from "@/components/foundations/hugeicons";
 
 export const Essence = ({ index }: { index: number }) => {
   return (

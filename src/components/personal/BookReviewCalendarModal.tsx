@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   X, 
-  Calendar as CalendarIcon, 
   ChevronLeft, 
   ChevronRight, 
   CheckCircle2, 
@@ -10,13 +9,12 @@ import {
   Eye, 
   Play, 
   CalendarCheck,
-  FolderTree,
-  RotateCcw,
-  Clock
-} from 'lucide-react';
+  FolderTree
+} from "@/components/foundations/hugeicons";
 import { Book, BookItem, Chapter } from '../../types';
 import { isDue, getNonQuranIntervalDays } from '../../lib/fsrs';
 import { BilingualCardText } from '../common/BilingualCardText';
+import { Dialog, Modal, ModalOverlay } from '@/components/application/modals/modal';
 
 interface Props {
   isOpen: boolean;
@@ -78,17 +76,6 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
       setChapterFilter('all');
     }
   }, [initialChapterFilter, book.id]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   // Month navigation
   const handlePrevMonth = () => {
@@ -288,7 +275,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
     });
 
     return { plannedMap, completedMap };
-  }, [items, book.id, chapterFilter, statusFilter, chapters, today, currentYear, currentMonth, includeProjection]);
+  }, [items, book.id, chapterFilter, statusFilter, chapters, today, todayStr, currentYear, currentMonth, includeProjection]);
 
   // Monthly summary metrics for this specific book
   const metrics = useMemo(() => {
@@ -394,31 +381,35 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
   if (!isOpen) return null;
 
   return (
-    <div 
+    <ModalOverlay
+      isOpen={isOpen}
+      isDismissable
+      onOpenChange={(open) => !open && onClose()}
       data-no-swipe="true"
-      className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
     >
-      <div 
-        id="book-review-calendar-modal"
-        className="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
-      >
-        {/* MODAL HEADER */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 shrink-0 bg-slate-50/70 dark:bg-slate-900/90">
+      <Modal className="max-w-6xl overflow-hidden rounded-3xl border border-secondary bg-primary">
+        <Dialog
+          id="book-review-calendar-modal"
+          aria-label={language === 'en' ? `${book.title} review calendar` : `Kalender review ${book.title}`}
+          className="flex max-h-[92dvh] flex-col !overflow-hidden"
+        >
+        <div className="relative flex shrink-0 items-center justify-between gap-3 overflow-hidden border-b border-brand-200 bg-[linear-gradient(135deg,var(--color-brand-50)_0%,var(--color-bg-primary)_72%)] p-4 sm:px-6 sm:py-5">
+          <div className="pointer-events-none absolute -right-16 -top-20 size-48 rounded-full bg-brand-200/30 blur-3xl" />
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
-              <CalendarCheck className="w-5 h-5" />
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-brand-solid text-white shadow-xs ring-1 ring-brand-600 ring-inset">
+              <CalendarCheck className="size-5" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
+                <h2 className="truncate text-lg font-semibold text-primary sm:text-xl">
                   {book.title}
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-extrabold text-[10px] flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-indigo-500" />
+                <span className="flex items-center gap-1 rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-semibold text-brand-700 ring-1 ring-brand-200 ring-inset">
+                  <Sparkles className="size-3" />
                   {language === 'en' ? 'Book Calendar' : 'Kalender Buku'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              <p className="mt-0.5 truncate text-xs text-secondary">
                 {language === 'en' 
                   ? 'Visual timeline of spaced flashcard reviews & future workload' 
                   : 'Peta sebaran jadwal murajaah kartu kitab berdasarkan interval retensi FSRS cerdas'}
@@ -430,23 +421,23 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+              aria-label={language === 'en' ? 'Close calendar' : 'Tutup kalender'}
+              className="relative flex size-9 cursor-pointer items-center justify-center rounded-xl bg-primary text-fg-quaternary shadow-xs ring-1 ring-secondary ring-inset transition-colors hover:bg-primary_hover hover:text-fg-quaternary_hover"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* SCROLLABLE MODAL BODY */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto bg-secondary/20 p-4 sm:p-6">
           {/* CONTROLS ROW: Book Selector (if multiple), Chapter Selector, Status Filter, Month Switcher */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex flex-col justify-between gap-3 rounded-2xl border border-secondary bg-primary p-3 shadow-xs md:flex-row md:items-center">
             {/* Left Filters */}
             <div className="flex flex-wrap items-center gap-2">
               {/* Optional Book Switcher */}
               {allBooks.length > 1 && onSelectBook && (
-                <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-                  <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <div className="flex items-center gap-1.5 rounded-xl border border-secondary bg-secondary px-3 py-2 text-xs font-semibold">
+                  <BookOpen className="size-3.5 shrink-0 text-brand-600" />
                   <span className="text-slate-500 dark:text-slate-400">{language === 'en' ? 'Book:' : 'Kitab:'}</span>
                   <select
                     value={book.id}
@@ -469,7 +460,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
               )}
 
               {/* Chapter Filter Dropdown */}
-              <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+              <div className="flex items-center gap-1.5 rounded-xl border border-secondary bg-secondary px-3 py-2 text-xs font-semibold">
                 <FolderTree className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 shrink-0" />
                 <span className="text-slate-500 dark:text-slate-400">{language === 'en' ? 'Chapter:' : 'Bab:'}</span>
                 <select
@@ -492,13 +483,13 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
               </div>
 
               {/* Status Segmented Buttons */}
-              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+              <div className="flex items-center rounded-xl border border-secondary bg-secondary p-1 text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => setStatusFilter('all')}
                   className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                     statusFilter === 'all' 
-                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold shadow-2xs' 
+                      ? 'bg-primary text-brand-secondary font-bold shadow-2xs ring-1 ring-primary'
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -509,7 +500,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                   onClick={() => setStatusFilter('active')}
                   className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                     statusFilter === 'active' 
-                      ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-300 font-bold shadow-2xs' 
+                      ? 'bg-primary text-warning font-bold shadow-2xs ring-1 ring-primary'
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -520,7 +511,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                   onClick={() => setStatusFilter('mapan')}
                   className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                     statusFilter === 'mapan' 
-                      ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 font-bold shadow-2xs' 
+                      ? 'bg-primary text-success-primary font-bold shadow-2xs ring-1 ring-primary'
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -534,29 +525,29 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                 onClick={() => setIncludeProjection(!includeProjection)}
                 className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                   includeProjection
-                    ? 'bg-purple-50 dark:bg-purple-950/60 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 shadow-2xs ring-2 ring-purple-400/30'
-                    : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-brand-50 border-brand-300 text-brand-700 shadow-2xs ring-2 ring-brand-400/20'
+                    : 'bg-secondary border-secondary text-secondary hover:text-primary'
                 }`}
                 title={includeProjection 
-                  ? 'Sedang menampilkan jadwal pasti FSRS (Biru) + simulasi siklus masa depan (Ungu)' 
-                  : 'Aktifkan untuk melihat simulasi siklus pengulangan masa depan (Ungu)'}
+                  ? 'Sedang menampilkan jadwal FSRS dan simulasi siklus masa depan'
+                  : 'Aktifkan untuk melihat simulasi siklus pengulangan masa depan'}
               >
-                <Sparkles className={`w-3.5 h-3.5 ${includeProjection ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400'}`} />
+                <Sparkles className={`size-3.5 ${includeProjection ? 'text-brand-600' : 'text-fg-quaternary'}`} />
                 <span>
                   {language === 'en' 
-                    ? (includeProjection ? 'Projection Active (Violet)' : 'Simulate Future') 
-                    : (includeProjection ? 'Proyeksi Aktif (Warna Ungu)' : 'Simulasi Proyeksi')}
+                    ? (includeProjection ? 'Projection Active' : 'Simulate Future')
+                    : (includeProjection ? 'Proyeksi Aktif' : 'Simulasi Proyeksi')}
                 </span>
               </button>
             </div>
 
             {/* Right: Month Switcher */}
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded-xl shadow-2xs self-start md:self-auto">
+            <div className="flex self-start items-center gap-1 rounded-xl border border-secondary bg-primary p-1 shadow-xs md:self-auto">
               <button
                 type="button"
                 onClick={handlePrevMonth}
                 title={language === 'en' ? 'Previous Month' : 'Bulan Sebelumnya'}
-                className="w-7 h-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer"
+                className="flex size-8 cursor-pointer items-center justify-center rounded-lg text-fg-quaternary transition-colors hover:bg-primary_hover hover:text-primary"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -565,7 +556,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                 type="button"
                 onClick={handleGoToToday}
                 title={language === 'en' ? 'Jump to Today' : 'Kembali ke Hari Ini'}
-                className="px-3 py-1 text-xs font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer whitespace-nowrap"
+                className="cursor-pointer whitespace-nowrap px-3 py-1 text-xs font-semibold text-primary hover:text-brand-secondary"
               >
                 {currentMonthName} {currentYear}
               </button>
@@ -574,7 +565,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                 type="button"
                 onClick={handleNextMonth}
                 title={language === 'en' ? 'Next Month' : 'Bulan Berikutnya'}
-                className="w-7 h-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer"
+                className="flex size-8 cursor-pointer items-center justify-center rounded-lg text-fg-quaternary transition-colors hover:bg-primary_hover hover:text-primary"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -582,9 +573,9 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
           </div>
 
           {/* BOOK METRICS SUMMARY */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-            <div className="p-3 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40">
-              <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider block mb-1">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="rounded-2xl border border-brand-200 bg-primary p-3.5 shadow-xs">
+              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-brand-700">
                 {language === 'en' ? 'Scheduled This Month' : 'Jadwal Bulan Ini'}
               </span>
               <div className="flex items-baseline gap-1.5 flex-wrap">
@@ -595,15 +586,15 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                   {language === 'en' ? 'official (FSRS)' : 'kartu pasti'}
                 </span>
                 {includeProjection && metrics.projectedInMonth > 0 && (
-                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-700 border-dashed">
-                    <Sparkles className="w-2.5 h-2.5 text-purple-500" />
+                  <span className="inline-flex items-center gap-0.5 rounded-md border border-brand-300 bg-brand-50 px-1.5 py-0.5 text-[10px] font-bold text-brand-700">
+                    <Sparkles className="size-2.5 text-brand-500" />
                     +{metrics.projectedInMonth} {language === 'en' ? 'sim' : 'simulasi'}
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40">
+            <div className="rounded-2xl border border-utility-green-200 bg-primary p-3.5 shadow-xs">
               <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block mb-1">
                 {language === 'en' ? 'Completed Reviews' : 'Sudah Diulang'}
               </span>
@@ -617,7 +608,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40">
+            <div className="rounded-2xl border border-utility-yellow-200 bg-primary p-3.5 shadow-xs">
               <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">
                 {language === 'en' ? 'Peak Day Load' : 'Beban Harian Maks'}
               </span>
@@ -629,15 +620,15 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                   {language === 'en' ? 'pasti / day' : 'pasti / hari'}
                 </span>
                 {includeProjection && metrics.peakDayCount > metrics.peakDefinitiveCount && (
-                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                  <span className="text-[10px] font-bold text-brand-600">
                     (maks {metrics.peakDayCount} dgn simulasi)
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-purple-50/60 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/40">
-              <span className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider block mb-1">
+            <div className="rounded-2xl border border-utility-blue-200 bg-primary p-3.5 shadow-xs">
+              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-utility-blue-700">
                 {language === 'en' ? 'Mastery Retention' : 'Ketahanan Mapan'}
               </span>
               <div className="flex items-baseline gap-1.5">
@@ -651,43 +642,41 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* PROJECTION COLOR LEGEND BANNER */}
-          {includeProjection && (
-            <div className="flex items-center justify-between gap-3 px-3.5 py-2 rounded-2xl bg-purple-50/80 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 text-xs flex-wrap animate-in fade-in duration-200">
+          <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.75fr)]">
+            <div className="space-y-4">
+            {includeProjection && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-200 bg-brand-50/70 px-3.5 py-2 text-xs animate-in fade-in duration-200">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
-                <span className="font-bold text-purple-900 dark:text-purple-200 text-xs">
+                <Sparkles className="size-4 shrink-0 text-brand-600" />
+                <span className="text-xs font-bold text-brand-900">
                   {language === 'en' ? 'Visual Color Legend:' : 'Keterangan Warna Kalender:'}
                 </span>
               </div>
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-3 h-3 rounded-md bg-indigo-600 inline-block shadow-2xs"></span>
+                  <span className="inline-block size-3 rounded-md bg-brand-solid shadow-2xs"></span>
                   <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-                    {language === 'en' ? 'Solid Blue = Official FSRS Schedule' : 'Biru Solid = Jadwal Pasti FSRS (Resmi)'}
+                    {language === 'en' ? 'Solid orange = Official FSRS Schedule' : 'Orange solid = Jadwal pasti FSRS'}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-3 h-3 rounded-md bg-purple-100 dark:bg-purple-900/60 border border-purple-400 dark:border-purple-500 border-dashed inline-block"></span>
-                  <span className="text-[11px] font-semibold text-purple-800 dark:text-purple-300">
-                    {language === 'en' ? 'Dashed Violet (~) = Simulated Repeat Cycle' : 'Ungu Bergaris (~) = Simulasi Siklus Lanjutan'}
+                  <span className="inline-block size-3 rounded-md border border-dashed border-utility-blue-400 bg-utility-blue-50"></span>
+                  <span className="text-[11px] font-semibold text-utility-blue-700">
+                    {language === 'en' ? 'Dashed blue (~) = Simulated Repeat Cycle' : 'Biru bergaris (~) = Simulasi siklus lanjutan'}
                   </span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* CALENDAR GRID */}
-          <div className="space-y-1.5">
+          <div className="space-y-2 rounded-3xl border border-secondary bg-primary p-3 shadow-xs sm:p-4">
             {/* Day Header */}
             <div className="grid grid-cols-7 gap-1 text-center">
               {weekDayLabels.map((lbl, idx) => (
                 <div 
                   key={lbl} 
                   className={`py-1 text-[11px] font-bold uppercase tracking-wider ${
-                    idx === 4 
-                      ? 'text-indigo-600 dark:text-indigo-400' 
-                      : idx === 6 
+                    idx === 6
                       ? 'text-rose-500 dark:text-rose-400' 
                       : 'text-slate-400 dark:text-slate-500'
                   }`}
@@ -713,17 +702,17 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                 const isSelected = day.dateStr === selectedDateStr;
                 const isToday = day.isToday;
 
-                let cellBg = 'bg-slate-50/60 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80';
+                let cellBg = 'bg-secondary/40 hover:bg-secondary';
                 if (!day.isCurrentMonth) {
                   cellBg = 'bg-transparent text-slate-300 dark:text-slate-700 opacity-40';
                 } else if (defCount > 0) {
                   if (defCount >= 100) {
                     cellBg = 'bg-rose-100/90 dark:bg-rose-950/70 border-rose-300 dark:border-rose-800';
                   } else {
-                    cellBg = 'bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-100 dark:border-indigo-900/40';
+                    cellBg = 'bg-brand-50/70 border-brand-200 hover:bg-brand-100/70';
                   }
                 } else if (projCount > 0) {
-                  cellBg = 'bg-purple-50/35 dark:bg-purple-950/20 border-purple-200/70 dark:border-purple-900/50 border-dashed hover:bg-purple-50/60 dark:hover:bg-purple-900/30';
+                  cellBg = 'bg-utility-blue-50/60 border-utility-blue-300 border-dashed hover:bg-utility-blue-100/60';
                 }
 
                 return (
@@ -731,22 +720,22 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                     key={day.dateStr}
                     type="button"
                     onClick={() => setSelectedDateStr(day.dateStr)}
-                    className={`min-h-[52px] sm:min-h-[66px] p-1 sm:p-1.5 rounded-2xl border transition-all text-left flex flex-col justify-between cursor-pointer ${cellBg} ${
+                    className={`flex min-h-[56px] cursor-pointer flex-col justify-between rounded-xl border p-1.5 text-left transition-all sm:min-h-[82px] sm:rounded-2xl sm:p-2 ${cellBg} ${
                       isSelected 
-                        ? 'ring-2 ring-indigo-500 dark:ring-indigo-400 border-transparent shadow-xs scale-[1.02] z-10' 
+                        ? 'z-10 border-brand-500 ring-2 ring-brand-500/30 shadow-md'
                         : defCount > 0
                         ? 'border-slate-200/70 dark:border-slate-800/80'
                         : projCount > 0
-                        ? 'border-purple-300/60 dark:border-purple-800/60'
+                        ? 'border-utility-blue-300'
                         : 'border-slate-200/70 dark:border-slate-800/80'
                     }`}
                   >
                     <div className="flex items-center justify-between w-full">
                       <span className={`text-xs font-bold ${
                         isToday
-                          ? 'w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black'
+                          ? 'flex size-5 items-center justify-center rounded-full bg-brand-solid text-[10px] font-black text-white'
                           : isSelected
-                          ? 'text-indigo-700 dark:text-indigo-300 font-extrabold'
+                          ? 'text-brand-700 font-extrabold'
                           : day.isCurrentMonth
                           ? 'text-slate-800 dark:text-slate-200'
                           : 'text-slate-300 dark:text-slate-600'
@@ -769,8 +758,8 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                               defCount >= 100
                                 ? 'bg-rose-600 text-white shadow-2xs'
                                 : isToday 
-                                ? 'bg-indigo-600 text-white shadow-2xs' 
-                                : 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-2xs'
+                                ? 'bg-brand-solid text-white shadow-2xs'
+                                : 'bg-brand-solid text-white shadow-2xs'
                             }`}
                           >
                             {defCount} {projCount === 0 && <span className="hidden sm:inline ml-0.5">kartu</span>}
@@ -781,9 +770,9 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                         {projCount > 0 && (
                           <span 
                             title={`${projCount} kartu simulasi proyeksi masa depan`}
-                            className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md font-black text-[9px] sm:text-[10px] bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-700/80 border-dashed"
+                            className="inline-flex items-center gap-0.5 rounded-md border border-dashed border-utility-blue-300 bg-utility-blue-50 px-1.5 py-0.5 text-[9px] font-black text-utility-blue-700 sm:text-[10px]"
                           >
-                            <Sparkles className="w-2.5 h-2.5 text-purple-500 shrink-0" />
+                            <Sparkles className="size-2.5 shrink-0 text-utility-blue-500" />
                             <span>~{projCount}</span>
                             {defCount === 0 && <span className="hidden sm:inline ml-0.5">sim</span>}
                           </span>
@@ -795,9 +784,10 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
               })}
             </div>
           </div>
+            </div>
 
           {/* DETAIL DRAWER FOR SELECTED DATE */}
-          <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 p-4 space-y-3">
+          <aside className="space-y-4 rounded-3xl border border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_0%,var(--color-brand-50)_100%)] p-4 shadow-xs lg:sticky lg:top-0">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -805,7 +795,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                     {selectedDetails.formattedTitle}
                   </h3>
                   {selectedDetails.isDateToday && (
-                    <span className="px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-900 dark:text-indigo-200 font-extrabold text-[10px]">
+                    <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold text-brand-800">
                       {language === 'en' ? 'Today' : 'Hari Ini'}
                     </span>
                   )}
@@ -815,7 +805,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                     </span>
                   )}
                   {selectedDetails.isFuture && (
-                    <span className="px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 font-bold text-[10px]">
+                    <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold text-brand-800">
                       {language === 'en' ? 'Future Schedule' : 'Jadwal Mendatang'}
                     </span>
                   )}
@@ -823,11 +813,11 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   {selectedDetails.planned.length > 0 ? (
                     <span>
-                      <strong className="text-indigo-600 dark:text-indigo-400 font-bold">
+                      <strong className="font-bold text-brand-700">
                         {selectedDetails.planned.filter(p => !p.isProjected).length} {language === 'en' ? 'official FSRS cards' : 'kartu pasti FSRS'}
                       </strong>
                       {selectedDetails.planned.some(p => p.isProjected) && (
-                        <span className="ml-1 text-purple-700 dark:text-purple-300 font-semibold">
+                        <span className="ml-1 font-semibold text-utility-blue-700">
                           + {selectedDetails.planned.filter(p => p.isProjected).length} {language === 'en' ? 'simulated' : 'simulasi proyeksi'}
                         </span>
                       )}
@@ -846,7 +836,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                     onClose();
                     onStartReview(chapterFilter !== 'all' && chapterFilter !== 'unassigned' ? chapterFilter : undefined);
                   }}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all self-start sm:self-auto"
+                  className="flex cursor-pointer items-center gap-1.5 self-start rounded-xl bg-brand-solid px-4 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-brand-solid_hover active:scale-95 sm:self-auto"
                 >
                   <Play className="w-3.5 h-3.5 fill-white" />
                   <span>{language === 'en' ? 'Start Review' : 'Mulai Review Kitab Ini'}</span>
@@ -856,7 +846,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
 
             {/* PLANNED CARDS LIST */}
             {selectedDetails.planned.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+              <div className="grid grid-cols-1 gap-2.5 pt-2">
                 {selectedDetails.planned.map(({ item, isProjected, isOverdue, overdueDays }) => {
                   const intervalDays = getNonQuranIntervalDays(item.fsrsData);
                   const isMapan = item.status === 'mastered' || intervalDays >= 30;
@@ -867,7 +857,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                       key={`${item.id}-${isProjected ? 'proj' : 'def'}`}
                       className={`p-3 rounded-xl border flex flex-col justify-between gap-2 shadow-2xs group transition-all ${
                         isProjected
-                          ? 'bg-purple-50/30 dark:bg-purple-950/20 border-purple-200/80 dark:border-purple-800/60 border-dashed'
+                          ? 'bg-utility-blue-50/40 border-utility-blue-200 border-dashed'
                           : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800'
                       }`}
                     >
@@ -884,12 +874,12 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                               </span>
                             )}
                             {isProjected ? (
-                              <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-700 border-dashed flex items-center gap-1">
-                                <Sparkles className="w-2.5 h-2.5 text-purple-500" />
+                              <span className="flex items-center gap-1 rounded-md border border-dashed border-utility-blue-300 bg-utility-blue-50 px-2 py-0.5 text-[9px] font-bold text-utility-blue-700">
+                                <Sparkles className="size-2.5 text-utility-blue-500" />
                                 <span>{language === 'en' ? 'Projected Cycle' : 'Simulasi Siklus'}</span>
                               </span>
                             ) : (
-                              <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300">
+                              <span className="rounded-md bg-brand-100 px-2 py-0.5 text-[9px] font-bold text-brand-800">
                                 Jadwal Pasti FSRS
                               </span>
                             )}
@@ -915,7 +905,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                         </div>
 
                         {isProjected && (
-                          <p className="text-[10px] text-purple-700 dark:text-purple-300 italic pt-0.5">
+                          <p className="pt-0.5 text-[10px] italic text-utility-blue-700">
                             * {language === 'en' 
                                 ? 'Simulated recurrence for next cycle (will be fixed once previous review is evaluated)' 
                                 : 'Estimasi siklus putaran berikutnya (jadwal resmi akan dihitung FSRS setelah review sebelumnya selesai)'}
@@ -947,7 +937,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                                 onStartReview(item.chapterId || undefined);
                               }}
                               title={language === 'en' ? 'Review this Card' : 'Review Kartu Ini'}
-                              className="p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer transition-colors shadow-2xs"
+                              className="cursor-pointer rounded-lg bg-brand-solid p-1.5 text-white shadow-2xs transition-colors hover:bg-brand-solid_hover"
                             >
                               <Play className="w-3.5 h-3.5 fill-white" />
                             </button>
@@ -966,7 +956,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                   {language === 'en' ? 'Completed on this day:' : 'Riwayat Evaluasi Selesai pada Hari Ini:'}
                 </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {selectedDetails.completed.map(({ item, rating }, idx) => (
                     <div
                       key={`${item.id}-${idx}`}
@@ -981,7 +971,7 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                       </div>
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
                         rating === 4 
-                          ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300' 
+                          ? 'bg-brand-100 text-brand-800'
                           : rating === 3 
                           ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' 
                           : rating === 2 
@@ -995,9 +985,11 @@ export const BookReviewCalendarModal: React.FC<Props> = ({
                 </div>
               </div>
             )}
+          </aside>
           </div>
         </div>
-      </div>
-    </div>
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 };

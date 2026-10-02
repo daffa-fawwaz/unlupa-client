@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, ChevronDown, Flame } from "lucide-react";
+import { Check, ChevronDown, Flame } from "@/components/foundations/hugeicons";
 
 import { useApp } from "@/context/AppContext";
 import { useDashboardStats } from "@/features/dashboard/student/hooks/useDashboardStats";

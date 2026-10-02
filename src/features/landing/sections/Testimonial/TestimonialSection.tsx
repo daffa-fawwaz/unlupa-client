@@ -1,4 +1,4 @@
-import { Activity } from "lucide-react";
+import { Activity } from "@/components/foundations/hugeicons";
 
 export const TestimonialSection = () => {
   const logsLeft = [

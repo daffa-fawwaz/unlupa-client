@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, CheckCircle2, Clock, Calendar } from 'lucide-react';
+import { Play, CheckCircle2, Clock, Calendar } from "@/components/foundations/hugeicons";
 import { Language } from '../../types';
 
 export interface DueFilterPill {

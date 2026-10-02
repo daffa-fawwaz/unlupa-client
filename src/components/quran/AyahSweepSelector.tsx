@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Sparkles, Check, Layers } from 'lucide-react';
+import { Sparkles, Check, Layers } from "@/components/foundations/hugeicons";
 
 interface AyahSweepSelectorProps {
   startAyah: number;

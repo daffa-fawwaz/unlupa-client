@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, X, Check, BookOpen, Loader2 } from "lucide-react";
+import { Search, X, Check, BookOpen, Loader2 } from "@/components/foundations/hugeicons";
 import { useBooks } from "@/features/personal/hooks/useBooks";
 import { useAddBookToClass } from "../../hooks/useClassroom";
 import { toast } from "sonner";

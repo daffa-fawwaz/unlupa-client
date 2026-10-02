@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Loader2, AlertCircle, CalendarDays } from "lucide-react";
+import { X, Loader2, AlertCircle, CalendarDays } from "@/components/foundations/hugeicons";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import type { EditIntervalDaysPayload, EditIntervalDaysResponse } from "@/features/alquran/types/quran.types";
 

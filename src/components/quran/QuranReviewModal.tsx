@@ -24,7 +24,7 @@ import {
   CalendarCheck2,
   Check,
   Lock
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import confetti from 'canvas-confetti';
 import { soundEffects } from '../../lib/soundFeedback';
 import { quranPageService } from '@/features/alquran/services/quranPage.service';

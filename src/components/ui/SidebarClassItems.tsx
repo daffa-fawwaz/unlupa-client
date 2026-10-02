@@ -1,4 +1,4 @@
-import { ChevronRight, GraduationCap, Moon, User } from "lucide-react";
+import { ChevronRight, GraduationCap, Moon, User } from "@/components/foundations/hugeicons";
 import { NavLink } from "react-router";
 
 type NavClassItemProps = {

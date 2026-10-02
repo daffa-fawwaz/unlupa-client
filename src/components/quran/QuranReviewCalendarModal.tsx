@@ -14,7 +14,7 @@ import {
   Filter,
   CalendarCheck,
   ChevronDown
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { motion, AnimatePresence } from 'motion/react';
 import { QuranPageItem } from '../../types';
 import { JUZ_LIST } from '../../data/quranData';

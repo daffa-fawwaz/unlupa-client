@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldAlert, Users, CreditCard, BookOpen, Activity, TrendingUp, DollarSign, Settings, UserCheck, Sliders, Compass } from 'lucide-react';
+import { ShieldAlert, Users, CreditCard, BookOpen, Activity, TrendingUp, DollarSign, Settings, UserCheck, Sliders, Compass } from "@/components/foundations/hugeicons";
 import { useApp } from '../../context/AppContext';
 import { SystemLimitsConfigTab } from './SystemLimitsConfigTab';
 import { AdminTransactionsTab } from './AdminTransactionsTab';

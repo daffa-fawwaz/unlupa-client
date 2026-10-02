@@ -15,7 +15,7 @@ import {
   Plus,
   Sparkles,
   ArrowRight
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { motion, AnimatePresence } from 'motion/react';
 import { JUZ_LIST } from '../../data/quranData';
 import { isDue } from '../../lib/fsrs';

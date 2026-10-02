@@ -82,13 +82,13 @@ export const classroomService = {
   },
 
   // JOIN CLASS
-  joinClass: async (payload: JoinClassPayload): Promise<ClassItem[]> => {
+  joinClass: async (payload: JoinClassPayload): Promise<ClassItem> => {
     const response = await api.post(`/api/v1/classes/join`, payload);
     return response.data.data;
   },
 
   // LEAVE CLASS (for student)
-  leaveClass: async (classId: string): Promise<any> => {
+  leaveClass: async (classId: string) => {
     const response = await api.delete(`/api/v1/classes/${classId}/leave`);
     return response.data;
   },
@@ -109,7 +109,7 @@ export const classroomService = {
   addBookToClass: async (
     classId: string,
     payload: { book_id: string; order: number },
-  ): Promise<any> => {
+  ) => {
     const response = await api.post(
       `/api/v1/classes/${classId}/books`,
       payload,

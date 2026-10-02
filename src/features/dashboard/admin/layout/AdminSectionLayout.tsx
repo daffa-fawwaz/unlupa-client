@@ -1,4 +1,4 @@
-import { BookMarked, FileText, LayoutDashboard, Users } from "lucide-react";
+import { BookMarked, FileText, LayoutDashboard, Users } from "@/components/foundations/hugeicons";
 import { NavLink, Outlet } from "react-router";
 import { SidebarRoleSwitcher } from "@/components/ui/SidebarRoleSwitcher";
 import { useApp } from "@/context/AppContext";

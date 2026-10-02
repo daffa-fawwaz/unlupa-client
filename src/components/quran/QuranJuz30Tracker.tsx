@@ -17,7 +17,7 @@ import {
   ArrowUpRight,
   Check,
   X
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 function pageHasMapan(page: QuranPageItem) {
   return page.status === 'mastered_for_now' || (page.isActive && (page.fsrsData.stability >= 74.5 || Math.round(page.fsrsData.stability * 0.4025587) > 30));

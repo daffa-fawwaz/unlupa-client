@@ -2,32 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { LibraryEntry } from '../../data/sampleBooks';
 import { Chapter, BookItem, createInitialFSRSState } from '../../types';
+import type { Module as ApiBookModule } from '@/features/personal/types/personal.types';
+import { resolveAssetUrl } from '../../lib/assets';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { BookDashedIcon, Books02Icon } from '@hugeicons/core-free-icons';
 import { personalService } from '@/features/personal/services/personal.services';
 import { adminService } from '@/features/admin/services/admin.services';
 import { BilingualCardText } from '../common/BilingualCardText';
 import { 
-  X, 
   Search, 
   Download, 
   Star, 
   CheckCircle2, 
-  BookOpen, 
   Layers, 
   ShieldCheck,
-  Tag,
   Eye,
   ArrowRight,
   Folder,
   Sparkles,
-  HelpCircle,
-  FileText,
   SlidersHorizontal,
   Check,
-  ExternalLink,
-  ChevronRight,
   Loader2,
   Trash2
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
+import { Dialog, Modal, ModalOverlay } from '@/components/application/modals/modal';
+import { InlineAlert } from '@/components/base/alert/alert';
+import { Badge } from '@/components/base/badges/badges';
+import { Button } from '@/components/base/buttons/button';
+import { CloseButton } from '@/components/base/buttons/close-button';
+import { Input } from '@/components/base/input/input';
 
 interface Props {
   isOpen: boolean;
@@ -39,9 +42,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
     library, 
     books, 
     importFromLibrary, 
-    duplicateBookAsEditable, 
     language, 
-    setActiveSpace,
     isBookPurchased,
     openCheckoutModal,
     userProfile,
@@ -54,31 +55,38 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [previewSelectedChapterId, setPreviewSelectedChapterId] = useState<string | null>(null);
   const [justImportedId, setJustImportedId] = useState<string | null>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [importingId, setImportingId] = useState<string | null>(null);
+  const [bookToDelete, setBookToDelete] = useState<{ id: string; title: string } | null>(null);
+  const [operationError, setOperationError] = useState<string | null>(null);
 
   const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'superadmin';
+  const previewBookId = previewEntry?.book.id;
+  const previewItemCount = previewEntry?.items.length ?? 0;
 
   const handleDeletePublishedBook = async (bookId: string, title: string) => {
-    const msg = language === 'en'
-      ? `Are you sure you want to remove "${title}" from the public library?`
-      : `Apakah Anda yakin ingin menghapus kitab "${title}" dari pustaka publik?`;
-    if (!window.confirm(msg)) return;
+    setBookToDelete({ id: bookId, title });
+  };
 
+  const confirmDeletePublishedBook = async () => {
+    if (!bookToDelete) return;
     try {
-      await adminService.deletePublishedBook(bookId);
+      await adminService.deletePublishedBook(bookToDelete.id);
       await fetchPublishedLibrary();
-      if (previewEntry?.book?.id === bookId) {
+      if (previewEntry?.book?.id === bookToDelete.id) {
         setPreviewEntry(null);
       }
-    } catch (err: any) {
-      alert(err?.response?.data?.message || err?.message || 'Gagal menghapus kitab');
+      setBookToDelete(null);
+    } catch (error) {
+      const requestError = error as { response?: { data?: { message?: string } }; message?: string };
+      setOperationError(requestError.response?.data?.message || requestError.message || (language === 'en' ? 'Failed to remove the book.' : 'Gagal menghapus kitab.'));
     }
   };
 
   // Load preview book details and tree dynamically from backend API if empty
   useEffect(() => {
-    if (previewEntry && (!previewEntry.items || previewEntry.items.length === 0) && previewEntry.book?.id) {
+    if (previewBookId && previewItemCount === 0) {
       setIsLoadingPreview(true);
-      personalService.getBookTree(previewEntry.book.id)
+      personalService.getBookTree(previewBookId)
         .then(res => {
           if (res?.data) {
             const tree = res.data;
@@ -86,14 +94,14 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
             const itemsList: BookItem[] = [];
 
             if (Array.isArray(tree.items)) {
-              tree.items.forEach((item: any) => {
+              tree.items.forEach(item => {
                 itemsList.push({
                   id: item.id,
-                  bookId: tree.book_id || previewEntry.book.id,
+                  bookId: tree.book_id || previewBookId,
                   chapterId: '',
-                  question: item.question || item.content || item.title || '',
+                  question: item.title || item.content || '',
                   answer: item.answer || '',
-                  tags: item.tags || [],
+                  tags: [],
                   isActive: false,
                   status: 'inactive',
                   fsrsData: createInitialFSRSState(),
@@ -102,25 +110,25 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
               });
             }
 
-            const flattenModules = (mods: any[], parentId: string | null = null) => {
+            const flattenModules = (mods: ApiBookModule[], parentId: string | null = null) => {
               mods.forEach(mod => {
                 chaptersList.push({
                   id: mod.id,
-                  bookId: tree.book_id || previewEntry.book.id,
+                  bookId: tree.book_id || previewBookId,
                   parentId,
                   title: mod.title,
                   description: mod.description,
                   order: mod.order || 1,
                 });
                 if (Array.isArray(mod.items)) {
-                  mod.items.forEach((item: any) => {
+                  mod.items.forEach(item => {
                     itemsList.push({
                       id: item.id,
-                      bookId: tree.book_id || previewEntry.book.id,
+                      bookId: tree.book_id || previewBookId,
                       chapterId: mod.id,
-                      question: item.question || item.content || item.title || '',
+                      question: item.title || item.content || '',
                       answer: item.answer || '',
-                      tags: item.tags || [],
+                      tags: [],
                       isActive: false,
                       status: 'inactive',
                       fsrsData: createInitialFSRSState(),
@@ -148,7 +156,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
           setIsLoadingPreview(false);
         });
     }
-  }, [previewEntry?.id]);
+  }, [previewBookId, previewItemCount]);
 
   if (!isOpen) return null;
 
@@ -189,11 +197,17 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
     });
 
   const handleImport = async (entry: LibraryEntry) => {
-    await importFromLibrary(entry.id);
-    setJustImportedId(entry.id);
-    setTimeout(() => {
-      setJustImportedId(null);
-    }, 2500);
+    setImportingId(entry.id);
+    setOperationError(null);
+    try {
+      await importFromLibrary(entry.id);
+      setJustImportedId(entry.id);
+      setTimeout(() => setJustImportedId(null), 2500);
+    } catch (error) {
+      setOperationError(error instanceof Error ? error.message : (language === 'en' ? 'Failed to import the book.' : 'Gagal mengimpor kitab.'));
+    } finally {
+      setImportingId(null);
+    }
   };
 
   const selectedPreviewChapterCards = previewEntry
@@ -203,60 +217,47 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
     : [];
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 w-full max-w-5xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[92vh]">
+    <ModalOverlay isOpen isDismissable onOpenChange={open => { if (!open) onClose(); }}>
+      <Modal className="max-w-6xl overflow-hidden rounded-t-3xl sm:rounded-3xl">
+        <Dialog aria-label={language === 'en' ? 'Public book library' : 'Pustaka kitab publik'} className="flex max-h-[inherit] flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="px-4 sm:px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-900/80">
+        <div className="relative flex shrink-0 items-start gap-3 border-b border-secondary px-5 py-5 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-              <BookOpen className="w-5 h-5" />
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+              <HugeiconsIcon icon={Books02Icon} className="size-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
-                  {language === 'en' ? 'Public Knowledge Library' : 'Pustaka Kitab & Kurasi Publik'}
+                <h3 className="text-lg font-semibold text-primary">
+                  {language === 'en' ? 'Explore the library' : 'Jelajahi pustaka'}
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
-                  {library.length} {language === 'en' ? 'Curated Books' : 'Kitab Tersedia'}
-                </span>
+                <Badge color="brand" size="sm">{library.length} {language === 'en' ? 'books' : 'kitab'}</Badge>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="mt-0.5 max-w-2xl text-sm text-secondary">
                 {language === 'en'
-                  ? 'High-retention, peer-reviewed structured books ready for 1-click import into your adaptive spaced review.'
-                  : 'Kitab-kitab terstruktur terkurasi dengan sistem Spaced Repetition, siap diimpor ke akun Anda dalam 1 detik.'}
+                  ? 'Discover curated books and import them into your adaptive review collection.'
+                  : 'Temukan kitab terkurasi dan impor ke koleksi murajaah adaptif Anda.'}
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-slate-200/70 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <CloseButton label={language === 'en' ? 'Close library' : 'Tutup pustaka'} onPress={onClose} className="absolute right-4 top-4" />
         </div>
 
+        {operationError && <div className="shrink-0 px-4 pt-4 sm:px-6"><InlineAlert variant="error" title={operationError} onDismiss={() => setOperationError(null)} /></div>}
+
         {/* Filter & Controls Bar */}
-        <div className="px-4 sm:px-6 py-3 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-900">
+        <div className="flex shrink-0 flex-col items-stretch justify-between gap-3 border-b border-secondary px-4 py-3 sm:px-6 md:flex-row md:items-center">
           {/* Search */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
+          <Input
+              icon={Search}
+              size="sm"
+              aria-label={language === 'en' ? 'Search library' : 'Cari pustaka'}
               placeholder={language === 'en' ? 'Search kitab title, author, or topic...' : 'Cari judul kitab, pengarang, materi...'}
               value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+              onChange={setSearch}
+              className="w-full md:max-w-md"
             />
-            {search && (
-              <button
-                onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
 
           {/* Sort Selector */}
           <div className="flex items-center gap-2 self-end md:self-auto">
@@ -266,8 +267,8 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/30 cursor-pointer"
+              onChange={(e) => setSortBy(e.target.value as 'popular' | 'rating' | 'cards' | 'newest')}
+              className="rounded-lg border border-secondary bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary outline-focus-ring focus:ring-2 focus:ring-brand"
             >
               <option value="popular">{language === 'en' ? 'Most Popular (Downloads)' : 'Terpopuler (Unduhan)'}</option>
               <option value="rating">{language === 'en' ? 'Highest Rated' : 'Rating Tertinggi'}</option>
@@ -278,15 +279,15 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Categories Horizontal Scroll */}
-        <div className="px-4 sm:px-6 py-2.5 bg-slate-50/50 dark:bg-slate-900/40 border-b border-slate-200/60 dark:border-slate-800/60 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <div className="no-scrollbar flex shrink-0 items-center gap-2 overflow-x-auto border-b border-secondary bg-secondary/30 px-4 py-2.5 sm:px-6">
           {categories.map(cat => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat.id
-                  ? 'bg-amber-600 text-white shadow-xs font-bold'
-                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-750 border border-slate-200/80 dark:border-slate-700/80'
+                  ? 'bg-brand-solid text-white shadow-xs'
+                  : 'border border-secondary bg-primary text-secondary hover:border-brand-200 hover:text-primary'
               }`}
             >
               {cat.label}
@@ -297,12 +298,12 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
         {/* Main Content: Catalog Grid or Empty */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           {filteredEntries.length === 0 ? (
-            <div className="text-center py-16 px-4">
-              <BookOpen className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
-              <h4 className="font-bold text-slate-800 dark:text-slate-200 text-base">
+            <div className="rounded-2xl border border-dashed border-secondary bg-secondary/30 px-4 py-16 text-center">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset"><HugeiconsIcon icon={BookDashedIcon} className="size-5" /></div>
+              <h4 className="mt-3 text-base font-semibold text-primary">
                 {language === 'en' ? 'No books found' : 'Tidak ada kitab yang cocok'}
               </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+              <p className="mx-auto mt-1 max-w-sm text-sm text-secondary">
                 {language === 'en' 
                   ? 'Try searching with different keywords or switch the category filter.' 
                   : 'Coba gunakan kata kunci lain atau pilih kategori kitab yang berbeda.'}
@@ -319,21 +320,21 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 return (
                   <div
                     key={entry.id}
-                    className="group bg-white dark:bg-slate-850 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-500/70 p-4 transition-all hover:shadow-lg flex flex-col justify-between"
+                    className="group flex flex-col justify-between rounded-3xl border border-secondary bg-primary p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg"
                   >
                     <div>
                       {/* Cover & Header Info */}
                       <div className="flex items-start gap-3">
                         <div className="relative w-20 h-28 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-slate-700 shadow-2xs">
-                          {entry.book.coverUrl ? (
+                          {resolveAssetUrl(entry.book.coverUrl) ? (
                             <img
-                              src={entry.book.coverUrl}
+                              src={resolveAssetUrl(entry.book.coverUrl)}
                               alt={entry.book.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-400">
-                              <BookOpen className="w-6 h-6" />
+                              <HugeiconsIcon icon={BookDashedIcon} className="size-6" />
                             </div>
                           )}
                           <div className="absolute top-1 left-1">
@@ -345,13 +346,13 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-                            <span className="px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 text-[10px] font-bold border border-amber-200/60 dark:border-amber-800/60">
+                            <span className="rounded-md bg-brand-50 px-2 py-0.5 text-[10px] font-bold text-brand-700 ring-1 ring-brand-200 ring-inset">
                               {entry.book.category}
                             </span>
                             
                             {/* Price / Free Badge */}
                             {isPaid ? (
-                              <span className="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold border border-indigo-200/60 dark:border-indigo-800/60">
+                              <span className="rounded-md bg-brand-50 px-2 py-0.5 text-[10px] font-bold text-brand-700 ring-1 ring-brand-200 ring-inset">
                                 {formatIDR(entry.book.price || 0)}
                               </span>
                             ) : (
@@ -370,7 +371,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
                           <h4 
                             title={entry.book.title}
-                            className="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"
+                            className="line-clamp-2 text-sm font-semibold leading-snug text-primary transition-colors group-hover:text-brand-secondary sm:text-base"
                           >
                             {entry.book.title}
                           </h4>
@@ -381,8 +382,8 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
                           {/* Stats Badge */}
                           <div className="flex items-center gap-2.5 mt-2.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
-                            <span className="flex items-center gap-1 text-amber-500 font-bold">
-                              <Star className="w-3.5 h-3.5 fill-amber-500" />
+                            <span className="flex items-center gap-1 font-bold text-brand-700">
+                              <Star className="w-3.5 h-3.5 fill-brand-500" />
                               {entry.rating}
                             </span>
                             <span>•</span>
@@ -445,7 +446,8 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                           <button
                             type="button"
                             onClick={() => handleImport(entry)}
-                            className="px-2.5 py-1 rounded-lg text-[10px] font-semibold border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 cursor-pointer"
+                            disabled={importingId === entry.id}
+                            className="rounded-lg border border-brand-200 px-2.5 py-1 text-[10px] font-semibold text-brand-700 hover:bg-brand-50"
                             title={language === 'en' ? 'Import again as fresh duplicate' : 'Pasang ulang sebagai salinan baru'}
                           >
                             + Salin
@@ -455,7 +457,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                         <button
                           type="button"
                           onClick={() => openCheckoutModal(entry)}
-                          className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                          className="flex items-center gap-1.5 rounded-xl bg-brand-solid px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-all hover:bg-brand-solid_hover active:scale-95"
                         >
                           <span>Beli ({formatIDR(entry.book.price || 0)})</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -464,9 +466,10 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                         <button
                           type="button"
                           onClick={() => handleImport(entry)}
-                          className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                          disabled={importingId === entry.id}
+                          className="flex items-center gap-1.5 rounded-xl bg-brand-solid px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-all hover:bg-brand-solid_hover active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          <Download className="w-3.5 h-3.5" />
+                          {importingId === entry.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
                           <span>{language === 'en' ? '1-Click Import' : 'Pasang Kitab'}</span>
                         </button>
                       )}
@@ -480,20 +483,21 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
         {/* Detailed Book Preview Modal (Deep Inspection & Sample Cards) */}
         {previewEntry && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-md animate-in fade-in">
-            <div className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[88vh]">
+          <ModalOverlay isOpen isDismissable onOpenChange={open => { if (!open) setPreviewEntry(null); }} className="z-[1100]">
+            <Modal className="max-w-3xl overflow-hidden rounded-t-3xl sm:rounded-3xl">
+              <Dialog aria-label={language === 'en' ? `Preview ${previewEntry.book.title}` : `Pratinjau ${previewEntry.book.title}`} className="flex max-h-[inherit] flex-col overflow-hidden">
               
               {/* Preview Header */}
               <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between gap-4 bg-slate-50/70 dark:bg-slate-850">
                 <div className="flex items-start gap-4">
-                  <img
-                    src={previewEntry.book.coverUrl}
-                    alt={previewEntry.book.title}
-                    className="w-18 h-24 sm:w-20 sm:h-28 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shadow-md shrink-0"
-                  />
+                  {resolveAssetUrl(previewEntry.book.coverUrl) ? (
+                    <img src={resolveAssetUrl(previewEntry.book.coverUrl)} alt={previewEntry.book.title} className="h-24 w-18 shrink-0 rounded-xl object-cover shadow-md ring-1 ring-secondary sm:h-28 sm:w-20" />
+                  ) : (
+                    <div className="flex h-24 w-18 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 sm:h-28 sm:w-20"><HugeiconsIcon icon={BookDashedIcon} className="size-5" /></div>
+                  )}
                   <div>
                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="px-2.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-xs font-bold">
+                       <span className="rounded-md bg-brand-50 px-2.5 py-0.5 text-xs font-bold text-brand-700 ring-1 ring-brand-200 ring-inset">
                         {previewEntry.book.category}
                       </span>
                       {previewEntry.verified && (
@@ -514,12 +518,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setPreviewEntry(null)}
-                  className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors shrink-0"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <CloseButton label={language === 'en' ? 'Close preview' : 'Tutup pratinjau'} onPress={() => setPreviewEntry(null)} />
               </div>
 
               {/* Preview Body: Chapters Filter & Sample Cards List */}
@@ -527,7 +526,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 {/* Chapter Selector Pills */}
                 <div>
                   <h5 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <Folder className="w-3.5 h-3.5 text-amber-500" />
+                    <Folder className="w-3.5 h-3.5 text-brand-700" />
                     <span>{language === 'en' ? 'Table of Contents' : 'Daftar Bab & Materi'} ({previewEntry.chapters?.length || 0})</span>
                   </h5>
                   <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -535,7 +534,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       onClick={() => setPreviewSelectedChapterId(null)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                         previewSelectedChapterId === null
-                          ? 'bg-amber-600 text-white font-bold shadow-xs'
+                          ? 'bg-brand-solid text-white font-bold shadow-xs'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                       }`}
                     >
@@ -549,7 +548,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                           onClick={() => setPreviewSelectedChapterId(ch.id)}
                           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                             previewSelectedChapterId === ch.id
-                              ? 'bg-amber-600 text-white font-bold shadow-xs'
+                              ? 'bg-brand-solid text-white font-bold shadow-xs'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                           }`}
                         >
@@ -563,13 +562,13 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 {/* Cards Preview */}
                 <div className="space-y-3 pt-2">
                   <h5 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+                    <Sparkles className="w-3.5 h-3.5 text-brand-700" />
                     <span>{language === 'en' ? 'Sample Flashcards' : 'Sampel Kartu Q&A'} ({selectedPreviewChapterCards.length})</span>
                   </h5>
 
                   {isLoadingPreview ? (
                     <div className="flex items-center justify-center py-10 gap-2 text-slate-400 text-xs">
-                      <Loader2 className="w-5 h-5 animate-spin text-amber-500" />
+                      <Loader2 className="w-5 h-5 animate-spin text-brand-700" />
                       <span>{language === 'en' ? 'Loading book content...' : 'Memuat isi materi kitab...'}</span>
                     </div>
                   ) : (
@@ -585,7 +584,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                             className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 space-y-2"
                           >
                             <div className="flex items-start gap-2">
-                              <span className="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                              <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[10px] font-bold text-brand-700">
                                 Q
                               </span>
                               <div className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white leading-relaxed flex-1">
@@ -650,7 +649,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       setPreviewEntry(null);
                       openCheckoutModal(entryToBuy);
                     }}
-                    className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                    className="flex items-center gap-2 rounded-xl bg-brand-solid px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:bg-brand-solid_hover active:scale-95 sm:text-sm"
                   >
                     <span>Beli Kitab Ini ({formatIDR(previewEntry.book.price || 0)})</span>
                     <ArrowRight className="w-4 h-4" />
@@ -662,7 +661,7 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       handleImport(previewEntry);
                       setPreviewEntry(null);
                     }}
-                    className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                    className="flex items-center gap-2 rounded-xl bg-brand-solid px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:bg-brand-solid_hover active:scale-95 sm:text-sm"
                   >
                     <Download className="w-4 h-4" />
                     <span>{language === 'en' ? 'Import Full Kitab (1-Click)' : 'Pasang Seluruh Kitab (1-Klik)'}</span>
@@ -670,11 +669,49 @@ export const LibraryModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 )}
               </div>
 
-            </div>
-          </div>
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
         )}
 
-      </div>
-    </div>
+        <ModalOverlay
+          isOpen={Boolean(bookToDelete)}
+          isDismissable
+          onOpenChange={open => { if (!open) setBookToDelete(null); }}
+          className="z-[1200]"
+        >
+          <Modal className="max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl">
+            <Dialog aria-label={language === 'en' ? 'Remove published book' : 'Hapus kitab terbit'}>
+              {({ close }) => (
+                <div>
+                  <div className="relative flex items-start gap-3 border-b border-secondary px-5 py-5 sm:px-6">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-error-primary text-error-primary">
+                      <Trash2 className="size-5" />
+                    </div>
+                    <div className="pr-10">
+                      <h2 className="text-lg font-semibold text-primary">{language === 'en' ? 'Remove from library?' : 'Hapus dari pustaka?'}</h2>
+                      <p className="mt-1 text-sm text-secondary">
+                        {language === 'en'
+                          ? `This will remove "${bookToDelete?.title}" from the public catalog.`
+                          : `Tindakan ini akan menghapus "${bookToDelete?.title}" dari katalog publik.`}
+                      </p>
+                    </div>
+                    <CloseButton label={language === 'en' ? 'Close confirmation' : 'Tutup konfirmasi'} onPress={close} className="absolute right-4 top-4" />
+                  </div>
+                  <div className="flex flex-col-reverse gap-3 bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                    <Button color="secondary" size="md" onPress={close} className="w-full sm:w-auto">{language === 'en' ? 'Cancel' : 'Batal'}</Button>
+                    <Button color="primary-destructive" size="md" iconLeading={Trash2} onPress={confirmDeletePublishedBook} className="w-full sm:w-auto">
+                      {language === 'en' ? 'Remove book' : 'Hapus kitab'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 };

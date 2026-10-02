@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { AnimatePresence, motion } from "motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Activity,
-  BookOpen,
-  CheckCircle2,
-  Download,
-  Flame,
-  GraduationCap,
-  Library,
-  Share2,
-  Sparkles,
-  Target,
-} from "lucide-react";
+  Activity01Icon,
+  AiSparklesIcon,
+  Books02Icon,
+  CheckmarkCircle02Icon,
+  FileDownloadIcon,
+  FireIcon,
+  GraduationCapIcon,
+  Quran02Icon,
+  Share01Icon,
+  Target02Icon,
+} from "@hugeicons/core-free-icons";
 import { FloatingAlert } from "@/components/base/alert/alert";
 import { Button } from "@/components/base/buttons/button";
 import { CloseButton } from "@/components/base/buttons/close-button";
@@ -299,10 +300,10 @@ export const StudentReportModal = ({
   };
 
   const metrics = [
-    { label: language === "en" ? "Mastery" : "Ketuntasan", value: `${masteryRate}%`, icon: Target, background: "#fff7ed", color: "#c2410c" },
-    { label: language === "en" ? "Mastered" : "Materi Mapan", value: totalMasteredMaterials, icon: CheckCircle2, background: "#ecfdf5", color: "#047857" },
-    { label: language === "en" ? "Active" : "Materi Aktif", value: totalActiveMaterials, icon: Activity, background: "#eff6ff", color: "#1d4ed8" },
-    { label: language === "en" ? "Reviews" : "Total Review", value: totalReviews, icon: Sparkles, background: "#fffbeb", color: "#b45309" },
+    { label: language === "en" ? "Mastery" : "Ketuntasan", value: `${masteryRate}%`, icon: Target02Icon, background: "#fff7ed", color: "#c2410c" },
+    { label: language === "en" ? "Mastered" : "Materi Mapan", value: totalMasteredMaterials, icon: CheckmarkCircle02Icon, background: "#ecfdf5", color: "#047857" },
+    { label: language === "en" ? "Active" : "Materi Aktif", value: totalActiveMaterials, icon: Activity01Icon, background: "#eff6ff", color: "#1d4ed8" },
+    { label: language === "en" ? "Reviews" : "Total Review", value: totalReviews, icon: AiSparklesIcon, background: "#fffbeb", color: "#b45309" },
   ];
 
   return (
@@ -381,7 +382,7 @@ export const StudentReportModal = ({
                     </div>
 
                     <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#fed7aa] px-3 py-2 text-sm font-semibold text-[#1e293b]" style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}>
-                      <Flame className="size-4 fill-[#f97316] text-[#f97316]" />
+                       <HugeiconsIcon icon={FireIcon} className="size-4 text-[#f97316]" />
                       {currentStreak} {language === "en" ? "day streak" : "hari istiqomah"}
                     </div>
                   </div>
@@ -389,10 +390,10 @@ export const StudentReportModal = ({
 
                 <div className="space-y-6 p-5 sm:p-8">
                   <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                    {metrics.map(({ label, value, icon: Icon, background, color }) => (
+                    {metrics.map(({ label, value, icon, background, color }) => (
                       <div key={label} className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-4">
                         <div className="flex size-9 items-center justify-center rounded-lg" style={{ backgroundColor: background, color }}>
-                          <Icon className="size-4.5" />
+                          <HugeiconsIcon icon={icon} className="size-4.5" />
                         </div>
                         <p className="mt-4 text-2xl font-semibold tracking-tight text-[#020617]">{value}</p>
                         <p className="mt-1 text-xs font-medium text-[#64748b]">{label}</p>
@@ -426,7 +427,7 @@ export const StudentReportModal = ({
                     <div className="grid gap-3 md:grid-cols-3">
                       <div className="flex items-start gap-3 rounded-xl border border-[#e2e8f0] p-4">
                         <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#ecfdf5] text-[#047857]">
-                          <BookOpen className="size-5" />
+                          <HugeiconsIcon icon={Quran02Icon} className="size-5" />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[#020617]">Al-Quran</p>
@@ -438,7 +439,7 @@ export const StudentReportModal = ({
 
                       <div className="flex items-start gap-3 rounded-xl border border-[#e2e8f0] p-4">
                         <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#eff6ff] text-[#1d4ed8]">
-                          <Library className="size-5" />
+                          <HugeiconsIcon icon={Books02Icon} className="size-5" />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[#020617]">{language === "en" ? "Personal books" : "Buku pribadi"}</p>
@@ -450,7 +451,7 @@ export const StudentReportModal = ({
 
                       <div className="flex items-start gap-3 rounded-xl border border-[#e2e8f0] p-4">
                         <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#fffbeb] text-[#b45309]">
-                          <GraduationCap className="size-5" />
+                          <HugeiconsIcon icon={GraduationCapIcon} className="size-5" />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[#020617]">{language === "en" ? "Learning space" : "Ruang belajar"}</p>
@@ -474,22 +475,22 @@ export const StudentReportModal = ({
               <Button
                 color="secondary"
                 size="lg"
-                iconLeading={Download}
                 isLoading={isPreparing || activeAction === "download"}
                 isDisabled={isPreparing || !preparedFile || Boolean(activeAction && activeAction !== "download")}
                 onPress={handleDownload}
                 className="w-full sm:w-auto"
               >
+                <HugeiconsIcon icon={FileDownloadIcon} className="size-5" />
                 {language === "en" ? "Download PNG" : "Unduh PNG"}
               </Button>
               <Button
                 size="lg"
-                iconLeading={Share2}
                 isLoading={isPreparing || activeAction === "share"}
                 isDisabled={isPreparing || !preparedFile || Boolean(activeAction && activeAction !== "share")}
                 onPress={handleShare}
                 className="w-full sm:w-auto"
               >
+                <HugeiconsIcon icon={Share01Icon} className="size-5" />
                 {language === "en" ? "Share report" : "Bagikan rapor"}
               </Button>
             </footer>

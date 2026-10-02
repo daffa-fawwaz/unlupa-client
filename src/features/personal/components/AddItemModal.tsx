@@ -12,7 +12,7 @@ import {
   Plus,
   Upload,
   X,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { useCreateItem } from "@/features/personal/hooks/useCreateItem";
 import { useCreateModuleItem } from "@/features/personal/hooks/useCreateModuleItem";

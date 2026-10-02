@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { useApp } from "@/context/AppContext";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Share01Icon } from "@hugeicons/core-free-icons";
+import {
+  Books02Icon,
+  Home03Icon,
+  Quran02Icon,
+  SecurityIcon,
+  Share01Icon,
+  TeachingIcon,
+} from "@hugeicons/core-free-icons";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import {
-  Home,
-  BookOpen,
-  Library,
-  Users,
-  ShieldAlert,
   Crown,
   ChevronDown,
   LogOut,
@@ -20,7 +22,7 @@ import {
   Languages,
   Smartphone,
   CheckCircle2,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { StudentReportModal } from "@/components/home/StudentReportModal";
 import { BillingHistoryModal } from "@/components/profile/BillingHistoryModal";
 import { AchievementReportModal } from "@/components/common/AchievementReportModal";
@@ -71,15 +73,20 @@ export const DashboardLayout: React.FC = () => {
     .slice(0, 2)
     .map((part) => part.charAt(0).toUpperCase())
     .join("");
-  const hasPaidPlan = userProfile?.plan === "premium" || userProfile?.plan === "institutional";
-  const hasProAccess = hasPaidPlan || userProfile?.role === "admin" || userProfile?.role === "superadmin" || userRole === "admin";
+  const hasPaidPlan =
+    userProfile?.plan === "premium" || userProfile?.plan === "institutional";
+  const hasProAccess =
+    hasPaidPlan ||
+    userProfile?.role === "admin" ||
+    userProfile?.role === "superadmin" ||
+    userRole === "admin";
 
   const navItems = [
     {
       path: "/dashboard",
       labelEn: "Home",
       labelId: "Beranda",
-      icon: <Home className="w-5 h-5" />,
+      icon: <HugeiconsIcon icon={Home03Icon} className="size-5" />,
       badge: 0,
       isActive: location.pathname === "/dashboard",
     },
@@ -87,7 +94,7 @@ export const DashboardLayout: React.FC = () => {
       path: "/dashboard/alquran",
       labelEn: "Al-Quran",
       labelId: "Al-Qur'an",
-      icon: <BookOpen className="w-5 h-5" />,
+      icon: <HugeiconsIcon icon={Quran02Icon} className="size-5" />,
       badge: quranStats?.dueToday || 0,
       isActive: location.pathname.startsWith("/dashboard/alquran"),
     },
@@ -95,7 +102,7 @@ export const DashboardLayout: React.FC = () => {
       path: "/dashboard/pribadi",
       labelEn: "Books",
       labelId: "Ruang Buku",
-      icon: <Library className="w-5 h-5" />,
+      icon: <HugeiconsIcon icon={Books02Icon} className="size-5" />,
       badge: personalStats?.dueToday || 0,
       isActive: location.pathname.startsWith("/dashboard/pribadi"),
     },
@@ -103,7 +110,7 @@ export const DashboardLayout: React.FC = () => {
       path: "/dashboard/kelas",
       labelEn: "Teaching",
       labelId: "Mengajar",
-      icon: <Users className="w-5 h-5" />,
+      icon: <HugeiconsIcon icon={TeachingIcon} className="size-5" />,
       badge: 0,
       isActive: location.pathname.startsWith("/dashboard/kelas"),
     },
@@ -113,7 +120,7 @@ export const DashboardLayout: React.FC = () => {
             path: "/dashboard/teacher-requests",
             labelEn: "Admin",
             labelId: "Admin",
-            icon: <ShieldAlert className="w-5 h-5" />,
+            icon: <HugeiconsIcon icon={SecurityIcon} className="size-5" />,
             badge: 0,
             isActive:
               location.pathname.startsWith("/dashboard/teacher-requests") ||
@@ -209,7 +216,9 @@ export const DashboardLayout: React.FC = () => {
                 className={`flex h-9 items-center rounded-full border shadow-xs transition active:scale-95 ${hasProAccess ? "gap-1.5 border-[#f59e0b]/60 bg-[#24170d] py-1 pl-1 pr-2 shadow-[#ef6905]/15 hover:bg-[#302014]" : "gap-2 border-secondary bg-primary px-2 hover:bg-primary_hover"}`}
                 aria-expanded={showProfileMenu}
               >
-                <span className={`inline-flex shrink-0 rounded-full ${hasProAccess ? "ring-2 ring-[#ef6905] ring-offset-1 ring-offset-[#24170d]" : ""}`}>
+                <span
+                  className={`inline-flex shrink-0 rounded-full ${hasProAccess ? "ring-2 ring-[#ef6905] ring-offset-1 ring-offset-[#24170d]" : ""}`}
+                >
                   <Avatar
                     size="xs"
                     src={userProfile?.avatarUrl}
@@ -218,7 +227,9 @@ export const DashboardLayout: React.FC = () => {
                     border
                   />
                 </span>
-                <span className={`hidden max-w-[120px] truncate text-sm font-semibold lg:inline ${hasProAccess ? "text-white" : "text-primary"}`}>
+                <span
+                  className={`hidden max-w-[120px] truncate text-sm font-semibold lg:inline ${hasProAccess ? "text-white" : "text-primary"}`}
+                >
                   {profileName}
                 </span>
                 {hasProAccess && (
@@ -229,7 +240,9 @@ export const DashboardLayout: React.FC = () => {
                     </span>
                   </>
                 )}
-                <ChevronDown className={`size-3.5 shrink-0 ${hasProAccess ? "text-[#fbbf24]" : "text-fg-quaternary"}`} />
+                <ChevronDown
+                  className={`size-3.5 shrink-0 ${hasProAccess ? "text-[#fbbf24]" : "text-fg-quaternary"}`}
+                />
               </button>
 
               {showProfileMenu && (
@@ -244,20 +257,29 @@ export const DashboardLayout: React.FC = () => {
                         border
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-primary">{profileName}</p>
-                        <p className="mt-0.5 truncate text-xs text-secondary">{userProfile?.email || user?.email}</p>
+                        <p className="truncate text-sm font-semibold text-primary">
+                          {profileName}
+                        </p>
+                        <p className="mt-0.5 truncate text-xs text-secondary">
+                          {userProfile?.email || user?.email}
+                        </p>
                         <div className="mt-2 flex flex-wrap items-center gap-1.5">
                           <Badge color="gray" size="sm">
                             {userRole === "admin"
                               ? "Admin"
                               : userRole === "teacher"
-                                ? language === "en" ? "Teacher" : "Guru / Asatidz"
-                                : language === "en" ? "Student" : "Santri / Murid"}
+                                ? language === "en"
+                                  ? "Teacher"
+                                  : "Guru / Asatidz"
+                                : language === "en"
+                                  ? "Student"
+                                  : "Santri / Murid"}
                           </Badge>
                           {currentStreak > 0 && (
                             <Badge color="warning" size="sm" className="gap-1">
                               <Flame className="size-3 fill-current" />
-                              {currentStreak} {language === "en" ? "days" : "hari"}
+                              {currentStreak}{" "}
+                              {language === "en" ? "days" : "hari"}
                             </Badge>
                           )}
                         </div>
@@ -267,28 +289,55 @@ export const DashboardLayout: React.FC = () => {
 
                   <section
                     className={`relative overflow-hidden rounded-2xl border ${hasProAccess ? "border-[#f59e0b]/50 p-4 shadow-lg shadow-[#ef6905]/15" : "border-secondary bg-primary p-3"}`}
-                    style={hasProAccess ? { background: "radial-gradient(circle at 100% 0%, rgba(239,105,5,0.35), transparent 45%), linear-gradient(135deg, #26170c 0%, #130d09 100%)" } : undefined}
+                    style={
+                      hasProAccess
+                        ? {
+                            background:
+                              "radial-gradient(circle at 100% 0%, rgba(239,105,5,0.35), transparent 45%), linear-gradient(135deg, #26170c 0%, #130d09 100%)",
+                          }
+                        : undefined
+                    }
                   >
-                    {hasProAccess && <div className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full border border-white/10" />}
+                    {hasProAccess && (
+                      <div className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full border border-white/10" />
+                    )}
                     <div className="relative flex items-start gap-3">
-                      <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${hasProAccess ? "bg-[#ef6905] text-white shadow-md shadow-[#ef6905]/30" : "bg-brand-50 text-brand-700"}`}>
+                      <div
+                        className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${hasProAccess ? "bg-[#ef6905] text-white shadow-md shadow-[#ef6905]/30" : "bg-brand-50 text-brand-700"}`}
+                      >
                         <Crown className="size-5" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <p className={`text-sm font-semibold ${hasProAccess ? "text-white" : "text-primary"}`}>{hasProAccess ? "Unlupa Pro" : language === "en" ? "Free plan" : "Paket gratis"}</p>
+                          <p
+                            className={`text-sm font-semibold ${hasProAccess ? "text-white" : "text-primary"}`}
+                          >
+                            {hasProAccess
+                              ? "Unlupa Pro"
+                              : language === "en"
+                                ? "Free plan"
+                                : "Paket gratis"}
+                          </p>
                           {hasProAccess ? (
                             <span className="rounded-full border border-[#fbbf24]/70 bg-[#ef6905] px-2.5 py-0.5 text-[10px] font-black tracking-wider text-white shadow-sm shadow-black/20">
                               PRO
                             </span>
                           ) : (
-                            <Badge color="gray" size="sm">FREE</Badge>
+                            <Badge color="gray" size="sm">
+                              FREE
+                            </Badge>
                           )}
                         </div>
-                        <p className={`mt-1 text-xs leading-relaxed ${hasProAccess ? "text-[#fed7aa]" : "text-secondary"}`}>
+                        <p
+                          className={`mt-1 text-xs leading-relaxed ${hasProAccess ? "text-[#fed7aa]" : "text-secondary"}`}
+                        >
                           {hasProAccess
-                            ? language === "en" ? "Full feature access is active on this account." : "Akses penuh fitur aktif pada akun ini."
-                            : language === "en" ? "Upgrade for full Quran, AI, and teaching access." : "Upgrade untuk akses penuh Quran, AI, dan fitur mengajar."}
+                            ? language === "en"
+                              ? "Full feature access is active on this account."
+                              : "Akses penuh fitur aktif pada akun ini."
+                            : language === "en"
+                              ? "Upgrade for full Quran, AI, and teaching access."
+                              : "Upgrade untuk akses penuh Quran, AI, dan fitur mengajar."}
                         </p>
                       </div>
                     </div>
@@ -306,7 +355,9 @@ export const DashboardLayout: React.FC = () => {
                         }}
                         className="mt-3 w-full"
                       >
-                        {language === "en" ? "Upgrade to Pro" : "Upgrade ke Pro"}
+                        {language === "en"
+                          ? "Upgrade to Pro"
+                          : "Upgrade ke Pro"}
                       </Button>
                     ) : hasPaidPlan ? (
                       <Button
@@ -318,12 +369,16 @@ export const DashboardLayout: React.FC = () => {
                         }}
                         className="relative mt-3 w-full bg-white/10 text-white ring-white/20 hover:bg-white/15 hover:text-white"
                       >
-                        {language === "en" ? "Manage subscription" : "Kelola langganan"}
+                        {language === "en"
+                          ? "Manage subscription"
+                          : "Kelola langganan"}
                       </Button>
                     ) : (
                       <div className="relative mt-3 flex items-center gap-2 rounded-xl border border-white/10 bg-white/8 px-3 py-2.5 text-xs font-medium text-[#fde68a]">
                         <CheckCircle2 className="size-4 text-[#fbbf24]" />
-                        {language === "en" ? "Pro access via account role" : "Akses Pro melalui peran akun"}
+                        {language === "en"
+                          ? "Pro access via account role"
+                          : "Akses Pro melalui peran akun"}
                       </div>
                     )}
                   </section>
@@ -334,8 +389,16 @@ export const DashboardLayout: React.FC = () => {
                         <Smartphone className="size-5" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-primary">{language === "en" ? "Install Unlupa" : "Instal Unlupa"}</p>
-                        <p className="mt-0.5 text-xs text-secondary">{language === "en" ? "Faster access from your device." : "Akses lebih cepat dari perangkatmu."}</p>
+                        <p className="text-sm font-semibold text-primary">
+                          {language === "en"
+                            ? "Install Unlupa"
+                            : "Instal Unlupa"}
+                        </p>
+                        <p className="mt-0.5 text-xs text-secondary">
+                          {language === "en"
+                            ? "Faster access from your device."
+                            : "Akses lebih cepat dari perangkatmu."}
+                        </p>
                       </div>
                       <Button
                         size="sm"
@@ -359,17 +422,37 @@ export const DashboardLayout: React.FC = () => {
                   <section className="overflow-hidden rounded-2xl border border-secondary bg-primary">
                     <div className="flex items-center gap-3 border-b border-secondary p-3">
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-fg-quaternary">
-                        {theme === "dark" ? <Moon className="size-4.5" /> : <Sun className="size-4.5" />}
+                        {theme === "dark" ? (
+                          <Moon className="size-4.5" />
+                        ) : (
+                          <Sun className="size-4.5" />
+                        )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-primary">{language === "en" ? "Dark theme" : "Tema gelap"}</p>
-                        <p className="text-xs text-secondary">{theme === "dark" ? (language === "en" ? "Enabled" : "Aktif") : (language === "en" ? "Disabled" : "Nonaktif")}</p>
+                        <p className="text-sm font-medium text-primary">
+                          {language === "en" ? "Dark theme" : "Tema gelap"}
+                        </p>
+                        <p className="text-xs text-secondary">
+                          {theme === "dark"
+                            ? language === "en"
+                              ? "Enabled"
+                              : "Aktif"
+                            : language === "en"
+                              ? "Disabled"
+                              : "Nonaktif"}
+                        </p>
                       </div>
                       <Toggle
                         size="md"
-                        aria-label={language === "en" ? "Toggle dark theme" : "Ubah tema gelap"}
+                        aria-label={
+                          language === "en"
+                            ? "Toggle dark theme"
+                            : "Ubah tema gelap"
+                        }
                         isSelected={theme === "dark"}
-                        onChange={(isSelected) => setTheme(isSelected ? "dark" : "light")}
+                        onChange={(isSelected) =>
+                          setTheme(isSelected ? "dark" : "light")
+                        }
                       />
                     </div>
 
@@ -378,17 +461,31 @@ export const DashboardLayout: React.FC = () => {
                         <Languages className="size-4.5" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-primary">{language === "en" ? "Language" : "Bahasa"}</p>
-                        <p className="text-xs text-secondary">{language === "en" ? "English" : "Indonesia"}</p>
+                        <p className="text-sm font-medium text-primary">
+                          {language === "en" ? "Language" : "Bahasa"}
+                        </p>
+                        <p className="text-xs text-secondary">
+                          {language === "en" ? "English" : "Indonesia"}
+                        </p>
                       </div>
-                      <span className="text-[10px] font-semibold text-tertiary">ID</span>
+                      <span className="text-[10px] font-semibold text-tertiary">
+                        ID
+                      </span>
                       <Toggle
                         size="md"
-                        aria-label={language === "en" ? "Switch to Indonesian" : "Ganti ke bahasa Inggris"}
+                        aria-label={
+                          language === "en"
+                            ? "Switch to Indonesian"
+                            : "Ganti ke bahasa Inggris"
+                        }
                         isSelected={language === "en"}
-                        onChange={(isEnglish) => setLanguage(isEnglish ? "en" : "id")}
+                        onChange={(isEnglish) =>
+                          setLanguage(isEnglish ? "en" : "id")
+                        }
                       />
-                      <span className="text-[10px] font-semibold text-tertiary">EN</span>
+                      <span className="text-[10px] font-semibold text-tertiary">
+                        EN
+                      </span>
                     </div>
                   </section>
 
@@ -428,38 +525,38 @@ export const DashboardLayout: React.FC = () => {
             navItems.length > 4 ? "grid-cols-5" : "grid-cols-4"
           }`}
         >
-            {navItems.map((item) => {
-              const label = language === "en" ? item.labelEn : item.labelId;
+          {navItems.map((item) => {
+            const label = language === "en" ? item.labelEn : item.labelId;
 
-              return (
-                <button
-                  key={item.path}
-                  type="button"
-                  aria-label={label}
-                  aria-current={item.isActive ? "page" : undefined}
-                  title={label}
-                  onClick={() => {
-                    setShowProfileMenu(false);
-                    navigate(item.path);
-                  }}
-                  className={`relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-center transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:scale-95 ${
-                    item.isActive
-                      ? "bg-brand-50 text-brand-700"
-                      : "text-tertiary hover:bg-primary_hover hover:text-secondary"
-                  }`}
-                >
-                  {item.icon}
-                  <span className="max-w-full truncate text-[11px] font-semibold leading-none">
-                    {label}
+            return (
+              <button
+                key={item.path}
+                type="button"
+                aria-label={label}
+                aria-current={item.isActive ? "page" : undefined}
+                title={label}
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  navigate(item.path);
+                }}
+                className={`relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-center transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:scale-95 ${
+                  item.isActive
+                    ? "bg-brand-50 text-brand-700"
+                    : "text-tertiary hover:bg-primary_hover hover:text-secondary"
+                }`}
+              >
+                {item.icon}
+                <span className="max-w-full truncate text-[11px] font-semibold leading-none">
+                  {label}
+                </span>
+                {item.badge > 0 && (
+                  <span className="absolute right-2 top-1 flex min-w-4.5 items-center justify-center rounded-full bg-brand-solid px-1 text-[9px] font-bold leading-4 text-white shadow-xs ring-2 ring-brand-50">
+                    {item.badge > 99 ? "99+" : item.badge}
                   </span>
-                  {item.badge > 0 && (
-                    <span className="absolute right-2 top-1 flex min-w-4.5 items-center justify-center rounded-full bg-primary-solid px-1 text-[9px] font-bold leading-4 text-white ring-2 ring-primary">
-                      {item.badge > 99 ? "99+" : item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+                )}
+              </button>
+            );
+          })}
         </div>
       </nav>
 
@@ -495,36 +592,73 @@ export const DashboardLayout: React.FC = () => {
         <div className="fixed inset-0 z-[400] flex items-end justify-center sm:items-center sm:p-4">
           <button
             type="button"
-            aria-label={language === "en" ? "Close installation guide" : "Tutup panduan instalasi"}
+            aria-label={
+              language === "en"
+                ? "Close installation guide"
+                : "Tutup panduan instalasi"
+            }
             onClick={() => setShowIOSInstallGuide(false)}
             className="absolute inset-0 bg-overlay/70 backdrop-blur-sm"
           />
-          <div role="dialog" aria-modal="true" className="relative w-full max-w-sm rounded-t-3xl border border-secondary bg-primary p-5 shadow-2xl sm:rounded-3xl">
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="relative w-full max-w-sm rounded-t-3xl border border-secondary bg-primary p-5 shadow-2xl sm:rounded-3xl"
+          >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                   <Smartphone className="size-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-primary">{language === "en" ? "Install on iPhone or iPad" : "Instal di iPhone atau iPad"}</h2>
-                  <p className="mt-0.5 text-sm text-secondary">{language === "en" ? "Add Unlupa to your Home Screen." : "Tambahkan Unlupa ke Layar Utama."}</p>
+                  <h2 className="text-lg font-semibold text-primary">
+                    {language === "en"
+                      ? "Install on iPhone or iPad"
+                      : "Instal di iPhone atau iPad"}
+                  </h2>
+                  <p className="mt-0.5 text-sm text-secondary">
+                    {language === "en"
+                      ? "Add Unlupa to your Home Screen."
+                      : "Tambahkan Unlupa ke Layar Utama."}
+                  </p>
                 </div>
               </div>
-              <CloseButton slot={null} size="sm" onPress={() => setShowIOSInstallGuide(false)} label="Close installation guide" />
+              <CloseButton
+                slot={null}
+                size="sm"
+                onPress={() => setShowIOSInstallGuide(false)}
+                label="Close installation guide"
+              />
             </div>
 
             <div className="mt-5 space-y-3">
               <div className="flex gap-3 rounded-2xl bg-secondary/50 p-3">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-brand-700 shadow-xs">1</span>
-                <p className="pt-1.5 text-sm text-secondary">{language === "en" ? "Tap Share in the Safari toolbar." : "Ketuk Bagikan pada toolbar Safari."}</p>
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-brand-700 shadow-xs">
+                  1
+                </span>
+                <p className="pt-1.5 text-sm text-secondary">
+                  {language === "en"
+                    ? "Tap Share in the Safari toolbar."
+                    : "Ketuk Bagikan pada toolbar Safari."}
+                </p>
               </div>
               <div className="flex gap-3 rounded-2xl bg-secondary/50 p-3">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-brand-700 shadow-xs">2</span>
-                <p className="pt-1.5 text-sm text-secondary">{language === "en" ? "Choose Add to Home Screen." : "Pilih Tambahkan ke Layar Utama."}</p>
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-brand-700 shadow-xs">
+                  2
+                </span>
+                <p className="pt-1.5 text-sm text-secondary">
+                  {language === "en"
+                    ? "Choose Add to Home Screen."
+                    : "Pilih Tambahkan ke Layar Utama."}
+                </p>
               </div>
             </div>
 
-            <Button size="lg" onPress={() => setShowIOSInstallGuide(false)} className="mt-5 w-full">
+            <Button
+              size="lg"
+              onPress={() => setShowIOSInstallGuide(false)}
+              className="mt-5 w-full"
+            >
               {language === "en" ? "Understood" : "Mengerti"}
             </Button>
           </div>

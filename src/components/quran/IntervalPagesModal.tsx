@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { QuranPageItem, Language } from '../../types';
-import { X, Target, Sparkles, Search } from 'lucide-react';
+import { X, Target, Sparkles, Search } from "@/components/foundations/hugeicons";
 import { QuranPageCard } from './QuranPageCard';
 import { getQuranPageClusterKey, QuranIntervalClusterKey } from '../../lib/fsrs';
 

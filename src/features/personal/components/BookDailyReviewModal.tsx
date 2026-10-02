@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Clock, BookOpen, ChevronRight } from "lucide-react";
+import { X, Clock, BookOpen, ChevronRight } from "@/components/foundations/hugeicons";
 import type { BookDailyTask, BookDailyReviewGroup } from "@/features/personal/types/personal.types";
 import { getTodayDateKey } from "@/features/personal/utils/bookReviewUtils";
 

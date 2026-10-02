@@ -10,7 +10,7 @@ import {
   Layers,
   Sparkles,
   ChevronRight,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useQuranPages } from "../hooks/useQuranPages";
 import { PageReviewModal } from "../components/PageReviewModal";
 import { Juz30TrackerWidget } from "../components/Juz30TrackerWidget";

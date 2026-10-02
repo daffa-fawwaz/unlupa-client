@@ -7,7 +7,7 @@ import {
   BookOpen,
   ShieldCheck,
   Check,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useState, useRef, useEffect } from "react";
 import { clsx } from "clsx";
 import { useApp } from "@/context/AppContext";

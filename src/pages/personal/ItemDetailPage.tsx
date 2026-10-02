@@ -19,7 +19,7 @@ import {
   AlertTriangle,
   Image,
   GraduationCap,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { personalService } from "@/features/personal/services/personal.services";
 import type { ItemDetail } from "@/features/personal/types/personal.types";
 import { Sidebar } from "@/components/ui/Sidebar";

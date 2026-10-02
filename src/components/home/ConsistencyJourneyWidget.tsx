@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, Flame, TrendingUp } from "lucide-react";
+import { CalendarDays, Flame, TrendingUp } from "@/components/foundations/hugeicons";
 import { useApp } from "../../context/AppContext";
 
 type ActivityDay = {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { QuranPageItem, PageIssue } from '../../types';
-import { X, MessageSquare, Check, Plus, History, Sliders, Sparkles, BookOpen } from 'lucide-react';
+import { X, MessageSquare, Check, Plus, History, Sliders, Sparkles, BookOpen } from "@/components/foundations/hugeicons";
 import { QURAN_PAGES_METADATA } from '../../data/quranPagesMetadata';
 import { SURAH_LIST } from '../../data/quranData';
 import { AudioRecorderPlayer } from '../shared/AudioRecorderPlayer';

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Flame, Check, Trophy } from 'lucide-react';
+import { Flame, Check, Trophy } from "@/components/foundations/hugeicons";
 import { motion } from 'motion/react';
 
 // Helper for safe ISO date extraction

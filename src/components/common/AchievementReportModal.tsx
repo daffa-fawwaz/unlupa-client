@@ -1,9 +1,21 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { 
-  Award, FileText, Download, Share2, Settings2, BookOpen,
-  Sparkles, Building2, UserCircle, PenTool, Image as ImageIcon, Instagram, Target
-} from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  AiSparklesIcon,
+  Building02Icon,
+  Certificate01Icon,
+  FileDownloadIcon,
+  FileTextIcon,
+  Image02Icon,
+  InstagramIcon,
+  PenToolIcon,
+  Quran02Icon,
+  Settings02Icon,
+  Share01Icon,
+  Target02Icon,
+  UserCircle02Icon,
+} from '@hugeicons/core-free-icons';
 import html2canvas from 'html2canvas';
 import { AnimatePresence, motion } from 'motion/react';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -17,6 +29,11 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const BuildingFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={Building02Icon} className={className} />;
+const ImageFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={Image02Icon} className={className} />;
+const UserFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={UserCircle02Icon} className={className} />;
+const PenFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={PenToolIcon} className={className} />;
 
 type GeneratorAlert = {
   variant: 'success' | 'error' | 'info';
@@ -186,7 +203,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
             <header className="flex shrink-0 items-center justify-between gap-4 border-b border-secondary bg-primary px-4 py-3 sm:px-6 sm:py-4">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-xs">
-                  <Award className="size-5" />
+                   <HugeiconsIcon icon={Certificate01Icon} className="size-5" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
@@ -208,7 +225,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                 <div className="rounded-2xl border border-secondary bg-secondary/40 p-4">
                   <div className="flex items-center gap-3">
                     <div className="flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-                      <Sparkles className="size-5" />
+                       <HugeiconsIcon icon={AiSparklesIcon} className="size-5" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-primary">{userProfile.fullName || 'Unlupa User'}</p>
@@ -229,7 +246,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                       onClick={() => setReportSource('quran')}
                       className={`flex items-center gap-2 rounded-xl border p-3 text-left transition ${reportSource === 'quran' ? 'border-brand bg-brand-50 text-brand-700 shadow-xs' : 'border-secondary bg-primary text-secondary hover:bg-primary_hover'}`}
                     >
-                      <BookOpen className="size-4.5 shrink-0" />
+                       <HugeiconsIcon icon={Quran02Icon} className="size-4.5 shrink-0" />
                       <span className="text-sm font-semibold">Al-Quran</span>
                     </button>
                     <button
@@ -238,7 +255,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                       onClick={() => setReportSource('personal')}
                       className={`flex items-center gap-2 rounded-xl border p-3 text-left transition ${reportSource === 'personal' ? 'border-brand bg-brand-50 text-brand-700 shadow-xs' : 'border-secondary bg-primary text-secondary hover:bg-primary_hover'}`}
                     >
-                      <Target className="size-4.5 shrink-0" />
+                       <HugeiconsIcon icon={Target02Icon} className="size-4.5 shrink-0" />
                       <span className="text-sm font-semibold">{language === 'en' ? 'Personal' : 'Pribadi'}</span>
                     </button>
                   </div>
@@ -251,10 +268,10 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     {([
-                      { value: 'social', label: language === 'en' ? 'Story' : 'Story', icon: Instagram },
-                      { value: 'certificate', label: language === 'en' ? 'Certificate' : 'Sertifikat', icon: Award },
-                      { value: 'report', label: language === 'en' ? 'Report' : 'Rapor', icon: FileText },
-                    ] as const).map(({ value, label, icon: Icon }) => (
+                       { value: 'social', label: language === 'en' ? 'Story' : 'Story', icon: InstagramIcon },
+                       { value: 'certificate', label: language === 'en' ? 'Certificate' : 'Sertifikat', icon: Certificate01Icon },
+                       { value: 'report', label: language === 'en' ? 'Report' : 'Rapor', icon: FileTextIcon },
+                     ] as const).map(({ value, label, icon }) => (
                       <button
                         key={value}
                         type="button"
@@ -262,7 +279,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                         onClick={() => setReportType(value)}
                         className={`flex min-w-0 flex-col items-center gap-2 rounded-xl border px-2 py-3 text-center transition ${reportType === value ? 'border-brand bg-brand-50 text-brand-700 shadow-xs' : 'border-secondary bg-primary text-secondary hover:bg-primary_hover'}`}
                       >
-                        <Icon className="size-5" />
+                         <HugeiconsIcon icon={icon} className="size-5" />
                         <span className="w-full truncate text-xs font-semibold">{label}</span>
                       </button>
                     ))}
@@ -273,7 +290,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                   <section className="space-y-4 border-t border-secondary pt-5">
                     <div className="flex items-center gap-2">
                       <div className="flex size-8 items-center justify-center rounded-lg bg-secondary text-fg-quaternary">
-                        <Settings2 className="size-4" />
+                         <HugeiconsIcon icon={Settings02Icon} className="size-4" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-primary">{language === 'en' ? 'Document details' : 'Detail dokumen'}</p>
@@ -281,19 +298,21 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <Input size="sm" icon={Building2} label={language === 'en' ? 'Institution name' : 'Nama lembaga'} value={instName} onChange={setInstName} />
-                      <Input size="sm" icon={ImageIcon} label={language === 'en' ? 'Logo URL (optional)' : 'URL logo (opsional)'} value={instLogo} onChange={setInstLogo} placeholder="https://..." />
-                      <Input size="sm" icon={UserCircle} label={language === 'en' ? 'Teacher or mentor' : 'Guru atau pembimbing'} value={teacherName} onChange={setTeacherName} />
-                      <Input size="sm" icon={PenTool} label={language === 'en' ? 'Head of institution' : 'Pimpinan lembaga'} value={headName} onChange={setHeadName} />
+                       <Input size="sm" icon={BuildingFieldIcon} label={language === 'en' ? 'Institution name' : 'Nama lembaga'} value={instName} onChange={setInstName} />
+                       <Input size="sm" icon={ImageFieldIcon} label={language === 'en' ? 'Logo URL (optional)' : 'URL logo (opsional)'} value={instLogo} onChange={setInstLogo} placeholder="https://..." />
+                       <Input size="sm" icon={UserFieldIcon} label={language === 'en' ? 'Teacher or mentor' : 'Guru atau pembimbing'} value={teacherName} onChange={setTeacherName} />
+                       <Input size="sm" icon={PenFieldIcon} label={language === 'en' ? 'Head of institution' : 'Pimpinan lembaga'} value={headName} onChange={setHeadName} />
                     </div>
                   </section>
                 )}
 
                 <div className="grid grid-cols-2 gap-2 border-t border-secondary pt-5">
-                  <Button color="secondary" size="lg" iconLeading={Share2} isLoading={isGenerating} onPress={handleShare} className="w-full">
+                   <Button color="secondary" size="lg" isLoading={isGenerating} onPress={handleShare} className="w-full">
+                     <HugeiconsIcon icon={Share01Icon} className="size-5" />
                     {language === 'en' ? 'Share' : 'Bagikan'}
                   </Button>
-                  <Button size="lg" iconLeading={Download} isLoading={isGenerating} onPress={handleDownload} className="w-full">
+                   <Button size="lg" isLoading={isGenerating} onPress={handleDownload} className="w-full">
+                     <HugeiconsIcon icon={FileDownloadIcon} className="size-5" />
                     {language === 'en' ? 'Save PNG' : 'Simpan PNG'}
                   </Button>
                 </div>
@@ -332,7 +351,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
 
               {/* Verified by Unlupa.id Default Logo (Bottom Center) */}
               <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center gap-1.5 opacity-50 z-20 pointer-events-none">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                 <HugeiconsIcon icon={AiSparklesIcon} className="size-3.5 text-indigo-600" />
                 <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">Verified by Unlupa.id</span>
               </div>
 
@@ -369,13 +388,13 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                     <div className="grid grid-cols-2 gap-4 mb-8">
                       <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 flex flex-col items-center shadow-xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/20 rounded-full blur-xl -translate-y-1/2 translate-x-1/2"></div>
-                        <Target className="w-6 h-6 text-blue-400 mb-3 opacity-80" />
+                         <HugeiconsIcon icon={Target02Icon} className="mb-3 size-6 text-blue-400 opacity-80" />
                         <span className="text-5xl font-black text-white mb-1 drop-shadow-md">{primaryStat}</span>
                         <span className="text-[10px] uppercase tracking-widest text-blue-200/80 font-bold text-center leading-tight">{primaryLabel.split(' ')[0]}<br/>{primaryLabel.split(' ').slice(1).join(' ')}</span>
                       </div>
                       <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 flex flex-col items-center shadow-xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/20 rounded-full blur-xl -translate-y-1/2 translate-x-1/2"></div>
-                        <Award className="w-6 h-6 text-emerald-400 mb-3 opacity-80" />
+                         <HugeiconsIcon icon={Certificate01Icon} className="mb-3 size-6 text-emerald-400 opacity-80" />
                         <span className="text-5xl font-black text-emerald-400 mb-1 drop-shadow-md">{secondaryStat}</span>
                         <span className="text-[10px] uppercase tracking-widest text-emerald-200/80 font-bold text-center leading-tight">{secondaryLabel.split(' ')[0]}<br/>{secondaryLabel.split(' ').slice(1).join(' ')}</span>
                       </div>
@@ -413,7 +432,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
 
                   <div className="relative z-10 flex flex-col items-center gap-2 mt-auto pb-4">
                     <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/10">
-                      <Sparkles className="w-4 h-4 text-amber-400" />
+                       <HugeiconsIcon icon={AiSparklesIcon} className="size-4 text-amber-400" />
                       <span className="text-xs font-bold text-white tracking-widest uppercase">Unlupa.id</span>
                     </div>
                     <p className="text-[9px] text-slate-500 tracking-widest uppercase">AI-Powered Memorization</p>
@@ -473,7 +492,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                     </div>
                     
                     <div className="w-20 h-20 rounded-full border-2 border-amber-400 bg-amber-50 flex items-center justify-center flex-col shadow-inner">
-                      <Award className="w-6 h-6 text-amber-500 mb-1" />
+                       <HugeiconsIcon icon={Certificate01Icon} className="mb-1 size-6 text-amber-500" />
                       <span className="text-[7px] font-bold text-amber-700 uppercase">Excellent</span>
                     </div>
 

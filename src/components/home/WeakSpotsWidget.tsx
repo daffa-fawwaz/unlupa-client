@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { BookOpen, Sparkles, ChevronRight, AlertCircle, Bookmark, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { BookOpen, Sparkles, ChevronRight, AlertCircle, Bookmark, ArrowRight, ShieldCheck, Zap } from "@/components/foundations/hugeicons";
 import { QuranPageItem } from '../../types';
 
 interface Props {

@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle } from "@/components/foundations/hugeicons";
 
 interface ErrorMessageProps {
   message?: string | null;

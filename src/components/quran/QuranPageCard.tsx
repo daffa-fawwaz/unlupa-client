@@ -19,7 +19,7 @@ import {
   Mic,
   Check,
   Lock
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 interface Props {
   page: QuranPageItem;

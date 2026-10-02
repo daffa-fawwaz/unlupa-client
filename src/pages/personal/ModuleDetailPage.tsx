@@ -16,7 +16,7 @@ import {
   Plus,
   Trash2,
   X,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";

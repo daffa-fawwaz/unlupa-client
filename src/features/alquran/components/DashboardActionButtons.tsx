@@ -1,4 +1,4 @@
-import { Plus, Users, ArrowRight } from "lucide-react";
+import { Plus, Users, ArrowRight } from "@/components/foundations/hugeicons";
 
 interface DashboardActionButtonsProps {
   onAddClick: () => void;

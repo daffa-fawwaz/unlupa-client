@@ -2,16 +2,21 @@ import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   CheckCircle2,
-  Clock3,
+  Clock5,
   Loader2,
   RefreshCw,
   Search,
+  Teacher,
   UserCheck,
   UsersRound,
   UserX,
   XCircle,
-} from "lucide-react";
-import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
+} from "@/components/foundations/hugeicons";
+import {
+  Dialog,
+  Modal,
+  ModalOverlay,
+} from "@/components/application/modals/modal";
 import { Table, TableCard } from "@/components/application/table/table";
 import { Avatar } from "@/components/base/avatar/avatar";
 import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
@@ -44,14 +49,26 @@ const RequestStatusBadge = ({
   labels: Record<TeacherRequest["status"], string>;
 }) => {
   if (status === "approved") {
-    return <BadgeWithDot color="success" size="sm">{labels.approved}</BadgeWithDot>;
+    return (
+      <BadgeWithDot color="success" size="sm">
+        {labels.approved}
+      </BadgeWithDot>
+    );
   }
 
   if (status === "rejected") {
-    return <BadgeWithDot color="error" size="sm">{labels.rejected}</BadgeWithDot>;
+    return (
+      <BadgeWithDot color="error" size="sm">
+        {labels.rejected}
+      </BadgeWithDot>
+    );
   }
 
-  return <BadgeWithDot color="warning" size="sm">{labels.pending}</BadgeWithDot>;
+  return (
+    <BadgeWithDot color="warning" size="sm">
+      {labels.pending}
+    </BadgeWithDot>
+  );
 };
 
 export const TeacherRequestPage = () => {
@@ -78,7 +95,8 @@ export const TeacherRequestPage = () => {
   const text = isEnglish
     ? {
         title: "Teacher requests",
-        subtitle: "Review applications from users who want to teach on the platform.",
+        subtitle:
+          "Review applications from users who want to teach on the platform.",
         pending: "Pending review",
         approved: "Approved",
         rejected: "Rejected",
@@ -91,7 +109,8 @@ export const TeacherRequestPage = () => {
         noFilter: "No filter",
         searchPlaceholder: "Search name, email, or message",
         tableTitle: "Teacher applications",
-        tableDescription: "Review applicant details and update each request status.",
+        tableDescription:
+          "Review applicant details and update each request status.",
         shown: "shown",
         applicant: "Applicant",
         message: "Message",
@@ -114,8 +133,10 @@ export const TeacherRequestPage = () => {
         clearFilters: "Clear filters",
         approveTitle: "Approve teacher request?",
         rejectTitle: "Reject teacher request?",
-        approveMessage: (name: string) => `${name} will receive teacher access and can start managing classes.`,
-        rejectMessage: (name: string) => `${name}'s teacher application will be declined.`,
+        approveMessage: (name: string) =>
+          `${name} will receive teacher access and can start managing classes.`,
+        rejectMessage: (name: string) =>
+          `${name}'s teacher application will be declined.`,
         cancel: "Cancel",
         confirmApprove: "Yes, approve",
         confirmReject: "Yes, reject",
@@ -136,7 +157,8 @@ export const TeacherRequestPage = () => {
         noFilter: "Tanpa filter",
         searchPlaceholder: "Cari nama, email, atau pesan",
         tableTitle: "Pengajuan guru",
-        tableDescription: "Tinjau data pemohon dan perbarui status setiap pengajuan.",
+        tableDescription:
+          "Tinjau data pemohon dan perbarui status setiap pengajuan.",
         shown: "ditampilkan",
         applicant: "Pemohon",
         message: "Pesan",
@@ -159,8 +181,10 @@ export const TeacherRequestPage = () => {
         clearFilters: "Hapus filter",
         approveTitle: "Setujui permintaan guru?",
         rejectTitle: "Tolak permintaan guru?",
-        approveMessage: (name: string) => `${name} akan mendapatkan akses guru dan dapat mulai mengelola kelas.`,
-        rejectMessage: (name: string) => `Pengajuan guru dari ${name} akan ditolak.`,
+        approveMessage: (name: string) =>
+          `${name} akan mendapatkan akses guru dan dapat mulai mengelola kelas.`,
+        rejectMessage: (name: string) =>
+          `Pengajuan guru dari ${name} akan ditolak.`,
         cancel: "Batal",
         confirmApprove: "Ya, setujui",
         confirmReject: "Ya, tolak",
@@ -176,7 +200,8 @@ export const TeacherRequestPage = () => {
     const query = searchQuery.trim().toLowerCase();
 
     return requests.filter((request) => {
-      const matchesStatus = statusFilter === "all" || request.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "all" || request.status === statusFilter;
       const matchesQuery =
         !query ||
         request.user.full_name.toLowerCase().includes(query) ||
@@ -189,16 +214,19 @@ export const TeacherRequestPage = () => {
 
   const stats = useMemo(
     () => ({
-      pending: requests.filter((request) => request.status === "pending").length,
-      approved: requests.filter((request) => request.status === "approved").length,
-      rejected: requests.filter((request) => request.status === "rejected").length,
+      pending: requests.filter((request) => request.status === "pending")
+        .length,
+      approved: requests.filter((request) => request.status === "approved")
+        .length,
+      rejected: requests.filter((request) => request.status === "rejected")
+        .length,
     }),
     [requests],
   );
 
   const statusOptions = [
     { id: "all", label: text.allStatuses, icon: UsersRound },
-    { id: "pending", label: text.pending, icon: Clock3 },
+    { id: "pending", label: text.pending, icon: Clock5 },
     { id: "approved", label: text.approved, icon: CheckCircle2 },
     { id: "rejected", label: text.rejected, icon: XCircle },
   ];
@@ -228,7 +256,12 @@ export const TeacherRequestPage = () => {
 
   const handleCloseModal = () => {
     if (isProcessing) return;
-    setModalState({ isOpen: false, type: null, requestId: null, requestName: "" });
+    setModalState({
+      isOpen: false,
+      type: null,
+      requestId: null,
+      requestName: "",
+    });
   };
 
   const handleConfirm = async () => {
@@ -241,7 +274,12 @@ export const TeacherRequestPage = () => {
     }
 
     await getTeacherRequests();
-    setModalState({ isOpen: false, type: null, requestId: null, requestName: "" });
+    setModalState({
+      isOpen: false,
+      type: null,
+      requestId: null,
+      requestName: "",
+    });
   };
 
   const statCards = [
@@ -250,8 +288,9 @@ export const TeacherRequestPage = () => {
       value: stats.pending,
       description: text.awaitingDecision,
       meta: text.needsReview,
-      icon: Clock3,
-      cardClass: "border-[#f79009]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#fffaeb_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#4e1d09_100%)]",
+      icon: Clock5,
+      cardClass:
+        "border-[#f79009]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#fffaeb_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#4e1d09_100%)]",
       iconClass: "bg-[#dc6803] text-white shadow-lg shadow-[#dc6803]/25",
       glowClass: "bg-[#fef0c7] dark:bg-[#7a2e0e]",
       cardStyle: { borderColor: "rgba(247, 144, 9, 0.5)" },
@@ -262,7 +301,8 @@ export const TeacherRequestPage = () => {
       description: text.teachersJoined,
       meta: text.completed,
       icon: UserCheck,
-      cardClass: "border-[#12b76a]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#ecfdf3_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#053321_100%)]",
+      cardClass:
+        "border-[#12b76a]/45 bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#ecfdf3_100%)] dark:bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,#053321_100%)]",
       iconClass: "bg-[#079455] text-white shadow-lg shadow-[#079455]/25",
       glowClass: "bg-[#d1fadf] dark:bg-[#054f31]",
       cardStyle: { borderColor: "rgba(18, 183, 106, 0.55)" },
@@ -273,7 +313,8 @@ export const TeacherRequestPage = () => {
       description: text.applicationsDeclined,
       meta: text.completed,
       icon: UserX,
-      cardClass: "border-error_subtle bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,rgba(240,68,56,0.08)_100%)]",
+      cardClass:
+        "border-error_subtle bg-[linear-gradient(145deg,var(--color-bg-primary)_45%,rgba(240,68,56,0.08)_100%)]",
       iconClass: "bg-error-solid text-white shadow-lg shadow-error/20",
       glowClass: "bg-error-primary",
       cardStyle: undefined,
@@ -292,14 +333,20 @@ export const TeacherRequestPage = () => {
       <header className="flex flex-col gap-4 border-b border-secondary pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex items-start gap-3">
           <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
-            <UsersRound className="size-5" />
+            <Teacher className="size-5" />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">{text.title}</h1>
-              <Badge color="warning" size="sm">{stats.pending} {text.pending.toLowerCase()}</Badge>
+              <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
+                {text.title}
+              </h1>
+              <Badge color="warning" size="sm">
+                {stats.pending} {text.pending.toLowerCase()}
+              </Badge>
             </div>
-            <p className="mt-1 max-w-2xl text-sm text-secondary">{text.subtitle}</p>
+            <p className="mt-1 max-w-2xl text-sm text-secondary">
+              {text.subtitle}
+            </p>
           </div>
         </div>
 
@@ -314,34 +361,58 @@ export const TeacherRequestPage = () => {
       </header>
 
       <section className="grid gap-3 sm:grid-cols-3">
-        {statCards.map(({ label, value, description, meta, icon: Icon, cardClass, iconClass, glowClass, cardStyle }) => (
-          <article
-            key={label}
-            style={cardStyle}
-            className={`group relative overflow-hidden rounded-3xl border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${cardClass}`}
-          >
-            <div className={`pointer-events-none absolute -right-8 -top-10 size-32 rounded-full opacity-70 transition-transform duration-300 group-hover:scale-110 ${glowClass}`} />
-            <div className="relative flex items-start justify-between gap-4">
-              <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${iconClass}`}>
-                <Icon className="size-5" />
+        {statCards.map(
+          ({
+            label,
+            value,
+            description,
+            meta,
+            icon: Icon,
+            cardClass,
+            iconClass,
+            glowClass,
+            cardStyle,
+          }) => (
+            <article
+              key={label}
+              style={cardStyle}
+              className={`group relative overflow-hidden rounded-3xl border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${cardClass}`}
+            >
+              <div
+                className={`pointer-events-none absolute -right-8 -top-10 size-32 rounded-full opacity-70 transition-transform duration-300 group-hover:scale-110 ${glowClass}`}
+              />
+              <div className="relative flex items-start justify-between gap-4">
+                <div
+                  className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${iconClass}`}
+                >
+                  <Icon className="size-5" />
+                </div>
+                <span className="rounded-full border border-white/50 bg-primary/70 px-2.5 py-1 text-[10px] font-semibold text-secondary shadow-xs backdrop-blur-sm">
+                  {meta}
+                </span>
               </div>
-              <span className="rounded-full border border-white/50 bg-primary/70 px-2.5 py-1 text-[10px] font-semibold text-secondary shadow-xs backdrop-blur-sm">
-                {meta}
-              </span>
-            </div>
-            <div className="relative mt-5">
-              <p className="text-3xl font-semibold tracking-tight text-primary">{value}</p>
-              <p className="mt-1 text-sm font-semibold text-primary">{label}</p>
-              <p className="mt-0.5 text-xs text-tertiary">{description}</p>
-            </div>
-          </article>
-        ))}
+              <div className="relative mt-5">
+                <p className="text-3xl font-semibold tracking-tight text-primary">
+                  {value}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-primary">
+                  {label}
+                </p>
+                <p className="mt-0.5 text-xs text-tertiary">{description}</p>
+              </div>
+            </article>
+          ),
+        )}
       </section>
 
       <TableCard.Root size="md" className="rounded-3xl">
         <TableCard.Header
           title={text.tableTitle}
-          badge={<Badge color="gray" size="sm">{filteredRequests.length} {text.shown}</Badge>}
+          badge={
+            <Badge color="gray" size="sm">
+              {filteredRequests.length} {text.shown}
+            </Badge>
+          }
           description={text.tableDescription}
           contentTrailing={
             <div className="grid w-full gap-2 sm:grid-cols-[minmax(0,1fr)_11rem] md:w-auto">
@@ -363,7 +434,13 @@ export const TeacherRequestPage = () => {
                 popoverClassName="min-w-48"
               >
                 {(item) => (
-                  <Select.Item id={item.id} icon={item.icon} supportingText={item.id === "all" ? text.noFilter : undefined}>
+                  <Select.Item
+                    id={item.id}
+                    icon={item.icon}
+                    supportingText={
+                      item.id === "all" ? text.noFilter : undefined
+                    }
+                  >
                     {item.label}
                   </Select.Item>
                 )}
@@ -377,28 +454,48 @@ export const TeacherRequestPage = () => {
             <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-error-primary text-error-primary">
               <AlertCircle className="size-5" />
             </div>
-            <p className="mt-3 text-sm font-semibold text-primary">{text.loadError}</p>
+            <p className="mt-3 text-sm font-semibold text-primary">
+              {text.loadError}
+            </p>
             <p className="mt-1 text-sm text-secondary">{error}</p>
-            <Button color="secondary" size="sm" iconLeading={RefreshCw} onPress={handleRefresh} className="mt-4">
+            <Button
+              color="secondary"
+              size="sm"
+              iconLeading={RefreshCw}
+              onPress={handleRefresh}
+              className="mt-4"
+            >
               {text.tryAgain}
             </Button>
           </div>
         ) : loading && requests.length === 0 ? (
           <div className="flex flex-col items-center px-6 py-14 text-center">
             <Loader2 className="size-6 animate-spin text-brand-600" />
-            <p className="mt-3 text-sm font-semibold text-primary">{text.loadingTitle}</p>
-            <p className="mt-1 text-sm text-secondary">{text.loadingDescription}</p>
+            <p className="mt-3 text-sm font-semibold text-primary">
+              {text.loadingTitle}
+            </p>
+            <p className="mt-1 text-sm text-secondary">
+              {text.loadingDescription}
+            </p>
           </div>
         ) : filteredRequests.length === 0 ? (
           <div className="px-6 py-14 text-center">
             <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
-              {searchQuery || statusFilter !== "all" ? <Search className="size-5" /> : <UsersRound className="size-5" />}
+              {searchQuery || statusFilter !== "all" ? (
+                <Search className="size-5" />
+              ) : (
+                <UsersRound className="size-5" />
+              )}
             </div>
             <p className="mt-3 text-sm font-semibold text-primary">
-              {searchQuery || statusFilter !== "all" ? text.noResultsTitle : text.emptyTitle}
+              {searchQuery || statusFilter !== "all"
+                ? text.noResultsTitle
+                : text.emptyTitle}
             </p>
             <p className="mx-auto mt-1 max-w-sm text-sm text-secondary">
-              {searchQuery || statusFilter !== "all" ? text.noResultsDescription : text.emptyDescription}
+              {searchQuery || statusFilter !== "all"
+                ? text.noResultsDescription
+                : text.emptyDescription}
             </p>
             {(searchQuery || statusFilter !== "all") && (
               <Button
@@ -428,23 +525,43 @@ export const TeacherRequestPage = () => {
                 <Table.Row id={request.id}>
                   <Table.Cell>
                     <div className="flex items-center gap-3">
-                      <Avatar size="sm" initials={getInitials(request.user.full_name)} alt={request.user.full_name} />
+                      <Avatar
+                        size="sm"
+                        initials={getInitials(request.user.full_name)}
+                        alt={request.user.full_name}
+                      />
                       <div className="min-w-0">
-                        <p className="max-w-56 truncate text-sm font-semibold text-primary">{request.user.full_name}</p>
-                        <p className="mt-0.5 max-w-64 truncate text-xs text-tertiary">{request.user.email}</p>
+                        <p className="max-w-56 truncate text-sm font-semibold text-primary">
+                          {request.user.full_name}
+                        </p>
+                        <p className="mt-0.5 max-w-64 truncate text-xs text-tertiary">
+                          {request.user.email}
+                        </p>
                       </div>
                     </div>
                   </Table.Cell>
                   <Table.Cell>
-                    <p className="max-w-72 truncate text-sm text-secondary" title={request.message}>
+                    <p
+                      className="max-w-72 truncate text-sm text-secondary"
+                      title={request.message}
+                    >
                       {request.message || text.noMessage}
                     </p>
                   </Table.Cell>
                   <Table.Cell>
-                    <p className="whitespace-nowrap text-sm font-medium text-primary">{formatDate(request.created_at)}</p>
-                    <p className="mt-0.5 font-mono text-xs text-tertiary">ID: {request.id.slice(0, 8)}</p>
+                    <p className="whitespace-nowrap text-sm font-medium text-primary">
+                      {formatDate(request.created_at)}
+                    </p>
+                    <p className="mt-0.5 font-mono text-xs text-tertiary">
+                      ID: {request.id.slice(0, 8)}
+                    </p>
                   </Table.Cell>
-                  <Table.Cell><RequestStatusBadge status={request.status} labels={statusLabels} /></Table.Cell>
+                  <Table.Cell>
+                    <RequestStatusBadge
+                      status={request.status}
+                      labels={statusLabels}
+                    />
+                  </Table.Cell>
                   <Table.Cell>
                     <div className="flex justify-end gap-1">
                       {request.status === "pending" && (
@@ -453,7 +570,13 @@ export const TeacherRequestPage = () => {
                             icon={CheckCircle2}
                             color="tertiary"
                             tooltip={text.approve}
-                            onPress={() => handleOpenModal("approve", request.id, request.user.full_name)}
+                            onPress={() =>
+                              handleOpenModal(
+                                "approve",
+                                request.id,
+                                request.user.full_name,
+                              )
+                            }
                             isDisabled={isProcessing}
                             className="text-[#079455] hover:bg-[#ecfdf3] hover:text-[#067647] dark:hover:bg-[#053321]"
                           />
@@ -461,7 +584,13 @@ export const TeacherRequestPage = () => {
                             icon={XCircle}
                             color="tertiary"
                             tooltip={text.reject}
-                            onPress={() => handleOpenModal("reject", request.id, request.user.full_name)}
+                            onPress={() =>
+                              handleOpenModal(
+                                "reject",
+                                request.id,
+                                request.user.full_name,
+                              )
+                            }
                             isDisabled={isProcessing}
                             className="text-error-primary hover:bg-error-primary hover:text-error-primary"
                           />
@@ -482,7 +611,13 @@ export const TeacherRequestPage = () => {
         onOpenChange={(isOpen) => !isOpen && handleCloseModal()}
       >
         <Modal className="max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl">
-          <Dialog aria-label={modalState.type === "approve" ? text.approveTitle : text.rejectTitle}>
+          <Dialog
+            aria-label={
+              modalState.type === "approve"
+                ? text.approveTitle
+                : text.rejectTitle
+            }
+          >
             {({ close }) => {
               const isReject = modalState.type === "reject";
               const Icon = isReject ? XCircle : CheckCircle2;
@@ -490,19 +625,34 @@ export const TeacherRequestPage = () => {
               return (
                 <>
                   <div className="relative px-5 pb-5 pt-6 sm:px-6">
-                    <CloseButton label={text.closeConfirmation} onPress={close} isDisabled={isProcessing} className="absolute right-4 top-4" />
-                    <div className={`flex size-12 items-center justify-center rounded-xl ring-1 ring-inset ${isReject ? "bg-error-primary text-error-primary ring-error_subtle" : "bg-[#ecfdf3] text-[#079455] ring-[#abefc6] dark:bg-[#053321] dark:text-[#47cd89] dark:ring-[#085d3a]"}`}>
+                    <CloseButton
+                      label={text.closeConfirmation}
+                      onPress={close}
+                      isDisabled={isProcessing}
+                      className="absolute right-4 top-4"
+                    />
+                    <div
+                      className={`flex size-12 items-center justify-center rounded-xl ring-1 ring-inset ${isReject ? "bg-error-primary text-error-primary ring-error_subtle" : "bg-[#ecfdf3] text-[#079455] ring-[#abefc6] dark:bg-[#053321] dark:text-[#47cd89] dark:ring-[#085d3a]"}`}
+                    >
                       <Icon className="size-6" />
                     </div>
                     <h2 className="mt-4 pr-10 text-lg font-semibold text-primary">
                       {isReject ? text.rejectTitle : text.approveTitle}
                     </h2>
                     <p className="mt-2 text-sm leading-6 text-secondary">
-                      {isReject ? text.rejectMessage(modalState.requestName) : text.approveMessage(modalState.requestName)}
+                      {isReject
+                        ? text.rejectMessage(modalState.requestName)
+                        : text.approveMessage(modalState.requestName)}
                     </p>
                   </div>
                   <div className="flex flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
-                    <Button color="secondary" size="md" onPress={close} isDisabled={isProcessing} className="w-full sm:w-auto">
+                    <Button
+                      color="secondary"
+                      size="md"
+                      onPress={close}
+                      isDisabled={isProcessing}
+                      className="w-full sm:w-auto"
+                    >
                       {text.cancel}
                     </Button>
                     <Button

@@ -1,278 +1,360 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { BookItem, Chapter, Language } from '../../types';
-import { X, UploadCloud, BookOpen, ChevronDown } from 'lucide-react';
-import { uploadImageToStorage } from '../../lib/imageUtils';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import {
+  BookOpen,
+  ChevronDown,
+  Image as ImageIcon,
+  Plus,
+  UploadCloud,
+  WalletCards,
+  X,
+} from "@/components/foundations/hugeicons";
+import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
+import { InlineAlert } from "@/components/base/alert/alert";
+import { Badge } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { TextArea } from "@/components/base/textarea/textarea";
+import type { BookItem, Chapter, Language } from "../../types";
+import { uploadImageToStorage } from "../../lib/imageUtils";
 
 interface ItemFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { question: string; answer: string; explanation?: string; imageQ?: string; imageA?: string; chapterId?: string }, keepOpen?: boolean) => void;
+  onSubmit: (
+    data: {
+      question: string;
+      answer: string;
+      explanation?: string;
+      imageQ?: string;
+      imageA?: string;
+      chapterId?: string;
+    },
+    keepOpen?: boolean,
+  ) => void;
   chapters: Chapter[];
   initialData?: Partial<BookItem>;
   initialChapterId?: string;
   language: Language;
 }
 
-export const ItemFormModal: React.FC<ItemFormModalProps> = ({
-  isOpen, onClose, onSubmit, chapters, initialData, initialChapterId, language
-}) => {
-  const [form, setForm] = useState({
-    question: '',
-    answer: '',
-    explanation: '',
-    imageQ: '',
-    imageA: '',
-    chapterId: ''
-  });
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+type FormState = {
+  question: string;
+  answer: string;
+  explanation: string;
+  imageQ: string;
+  imageA: string;
+  chapterId: string;
+};
 
+const emptyForm: FormState = {
+  question: "",
+  answer: "",
+  explanation: "",
+  imageQ: "",
+  imageA: "",
+  chapterId: "",
+};
+
+export const ItemFormModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  chapters,
+  initialData,
+  initialChapterId,
+  language,
+}: ItemFormModalProps) => {
+  const [form, setForm] = useState<FormState>(emptyForm);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [uploadingField, setUploadingField] = useState<"imageQ" | "imageA" | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputQ = useRef<HTMLInputElement>(null);
   const fileInputA = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      const hasExp = Boolean(initialData?.explanation);
-      setShowExplanation(hasExp);
-      setForm({
-        question: initialData?.question || '',
-        answer: initialData?.answer || '',
-        explanation: initialData?.explanation || '',
-        imageQ: initialData?.imageQ || '',
-        imageA: initialData?.imageA || '',
-        chapterId: initialData?.chapterId || initialChapterId || ''
-      });
-    }
+    if (!isOpen) return;
+    setShowExplanation(Boolean(initialData?.explanation));
+    setUploadError(null);
+    setForm({
+      question: initialData?.question || "",
+      answer: initialData?.answer || "",
+      explanation: initialData?.explanation || "",
+      imageQ: initialData?.imageQ || "",
+      imageA: initialData?.imageA || "",
+      chapterId: initialData?.chapterId || initialChapterId || "",
+    });
   }, [isOpen, initialData, initialChapterId]);
 
   if (!isOpen) return null;
 
+  const isEditing = Boolean(initialData?.id);
+  const isUploading = uploadingField !== null;
+  const hasQuestion = Boolean(form.question.trim() || form.imageQ);
+  const hasAnswer = Boolean(form.answer.trim() || form.imageA);
+  const canSubmit = hasQuestion && hasAnswer && !isUploading;
+
   const submitForm = (keepOpen: boolean) => {
-    if (!form.question.trim() && !form.imageQ) return;
-    if (!form.answer.trim() && !form.imageA) return;
-    
-    onSubmit({
-      question: form.question,
-      answer: form.answer,
-      explanation: form.explanation.trim() || undefined,
-      imageQ: form.imageQ || undefined,
-      imageA: form.imageA || undefined,
-      chapterId: form.chapterId || undefined
-    }, keepOpen);
+    if (!canSubmit) return;
+    onSubmit(
+      {
+        question: form.question.trim(),
+        answer: form.answer.trim(),
+        explanation: form.explanation.trim() || undefined,
+        imageQ: form.imageQ || undefined,
+        imageA: form.imageA || undefined,
+        chapterId: form.chapterId || undefined,
+      },
+      keepOpen,
+    );
 
     if (keepOpen) {
-      setForm(prev => ({
-        ...prev,
-        question: '',
-        answer: '',
-        explanation: '',
-        imageQ: '',
-        imageA: ''
-      }));
+      setForm((current) => ({ ...emptyForm, chapterId: current.chapterId }));
       setShowExplanation(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Default to close if submitted via enter key or generic submit
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
     submitForm(false);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'imageQ' | 'imageA') => {
-    const file = e.target.files?.[0];
+  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>, field: "imageQ" | "imageA") => {
+    const file = event.target.files?.[0];
     if (!file) return;
+
+    setUploadingField(field);
+    setUploadError(null);
     try {
-      setIsUploading(true);
       const storageUrl = await uploadImageToStorage(file);
-      setForm(prev => ({ ...prev, [field]: storageUrl }));
-    } catch (err) {
-      console.error('Image upload failed', err);
+      setForm((current) => ({ ...current, [field]: storageUrl }));
+    } catch (error) {
+      console.error("Image upload failed", error);
+      setUploadError(language === "en" ? "The image could not be uploaded. Please try another file." : "Gambar gagal diunggah. Coba gunakan file lain.");
     } finally {
-      setIsUploading(false);
+      setUploadingField(null);
+      event.target.value = "";
     }
   };
 
-  // Helper to render chapter options hierarchically
-  const renderChapterOptions = (parentId: string | null | undefined, depth = 0) => {
-    const children = chapters.filter(c => (c.parentId || null) === (parentId || null));
-    let nodes: React.ReactNode[] = [];
-    children.forEach(ch => {
-      const prefix = '\u00A0\u00A0'.repeat(depth) + (depth > 0 ? '└ ' : '');
-      nodes.push(
-        <option key={ch.id} value={ch.id}>{prefix}{ch.title}</option>
-      );
-      nodes = nodes.concat(renderChapterOptions(ch.id, depth + 1));
-    });
-    return nodes;
+  const renderChapterOptions = (parentId: string | null = null, depth = 0): ReactNode[] => {
+    return chapters
+      .filter((chapter) => (chapter.parentId || null) === parentId)
+      .flatMap((chapter) => [
+        <option key={chapter.id} value={chapter.id}>
+          {`${"  ".repeat(depth)}${depth > 0 ? "- " : ""}${chapter.title}`}
+        </option>,
+        ...renderChapterOptions(chapter.id, depth + 1),
+      ]);
+  };
+
+  const renderImageControl = (field: "imageQ" | "imageA", inputRef: typeof fileInputQ) => {
+    const imageUrl = form[field];
+    const label = field === "imageQ" ? (language === "en" ? "Question image" : "Gambar pertanyaan") : language === "en" ? "Answer image" : "Gambar jawaban";
+
+    return (
+      <div className="mt-3 rounded-2xl border border-dashed border-secondary bg-secondary/30 p-3">
+        {imageUrl ? (
+          <div className="flex items-center gap-3">
+            <div className="size-20 shrink-0 overflow-hidden rounded-xl bg-secondary shadow-xs ring-1 ring-secondary ring-inset">
+              <img src={imageUrl} alt={label} className="size-full object-cover" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-primary">{label}</p>
+              <p className="mt-0.5 text-xs text-secondary">{language === "en" ? "Image attached to this side of the card." : "Gambar terpasang pada sisi kartu ini."}</p>
+              <div className="mt-2 flex gap-2">
+                <Button color="secondary" size="xs" iconLeading={UploadCloud} onPress={() => inputRef.current?.click()} isDisabled={isUploading}>
+                  {language === "en" ? "Replace" : "Ganti"}
+                </Button>
+                <Button color="tertiary-destructive" size="xs" onPress={() => setForm((current) => ({ ...current, [field]: "" }))} isDisabled={isUploading}>
+                  {language === "en" ? "Remove" : "Hapus"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={isUploading}
+            className="flex w-full items-center gap-3 rounded-xl p-1 text-left outline-brand transition hover:bg-primary focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-brand-700 shadow-xs ring-1 ring-brand-200 ring-inset">
+              <ImageIcon className="size-4.5" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-primary">{uploadingField === field ? (language === "en" ? "Uploading image..." : "Mengunggah gambar...") : language === "en" ? "Add an image" : "Tambahkan gambar"}</p>
+              <p className="mt-0.5 text-xs text-secondary">{language === "en" ? "Optional. JPG, PNG, or WebP." : "Opsional. JPG, PNG, atau WebP."}</p>
+            </div>
+          </button>
+        )}
+        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={(event) => handleImageUpload(event, field)} />
+      </div>
+    );
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-800 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-            {initialData ? (language === 'en' ? 'Edit Card' : 'Edit Kartu') : (language === 'en' ? 'Add Knowledge Card' : 'Tambah Kartu Review')}
-          </h3>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {chapters.length > 0 && (
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                {language === 'en' ? 'Assign to Chapter' : 'Pilih Bab'}
-              </label>
-              <select
-                value={form.chapterId}
-                onChange={e => setForm({ ...form, chapterId: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
-              >
-                <option value="">-- {language === 'en' ? 'No Chapter' : 'Tanpa Bab'} --</option>
-                {renderChapterOptions(null)}
-              </select>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-              {language === 'en' ? 'Question' : 'Pertanyaan'}
-            </label>
-            <textarea
-              rows={2}
-              placeholder={language === 'en' ? 'Enter text...' : 'Teks pertanyaan...'}
-              value={form.question}
-              onChange={e => setForm({ ...form, question: e.target.value })}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
-            />
-            
-            <div className="flex items-center gap-3 mt-2">
-              <button
-                type="button"
-                onClick={() => fileInputQ.current?.click()}
-                disabled={isUploading}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer disabled:opacity-50"
-              >
-                <UploadCloud className="w-4 h-4" />
-                {language === 'en' ? 'Upload Image' : 'Unggah Gambar'}
-              </button>
-              <input type="file" accept="image/*" className="hidden" ref={fileInputQ} onChange={e => handleImageUpload(e, 'imageQ')} />
-              
-              {form.imageQ && (
-                <div className="relative w-12 h-12 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden group">
-                  <img src={form.imageQ} alt="Preview Q" className="w-full h-full object-cover" />
-                  <button type="button" onClick={() => setForm({...form, imageQ: ''})} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <X className="w-4 h-4 text-white" />
-                  </button>
+    <ModalOverlay
+      isOpen
+      isDismissable={!isUploading}
+      onOpenChange={(open) => {
+        if (!open && !isUploading) onClose();
+      }}
+    >
+      <Modal className="max-w-4xl overflow-hidden rounded-t-3xl sm:rounded-3xl">
+        <Dialog aria-label={isEditing ? (language === "en" ? "Edit card" : "Edit kartu") : language === "en" ? "Add card" : "Tambah kartu"}>
+          {({ close }) => (
+            <form onSubmit={handleSubmit} className="flex max-h-[inherit] flex-col">
+              <div className="relative shrink-0 overflow-hidden border-b border-brand-200 bg-[linear-gradient(135deg,var(--color-brand-50)_0%,var(--color-bg-primary)_74%)] px-5 py-5 sm:px-6">
+                <div className="pointer-events-none absolute -right-14 -top-20 size-48 rounded-full bg-brand-200/40 blur-3xl" />
+                <div className="relative flex items-start gap-3 pr-10">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-xs ring-1 ring-brand-600 ring-inset">
+                    <WalletCards className="size-5" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-lg font-semibold text-primary">
+                        {isEditing ? (language === "en" ? "Edit knowledge card" : "Edit kartu pengetahuan") : language === "en" ? "Add a knowledge card" : "Tambah kartu pengetahuan"}
+                      </h2>
+                      <Badge color="brand" size="sm">{isEditing ? (language === "en" ? "Editing" : "Mengedit") : language === "en" ? "New card" : "Kartu baru"}</Badge>
+                    </div>
+                    <p className="mt-1 max-w-2xl text-sm leading-5 text-secondary">
+                      {language === "en" ? "Build a focused prompt and answer. Text or an image can be used on either side." : "Susun pertanyaan dan jawaban yang fokus. Setiap sisi dapat menggunakan teks atau gambar."}
+                    </p>
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-              {language === 'en' ? 'Answer' : 'Jawaban'}
-            </label>
-            <textarea
-              rows={3}
-              placeholder={language === 'en' ? 'Enter answer text...' : 'Teks jawaban...'}
-              value={form.answer}
-              onChange={e => setForm({ ...form, answer: e.target.value })}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
-            />
-            
-            <div className="flex items-center gap-2.5 mt-2 flex-wrap">
-              <button
-                type="button"
-                onClick={() => fileInputA.current?.click()}
-                disabled={isUploading}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors border border-slate-200 dark:border-slate-700 cursor-pointer disabled:opacity-50"
-              >
-                <UploadCloud className="w-4 h-4" />
-                {language === 'en' ? 'Upload Image' : 'Unggah Gambar'}
-              </button>
-              <input type="file" accept="image/*" className="hidden" ref={fileInputA} onChange={e => handleImageUpload(e, 'imageA')} />
-
-              <button
-                type="button"
-                onClick={() => setShowExplanation(prev => !prev)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50/90 hover:bg-indigo-100/90 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-semibold transition-colors border border-indigo-200/80 dark:border-indigo-800 cursor-pointer"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span>{language === 'en' ? '+ Insert Explanation' : '+ Sisipkan Penjelasan'}</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-indigo-500 transition-transform duration-200 ${showExplanation ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-
-            {form.imageA && (
-              <div className="relative w-12 h-12 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden group mt-2">
-                <img src={form.imageA} alt="Preview A" className="w-full h-full object-cover" />
-                <button type="button" onClick={() => setForm({...form, imageA: ''})} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <X className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            )}
-
-            {showExplanation && (
-              <div className="space-y-1.5 mt-3 p-3 rounded-2xl bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-1.5 text-xs font-semibold text-indigo-900 dark:text-indigo-300">
-                    <BookOpen className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                    {language === 'en' ? 'Explanation (Optional)' : 'Penjelasan (Opsional)'}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowExplanation(false);
-                      setForm(prev => ({ ...prev, explanation: '' }));
-                    }}
-                    className="text-[11px] text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                  >
-                    {language === 'en' ? 'Remove' : 'Hapus'}
-                  </button>
-                </div>
-                <textarea
-                  rows={2}
-                  placeholder={language === 'en' ? 'Add extra explanation, notes, or tips...' : 'Tuliskan penjelasan tambahan, tips, atau catatan konteks...'}
-                  value={form.explanation}
-                  onChange={e => setForm({ ...form, explanation: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-indigo-200/70 dark:border-indigo-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400"
+                <ButtonUtility
+                  icon={X}
+                  color="tertiary"
+                  tooltip={language === "en" ? "Close card form" : "Tutup form kartu"}
+                  onPress={close}
+                  isDisabled={isUploading}
+                  className="absolute right-4 top-4 bg-primary/80 shadow-xs backdrop-blur-sm"
                 />
               </div>
-            )}
-          </div>
 
-          <div className="pt-4 flex justify-end gap-3 flex-wrap">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-            >
-              {language === 'en' ? 'Cancel' : 'Tutup Keluar'}
-            </button>
-            {!initialData && (
-              <button
-                type="button"
-                onClick={() => submitForm(true)}
-                disabled={(!form.question.trim() && !form.imageQ) || (!form.answer.trim() && !form.imageA)}
-                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm border border-emerald-200 dark:border-emerald-800 cursor-pointer"
-              >
-                {language === 'en' ? 'Save & Add Another' : 'Simpan & Tambah Lagi'}
-              </button>
-            )}
-            <button
-              type="submit"
-              disabled={(!form.question.trim() && !form.imageQ) || (!form.answer.trim() && !form.imageA)}
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"
-            >
-              {language === 'en' ? 'Save Card' : (initialData ? 'Simpan Perubahan' : 'Simpan & Tutup')}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-5 sm:px-6">
+                {uploadError && <InlineAlert variant="error" title={uploadError} onDismiss={() => setUploadError(null)} />}
+
+                {chapters.length > 0 && (
+                  <div className="rounded-2xl border border-secondary bg-secondary/30 p-3.5">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-brand-700 shadow-xs ring-1 ring-brand-200 ring-inset">
+                          <BookOpen className="size-4" />
+                        </div>
+                        <div>
+                          <label htmlFor="item-chapter" className="text-sm font-medium text-primary">{language === "en" ? "Save to chapter" : "Simpan ke bab"}</label>
+                          <p className="text-xs text-secondary">{language === "en" ? "You can move the card later." : "Kartu dapat dipindahkan kembali nanti."}</p>
+                        </div>
+                      </div>
+                      <div className="relative sm:w-72">
+                        <select
+                          id="item-chapter"
+                          value={form.chapterId}
+                          onChange={(event) => setForm((current) => ({ ...current, chapterId: event.target.value }))}
+                          className="w-full appearance-none rounded-lg bg-primary px-3 py-2 pr-9 text-sm text-primary shadow-xs ring-1 ring-primary outline-none ring-inset focus:ring-2 focus:ring-brand"
+                        >
+                          <option value="">{language === "en" ? "General cards (no chapter)" : "Kartu umum (tanpa bab)"}</option>
+                          {renderChapterOptions()}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-fg-quaternary" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <section className="rounded-3xl border border-secondary bg-primary p-4 shadow-xs">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="flex size-7 items-center justify-center rounded-lg bg-brand-50 text-xs font-bold text-brand-700 ring-1 ring-brand-200 ring-inset">Q</span>
+                      <div>
+                        <h3 className="text-sm font-semibold text-primary">{language === "en" ? "Question" : "Pertanyaan"}</h3>
+                        <p className="text-xs text-secondary">{language === "en" ? "What should you recall?" : "Apa yang ingin Anda ingat?"}</p>
+                      </div>
+                    </div>
+                    <TextArea
+                      aria-label={language === "en" ? "Question text" : "Teks pertanyaan"}
+                      value={form.question}
+                      onChange={(value) => setForm((current) => ({ ...current, question: value }))}
+                      placeholder={language === "en" ? "Write a concise question or prompt..." : "Tulis pertanyaan atau pemantik yang singkat..."}
+                      rows={5}
+                      isDisabled={isUploading}
+                    />
+                    {renderImageControl("imageQ", fileInputQ)}
+                    {!hasQuestion && <p className="mt-2 text-xs text-tertiary">{language === "en" ? "Question text or an image is required." : "Teks pertanyaan atau gambar wajib diisi."}</p>}
+                  </section>
+
+                  <section className="rounded-3xl border border-secondary bg-primary p-4 shadow-xs">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="flex size-7 items-center justify-center rounded-lg bg-utility-green-50 text-xs font-bold text-utility-green-700 ring-1 ring-utility-green-200 ring-inset">A</span>
+                      <div>
+                        <h3 className="text-sm font-semibold text-primary">{language === "en" ? "Answer" : "Jawaban"}</h3>
+                        <p className="text-xs text-secondary">{language === "en" ? "What is the expected response?" : "Apa jawaban yang diharapkan?"}</p>
+                      </div>
+                    </div>
+                    <TextArea
+                      aria-label={language === "en" ? "Answer text" : "Teks jawaban"}
+                      value={form.answer}
+                      onChange={(value) => setForm((current) => ({ ...current, answer: value }))}
+                      placeholder={language === "en" ? "Write the answer clearly..." : "Tulis jawaban dengan jelas..."}
+                      rows={5}
+                      isDisabled={isUploading}
+                    />
+                    {renderImageControl("imageA", fileInputA)}
+                    {!hasAnswer && <p className="mt-2 text-xs text-tertiary">{language === "en" ? "Answer text or an image is required." : "Teks jawaban atau gambar wajib diisi."}</p>}
+                  </section>
+                </div>
+
+                <section className="overflow-hidden rounded-2xl border border-secondary bg-secondary/30">
+                  <button
+                    type="button"
+                    onClick={() => setShowExplanation((current) => !current)}
+                    className="flex w-full items-center justify-between gap-3 p-3.5 text-left transition hover:bg-primary_hover"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-brand-700 shadow-xs ring-1 ring-brand-200 ring-inset"><BookOpen className="size-4" /></div>
+                      <div>
+                        <p className="text-sm font-medium text-primary">{language === "en" ? "Add an explanation" : "Tambahkan penjelasan"}</p>
+                        <p className="text-xs text-secondary">{language === "en" ? "Optional context, notes, or memory tips." : "Konteks, catatan, atau tips mengingat yang bersifat opsional."}</p>
+                      </div>
+                    </div>
+                    <ChevronDown className={`size-4 text-fg-quaternary transition-transform ${showExplanation ? "rotate-180" : ""}`} />
+                  </button>
+                  {showExplanation && (
+                    <div className="border-t border-secondary bg-primary p-3.5 animate-in fade-in slide-in-from-top-2">
+                      <TextArea
+                        label={language === "en" ? "Explanation" : "Penjelasan"}
+                        value={form.explanation}
+                        onChange={(value) => setForm((current) => ({ ...current, explanation: value }))}
+                        placeholder={language === "en" ? "Add context that helps explain the answer..." : "Tambahkan konteks yang membantu menjelaskan jawaban..."}
+                        rows={3}
+                        isDisabled={isUploading}
+                      />
+                    </div>
+                  )}
+                </section>
+              </div>
+
+              <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <p className="hidden text-xs text-tertiary sm:block">{language === "en" ? "Both sides require text or an image." : "Kedua sisi membutuhkan teks atau gambar."}</p>
+                <div className="flex flex-col-reverse gap-3 sm:flex-row">
+                  <Button color="secondary" size="md" onPress={close} isDisabled={isUploading} className="w-full sm:w-auto">
+                    {language === "en" ? "Cancel" : "Batal"}
+                  </Button>
+                  {!isEditing && (
+                    <Button color="secondary" size="md" iconLeading={Plus} onPress={() => submitForm(true)} isDisabled={!canSubmit} className="w-full sm:w-auto">
+                      {language === "en" ? "Save & add another" : "Simpan & tambah lagi"}
+                    </Button>
+                  )}
+                  <Button type="submit" size="md" isDisabled={!canSubmit} isLoading={isUploading} showTextWhileLoading className="w-full sm:w-auto">
+                    {isUploading ? (language === "en" ? "Uploading image..." : "Mengunggah gambar...") : isEditing ? (language === "en" ? "Save changes" : "Simpan perubahan") : language === "en" ? "Save card" : "Simpan kartu"}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          )}
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 };
-

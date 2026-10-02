@@ -1,5 +1,5 @@
 import { SlideContainer } from "@/components/utils/SlideContainer";
-import { Target, Zap, Award, Crosshair } from "lucide-react";
+import { Target, Zap, Award, Crosshair } from "@/components/foundations/hugeicons";
 
 export const TimePurpose = ({ index }: { index: number }) => {
   return (

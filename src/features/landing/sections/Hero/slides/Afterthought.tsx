@@ -1,5 +1,5 @@
 import { SlideContainer } from "@/components/utils/SlideContainer";
-import { HeartCrack, TrendingDown, AlertCircle, XCircle } from "lucide-react";
+import { HeartCrack, TrendingDown, AlertCircle, XCircle } from "@/components/foundations/hugeicons";
 
 export const Afterthought = ({ index }: { index: number }) => {
   return (

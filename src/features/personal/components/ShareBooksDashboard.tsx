@@ -8,7 +8,7 @@ import {
   BookOpen,
   CheckCircle,
   XCircle,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useBooks } from "../hooks/useBooks";
 import { ShareBookCard } from "./ShareBookCard";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";

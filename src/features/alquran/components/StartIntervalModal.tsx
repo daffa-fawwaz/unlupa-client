@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { X, CalendarDays, ChevronRight, Loader2 } from "lucide-react";
+import { X, CalendarDays, ChevronRight, Loader2 } from "@/components/foundations/hugeicons";
 import { useStartInterval } from "@/features/alquran/hooks/useStartInterval";
 
 interface StartIntervalModalProps {

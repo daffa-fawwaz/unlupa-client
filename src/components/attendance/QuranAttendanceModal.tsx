@@ -1,6 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import type { Language } from '../../types';
-import { CalendarDays, CheckCircle2, XCircle, AlertCircle, Check, Undo2, Info, TrendingUp } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Alert02Icon,
+  Calendar03Icon,
+  CancelCircleIcon,
+  CheckmarkCircle02Icon,
+  CheckIcon,
+  InformationCircleIcon,
+  TrendingUpIcon,
+  Undo02Icon,
+} from '@hugeicons/core-free-icons';
 import { AnimatePresence, motion } from 'motion/react';
 import { useApp } from '../../context/AppContext';
 import { Badge } from '@/components/base/badges/badges';
@@ -107,7 +117,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
       label: language === 'en' ? 'Present' : 'Hadir',
       value: stats.present,
       hint: language === 'en' ? 'Recorded' : 'Tercatat',
-      icon: CheckCircle2,
+      icon: CheckmarkCircle02Icon,
       activeClass: 'border-emerald-300 bg-emerald-50 text-emerald-700 ring-emerald-500/15',
       iconClass: 'bg-emerald-100 text-emerald-700',
     },
@@ -116,7 +126,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
       label: language === 'en' ? 'Absent' : 'Alpa',
       value: stats.absent,
       hint: language === 'en' ? 'Needs review' : 'Perlu ditinjau',
-      icon: XCircle,
+      icon: CancelCircleIcon,
       activeClass: 'border-error_subtle bg-error-primary text-error-primary ring-error/15',
       iconClass: 'bg-error-primary text-error-primary',
     },
@@ -125,7 +135,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
       label: language === 'en' ? 'Excused' : 'Berhalangan',
       value: stats.excused,
       hint: language === 'en' ? 'Confirmed' : 'Dikonfirmasi',
-      icon: AlertCircle,
+      icon: Alert02Icon,
       activeClass: 'border-warning/30 bg-warning/10 text-warning ring-warning/15',
       iconClass: 'bg-warning/15 text-warning',
     },
@@ -158,7 +168,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
             <header className="flex shrink-0 items-center justify-between gap-4 border-b border-secondary px-4 py-3 sm:px-6 sm:py-4">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
-                  <CalendarDays className="size-5" />
+                   <HugeiconsIcon icon={Calendar03Icon} className="size-5" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
@@ -177,7 +187,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
 
             <div className="shrink-0 border-b border-secondary bg-secondary/30 p-3 sm:p-4">
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                {tabs.map(({ id, label, value, hint, icon: Icon, activeClass, iconClass }) => (
+                {tabs.map(({ id, label, value, hint, icon, activeClass, iconClass }) => (
                   <button
                     key={id}
                     type="button"
@@ -187,7 +197,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className={`flex size-9 items-center justify-center rounded-xl ${iconClass}`}>
-                        <Icon className="size-4.5" />
+                        <HugeiconsIcon icon={icon} className="size-4.5" />
                       </div>
                       <span className="text-xl font-semibold tracking-tight text-primary sm:text-2xl">{value}</span>
                     </div>
@@ -204,7 +214,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                   <section className="rounded-2xl border border-brand-200 bg-brand-50 p-4 sm:p-5">
                     <div className="flex items-start gap-3">
                       <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
-                        <TrendingUp className="size-5" />
+                         <HugeiconsIcon icon={TrendingUpIcon} className="size-5" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-end justify-between gap-3">
@@ -224,7 +234,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                   <section className="rounded-2xl border border-secondary bg-secondary/30 p-4">
                     <div className="flex items-start gap-3">
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-secondary bg-primary text-fg-quaternary">
-                        <Info className="size-4.5" />
+                         <HugeiconsIcon icon={InformationCircleIcon} className="size-4.5" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-primary">
@@ -243,7 +253,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                     <section className="flex flex-col gap-3 rounded-2xl border border-error_subtle bg-error-primary p-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-3">
                         <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-error-primary text-error-primary ring-1 ring-error_subtle ring-inset">
-                          <XCircle className="size-4.5" />
+                           <HugeiconsIcon icon={CancelCircleIcon} className="size-4.5" />
                         </div>
                         <p className="text-sm font-medium text-error-primary">
                           {language === 'en' ? `${stats.absent} days need confirmation.` : `${stats.absent} hari alpa perlu dikonfirmasi.`}
@@ -270,7 +280,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                   {stats.absentDays.length === 0 ? (
                     <div className="rounded-2xl border border-secondary bg-secondary/30 px-5 py-10 text-center">
                       <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-success/10 text-success">
-                        <Check className="size-5" />
+                         <HugeiconsIcon icon={CheckIcon} className="size-5" />
                       </div>
                       <p className="mt-3 text-sm font-semibold text-primary">{language === 'en' ? 'No unexcused absences' : 'Tidak ada alpa tanpa keterangan'}</p>
                       <p className="mt-1 text-xs text-secondary">{language === 'en' ? 'All recorded days are accounted for.' : 'Semua hari yang tercatat sudah memiliki status.'}</p>
@@ -280,7 +290,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                       <article key={item.date} className="flex flex-col gap-3 rounded-2xl border border-secondary bg-primary p-3 shadow-xs sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex min-w-0 items-center gap-3">
                           <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-error-primary text-error-primary">
-                            <CalendarDays className="size-5" />
+                             <HugeiconsIcon icon={Calendar03Icon} className="size-5" />
                           </div>
                           <div className="min-w-0">
                             <p className="truncate text-sm font-semibold text-primary">{formatDate(item.date)}</p>
@@ -314,7 +324,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                   {stats.excusedDays.length === 0 ? (
                     <div className="rounded-2xl border border-secondary bg-secondary/30 px-5 py-10 text-center">
                       <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-warning/10 text-warning">
-                        <AlertCircle className="size-5" />
+                         <HugeiconsIcon icon={Alert02Icon} className="size-5" />
                       </div>
                       <p className="mt-3 text-sm font-semibold text-primary">{language === 'en' ? 'No excused records' : 'Belum ada riwayat berhalangan'}</p>
                       <p className="mt-1 text-xs text-secondary">{language === 'en' ? 'Sick and permitted days will appear here.' : 'Hari sakit dan izin akan tampil di sini.'}</p>
@@ -324,7 +334,7 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                       <article key={item.date} className="flex items-center justify-between gap-3 rounded-2xl border border-secondary bg-primary p-3 shadow-xs">
                         <div className="flex min-w-0 items-center gap-3">
                           <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 text-warning">
-                            <CalendarDays className="size-5" />
+                             <HugeiconsIcon icon={Calendar03Icon} className="size-5" />
                           </div>
                           <div className="min-w-0">
                             <p className="truncate text-sm font-semibold text-primary">{formatDate(item.date)}</p>
@@ -336,9 +346,9 @@ export const QuranAttendanceModal: React.FC<Props> = ({ isOpen, onClose, languag
                         <Button
                           size="sm"
                           color="secondary-destructive"
-                          iconLeading={Undo2}
                           onPress={() => markAttendanceException(item.date, null)}
                         >
+                          <HugeiconsIcon icon={Undo02Icon} className="size-4" />
                           <span className="hidden sm:inline">{language === 'en' ? 'Revert' : 'Batalkan'}</span>
                         </Button>
                       </article>

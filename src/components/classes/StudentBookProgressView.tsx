@@ -14,7 +14,7 @@ import {
   ChevronDown, 
   Sparkles,
   HelpCircle
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { BilingualCardText } from '../common/BilingualCardText';
 
 interface StudentBookProgressViewProps {
