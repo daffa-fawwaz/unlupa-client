@@ -7,9 +7,12 @@ import { cx } from "@/utils/cx";
 
 const DAY_IN_MS = 86_400_000;
 
-function getLocalDateKey(value: string | Date | null | undefined): string | null {
+function getLocalDateKey(
+  value: string | Date | null | undefined,
+): string | null {
   if (!value) return null;
-  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value))
+    return value;
 
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return null;
@@ -28,7 +31,10 @@ function getLongestStreak(dateKeys: string[]): number {
 
   dateKeys.sort().forEach((dateKey) => {
     const currentTime = new Date(`${dateKey}T00:00:00Z`).getTime();
-    current = previousTime !== null && currentTime - previousTime === DAY_IN_MS ? current + 1 : 1;
+    current =
+      previousTime !== null && currentTime - previousTime === DAY_IN_MS
+        ? current + 1
+        : 1;
     longest = Math.max(longest, current);
     previousTime = currentTime;
   });
@@ -37,17 +43,28 @@ function getLongestStreak(dateKeys: string[]): number {
 }
 
 export function StreakOverviewCard() {
-  const { quranPages, items, currentStreak: localCurrentStreak, language } = useApp();
+  const {
+    quranPages,
+    items,
+    currentStreak: localCurrentStreak,
+    language,
+  } = useApp();
   const { data: dashboardStats, isLoading } = useDashboardStats();
   const [showDetails, setShowDetails] = useState(false);
 
   const streakData = useMemo(() => {
     const activityByDate = new Map<string, number>();
-    const addActivity = (value: string | Date | null | undefined, count = 1) => {
+    const addActivity = (
+      value: string | Date | null | undefined,
+      count = 1,
+    ) => {
       const dateKey = getLocalDateKey(value);
       if (!dateKey) return;
 
-      activityByDate.set(dateKey, Math.max(activityByDate.get(dateKey) ?? 0, count));
+      activityByDate.set(
+        dateKey,
+        Math.max(activityByDate.get(dateKey) ?? 0, count),
+      );
     };
 
     // Preserve all activity sources used by the previous weekly streak widget.
@@ -75,9 +92,10 @@ export function StreakOverviewCard() {
     monday.setDate(today.getDate() - dayFromMonday);
     monday.setHours(0, 0, 0, 0);
 
-    const dayLabels = language === "en"
-      ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-      : ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+    const dayLabels =
+      language === "en"
+        ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        : ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
     const weekDays = dayLabels.map((label, index) => {
       const date = new Date(monday);
@@ -95,12 +113,18 @@ export function StreakOverviewCard() {
 
     const dateKeys = Array.from(activityByDate.keys());
     const localLongestStreak = getLongestStreak(dateKeys);
-    const totalActivities = Array.from(activityByDate.values()).reduce((total, count) => total + count, 0);
+    const totalActivities = Array.from(activityByDate.values()).reduce(
+      (total, count) => total + count,
+      0,
+    );
 
     return {
       weekDays,
       currentStreak: dashboardStats?.current_streak ?? localCurrentStreak,
-      longestStreak: Math.max(dashboardStats?.longest_streak ?? 0, localLongestStreak),
+      longestStreak: Math.max(
+        dashboardStats?.longest_streak ?? 0,
+        localLongestStreak,
+      ),
       totalActivities,
     };
   }, [dashboardStats, items, language, localCurrentStreak, quranPages]);
@@ -120,13 +144,15 @@ export function StreakOverviewCard() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <Flame className="size-5 text-fg-secondary" aria-hidden="true" />
+              <span className="flex size-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+                <Flame className="size-5 fill-current" aria-hidden="true" />
+              </span>
               <h2 className="text-lg font-semibold text-primary sm:text-xl">
                 {isEnglish ? "Streak" : "Istiqomah"}
               </h2>
             </div>
 
-            <p className="mt-3 text-display-sm font-semibold tracking-tight text-primary sm:text-display-md">
+            <p className="mt-3 text-display-sm font-semibold tracking-tight text-brand-700 sm:text-display-md">
               {streakData.currentStreak}
               <span className="ml-1.5 text-lg font-semibold text-secondary sm:text-xl">
                 {isEnglish ? "days" : "hari"}
@@ -140,31 +166,48 @@ export function StreakOverviewCard() {
             className="rounded-lg px-2 py-1 text-sm font-semibold text-secondary outline-focus-ring transition-colors hover:bg-primary_hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             {showDetails
-              ? isEnglish ? "Hide details" : "Tutup detail"
-              : isEnglish ? "View details" : "Lihat detail"}
+              ? isEnglish
+                ? "Hide details"
+                : "Tutup detail"
+              : isEnglish
+                ? "View details"
+                : "Lihat detail"}
           </button>
         </div>
 
         <div className="mt-5 grid grid-cols-7 gap-1.5 sm:gap-3">
           {streakData.weekDays.map((day) => (
-            <div key={day.label} className="flex min-w-0 flex-col items-center gap-2">
+            <div
+              key={day.label}
+              className="flex min-w-0 flex-col items-center gap-2"
+            >
               <div
                 title={
                   day.activityCount > 0
                     ? `${day.activityCount} ${isEnglish ? "activities" : "aktivitas"}`
-                    : isEnglish ? "No activity" : "Belum ada aktivitas"
+                    : isEnglish
+                      ? "No activity"
+                      : "Belum ada aktivitas"
                 }
                 aria-label={`${day.label}: ${day.activityCount} ${isEnglish ? "activities" : "aktivitas"}`}
                 className={cx(
                   "flex aspect-square w-full max-w-12 items-center justify-center rounded-full border transition-colors",
-                  day.isActive && "border-primary-solid bg-primary-solid text-white shadow-xs",
-                  !day.isActive && day.isToday && "border-brand bg-brand-primary text-brand-secondary",
-                  !day.isActive && !day.isToday && "border-secondary bg-secondary text-quaternary",
+                  day.isActive &&
+                    "border-brand-600 bg-brand-solid text-white shadow-md shadow-brand-500/25 ring-4 ring-brand-50",
+                  !day.isActive &&
+                    day.isToday &&
+                    "border-brand bg-brand-primary text-brand-secondary",
+                  !day.isActive &&
+                    !day.isToday &&
+                    "border-secondary bg-secondary text-quaternary",
                   day.isFuture && "opacity-55",
                 )}
               >
                 {day.isActive ? (
-                  <Check className="size-4 stroke-[2.5] sm:size-5" aria-hidden="true" />
+                  <Check
+                    className="size-4 stroke-[2.5] sm:size-5"
+                    aria-hidden="true"
+                  />
                 ) : (
                   <span className="size-1.5 rounded-full bg-fg-quaternary/50" />
                 )}
@@ -172,7 +215,7 @@ export function StreakOverviewCard() {
               <span
                 className={cx(
                   "truncate text-xs font-medium text-tertiary",
-                  day.isActive && "text-primary",
+                  day.isActive && "text-brand-700",
                   day.isToday && "font-semibold",
                 )}
               >
@@ -191,11 +234,15 @@ export function StreakOverviewCard() {
             </p>
             <p className="mt-1 text-display-xs font-semibold tracking-tight text-primary">
               {streakData.longestStreak}
-              <span className="ml-1 text-lg">{isEnglish ? "days" : "hari"}</span>
+              <span className="ml-1 text-lg">
+                {isEnglish ? "days" : "hari"}
+              </span>
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-secondary">{isEnglish ? "Total" : "Total"}</p>
+            <p className="text-sm text-secondary">
+              {isEnglish ? "Total" : "Total"}
+            </p>
             <p className="mt-1 text-display-xs font-semibold tracking-tight text-primary">
               {streakData.totalActivities}
             </p>
@@ -209,9 +256,14 @@ export function StreakOverviewCard() {
             onClick={() => setShowDetails((isOpen) => !isOpen)}
             className="flex w-full items-center justify-between gap-4 rounded-xl bg-secondary px-4 py-3 text-left text-sm font-semibold text-primary outline-focus-ring transition-colors hover:bg-secondary_hover focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <span>{isEnglish ? "How do streaks work?" : "Bagaimana streak bekerja?"}</span>
+            <span>
+              {isEnglish ? "How do streaks work?" : "Bagaimana streak bekerja?"}
+            </span>
             <ChevronDown
-              className={cx("size-4 text-fg-quaternary transition-transform", showDetails && "rotate-180")}
+              className={cx(
+                "size-4 text-fg-quaternary transition-transform",
+                showDetails && "rotate-180",
+              )}
               aria-hidden="true"
             />
           </button>

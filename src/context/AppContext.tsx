@@ -1031,7 +1031,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             userId: uid,
             title: b.title,
             description: b.description || '',
-            coverUrl: b.cover_image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+            coverUrl: b.cover_image || b.cover_image_url || b.cover_url || b.coverUrl || b.cover?.url || undefined,
             isPublic: b.is_public ?? false,
             category: 'Umum',
             isReadonly: false,
@@ -1047,7 +1047,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             userId: uid,
             title: b.title,
             description: b.description || '',
-            coverUrl: b.cover_image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+            coverUrl: b.cover_image || b.cover_image_url || b.cover_url || b.coverUrl || b.cover?.url || undefined,
             isPublic: true,
             category: 'Umum',
             isReadonly: true,
@@ -1097,7 +1097,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           userId: b.owner_id || '',
           title: b.title || 'Untitled Book',
           description: b.description || '',
-          coverUrl: b.cover_image || '',
+          coverUrl: b.cover_image || b.cover_image_url || b.cover_url || b.coverUrl || b.cover?.url || '',
           isPublic: true,
           isReadonly: false,
           authorName: b.owner_name || 'Penulis',
@@ -1193,11 +1193,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           frequentStruggles: [],
           teacherFeedbacks: [],
         }));
-        setTeachingClasses(prev => prev.map(cls => cls.id === classId ? {
+        const updateClassMembers = (classes: ClassGroup[]) => classes.map(cls => cls.id === classId ? {
           ...cls,
           students: mappedStudents,
           studentCount: mappedStudents.length,
-        } : cls));
+        } : cls);
+        setTeachingClasses(updateClassMembers);
+        setMyClasses(updateClassMembers);
       }
     } catch (err) {
       console.warn(`Failed to fetch members for class ${classId}:`, err);
@@ -1999,8 +2001,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cover_image: data.coverUrl,
       });
       if (res && res.data) {
-        backendBookId = res.data.id || backendBookId;
-        backendCover = res.data.cover_image || backendCover;
+        const backendBook = res.data as typeof res.data & {
+          cover_image_url?: string;
+          cover_url?: string;
+          coverUrl?: string;
+        };
+        backendBookId = backendBook.id || backendBookId;
+        backendCover = backendBook.cover_image || backendBook.cover_image_url || backendBook.cover_url || backendBook.coverUrl || backendCover;
       }
     } catch (err) {
       console.warn("Backend createBook failed:", err);
@@ -2011,7 +2018,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       userId: userProfile.id,
       title: data.title,
       description: data.description,
-      coverUrl: backendCover || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+      coverUrl: backendCover,
       isPublic: data.isPublic ?? false,
       category: data.category || 'Umum',
       isReadonly: false,

@@ -134,8 +134,10 @@ export const DashboardLayout: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col bg-primary font-sans text-primary transition-colors selection:bg-brand-500 selection:text-white">
       {/* Top Application Bar */}
-      <header className="sticky top-0 z-40 border-b border-secondary bg-primary/95 backdrop-blur-md transition-colors print:hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-40 overflow-visible border-b border-brand-200/80 bg-primary/90 shadow-[0_8px_30px_rgba(239,105,5,0.06)] backdrop-blur-xl transition-colors print:hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,var(--color-brand-500),transparent)] opacity-70" />
+        <div className="pointer-events-none absolute -top-20 left-[8%] size-36 rounded-full bg-brand-200/25 blur-3xl" />
+        <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
             <button
@@ -145,47 +147,51 @@ export const DashboardLayout: React.FC = () => {
                   userRole === "teacher" ? "/dashboard/kelas" : "/dashboard",
                 )
               }
-              className="flex items-center gap-2.5 text-left group cursor-pointer"
+              className="group flex cursor-pointer items-center gap-2.5 rounded-xl text-left outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-4"
             >
-              <div className="relative flex size-8 items-center justify-center overflow-hidden rounded-lg border border-secondary bg-primary-solid shadow-lg shadow-amber-500/10 transition-transform group-hover:scale-105">
+              <div className="relative flex size-9 items-center justify-center overflow-hidden rounded-xl border border-brand-500 bg-[linear-gradient(145deg,#fb923c_0%,#ef6905_58%,#c2410c_100%)] shadow-lg shadow-brand-500/25 transition-transform duration-200 group-hover:-rotate-3 group-hover:scale-105">
+                <div className="absolute -right-2 -top-2 size-5 rounded-full bg-white/25 blur-sm" />
                 {/* Custom CSS Logo */}
                 <div className="w-4 h-5 relative flex flex-col justify-between">
                   <div
-                    className="absolute left-0 top-1 bottom-0 w-2 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-600 rounded-sm"
+                    className="absolute left-0 top-1 bottom-0 w-2 rounded-sm bg-gradient-to-b from-white via-orange-50 to-orange-200"
                     style={{
                       clipPath: "polygon(0 15%, 100% 0, 100% 100%, 0 85%)",
                     }}
                   />
                   <div
-                    className="absolute right-0 top-0 bottom-1 w-2 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-600 rounded-sm"
+                    className="absolute right-0 top-0 bottom-1 w-2 rounded-sm bg-gradient-to-b from-white via-orange-50 to-orange-200"
                     style={{
                       clipPath: "polygon(0 0, 100% 15%, 100% 85%, 0 100%)",
                     }}
                   />
                   <div
-                    className="absolute bottom-0 left-1 right-1 h-2 bg-gradient-to-r from-amber-600 to-amber-500"
+                    className="absolute bottom-0 left-1 right-1 h-2 bg-gradient-to-r from-orange-200 to-white"
                     style={{
                       clipPath: "polygon(0 100%, 100% 0, 100% 100%, 0 100%)",
                     }}
                   />
                   <div
-                    className="absolute top-0 left-1 right-1 h-2 bg-gradient-to-r from-amber-400 to-amber-300"
+                    className="absolute top-0 left-1 right-1 h-2 bg-gradient-to-r from-white to-orange-100"
                     style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 0)" }}
                   />
                 </div>
               </div>
               <div>
                 <span
-                  className="text-lg font-bold uppercase tracking-tight text-primary"
+                  className="text-lg font-black uppercase tracking-tight text-primary"
                   style={{
                     fontFamily: "system-ui, sans-serif",
                     letterSpacing: "-0.02em",
                   }}
                 >
                   Unlupa
-                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-400 to-orange-500">
+                  <span className="bg-gradient-to-br from-orange-500 to-brand-700 bg-clip-text text-transparent">
                     .id
                   </span>
+                </span>
+                <span className="hidden text-[9px] font-semibold uppercase tracking-[0.18em] text-tertiary sm:block">
+                  Keep knowledge alive
                 </span>
               </div>
             </button>
@@ -197,14 +203,14 @@ export const DashboardLayout: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsReportModalOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[#161f30] border border-slate-700/80 hover:border-slate-600 text-xs font-bold text-slate-200 shadow-2xs transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+              className="hidden h-9 cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl border border-brand-200 bg-brand-50 px-3 text-xs font-bold text-brand-700 shadow-xs transition-all hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-100 hover:shadow-md active:scale-95 sm:inline-flex"
               title={
                 language === "en"
                   ? "Share Progress Report"
                   : "Bagikan Rapor Progres"
               }
             >
-              <HugeiconsIcon icon={Share01Icon} />
+              <HugeiconsIcon icon={Share01Icon} className="size-4" />
               <span>{language === "en" ? "Share Report" : "Bagi Rapor"}</span>
             </button>
 
@@ -213,11 +219,11 @@ export const DashboardLayout: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowProfileMenu((isOpen) => !isOpen)}
-                className={`flex h-9 items-center rounded-full border shadow-xs transition active:scale-95 ${hasProAccess ? "gap-1.5 border-[#f59e0b]/60 bg-[#24170d] py-1 pl-1 pr-2 shadow-[#ef6905]/15 hover:bg-[#302014]" : "gap-2 border-secondary bg-primary px-2 hover:bg-primary_hover"}`}
+                className={`flex h-10 items-center rounded-xl border shadow-xs transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 ${hasProAccess ? "gap-2 border-brand-300 bg-[linear-gradient(135deg,var(--color-brand-50),var(--color-brand-100))] py-1 pl-1.5 pr-2.5 shadow-brand-500/10 hover:border-brand-400" : "gap-2 border-secondary bg-primary px-2 hover:border-brand-200 hover:bg-primary_hover"}`}
                 aria-expanded={showProfileMenu}
               >
                 <span
-                  className={`inline-flex shrink-0 rounded-full ${hasProAccess ? "ring-2 ring-[#ef6905] ring-offset-1 ring-offset-[#24170d]" : ""}`}
+                  className={`inline-flex shrink-0 rounded-lg ${hasProAccess ? "ring-2 ring-brand-500 ring-offset-1 ring-offset-brand-50" : ""}`}
                 >
                   <Avatar
                     size="xs"
@@ -228,20 +234,20 @@ export const DashboardLayout: React.FC = () => {
                   />
                 </span>
                 <span
-                  className={`hidden max-w-[120px] truncate text-sm font-semibold lg:inline ${hasProAccess ? "text-white" : "text-primary"}`}
+                  className={`hidden max-w-[120px] truncate text-sm font-semibold xl:inline ${hasProAccess ? "text-brand-900" : "text-primary"}`}
                 >
                   {profileName}
                 </span>
                 {hasProAccess && (
                   <>
-                    <Crown className="size-3.5 fill-[#fbbf24] text-[#fbbf24] sm:hidden" />
-                    <span className="hidden rounded-full bg-[#ef6905] px-1.5 py-0.5 text-[9px] font-black tracking-wider text-white sm:inline">
+                    <Crown className="size-3.5 fill-brand-600 text-brand-600 sm:hidden" />
+                    <span className="hidden rounded-full bg-brand-solid px-1.5 py-0.5 text-[9px] font-black tracking-wider text-white shadow-xs sm:inline">
                       PRO
                     </span>
                   </>
                 )}
                 <ChevronDown
-                  className={`size-3.5 shrink-0 ${hasProAccess ? "text-[#fbbf24]" : "text-fg-quaternary"}`}
+                  className={`size-3.5 shrink-0 ${hasProAccess ? "text-brand-700" : "text-fg-quaternary"}`}
                 />
               </button>
 

@@ -1,6 +1,6 @@
 import "@/App.css";
 import { Outlet, ScrollRestoration } from "react-router";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { AppProvider, useApp } from "@/context/AppContext";
 
 function AppShell() {
@@ -13,8 +13,11 @@ function AppShell() {
       <Toaster
         theme={theme}
         position="top-right"
-        richColors
         closeButton
+        expand
+        gap={10}
+        offset={20}
+        visibleToasts={4}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 export interface Book {
   id: string;
   owner_id: string;
+  owner_name?: string;
   title: string;
   description: string;
   cover_image: string;
@@ -99,7 +100,14 @@ export interface BookItem {
   review_count: number;
   stability?: number | string;
   next_review_at?: string;
-  status: 'belum_mulai' | 'start' | 'menghafal' | 'interval' | 'fsrs_active' | 'graduate' | 'inactive';
+  status:
+    | "belum_mulai"
+    | "start"
+    | "menghafal"
+    | "interval"
+    | "fsrs_active"
+    | "graduate"
+    | "inactive";
   created_at: string;
   updated_at: string;
 }

@@ -5,41 +5,12 @@ import {
   Edit2,
   Trash2,
   Calendar,
-  Box,
-  MoreHorizontalIcon,
 } from "@/components/foundations/hugeicons";
 import type { Book } from "../types/personal.types";
 import { useRemoveBookFromClass } from "@/features/classroom/hooks/useClassroom";
 import { toast } from "sonner";
 import { resolveAssetUrl } from "@/lib/assets";
-
-interface CoverImageProps {
-  src: string;
-  alt: string;
-}
-
-const CoverImage = ({ src, alt }: CoverImageProps) => {
-  const [failed, setFailed] = useState(false);
-
-  if (failed) {
-    return (
-      <div className="absolute inset-0 w-full h-full bg-linear-to-t from-surface-1 to-surface-2 flex items-center justify-center">
-        <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-xl bg-surface-2 border border-border flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-          <Box className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      onError={() => setFailed(true)}
-      className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
-    />
-  );
-};
+import { BookCoverVisual } from "@/components/personal/BookCoverVisual";
 
 export interface BookCardProps {
   book: Book;
@@ -60,24 +31,17 @@ export const BookCard = ({
 }: BookCardProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const removeBookMutation = useRemoveBookFromClass();
 
   const coverSrc = resolveAssetUrl(book.cover_image);
 
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     if (!classroomId) return;
-    
-    setIsDropdownOpen(false);
+
     setMenuOpen(false);
     const toastId = toast.loading("Menghapus buku dari kelas...");
 
@@ -90,16 +54,22 @@ export const BookCard = ({
             duration: 3000,
           });
         },
-        onError: (err: any) => {
+        onError: (err) => {
+          const apiError = err as {
+            response?: { data?: { message?: string } };
+            message?: string;
+          };
           toast.error(
-            err?.response?.data?.message || err?.message || "Gagal menghapus buku dari kelas.",
+            apiError.response?.data?.message ||
+              apiError.message ||
+              "Gagal menghapus buku dari kelas.",
             {
               id: toastId,
               duration: 4000,
-            }
+            },
           );
         },
-      }
+      },
     );
   };
 
@@ -156,7 +126,9 @@ export const BookCard = ({
     };
   }, [menuOpen]);
 
-  const hasMenuActions = Boolean(onEdit || onDelete || (showMenu && classroomId));
+  const hasMenuActions = Boolean(
+    onEdit || onDelete || (showMenu && classroomId),
+  );
 
   return (
     <div
@@ -231,19 +203,16 @@ export const BookCard = ({
           document.body,
         )}
 
-      {/* Image header */}
-      <div className="relative h-28 sm:h-48 w-full shrink-0 overflow-hidden flex items-center justify-center bg-surface-1 border-b border-border">
-        <div className="absolute bottom-0 inset-x-0 h-24 bg-linear-to-t from-card to-transparent z-10 pointer-events-none" />
-
-        {coverSrc ? (
-          <CoverImage key={coverSrc} src={coverSrc} alt={book.title} />
-        ) : (
-          <div className="absolute inset-0 w-full h-full bg-linear-to-t from-surface-1 to-surface-2 flex items-center justify-center">
-            <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-xl bg-surface-2 border border-border flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <Box className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
-            </div>
-          </div>
-        )}
+      {/* Physical book cover */}
+      <div className="relative flex h-32 w-full shrink-0 items-center justify-center overflow-hidden border-b border-border bg-[radial-gradient(circle_at_50%_25%,rgba(239,105,5,0.16),transparent_68%)] sm:h-56">
+        <div className="absolute inset-x-5 bottom-3 h-2 rounded-full bg-black/15 blur-sm" />
+        <div className="absolute inset-x-0 bottom-0 h-5 border-t border-[#d8c7ae] bg-[linear-gradient(180deg,#eadfce_0%,#cdb99d_100%)] dark:border-[#51483d] dark:bg-[linear-gradient(180deg,#51483d_0%,#302a24_100%)]" />
+        <BookCoverVisual
+          src={coverSrc}
+          title={book.title}
+          author={book.owner_name}
+          className="h-24 w-[4.25rem] sm:h-44 sm:w-32"
+        />
       </div>
 
       {/* Body */}

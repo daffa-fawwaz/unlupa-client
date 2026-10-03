@@ -22,6 +22,7 @@ import { ConfirmModal } from "./ConfirmModal";
 import { BookInteractionTracker } from "./BookInteractionTracker";
 import { BookReviewCalendarModal } from "./BookReviewCalendarModal";
 import { BookReviewForecast7Days } from "./BookReviewForecast7Days";
+import { BookCoverVisual } from "./BookCoverVisual";
 import { GlobalCardSearchModal } from "./GlobalCardSearchModal";
 import { PersonalBookPage } from "./pages/PersonalBookPage";
 import {
@@ -439,8 +440,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       setSelectedChapterId(c ? c.id : null);
     }
   };
-  const [chapterFilter, setChapterFilter] =
-    useState<ChapterCardFilter>("all");
+  const [chapterFilter, setChapterFilter] = useState<ChapterCardFilter>("all");
   const [chapterCardSearch, setChapterCardSearch] = useState("");
   const [tocSearch, setTocSearch] = useState("");
   const [isBulkMode, setIsBulkMode] = useState(false);
@@ -1287,26 +1287,15 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                       }}
                       className="group cursor-pointer rounded-3xl border border-secondary bg-primary p-3 shadow-xs outline-focus-ring transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
-                      <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-secondary">
-                        {book.coverUrl ? (
-                          <img
-                            src={book.coverUrl}
-                            alt={book.title}
-                            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex size-full items-center justify-center bg-[linear-gradient(145deg,#431407_0%,#9a3412_55%,#ef6905_100%)] text-white">
-                            <div className="text-center">
-                              <HugeiconsIcon
-                                icon={BookDashedIcon}
-                                className="mx-auto size-7"
-                              />
-                              <p className="mt-2 max-w-52 truncate px-3 text-sm font-semibold">
-                                {book.title}
-                              </p>
-                            </div>
-                          </div>
-                        )}
+                      <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl border border-secondary bg-[radial-gradient(circle_at_50%_28%,var(--color-brand-100)_0%,var(--color-bg-secondary)_68%)]">
+                        <div className="absolute inset-x-5 bottom-4 h-2 rounded-full bg-black/10 blur-sm dark:bg-black/30" />
+                        <div className="absolute inset-x-0 bottom-0 h-7 border-t border-[#d8c7ae] bg-[linear-gradient(180deg,#eadfce_0%,#cdb99d_100%)] dark:border-[#51483d] dark:bg-[linear-gradient(180deg,#51483d_0%,#302a24_100%)]" />
+                        <BookCoverVisual
+                          src={book.coverUrl}
+                          title={book.title}
+                          author={book.authorName || userProfile.fullName}
+                          className="h-52 w-[9.25rem]"
+                        />
                         <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-2.5">
                           <Badge
                             color={
@@ -2444,18 +2433,19 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       )}
 
       {/* 3. Chapter View: Halaman Khusus Bab & Item-Item Kartu (Seperti Halaman Juz Al-Qur'an) */}
-      {selectedBook && currentChapter &&
+      {selectedBook &&
+        currentChapter &&
         (() => {
           const isUnassigned = currentChapter.id === "__unassigned__";
           const chapterCards = isUnassigned
             ? bookItems.filter(
                 (item) =>
                   !item.chapterId ||
-                  !bookChapters.some((chapter) => chapter.id === item.chapterId),
+                  !bookChapters.some(
+                    (chapter) => chapter.id === item.chapterId,
+                  ),
               )
-            : bookItems.filter(
-                (item) => item.chapterId === currentChapter.id,
-              );
+            : bookItems.filter((item) => item.chapterId === currentChapter.id);
           const activeCards = chapterCards.filter((card) => card.isActive);
           const dueCards = chapterCards.filter((card) => isItemDue(card));
           const masteredCards = chapterCards.filter(
@@ -2786,7 +2776,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                     icon={X}
                     color="tertiary"
                     tooltip={
-                      language === "en" ? "Close chapter form" : "Tutup form bab"
+                      language === "en"
+                        ? "Close chapter form"
+                        : "Tutup form bab"
                     }
                     onPress={closeChapterModal}
                     className="absolute right-4 top-4 bg-primary/80 shadow-xs backdrop-blur-sm"
@@ -3397,6 +3389,7 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
   const intervalDays = getNonQuranIntervalDays(item.fsrsData);
   const isMapan = item.isActive && intervalDays >= 300;
   const intervals = predictNonQuranIntervals(item.fsrsData);
+  const hasVisualMedia = Boolean(item.imageQ || item.imageA);
 
   const formatDate = (d: string | null) => {
     if (!d) return language === "en" ? "Today" : "Hari ini";
@@ -3584,91 +3577,142 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
         </div>
       </div>
 
-      {/* Main Content: Question Body */}
+      {/* Media cards use two sides; text-only cards stay stacked. */}
       <div
-        className="flex items-start gap-3 cursor-pointer py-0.5 group/content"
-        onClick={(e) => {
-          if (isBulkMode) {
-            e.stopPropagation();
-            onToggleSelect?.();
-          } else {
-            onPreview();
-          }
-        }}
-        title={
-          isBulkMode
-            ? language === "en"
-              ? "Click to select/deselect"
-              : "Klik untuk memilih kartu"
-            : language === "en"
-              ? "Click to open pop-up preview"
-              : "Klik untuk melihat pop-up lengkap"
-        }
+        className={hasVisualMedia ? "grid grid-cols-2 gap-3" : "space-y-2.5"}
       >
-        {/* Thumbnail Image if available */}
-        {item.imageQ && (
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-50 dark:bg-slate-800 shrink-0 overflow-hidden flex items-center justify-center shadow-2xs border border-slate-200/70 dark:border-slate-700">
-            <img
-              src={item.imageQ}
-              className="w-full h-full object-cover group-hover/content:scale-105 transition-transform"
-              alt="Media"
-            />
-          </div>
-        )}
-
-        {/* Text Content */}
-        <div className="flex-1 min-w-0">
-          <BilingualCardText
-            text={item.question}
-            type="question"
-            variant="card-list"
-            emptyFallback={
-              language === "en" ? "[Image Only]" : "[Hanya Gambar]"
+        <button
+          type="button"
+          className={`group/content flex min-w-0 flex-col rounded-2xl border border-secondary bg-secondary/35 p-3 text-left outline-none transition hover:border-brand-200 hover:bg-brand-50/35 focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
+            hasVisualMedia ? "min-h-44" : "w-full"
+          }`}
+          onClick={(event) => {
+            if (isBulkMode) {
+              event.stopPropagation();
+              onToggleSelect?.();
+            } else {
+              onPreview();
             }
-          />
-        </div>
-      </div>
-
-      {/* Answer Area: (Inline Reveal when eye icon is clicked) */}
-      {showInlineAnswer && (
-        <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
-          {/* Formatted Answer Body */}
-          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60 text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
-            {item.imageA && (
-              <div className="mb-2 max-h-36 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-                <img
-                  src={item.imageA}
-                  alt="Answer Media"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+          }}
+          title={
+            isBulkMode
+              ? language === "en"
+                ? "Click to select/deselect"
+                : "Klik untuk memilih kartu"
+              : language === "en"
+                ? "Click to open pop-up preview"
+                : "Klik untuk melihat pop-up lengkap"
+          }
+        >
+          <span className="mb-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
+            {language === "en" ? "Question" : "Pertanyaan"}
+          </span>
+          {item.imageQ && (
+            <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-secondary bg-primary shadow-2xs sm:h-40">
+              <img
+                src={item.imageQ}
+                className="size-full object-contain transition-transform duration-300 group-hover/content:scale-[1.02]"
+                alt={language === "en" ? "Question media" : "Media pertanyaan"}
+              />
+            </div>
+          )}
+          <div
+            className={`min-w-0 ${hasVisualMedia && !item.imageQ ? "my-auto w-full" : "w-full"}`}
+          >
             <BilingualCardText
-              text={item.answer}
-              type="answer"
+              text={item.question}
+              type="question"
               variant="card-list"
               emptyFallback={
-                language === "en"
-                  ? "[No text answer]"
-                  : "[Tidak ada teks jawaban]"
+                language === "en" ? "[Image Only]" : "[Hanya Gambar]"
               }
             />
+          </div>
+        </button>
 
-            {item.explanation && (
-              <div className="mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 text-xs text-slate-600 dark:text-slate-400">
-                <span className="font-semibold text-brand-600">
-                  {language === "en" ? "Explanation" : "Penjelasan"}:{" "}
-                </span>
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowInlineAnswer((current) => !current);
+          }}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3 text-left outline-none transition focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
+            hasVisualMedia ? "min-h-44" : "w-full"
+          } ${
+            showInlineAnswer
+              ? "border-brand-200 bg-brand-50/40"
+              : "border-secondary bg-secondary/35 hover:border-brand-200 hover:bg-brand-50/35"
+          }`}
+        >
+          <span className="mb-2 flex w-full items-center justify-between gap-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
+            <span>{language === "en" ? "Answer" : "Jawaban"}</span>
+            <span className="inline-flex items-center gap-1 rounded-lg bg-primary px-2 py-1 text-[9px] normal-case tracking-normal text-brand-700 shadow-xs">
+              {showInlineAnswer ? (
+                <EyeOff className="size-3" />
+              ) : (
+                <Eye className="size-3" />
+              )}
+              {showInlineAnswer
+                ? language === "en"
+                  ? "Hide"
+                  : "Tutup"
+                : language === "en"
+                  ? "Open"
+                  : "Buka"}
+            </span>
+          </span>
+
+          {showInlineAnswer ? (
+            <>
+              {item.imageA && (
+                <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-brand-200 bg-primary shadow-2xs sm:h-40">
+                  <img
+                    src={item.imageA}
+                    alt={language === "en" ? "Answer media" : "Media jawaban"}
+                    className="size-full object-contain"
+                  />
+                </div>
+              )}
+              <div
+                className={`min-w-0 ${hasVisualMedia && !item.imageA ? "my-auto w-full" : "w-full"}`}
+              >
                 <BilingualCardText
-                  text={item.explanation}
+                  text={item.answer}
                   type="answer"
                   variant="card-list"
+                  emptyFallback={
+                    language === "en"
+                      ? "[No text answer]"
+                      : "[Tidak ada teks jawaban]"
+                  }
                 />
+
+                {item.explanation && (
+                  <div className="mt-3 border-t border-brand-200 pt-2 text-xs text-secondary">
+                    <span className="font-semibold text-brand-700">
+                      {language === "en" ? "Explanation" : "Penjelasan"}:{" "}
+                    </span>
+                    <BilingualCardText
+                      text={item.explanation}
+                      type="answer"
+                      variant="card-list"
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
+            </>
+          ) : (
+            <span className="my-auto flex w-full flex-col items-center justify-center gap-2 py-6 text-center text-xs font-medium text-tertiary">
+              <span className="flex size-9 items-center justify-center rounded-full bg-brand-solid text-white shadow-md shadow-brand-500/20">
+                <Eye className="size-4" />
+              </span>
+              {language === "en"
+                ? "Click to reveal the answer"
+                : "Klik untuk buka jawaban"}
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* 4 Tombol Evaluasi Kartu */}
       {item.isActive ? (

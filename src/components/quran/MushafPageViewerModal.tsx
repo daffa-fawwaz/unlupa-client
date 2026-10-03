@@ -1,22 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  ChevronLeft, 
-  ChevronRight, 
-  BookOpen, 
-  ZoomIn, 
-  ZoomOut, 
-  RotateCcw,
+import React, { useState, useEffect } from "react";
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  BookOpen,
+  ZoomIn,
+  ZoomOut,
   Loader2,
   CheckCircle2,
   Download,
-  MessageSquare
+  MessageSquare,
 } from "@/components/foundations/hugeicons";
-import { getSurahForPage, getJuzForPage, getQuranPageImageUrl, MUSHAF_SAMPLE_SNIPPETS } from '../../data/quranData';
-import { getOfflinePageUrl, cachePageOffline, isPageCachedOffline } from '../../lib/offlineStorage';
-import { AudioRecorderPlayer } from '../shared/AudioRecorderPlayer';
-import { MurottalPlayer } from '../shared/MurottalPlayer';
-import { useSwipeGesture } from '../../hooks/useSwipeGesture';
+import {
+  getSurahForPage,
+  getJuzForPage,
+  getQuranPageImageUrl,
+  MUSHAF_SAMPLE_SNIPPETS,
+} from "../../data/quranData";
+import {
+  getOfflinePageUrl,
+  cachePageOffline,
+  isPageCachedOffline,
+} from "../../lib/offlineStorage";
+import { AudioRecorderPlayer } from "../shared/AudioRecorderPlayer";
+import { MurottalPlayer } from "../shared/MurottalPlayer";
+import { useSwipeGesture } from "../../hooks/useSwipeGesture";
+import {
+  Dialog,
+  Modal,
+  ModalOverlay,
+} from "@/components/application/modals/modal";
 
 interface Props {
   pageNumber: number;
@@ -43,6 +56,7 @@ export const MushafPageViewerModal: React.FC<Props> = ({
   useEffect(() => {
     let isMounted = true;
     setImageError(false);
+    setZoomLevel(1);
 
     // Check local offline storage first for 0ms instant loading
     (async () => {
@@ -81,24 +95,37 @@ export const MushafPageViewerModal: React.FC<Props> = ({
       if (!isOpen) return;
       // Don't trigger if user is typing
       const target = e.target as HTMLElement;
-      if (target && ['input', 'textarea', 'select'].includes(target.tagName.toLowerCase())) {
+      if (
+        target &&
+        ["input", "textarea", "select"].includes(target.tagName.toLowerCase())
+      ) {
         return;
       }
 
-      if (e.key === 'Escape') {
-        onClose();
-      } else if (e.key === 'ArrowLeft' && e.altKey && onNavigatePage && pageNumber < 604) {
+      if (
+        e.key === "ArrowLeft" &&
+        e.altKey &&
+        onNavigatePage &&
+        pageNumber < 604
+      ) {
         // Alt + ArrowLeft: Next page
+        e.preventDefault();
         onNavigatePage(pageNumber + 1);
-      } else if (e.key === 'ArrowRight' && e.altKey && onNavigatePage && pageNumber > 1) {
+      } else if (
+        e.key === "ArrowRight" &&
+        e.altKey &&
+        onNavigatePage &&
+        pageNumber > 1
+      ) {
         // Alt + ArrowRight: Prev page
+        e.preventDefault();
         onNavigatePage(pageNumber - 1);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, pageNumber, onNavigatePage, onClose]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, pageNumber, onNavigatePage]);
 
   // Swipe support for Mushaf page flipping
   useSwipeGesture(null, {
@@ -136,230 +163,293 @@ export const MushafPageViewerModal: React.FC<Props> = ({
       `حِفْظُ وَمُرَاجَعَةُ كِتَابِ اللَّهِ بِإِتْقَانٍ وَثَبَاتٍ`,
       `وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ فَهَلْ مِن مُّدَّكِرٍ`,
       `اقْرَأْ وَارْتَقِ وَرَتِّلْ كَمَا كُنْتَ تُرَتِّلُ فِي الدُّنْيَا`,
-      `إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ`
-    ]
+      `إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ`,
+    ],
   };
 
-  const zoomIn = () => setZoomLevel(prev => Math.min(prev + 0.25, 2.5));
-  const zoomOut = () => setZoomLevel(prev => Math.max(prev - 0.25, 0.75));
+  const zoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 2.5));
+  const zoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.75));
   const resetZoom = () => setZoomLevel(1);
 
   return (
-    <div 
-      className="fixed inset-0 z-[110] flex items-center justify-center p-1 sm:p-3 md:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200"
-      onClick={onClose}
+    <ModalOverlay
+      isOpen={isOpen}
+      isDismissable
+      onOpenChange={(open) => !open && onClose()}
+      className="px-2 py-2 sm:px-4 sm:py-4"
     >
-      <div 
-        className="bg-[#0f172a] text-slate-100 w-full max-w-5xl h-[96vh] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Top Control Bar with Page Information & Evaluation Trigger */}
-        <div className="bg-slate-900/95 px-3 sm:px-5 py-2.5 flex items-center justify-between border-b border-slate-800 shrink-0 gap-2">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30 shrink-0">
-              <BookOpen className="w-4 h-4" />
-            </div>
-            <div className="truncate">
-              <div className="flex items-center gap-2">
-                <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">
-                  Halaman {pageNumber} • Juz {juzNum}
-                </span>
-                <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-medium truncate">
-                  {surahInfo.nameEn} ({surahInfo.ayahRange})
-                </span>
+      <Modal className="max-w-6xl overflow-hidden rounded-3xl border border-secondary bg-primary shadow-2xl">
+        <Dialog
+          aria-label={`Mushaf halaman ${pageNumber}, ${surahInfo.nameEn}`}
+          className="flex h-[calc(100dvh-1rem)] max-h-[920px] flex-col overflow-hidden sm:h-[92dvh]"
+        >
+          <header className="relative shrink-0 overflow-hidden border-b border-secondary bg-primary">
+            <div className="pointer-events-none absolute -right-16 -top-24 size-64 rounded-full bg-brand-100/55 blur-3xl" />
+            <div className="relative flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5 sm:py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-md shadow-brand-500/20">
+                  <BookOpen className="size-4.5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-sm font-semibold text-primary sm:text-base">
+                      Mushaf Madani
+                    </h2>
+                    <span className="rounded-lg bg-brand-50 px-2 py-1 text-[10px] font-bold text-brand-700 ring-1 ring-brand-200 ring-inset">
+                      Halaman {pageNumber} / 604
+                    </span>
+                    <span className="rounded-lg bg-secondary px-2 py-1 text-[10px] font-semibold text-secondary">
+                      Juz {juzNum}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex min-w-0 items-center gap-2 text-xs text-secondary">
+                    <span className="truncate font-medium">
+                      {surahInfo.nameEn} · Ayat {surahInfo.ayahRange}
+                    </span>
+                    <span
+                      className="hidden shrink-0 font-serif text-brand-700 sm:inline"
+                      dir="rtl"
+                    >
+                      سُورَةُ {surahInfo.nameAr}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <p className="text-[11px] text-amber-300/90 font-serif leading-none mt-0.5" dir="rtl">
-                سُورَةُ {surahInfo.nameAr}
-              </p>
-            </div>
-          </div>
 
-          {/* Controls: Murottal Player, Evaluation Note Button, Cache, Zoom, Navigation, Close */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {/* Murottal Player */}
-            <div className="hidden sm:block">
-              <MurottalPlayer pageNumber={pageNumber} />
-            </div>
-            {/* Direct Feedback / Issue evaluation modal button */}
-            {onOpenFeedback && (
               <button
                 type="button"
-                onClick={() => onOpenFeedback(pageNumber)}
-                className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-semibold transition-colors cursor-pointer active:scale-95"
-                title="Buka atau catat koreksi tajwid/hafalan halaman ini"
+                onClick={onClose}
+                aria-label="Tutup Mushaf"
+                className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-fg-quaternary outline-none transition hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#ef6905]"
               >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Catatan Evaluasi</span>
-              </button>
-            )}
-
-            {/* Offline Cache Status Badge / Trigger */}
-            {isCached ? (
-              <span className="hidden lg:flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg bg-blue-950/80 text-blue-300 border border-blue-800 font-medium shadow-2xs">
-                <CheckCircle2 className="w-3 h-3 text-blue-400 shrink-0" />
-                <span>Offline OK</span>
-              </span>
-            ) : (
-              <button
-                onClick={handleManualCache}
-                disabled={isCaching}
-                className="hidden lg:flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-amber-500/50 font-medium cursor-pointer transition-colors shadow-2xs"
-                title="Simpan halaman ini ke memori lokal browser agar bisa dibuka tanpa internet"
-              >
-                <Download className="w-3 h-3 text-amber-400 shrink-0" />
-                <span>{isCaching ? 'Menyimpan...' : 'Simpan'}</span>
-              </button>
-            )}
-
-            {/* Zoom Controls */}
-            <div className="hidden sm:flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
-              <button
-                onClick={zoomOut}
-                disabled={zoomLevel <= 0.75}
-                className="p-1.5 rounded hover:bg-slate-700 text-slate-300 disabled:opacity-30 transition-colors"
-                title="Zoom Out"
-              >
-                <ZoomOut className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={resetZoom}
-                className="px-2 py-1 text-[11px] font-mono text-slate-300 hover:text-white"
-                title="Reset Zoom (100%)"
-              >
-                {Math.round(zoomLevel * 100)}%
-              </button>
-              <button
-                onClick={zoomIn}
-                disabled={zoomLevel >= 2.5}
-                className="p-1.5 rounded hover:bg-slate-700 text-slate-300 disabled:opacity-30 transition-colors"
-                title="Zoom In"
-              >
-                <ZoomIn className="w-3.5 h-3.5" />
+                <X className="size-4" />
               </button>
             </div>
 
-            {/* Navigation Controls */}
-            {onNavigatePage && (
-              <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
-                <button
-                  disabled={pageNumber <= 1}
-                  onClick={() => onNavigatePage(pageNumber - 1)}
-                  className="p-1.5 rounded hover:bg-slate-700 text-slate-300 disabled:opacity-30 transition-colors"
-                  title="Halaman Sebelumnya"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <span className="px-1.5 sm:px-2 text-xs font-semibold text-slate-200 whitespace-nowrap">
-                  {pageNumber} / 604
-                </span>
-                <button
-                  disabled={pageNumber >= 604}
-                  onClick={() => onNavigatePage(pageNumber + 1)}
-                  className="p-1.5 rounded hover:bg-slate-700 text-slate-300 disabled:opacity-30 transition-colors"
-                  title="Halaman Selanjutnya"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            <button
-              onClick={onClose}
-              className="p-1.5 ml-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-              title="Tutup"
+            <div
+              className="relative flex items-center gap-2 overflow-x-auto border-t border-secondary bg-secondary/30 px-4 py-2.5 sm:px-5"
+              data-no-swipe="true"
             >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Mushaf Page Display Area - Top is NEVER cut off (flex-col justify-start) */}
-        <div className="flex-1 bg-[#141a29] overflow-y-auto overflow-x-hidden flex flex-col items-center justify-start p-1.5 sm:p-3 min-h-0 relative">
-          {imageLoading && !imageError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#141a29] z-10">
-              <Loader2 className="w-8 h-8 text-amber-400 animate-spin mb-3" />
-              <p className="text-xs text-slate-300 font-medium">Memuat Halaman Mushaf {pageNumber}...</p>
-            </div>
-          )}
-
-          {!imageError ? (
-            <div 
-              className="transition-transform duration-150 origin-top flex flex-col items-center justify-start my-auto w-full max-w-full"
-              style={{ transform: `scale(${zoomLevel})` }}
-            >
-              <div className="bg-[#FFFDF7] p-1.5 sm:p-2 rounded-xl shadow-2xl border-2 border-amber-900/40 flex items-center justify-center max-w-full">
-                <img
-                  src={localImageUrl || imageUrl}
-                  alt={`Halaman Mushaf Al-Quran ${pageNumber}`}
-                  onLoad={() => {
-                    setImageLoading(false);
-                    if (!isCached) {
-                      cachePageOffline(pageNumber).then((ok) => {
-                        if (ok) setIsCached(true);
-                      });
-                    }
-                  }}
-                  onError={() => {
-                    setImageLoading(false);
-                    setImageError(true);
-                  }}
-                  className="max-h-[calc(96vh-120px)] w-auto max-w-full object-contain select-none rounded shadow-xs"
-                  loading="eager"
-                />
-              </div>
-            </div>
-          ) : (
-            /* Fallback formatted view if image loading fails */
-            <div className="w-full max-w-xl bg-[#FFFDF5] text-slate-900 border-2 border-amber-800/40 p-6 rounded-2xl shadow-xl my-auto">
-              <div className="flex items-center justify-between border-b border-amber-800/30 pb-2 mb-4 text-xs text-amber-900 font-semibold px-2">
-                <span className="font-serif">الجُزْءُ {juzNum}</span>
-                <span className="px-3 py-0.5 rounded-full bg-amber-100 border border-amber-800/30 font-bold">
-                  {surahInfo.nameEn} ({surahInfo.ayahRange})
-                </span>
-                <span className="font-serif text-sm">سُورَةُ {surahInfo.nameAr}</span>
+              <div className="hidden shrink-0 sm:block">
+                <MurottalPlayer pageNumber={pageNumber} />
               </div>
 
-              <div className="my-3 py-2 px-4 rounded-lg bg-amber-100/70 border border-amber-800/40 text-amber-950 text-center shadow-sm">
-                <p className="font-serif text-lg font-bold">{snippet.header}</p>
-              </div>
-
-              {snippet.bismillah && (
-                <div className="my-3 py-1 text-center">
-                  <p className="font-serif text-xl sm:text-2xl text-amber-950 leading-loose">
-                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-                  </p>
-                </div>
+              {onOpenFeedback && (
+                <button
+                  type="button"
+                  onClick={() => onOpenFeedback(pageNumber)}
+                  className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-xl bg-brand-solid px-3 py-2 text-xs font-semibold text-white shadow-xs outline-none transition hover:bg-brand-solid_hover focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905]"
+                  title="Buka atau catat koreksi tajwid dan hafalan"
+                >
+                  <MessageSquare className="size-3.5" />
+                  <span>Evaluasi</span>
+                </button>
               )}
 
-              <div className="space-y-4 my-4 px-2">
-                {snippet.lines.map((line, idx) => (
-                  <p key={idx} className="font-serif text-xl sm:text-2xl text-slate-900 leading-[2.2] text-center" dir="rtl">
-                    {line}
-                  </p>
-                ))}
+              {isCached ? (
+                <span className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-xl border border-[#a6f4c5] bg-[#ecfdf3] px-3 py-2 text-[11px] font-semibold text-[#067647] dark:border-[#085d3a] dark:bg-[#052e22]/60 dark:text-[#47cd89]">
+                  <CheckCircle2 className="size-3.5" />
+                  Tersimpan offline
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleManualCache}
+                  disabled={isCaching}
+                  className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-xl border border-secondary bg-primary px-3 py-2 text-[11px] font-semibold text-secondary outline-none transition hover:border-brand-200 hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905]"
+                  title="Simpan halaman agar bisa dibuka tanpa internet"
+                >
+                  {isCaching ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Download className="size-3.5" />
+                  )}
+                  {isCaching ? "Menyimpan..." : "Simpan offline"}
+                </button>
+              )}
+
+              <div className="ml-auto hidden shrink-0 items-center rounded-xl border border-secondary bg-primary p-1 sm:flex">
+                <button
+                  type="button"
+                  onClick={zoomOut}
+                  disabled={zoomLevel <= 0.75}
+                  className="flex size-7 items-center justify-center rounded-lg text-tertiary outline-none transition hover:bg-secondary hover:text-primary disabled:opacity-30 focus-visible:outline-[2px] focus-visible:outline-[#ef6905]"
+                  title="Perkecil"
+                >
+                  <ZoomOut className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={resetZoom}
+                  className="min-w-14 px-2 py-1 text-[11px] font-semibold tabular-nums text-secondary outline-none focus-visible:outline-[2px] focus-visible:outline-[#ef6905]"
+                  title="Kembalikan ke 100%"
+                >
+                  {Math.round(zoomLevel * 100)}%
+                </button>
+                <button
+                  type="button"
+                  onClick={zoomIn}
+                  disabled={zoomLevel >= 2.5}
+                  className="flex size-7 items-center justify-center rounded-lg text-tertiary outline-none transition hover:bg-secondary hover:text-primary disabled:opacity-30 focus-visible:outline-[2px] focus-visible:outline-[#ef6905]"
+                  title="Perbesar"
+                >
+                  <ZoomIn className="size-3.5" />
+                </button>
               </div>
 
-              <div className="pt-4 mt-6 border-t border-amber-800/30 flex items-center justify-center">
-                <div className="w-9 h-9 rounded-full border border-amber-800/50 flex items-center justify-center font-serif text-sm font-bold text-amber-950 bg-amber-100/50">
-                  {pageNumber}
+              {onNavigatePage && (
+                <div className="flex shrink-0 items-center rounded-xl border border-secondary bg-primary p-1">
+                  <button
+                    type="button"
+                    disabled={pageNumber <= 1}
+                    onClick={() => onNavigatePage(pageNumber - 1)}
+                    className="flex size-7 items-center justify-center rounded-lg text-tertiary outline-none transition hover:bg-secondary hover:text-primary disabled:opacity-30 focus-visible:outline-[2px] focus-visible:outline-[#ef6905]"
+                    title="Halaman sebelumnya"
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+                  <span className="min-w-16 px-2 text-center text-[11px] font-semibold tabular-nums text-secondary">
+                    {pageNumber} / 604
+                  </span>
+                  <button
+                    type="button"
+                    disabled={pageNumber >= 604}
+                    onClick={() => onNavigatePage(pageNumber + 1)}
+                    className="flex size-7 items-center justify-center rounded-lg text-tertiary outline-none transition hover:bg-secondary hover:text-primary disabled:opacity-30 focus-visible:outline-[2px] focus-visible:outline-[#ef6905]"
+                    title="Halaman selanjutnya"
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
                 </div>
-              </div>
+              )}
             </div>
-          )}
-        </div>
+          </header>
 
-        {/* Ultra-Compact Unified Audio Dock Bar (Only ~44px high) - Sticky & Never Sinks */}
-        <div className="bg-[#0b1120] px-3 sm:px-5 py-1.5 border-t border-slate-800/80 shrink-0 shadow-lg sticky bottom-0 z-20">
-          <AudioRecorderPlayer 
-            itemId={pageNumber}
-            itemType="quran"
-            itemLabel={`Hal ${pageNumber}`}
-            language="id" 
-            variant="mushaf-dock" 
-            onOpenFeedback={onOpenFeedback ? () => onOpenFeedback(pageNumber) : undefined}
-          />
-        </div>
-      </div>
-    </div>
+          {onNavigatePage && (
+            <>
+              <button
+                type="button"
+                disabled={pageNumber <= 1}
+                onClick={() => onNavigatePage(pageNumber - 1)}
+                aria-label="Halaman sebelumnya"
+                className="absolute left-3 top-1/2 z-40 hidden size-11 -translate-y-1/2 items-center justify-center rounded-2xl bg-primary/90 text-secondary shadow-lg backdrop-blur outline-none transition hover:bg-brand-solid hover:text-white disabled:pointer-events-none disabled:opacity-0 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#ef6905] md:flex"
+              >
+                <ChevronLeft className="size-5" />
+              </button>
+              <button
+                type="button"
+                disabled={pageNumber >= 604}
+                onClick={() => onNavigatePage(pageNumber + 1)}
+                aria-label="Halaman selanjutnya"
+                className="absolute right-3 top-1/2 z-40 hidden size-11 -translate-y-1/2 items-center justify-center rounded-2xl bg-primary/90 text-secondary shadow-lg backdrop-blur outline-none transition hover:bg-brand-solid hover:text-white disabled:pointer-events-none disabled:opacity-0 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#ef6905] md:flex"
+              >
+                <ChevronRight className="size-5" />
+              </button>
+            </>
+          )}
+
+          <main className="relative min-h-0 flex-1 overflow-auto bg-[radial-gradient(circle_at_50%_8%,#fff7ed_0%,#eee7dc_52%,#ddd4c6_100%)] p-3 dark:bg-[radial-gradient(circle_at_50%_8%,#263244_0%,#111827_58%,#0b1220_100%)] sm:p-5">
+            {imageLoading && !imageError && (
+              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#eee7dc]/90 backdrop-blur-sm dark:bg-[#111827]/90">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-primary shadow-lg ring-1 ring-secondary ring-inset">
+                  <Loader2 className="size-5 animate-spin text-brand-600" />
+                </div>
+                <p className="mt-3 text-xs font-semibold text-secondary">
+                  Memuat halaman Mushaf {pageNumber}...
+                </p>
+              </div>
+            )}
+
+            <div className="flex min-h-full min-w-full items-center justify-center">
+              {!imageError ? (
+                <div
+                  className="flex origin-top items-start justify-center transition-transform duration-200 ease-out"
+                  style={{ transform: `scale(${zoomLevel})` }}
+                >
+                  <div className="relative rounded-[1.35rem] bg-[#fffdf7] p-1.5 shadow-[0_24px_70px_-28px_rgba(67,20,7,0.55)] ring-1 ring-[#d6c4a8] sm:p-2">
+                    <div className="pointer-events-none absolute inset-y-5 -right-1.5 w-2 rounded-r-md bg-[repeating-linear-gradient(90deg,#fffdf8_0px,#fffdf8_1px,#e8dfd1_1px,#e8dfd1_2px)] shadow-sm" />
+                    <img
+                      src={localImageUrl || imageUrl}
+                      alt={`Halaman Mushaf Al-Quran ${pageNumber}`}
+                      onLoad={() => {
+                        setImageLoading(false);
+                        if (!isCached) {
+                          cachePageOffline(pageNumber).then((ok) => {
+                            if (ok) setIsCached(true);
+                          });
+                        }
+                      }}
+                      onError={() => {
+                        setImageLoading(false);
+                        setImageError(true);
+                      }}
+                      className="max-h-[calc(100dvh-230px)] w-auto max-w-[calc(100vw-2.5rem)] select-none rounded-xl object-contain sm:max-h-[calc(92dvh-210px)] sm:max-w-[calc(100vw-5rem)]"
+                      loading="eager"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="my-auto w-full max-w-xl rounded-3xl border border-[#d6c4a8] bg-[#fffdf5] p-5 text-slate-900 shadow-2xl sm:p-7">
+                  <div className="mb-4 flex items-center justify-between gap-3 border-b border-amber-800/20 px-2 pb-3 text-xs font-semibold text-amber-900">
+                    <span className="font-serif">الجُزْءُ {juzNum}</span>
+                    <span className="rounded-full bg-amber-100 px-3 py-1 font-bold">
+                      {surahInfo.nameEn} ({surahInfo.ayahRange})
+                    </span>
+                    <span className="font-serif text-sm">
+                      سُورَةُ {surahInfo.nameAr}
+                    </span>
+                  </div>
+
+                  <div className="my-3 rounded-xl bg-amber-100/70 px-4 py-2 text-center text-amber-950 ring-1 ring-amber-800/20 ring-inset">
+                    <p className="font-serif text-lg font-bold">
+                      {snippet.header}
+                    </p>
+                  </div>
+
+                  {snippet.bismillah && (
+                    <div className="my-3 py-1 text-center">
+                      <p className="font-serif text-xl leading-loose text-amber-950 sm:text-2xl">
+                        بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="my-4 space-y-4 px-2">
+                    {snippet.lines.map((line, idx) => (
+                      <p
+                        key={idx}
+                        className="text-center font-serif text-xl leading-[2.2] text-slate-900 sm:text-2xl"
+                        dir="rtl"
+                      >
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-center border-t border-amber-800/20 pt-4">
+                    <div className="flex size-9 items-center justify-center rounded-full bg-amber-100/70 font-serif text-sm font-bold text-amber-950 ring-1 ring-amber-800/30 ring-inset">
+                      {pageNumber}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </main>
+
+          <footer className="shrink-0 border-t border-secondary bg-primary px-3 py-2 shadow-[0_-8px_24px_-20px_rgba(16,24,40,0.45)] sm:px-5">
+            <AudioRecorderPlayer
+              itemId={pageNumber}
+              itemType="quran"
+              itemLabel={`Hal ${pageNumber}`}
+              language="id"
+              variant="mushaf-dock"
+              onOpenFeedback={
+                onOpenFeedback ? () => onOpenFeedback(pageNumber) : undefined
+              }
+            />
+          </footer>
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 };

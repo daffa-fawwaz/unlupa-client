@@ -270,12 +270,18 @@ export const TeachingSpace: React.FC = () => {
     void fetchClasses();
   }, [fetchClasses]);
 
-  // Fetch class members whenever a class is selected
+  const selectedOwnedClassId =
+    selectedClassId &&
+    teachingClasses.some((item) => item.id === selectedClassId)
+      ? selectedClassId
+      : null;
+
+  // Member identities and progress are only available to the class owner.
   useEffect(() => {
-    if (selectedClassId) {
-      void fetchClassMembers(selectedClassId);
+    if (selectedOwnedClassId) {
+      void fetchClassMembers(selectedOwnedClassId);
     }
-  }, [selectedClassId, fetchClassMembers]);
+  }, [selectedOwnedClassId, fetchClassMembers]);
 
   // Combine classes based on role / enrolled list
   const combinedClasses = useMemo(() => {
@@ -2272,87 +2278,110 @@ export const TeachingSpace: React.FC = () => {
           </div>
 
           {/* Embedded Progress Card */}
-          <div className="flex items-center gap-4 p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
-            {/* Left Side: Circular Progress */}
-            <div className="relative w-16 h-16 shrink-0">
-              <svg
-                viewBox="0 0 100 100"
-                className="w-full h-full transform -rotate-90 drop-shadow-sm"
-              >
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  stroke="currentColor"
-                  strokeWidth="12"
-                  fill="transparent"
-                  className="text-slate-200 dark:text-slate-700"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  stroke="currentColor"
-                  strokeWidth="12"
-                  fill="transparent"
-                  strokeDasharray="263.89"
-                  strokeDashoffset={
-                    allStudents.length === 0
-                      ? 263.89
-                      : 263.89 - 263.89 * (classRetentionPct / 100)
-                  }
-                  strokeLinecap="round"
-                  className={`${allStudents.length === 0 ? "text-slate-300 dark:text-slate-600" : "text-emerald-500"} transition-all duration-1000`}
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-none">
-                  {allStudents.length === 0 ? "0%" : `${classRetentionPct}%`}
-                </span>
-                {allStudents.length > 0 && (
-                  <span className="text-[8px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
-                    Tuntas
+          {!isClassOwner ? (
+            <div className="flex items-center gap-4 rounded-xl border border-slate-200/70 bg-slate-50 p-3.5 dark:border-slate-700/60 dark:bg-slate-800/60 sm:p-4">
+              <div className="flex size-16 shrink-0 items-center justify-center rounded-full border-4 border-white bg-brand-50 text-xl font-bold text-brand-700 shadow-sm dark:border-slate-700 dark:bg-brand-950/40 dark:text-brand-300">
+                {Math.max(
+                  selectedClass.studentCount ?? 0,
+                  selectedClass.students.length,
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                  {language === "en"
+                    ? "Registered students"
+                    : "Santri terdaftar"}
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                  {language === "en"
+                    ? "Student identities and progress are only visible to the class teacher."
+                    : "Identitas dan progres santri hanya dapat dilihat oleh pengajar kelas."}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4 p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
+              {/* Left Side: Circular Progress */}
+              <div className="relative w-16 h-16 shrink-0">
+                <svg
+                  viewBox="0 0 100 100"
+                  className="w-full h-full transform -rotate-90 drop-shadow-sm"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="42"
+                    stroke="currentColor"
+                    strokeWidth="12"
+                    fill="transparent"
+                    className="text-slate-200 dark:text-slate-700"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="42"
+                    stroke="currentColor"
+                    strokeWidth="12"
+                    fill="transparent"
+                    strokeDasharray="263.89"
+                    strokeDashoffset={
+                      allStudents.length === 0
+                        ? 263.89
+                        : 263.89 - 263.89 * (classRetentionPct / 100)
+                    }
+                    strokeLinecap="round"
+                    className={`${allStudents.length === 0 ? "text-slate-300 dark:text-slate-600" : "text-emerald-500"} transition-all duration-1000`}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-none">
+                    {allStudents.length === 0 ? "0%" : `${classRetentionPct}%`}
                   </span>
+                  {allStudents.length > 0 && (
+                    <span className="text-[8px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                      Tuntas
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Side: Progress Legend */}
+              <div className="flex-1 space-y-2 min-w-0">
+                {allStudents.length === 0 ? (
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Belum ada santri terdaftar di kelas ini. Bagikan kode akses
+                    kelas kepada santri Anda.
+                  </p>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500 shrink-0" />
+                        <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">
+                          Santri Tuntas
+                        </span>
+                      </div>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400 shrink-0 ml-2">
+                        {fluentStudents.length} santri
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div className="w-2.5 h-2.5 rounded-sm bg-amber-500 shrink-0" />
+                        <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">
+                          Perlu Review
+                        </span>
+                      </div>
+                      <span className="font-bold text-amber-600 dark:text-amber-400 shrink-0 ml-2">
+                        {dueStudents.length} santri
+                      </span>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
-
-            {/* Right Side: Progress Legend */}
-            <div className="flex-1 space-y-2 min-w-0">
-              {allStudents.length === 0 ? (
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Belum ada santri terdaftar di kelas ini. Bagikan kode akses
-                  kelas kepada santri Anda.
-                </p>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500 shrink-0" />
-                      <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">
-                        Santri Tuntas
-                      </span>
-                    </div>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400 shrink-0 ml-2">
-                      {fluentStudents.length} santri
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <div className="w-2.5 h-2.5 rounded-sm bg-amber-500 shrink-0" />
-                      <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">
-                        Perlu Review
-                      </span>
-                    </div>
-                    <span className="font-bold text-amber-600 dark:text-amber-400 shrink-0 ml-2">
-                      {dueStudents.length} santri
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
         {/* 3. Section Below: Daftar Santri (Identical to Screenshot 1 "Daftar Isi Kitab") */}
@@ -2361,197 +2390,225 @@ export const TeachingSpace: React.FC = () => {
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
                 <List className="w-5 h-5 text-brand-700" />
-                <span>Daftar Santri ({allStudents.length})</span>
+                <span>
+                  Daftar Santri (
+                  {isClassOwner
+                    ? allStudents.length
+                    : Math.max(
+                        selectedClass.studentCount ?? 0,
+                        selectedClass.students.length,
+                      )}
+                  )
+                </span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Pilih santri untuk langsung masuk ke lembar hafalan dan kartu
-                materi di dalamnya.
+                {isClassOwner
+                  ? "Pilih santri untuk langsung masuk ke lembar hafalan dan kartu materi di dalamnya."
+                  : "Jumlah peserta ditampilkan tanpa membuka identitas dan progres pribadi."}
               </p>
             </div>
           </div>
 
-          {/* Search bar & quick filter tabs matching Screenshot 1 & 4 */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Cari santri..."
-                value={studentSearchQuery}
-                onChange={(e) => setStudentSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
-              />
-            </div>
+          {isClassOwner ? (
+            <>
+              {/* Search bar & quick filter tabs matching Screenshot 1 & 4 */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Cari santri..."
+                    value={studentSearchQuery}
+                    onChange={(e) => setStudentSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+                  />
+                </div>
 
-            {/* Segmented control tabs matching Screenshot 4 */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 shrink-0 flex-wrap sm:flex-nowrap">
-              <button
-                onClick={() => setStudentFilter("all")}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  studentFilter === "all"
-                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs"
-                    : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
-                }`}
-              >
-                Semua {allStudents.length}
-              </button>
-              <button
-                onClick={() => setStudentFilter("due")}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  studentFilter === "due"
-                    ? "bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-2xs"
-                    : "text-slate-500 hover:text-amber-600"
-                }`}
-              >
-                Belum Review {dueStudents.length}
-              </button>
-              <button
-                onClick={() => setStudentFilter("fluent")}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  studentFilter === "fluent"
-                    ? "bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-2xs"
-                    : "text-slate-500 hover:text-emerald-600"
-                }`}
-              >
-                Tuntas {fluentStudents.length}
-              </button>
-              <button
-                onClick={() => setStudentFilter("ready_advance")}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  studentFilter === "ready_advance"
-                    ? "bg-white dark:bg-slate-900 text-brand-700 shadow-2xs"
-                    : "text-slate-500 hover:text-brand-700"
-                }`}
-                title="Santri dengan beban review tuntas dan ingatan mapan (siap tambah materi/halaman baru)"
-              >
-                Siap Tambah {readyStudents.length}
-              </button>
-            </div>
-          </div>
+                {/* Segmented control tabs matching Screenshot 4 */}
+                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 shrink-0 flex-wrap sm:flex-nowrap">
+                  <button
+                    onClick={() => setStudentFilter("all")}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      studentFilter === "all"
+                        ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs"
+                        : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    Semua {allStudents.length}
+                  </button>
+                  <button
+                    onClick={() => setStudentFilter("due")}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      studentFilter === "due"
+                        ? "bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-2xs"
+                        : "text-slate-500 hover:text-amber-600"
+                    }`}
+                  >
+                    Belum Review {dueStudents.length}
+                  </button>
+                  <button
+                    onClick={() => setStudentFilter("fluent")}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      studentFilter === "fluent"
+                        ? "bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-2xs"
+                        : "text-slate-500 hover:text-emerald-600"
+                    }`}
+                  >
+                    Tuntas {fluentStudents.length}
+                  </button>
+                  <button
+                    onClick={() => setStudentFilter("ready_advance")}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      studentFilter === "ready_advance"
+                        ? "bg-white dark:bg-slate-900 text-brand-700 shadow-2xs"
+                        : "text-slate-500 hover:text-brand-700"
+                    }`}
+                    title="Santri dengan beban review tuntas dan ingatan mapan (siap tambah materi/halaman baru)"
+                  >
+                    Siap Tambah {readyStudents.length}
+                  </button>
+                </div>
+              </div>
 
-          {/* Student Items List (Matching Screenshot 1 & 4 clean layout) */}
-          <div className="space-y-2 pt-2">
-            {displayedStudents.map((student) => {
-              const analysis = studentAnalysisMap.get(student.id) || {
-                dueInfo: { count: 0, specific: null, isDue: false },
-                activeItems: 0,
-                masteredItems: 0,
-                isReadyToAdvance: false,
-                isHeavyLoad: false,
-                retentionRate: 100,
-              };
-              const { dueInfo } = analysis;
+              {/* Student Items List (Matching Screenshot 1 & 4 clean layout) */}
+              <div className="space-y-2 pt-2">
+                {displayedStudents.map((student) => {
+                  const analysis = studentAnalysisMap.get(student.id) || {
+                    dueInfo: { count: 0, specific: null, isDue: false },
+                    activeItems: 0,
+                    masteredItems: 0,
+                    isReadyToAdvance: false,
+                    isHeavyLoad: false,
+                    retentionRate: 100,
+                  };
+                  const { dueInfo } = analysis;
 
-              return (
-                <div
-                  key={student.id}
-                  onClick={() => setInspectingStudentId(student.id)}
-                  className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-3.5 sm:p-4 hover:border-brand-300 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between gap-3 cursor-pointer group"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white truncate group-hover:text-brand-700 transition-colors">
-                        {student.name}
-                      </h4>
-                      {analysis.isReadyToAdvance && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200">
-                          <Sparkles className="w-3 h-3 text-brand-600" />
-                          <span>Siap Tambah</span>
-                        </span>
-                      )}
-                      {analysis.isHeavyLoad && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800">
-                          <span>Beban Tinggi</span>
-                        </span>
-                      )}
-                    </div>
+                  return (
+                    <div
+                      key={student.id}
+                      onClick={() => setInspectingStudentId(student.id)}
+                      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-3.5 sm:p-4 hover:border-brand-300 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between gap-3 cursor-pointer group"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white truncate group-hover:text-brand-700 transition-colors">
+                            {student.name}
+                          </h4>
+                          {analysis.isReadyToAdvance && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200">
+                              <Sparkles className="w-3 h-3 text-brand-600" />
+                              <span>Siap Tambah</span>
+                            </span>
+                          )}
+                          {analysis.isHeavyLoad && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800">
+                              <span>Beban Tinggi</span>
+                            </span>
+                          )}
+                        </div>
 
-                    <div className="flex items-center gap-2 mt-1 flex-wrap text-xs">
-                      {dueInfo.isDue ? (
-                        <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 min-w-0">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 animate-pulse" />
-                          <span className="truncate">
-                            Belum review:{" "}
-                            <strong className="font-semibold text-amber-800 dark:text-amber-300">
-                              {dueInfo.specific}
-                            </strong>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap text-xs">
+                          {dueInfo.isDue ? (
+                            <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 min-w-0">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 animate-pulse" />
+                              <span className="truncate">
+                                Belum review:{" "}
+                                <strong className="font-semibold text-amber-800 dark:text-amber-300">
+                                  {dueInfo.specific}
+                                </strong>
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500" />
+                              <span>Tuntas review harian</span>
+                            </div>
+                          )}
+                          <span className="text-slate-300 dark:text-slate-700 hidden sm:inline">
+                            •
+                          </span>
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline">
+                            {analysis.masteredItems} materi mapan (
+                            {analysis.retentionRate}% retensi)
                           </span>
                         </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500" />
-                          <span>Tuntas review harian</span>
-                        </div>
-                      )}
-                      <span className="text-slate-300 dark:text-slate-700 hidden sm:inline">
-                        •
-                      </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline">
-                        {analysis.masteredItems} materi mapan (
-                        {analysis.retentionRate}% retensi)
-                      </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        {dueInfo.isDue ? (
+                          <span className="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/70 dark:border-amber-800/50 flex items-center gap-1 shadow-2xs">
+                            <span>{dueInfo.count} Review</span>
+                          </span>
+                        ) : (
+                          <span className="text-[11px] font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800/50">
+                            Lancar
+                          </span>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setReportStudent(student);
+                          }}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-brand-50 transition-colors cursor-pointer shrink-0"
+                          title={`Laporan & Raport Evaluasi ${student.name}`}
+                        >
+                          <Share8 className="w-4 h-4" />
+                        </button>
+
+                        {isClassOwner && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteStudent(student.id, student.name);
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:text-rose-400 dark:hover:bg-rose-950/50 transition-colors cursor-pointer shrink-0"
+                            title={`Keluarkan ${student.name} dari daftar santri kelas`}
+                          >
+                            <LogOut className="w-4 h-4" />
+                          </button>
+                        )}
+
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-brand-700 group-hover:translate-x-0.5 transition-all" />
+                      </div>
                     </div>
+                  );
+                })}
+
+                {displayedStudents.length === 0 && (
+                  <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+                    <Users className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+                    <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                      {allStudents.length === 0
+                        ? "Belum Ada Santri yang Bergabung"
+                        : "Tidak Ada Santri yang Cocok"}
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                      {allStudents.length === 0
+                        ? `Bagikan kode kelas ${selectedClass.code} kepada santri agar mereka dapat bergabung melalui akun mereka.`
+                        : "Coba sesuaikan kata kunci pencarian atau filter di atas."}
+                    </p>
                   </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    {dueInfo.isDue ? (
-                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/70 dark:border-amber-800/50 flex items-center gap-1 shadow-2xs">
-                        <span>{dueInfo.count} Review</span>
-                      </span>
-                    ) : (
-                      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800/50">
-                        Lancar
-                      </span>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setReportStudent(student);
-                      }}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-brand-700 hover:bg-brand-50 transition-colors cursor-pointer shrink-0"
-                      title={`Laporan & Raport Evaluasi ${student.name}`}
-                    >
-                      <Share8 className="w-4 h-4" />
-                    </button>
-
-                    {isClassOwner && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteStudent(student.id, student.name);
-                        }}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:text-rose-400 dark:hover:bg-rose-950/50 transition-colors cursor-pointer shrink-0"
-                        title={`Keluarkan ${student.name} dari daftar santri kelas`}
-                      >
-                        <LogOut className="w-4 h-4" />
-                      </button>
-                    )}
-
-                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-brand-700 group-hover:translate-x-0.5 transition-all" />
-                  </div>
-                </div>
-              );
-            })}
-
-            {displayedStudents.length === 0 && (
-              <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
-                <Users className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                  {allStudents.length === 0
-                    ? "Belum Ada Santri yang Bergabung"
-                    : "Tidak Ada Santri yang Cocok"}
-                </h4>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                  {allStudents.length === 0
-                    ? `Bagikan kode kelas ${selectedClass.code} kepada santri agar mereka dapat bergabung melalui akun mereka.`
-                    : "Coba sesuaikan kata kunci pencarian atau filter di atas."}
-                </p>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white/50 px-5 py-10 text-center dark:border-slate-800 dark:bg-slate-900/50">
+              <Users className="mx-auto mb-3 size-10 text-slate-300 dark:text-slate-600" />
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                {language === "en"
+                  ? "Student list is private"
+                  : "Daftar santri bersifat privat"}
+              </h4>
+              <p className="mx-auto mt-1 max-w-md text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                {language === "en"
+                  ? "Only the class teacher can view student identities and learning progress."
+                  : "Hanya pengajar kelas yang dapat melihat identitas dan progres belajar setiap santri."}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Shared In-App Modals for Level 2 */}
