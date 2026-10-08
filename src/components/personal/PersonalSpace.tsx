@@ -56,6 +56,7 @@ import {
   ModalOverlay,
 } from "@/components/application/modals/modal";
 import { InlineAlert } from "@/components/base/alert/alert";
+import { toast } from "sonner";
 import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
@@ -149,6 +150,8 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
 }) => {
   const {
     books,
+    setBooks,
+    library,
     chapters,
     items,
     personalStats,
@@ -182,7 +185,12 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     openUpgradeModal,
     tierConfig,
     userProfile,
+    fetchClasses,
   } = useApp();
+
+  useEffect(() => {
+    void fetchClasses();
+  }, [fetchClasses]);
 
   const handleTriggerNewBook = () => {
     const check = isFeatureAllowed("create_book");
@@ -247,21 +255,10 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   });
 
   const isBookInActiveClass = (b: Book): boolean => {
-    // If book has a direct classId, that class must be active
-    if (b.classId) {
-      return activeClassIds.has(b.classId);
-    }
-    // If book id starts with class-book-{classId}-...
-    if (b.id.startsWith("class-book-")) {
-      return Array.from(activeClassIds).some((cid) =>
-        b.id.startsWith(`class-book-${cid}-`),
-      );
-    }
-    // If book is linked through active joined classes and is readonly
-    if (joinedBookIds.has(b.id) && b.isReadonly) {
-      return true;
-    }
-    // If book has category 'class' but has no active class association, it's not active
+    if (b.category === "class") return true;
+    if (b.classId && (activeClassIds.has(b.classId) || activeClassIds.size === 0)) return true;
+    if (b.id.startsWith("class-book-")) return true;
+    if (joinedBookIds.has(b.id) || assignedBookIds.has(b.id)) return true;
     return false;
   };
 
@@ -282,7 +279,52 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     }
   }, [initialBookId]);
 
-  const selectedBook = books.find((b) => b.id === selectedBookId) || null;
+  const resolvedBookFromLibrary = selectedBookId
+    ? library.find(
+        (l) =>
+          l.book.id === selectedBookId ||
+          l.id === selectedBookId ||
+          `lib-book-${l.id.replace("lib-", "")}` === selectedBookId,
+      )?.book
+    : null;
+
+  const selectedBook =
+    books.find((b) => b.id === selectedBookId) ||
+    (resolvedBookFromLibrary
+      ? ({
+          ...resolvedBookFromLibrary,
+          category: "class" as const,
+          isReadonly: true,
+        } as Book)
+      : null) ||
+    (selectedBookId && classBanner
+      ? ({
+          id: selectedBookId,
+          userId: "",
+          title: classBanner.className,
+          description: `Kitab Kelas ${classBanner.className}`,
+          category: "class" as const,
+          classId: undefined,
+          isReadonly: true,
+          isPublic: false,
+          authorName: classBanner.teacherName || "Pengajar",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as Book)
+      : null);
+
+  useEffect(() => {
+    if (selectedBook && !books.some((b) => b.id === selectedBook.id)) {
+      setBooks((prev: Book[]) => [
+        {
+          ...selectedBook,
+          category: "class" as const,
+          isReadonly: true,
+        },
+        ...prev,
+      ]);
+    }
+  }, [selectedBook, books, setBooks]);
   const setSelectedBook = (b: Book | null) =>
     setSelectedBookId(b ? b.id : null);
 
@@ -326,9 +368,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   const [publishPreselectedId, setPublishPreselectedId] = useState<
     string | null
   >(null);
-  const [activeBookTab, setActiveBookTab] = useState<
-    "personal" | "imported" | "class"
-  >("personal");
+  const [activeBookTab, setActiveBookTab] = useState<"personal" | "imported">(
+    "personal",
+  );
   const [isJoinClassModalOpen, setIsJoinClassModalOpen] = useState(false);
   const [isJoiningClass, setIsJoiningClass] = useState(false);
   const [codeInputValue, setCodeInputValue] = useState("");
@@ -872,19 +914,20 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
         Boolean(selectedBook.classId) ||
         selectedBook.id.startsWith("class-book-"))
     ) {
-      if (!isBookInActiveClass(selectedBook)) {
+      if (!isBookInActiveClass(selectedBook) && !onExitEmbedded && !initialBookId) {
         setSelectedBook(null);
         setSelectedBookId(null);
       }
     }
-  }, [selectedBook, activeClassIds]);
+  }, [selectedBook, activeClassIds, onExitEmbedded, initialBookId]);
 
   const isCurrentBookReadonly = selectedBook
-    ? selectedBook.isReadonly ||
-      isBookInActiveClass(selectedBook) ||
+    ? (selectedBook.isReadonly && !assignedBookIds.has(selectedBook.id)) ||
+      (onExitEmbedded && !isEmbeddedTeacherView) ||
       (joinedBookIds.has(selectedBook.id) &&
         !assignedBookIds.has(selectedBook.id) &&
-        !isEmbeddedTeacherView)
+        !isEmbeddedTeacherView) ||
+      (selectedBook.userId ? selectedBook.userId !== userProfile.id : false)
     : false;
 
   const personalBookCount = books.filter(
@@ -893,20 +936,17 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   const importedBookCount = books.filter(
     (book) => !isBookInActiveClass(book) && book.isReadonly,
   ).length;
-  const classBookCount = books.filter((book) =>
-    isBookInActiveClass(book),
-  ).length;
   const visibleBooks = books
+    .filter((book) => !isBookInActiveClass(book))
     .filter((book) =>
       (book.title || "")
         .toLowerCase()
         .includes(searchQuery.trim().toLowerCase()),
     )
     .filter((book) => {
-      const isClassBook = isBookInActiveClass(book);
-      if (activeBookTab === "personal") return !isClassBook && !book.isReadonly;
-      if (activeBookTab === "imported") return !isClassBook && book.isReadonly;
-      return isClassBook;
+      if (activeBookTab === "personal") return !book.isReadonly;
+      if (activeBookTab === "imported") return book.isReadonly;
+      return true;
     });
 
   return (
@@ -924,7 +964,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                     {language === "en" ? "Books Space" : "Ruang Buku"}
                   </h1>
                   <Badge color="brand" size="sm">
-                    {books.length} {language === "en" ? "books" : "kitab"}
+                    {personalBookCount + importedBookCount} {language === "en" ? "books" : "kitab"}
                   </Badge>
                 </div>
                 <p className="mt-1 max-w-2xl text-sm text-secondary">
@@ -1037,8 +1077,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                 setIsReviewOpen(true);
               }}
               onOpenCalendar={() => {
+                const nonClassBooks = books.filter((b) => !isBookInActiveClass(b));
                 const targetBook =
-                  books.find((b) =>
+                  nonClassBooks.find((b) =>
                     items.some(
                       (i) =>
                         i.bookId === b.id &&
@@ -1046,7 +1087,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                         (!i.fsrsData.nextReview ||
                           new Date(i.fsrsData.nextReview) <= new Date()),
                     ),
-                  ) || books[0];
+                  ) || nonClassBooks[0];
                 if (targetBook) {
                   setCalendarBook(targetBook);
                   setCalendarChapterFilter(null);
@@ -1054,14 +1095,16 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                 }
               }}
               filterPills={books
-                .filter((b) =>
-                  items.some(
-                    (i) =>
-                      i.bookId === b.id &&
-                      i.isActive &&
-                      (!i.fsrsData.nextReview ||
-                        new Date(i.fsrsData.nextReview) <= new Date()),
-                  ),
+                .filter(
+                  (b) =>
+                    !isBookInActiveClass(b) &&
+                    items.some(
+                      (i) =>
+                        i.bookId === b.id &&
+                        i.isActive &&
+                        (!i.fsrsData.nextReview ||
+                          new Date(i.fsrsData.nextReview) <= new Date()),
+                    ),
                 )
                 .map((book) => ({
                   id: book.id,
@@ -1200,14 +1243,6 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                       <HugeiconsIcon icon={SwatchBookIcon} className="size-4" />
                     ),
                   },
-                  {
-                    id: "class" as const,
-                    label: language === "en" ? "Classes" : "Kelas",
-                    count: classBookCount,
-                    icon: (
-                      <HugeiconsIcon icon={BookMarkedIcon} className="size-4" />
-                    ),
-                  },
                 ].map(({ id, label, count, icon }) => (
                   <button
                     key={id}
@@ -1238,18 +1273,6 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                   }
                   className="min-w-0 flex-1 lg:w-72"
                 />
-                {activeBookTab === "class" && (
-                  <Button
-                    color="secondary"
-                    size="sm"
-                    iconLeading={KeyRound}
-                    onPress={() => setIsJoinClassModalOpen(true)}
-                  >
-                    <span className="hidden sm:inline">
-                      {language === "en" ? "Join class" : "Gabung kelas"}
-                    </span>
-                  </Button>
-                )}
               </div>
             </div>
 
@@ -1417,13 +1440,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                       ? language === "en"
                         ? "Create a book to begin organizing your learning cards."
                         : "Buat kitab untuk mulai menyusun kartu belajar Anda."
-                      : activeBookTab === "imported"
-                        ? language === "en"
-                          ? "Explore the public library and import a shared book."
-                          : "Jelajahi pustaka publik dan impor kitab yang dibagikan."
-                        : language === "en"
-                          ? "Join a class using the invitation code from your teacher."
-                          : "Gabung ke kelas dengan kode undangan dari guru Anda."}
+                      : language === "en"
+                        ? "Explore the public library and import a shared book."
+                        : "Jelajahi pustaka publik dan impor kitab yang dibagikan."}
                 </p>
                 <div className="mt-4 flex justify-center">
                   {searchQuery ? (
@@ -1442,7 +1461,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                     >
                       {language === "en" ? "Create book" : "Buat kitab"}
                     </Button>
-                  ) : activeBookTab === "imported" ? (
+                  ) : (
                     <Button
                       size="sm"
                       iconLeading={Library}
@@ -1451,16 +1470,6 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                       {language === "en"
                         ? "Explore library"
                         : "Jelajahi pustaka"}
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      iconLeading={KeyRound}
-                      onPress={() => setIsJoinClassModalOpen(true)}
-                    >
-                      {language === "en"
-                        ? "Join with code"
-                        : "Gabung dengan kode"}
                     </Button>
                   )}
                 </div>
@@ -1479,7 +1488,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
               size="sm"
               iconLeading={ArrowLeft}
               onPress={() => {
-                if (isEmbeddedTeacherView && onExitEmbedded) {
+                if (onExitEmbedded) {
                   onExitEmbedded();
                 } else {
                   setSelectedBook(null);
@@ -1487,7 +1496,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                 }
               }}
             >
-              {language === "en" ? "Back to Library" : "Kembali ke Koleksi"}
+              {onExitEmbedded
+                ? (language === "en" ? "Back to Class" : "Kembali ke Kelas")
+                : (language === "en" ? "Back to Library" : "Kembali ke Koleksi")}
             </Button>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -3277,7 +3288,7 @@ interface ItemRowProps {
   onPreview: () => void;
   onActivate: () => void;
   onDeactivate: () => void;
-  onReview?: (rating: 1 | 2 | 3 | 4) => void;
+  onReview?: (rating: 1 | 2 | 3 | 4) => Promise<number> | void;
   onDelete: () => void;
   onMove?: () => void;
   isBulkMode?: boolean;
@@ -3354,8 +3365,25 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
   const [justReviewedRating, setJustReviewedRating] = useState<number | null>(
     null,
   );
+  const [isReviewSubmitting, setIsReviewSubmitting] = useState(false);
   const [showAudio, setShowAudio] = useState(false);
   const [hasAudio, setHasAudio] = useState(false);
+
+  const submitReview = async (rating: 1 | 2 | 3) => {
+    if (!onReview || isReviewSubmitting) return;
+    setIsReviewSubmitting(true);
+    try {
+      await onReview(rating);
+      soundEffects.playRatingFeedback(rating);
+      setJustReviewedRating(rating);
+      window.setTimeout(() => setJustReviewedRating(null), 1500);
+    } catch (error) {
+      console.error("Book review failed:", error);
+      toast.error("Review gagal disimpan. Coba lagi.");
+    } finally {
+      setIsReviewSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -3714,116 +3742,85 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
         </button>
       </div>
 
-      {/* 4 Tombol Evaluasi Kartu */}
+      {/* 3 Tombol Evaluasi Kartu (hanya muncul jika aktif dan sudah waktunya review) */}
       {item.isActive ? (
-        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
-          <div className="grid grid-cols-4 gap-1.5">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                soundEffects.playRatingFeedback(1);
-                onReview?.(1);
-                setJustReviewedRating(1);
-                setTimeout(() => setJustReviewedRating(null), 1500);
-              }}
-              className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
-                justReviewedRating === 1
-                  ? "bg-rose-600 text-white border-rose-600 ring-2 ring-rose-400"
-                  : "border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300"
-              }`}
-              title={
-                language === "en"
-                  ? "Review again tomorrow"
-                  : "Lupa total / Ulang lagi"
-              }
-            >
-              <span className="text-[11px] font-bold leading-tight">
-                {language === "en" ? "Again" : "Lagi"}
-              </span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
-                {intervals.again}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                soundEffects.playRatingFeedback(2);
-                onReview?.(2);
-                setJustReviewedRating(2);
-                setTimeout(() => setJustReviewedRating(null), 1500);
-              }}
-              className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
-                justReviewedRating === 2
-                  ? "bg-amber-600 text-white border-amber-600 ring-2 ring-amber-400"
-                  : "border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300"
-              }`}
-              title={
-                language === "en"
-                  ? "Hard to recall"
-                  : "Ingat dengan susah payah"
-              }
-            >
-              <span className="text-[11px] font-bold leading-tight">
-                {language === "en" ? "Hard" : "Sulit"}
-              </span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
-                {intervals.hard}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                soundEffects.playRatingFeedback(3);
-                onReview?.(3);
-                setJustReviewedRating(3);
-                setTimeout(() => setJustReviewedRating(null), 1500);
-              }}
-              className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
-                justReviewedRating === 3
-                  ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-400"
-                  : "border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
-              }`}
-              title={language === "en" ? "Good recall" : "Ingat dengan baik"}
-            >
-              <span className="text-[11px] font-bold leading-tight">
-                {language === "en" ? "Good" : "Baik"}
-              </span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
-                {intervals.good}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                soundEffects.playRatingFeedback(4);
-                onReview?.(4);
-                setJustReviewedRating(4);
-                setTimeout(() => setJustReviewedRating(null), 1500);
-              }}
-              className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
-                justReviewedRating === 4
-                  ? "border-utility-blue-600 bg-utility-blue-600 text-white ring-2 ring-utility-blue-400"
-                  : "border-utility-blue-200 bg-utility-blue-50/70 text-utility-blue-700 hover:bg-utility-blue-100"
-              }`}
-              title={
-                language === "en"
-                  ? "Easy recall"
-                  : "Sangat mudah / Refleks langsung hafal"
-              }
-            >
-              <span className="text-[11px] font-bold leading-tight">
-                {language === "en" ? "Easy" : "Mudah"}
-              </span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
-                {intervals.easy}
-              </span>
-            </button>
+        isDueToday ? (
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <div className="grid grid-cols-3 gap-1.5">
+              <button
+                type="button"
+                disabled={isReviewSubmitting}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void submitReview(1);
+                }}
+                className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
+                  justReviewedRating === 1
+                    ? "bg-rose-600 text-white border-rose-600 ring-2 ring-rose-400"
+                    : "border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300"
+                }`}
+                title={
+                  language === "en"
+                    ? "Review again tomorrow"
+                    : "Lupa total / Ulang lagi"
+                }
+              >
+                <span className="text-[11px] font-bold leading-tight">
+                  {language === "en" ? "Again" : "Lagi"}
+                </span>
+                <span className="text-[9px] font-semibold opacity-85 mt-0.5">
+                  {intervals.again}
+                </span>
+              </button>
+              <button
+                type="button"
+                disabled={isReviewSubmitting}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void submitReview(2);
+                }}
+                className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
+                  justReviewedRating === 2
+                    ? "bg-amber-600 text-white border-amber-600 ring-2 ring-amber-400"
+                    : "border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300"
+                }`}
+                title={
+                  language === "en"
+                    ? "Hard to recall"
+                    : "Ingat dengan susah payah"
+                }
+              >
+                <span className="text-[11px] font-bold leading-tight">
+                  {language === "en" ? "Hard" : "Sulit"}
+                </span>
+                <span className="text-[9px] font-semibold opacity-85 mt-0.5">
+                  {intervals.hard}
+                </span>
+              </button>
+              <button
+                type="button"
+                disabled={isReviewSubmitting}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void submitReview(3);
+                }}
+                className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
+                  justReviewedRating === 3
+                    ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-400"
+                    : "border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+                }`}
+                title={language === "en" ? "Good recall" : "Ingat dengan baik"}
+              >
+                <span className="text-[11px] font-bold leading-tight">
+                  {language === "en" ? "Good" : "Baik"}
+                </span>
+                <span className="text-[9px] font-semibold opacity-85 mt-0.5">
+                  {intervals.good}
+                </span>
+              </button>
+            </div>
           </div>
-        </div>
+        ) : null
       ) : (
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
           <span className="text-[11px] text-slate-400 italic">
