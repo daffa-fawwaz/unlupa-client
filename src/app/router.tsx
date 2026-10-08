@@ -1,8 +1,7 @@
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { createBrowserRouter } from "react-router";
 import App from "./App";
-import { LandingLayout } from "../layouts/LandingLayout";
-import { LandingPage } from "../pages/LandingPage/LandingPage";
+import { LandingPage } from "@/components/landing/LandingPage";
 import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { ForgotPasswordPage } from "@/pages/auth/ForgotPasswordPage";
 import { ProtectedRoute } from "@/components/guard/ProtectedRoute";
@@ -34,8 +33,8 @@ export const router = createBrowserRouter([
     children: [
       // LANDING
       {
-        element: <LandingLayout />,
-        children: [{ index: true, element: <LandingPage /> }],
+        index: true,
+        element: <LandingPage />,
       },
 
       // SANDBOX
