@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react";
+import { Menu, X } from "@/components/foundations/hugeicons";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";

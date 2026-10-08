@@ -25,7 +25,7 @@ import {
   Play,
   Users,
   Eye,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useBookDetail } from "@/features/personal/hooks/useBookDetail";
 import { useBookTree } from "@/features/personal/hooks/useBookTree";

@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText, Users, BookOpen } from "lucide-react";
+import { LayoutDashboard, FileText, Users, BookOpen } from "@/components/foundations/hugeicons";
 import { NavLink } from "react-router";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 

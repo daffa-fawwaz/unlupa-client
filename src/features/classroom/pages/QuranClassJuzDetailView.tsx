@@ -6,12 +6,12 @@ import {
   Plus,
   Activity,
   Users,
-  Clock3,
+  Clock5,
   Flame,
   CircleCheckBig,
   BadgeAlert,
   Search,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 
 // Hooks
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
@@ -85,7 +85,7 @@ export const QuranClassJuzDetailView = () => {
     isError: progressIsError,
     error: progressError,
     refetch: refetchProgress,
-  } = useGetStudentProgress(isTeacher ? (classroomId || "") : "");
+  } = useGetStudentProgress(isTeacher ? classroomId || "" : "");
 
   const fetchClassJuzItems = () => {
     if (classroomId) {
@@ -125,7 +125,9 @@ export const QuranClassJuzDetailView = () => {
       items: group.items.map((item) => ({
         ...item,
         next_review_at:
-          nextReviewMap[item.item_id] ?? item.next_review_at ?? item.next_review,
+          nextReviewMap[item.item_id] ??
+          item.next_review_at ??
+          item.next_review,
       })),
     };
   }, [data, juzId, nextReviewMap]);
@@ -176,14 +178,20 @@ export const QuranClassJuzDetailView = () => {
     const totalProgress = rows.reduce((sum, row) => sum + row.progress_pct, 0);
     const totalGraduate = rows.reduce((sum, row) => sum + row.graduate, 0);
     const totalActive = rows.reduce(
-      (sum, row) => sum + row.start + row.menghafal + row.interval + row.fsrs_active,
+      (sum, row) =>
+        sum + row.start + row.menghafal + row.interval + row.fsrs_active,
       0,
     );
-    const totalPending = rows.reduce((sum, row) => sum + row.pending_graduate, 0);
+    const totalPending = rows.reduce(
+      (sum, row) => sum + row.pending_graduate,
+      0,
+    );
 
     return {
       totalStudents,
-      avgProgress: totalStudents ? Math.round(totalProgress / totalStudents) : 0,
+      avgProgress: totalStudents
+        ? Math.round(totalProgress / totalStudents)
+        : 0,
       totalGraduate,
       totalActive,
       totalPending,
@@ -253,10 +261,7 @@ export const QuranClassJuzDetailView = () => {
                     </span>
                   </div>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground mb-2 tracking-tight">
-                    Hafalan{" "}
-                    <span className="text-primary">
-                      Juz {juzIndex}
-                    </span>
+                    Hafalan <span className="text-primary">Juz {juzIndex}</span>
                   </h1>
                   <p className="text-muted-foreground text-base md:text-lg flex items-center justify-center md:justify-start gap-2">
                     <Activity className="w-4 h-4 text-primary" />
@@ -282,247 +287,251 @@ export const QuranClassJuzDetailView = () => {
               <>
                 {/* Progress Overview */}
                 <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
-              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-5">
-                <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-success/20 bg-success/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-success">
-                    <Users className="h-3.5 w-3.5" />
-                    Progress Siswa
+                  <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-5">
+                    <div>
+                      <div className="inline-flex items-center gap-2 rounded-full border border-success/20 bg-success/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-success">
+                        <Users className="h-3.5 w-3.5" />
+                        Progress Siswa
+                      </div>
+                      <h2 className="mt-3 text-2xl md:text-3xl font-serif font-bold text-foreground">
+                        Ringkasan progress hafalan kelas
+                      </h2>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Data ini membantu teacher melihat siapa yang aktif,
+                        siapa yang sudah graduate, dan siapa yang masih
+                        tertahan.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface-1 px-4 py-3">
+                      <Search className="h-4 w-4 text-muted-foreground" />
+                      <input
+                        type="text"
+                        value={studentFilter}
+                        onChange={(e) => setStudentFilter(e.target.value)}
+                        placeholder="Cari siswa..."
+                        className="w-52 sm:w-64 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+                      />
+                    </div>
                   </div>
-                  <h2 className="mt-3 text-2xl md:text-3xl font-serif font-bold text-foreground">
-                    Ringkasan progress hafalan kelas
-                  </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Data ini membantu teacher melihat siapa yang aktif, siapa
-                    yang sudah graduate, dan siapa yang masih tertahan.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface-1 px-4 py-3">
-                  <Search className="h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={studentFilter}
-                    onChange={(e) => setStudentFilter(e.target.value)}
-                    placeholder="Cari siswa..."
-                    className="w-52 sm:w-64 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
-                  />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-                <div className="rounded-2xl border border-border bg-surface-1 p-4">
-                  <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
-                    <span>Total Siswa</span>
-                    <Users className="h-4 w-4 text-warning" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+                    <div className="rounded-2xl border border-border bg-surface-1 p-4">
+                      <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
+                        <span>Total Siswa</span>
+                        <Users className="h-4 w-4 text-warning" />
+                      </div>
+                      <div className="mt-3 text-3xl font-serif text-foreground">
+                        {progressSummary.totalStudents}
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-surface-1 p-4">
+                      <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
+                        <span>Rata-rata Progress</span>
+                        <Activity className="h-4 w-4 text-success" />
+                      </div>
+                      <div className="mt-3 text-3xl font-serif text-foreground">
+                        {progressSummary.avgProgress}%
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-surface-1 p-4">
+                      <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
+                        <span>Sudah Graduate</span>
+                        <CircleCheckBig className="h-4 w-4 text-success" />
+                      </div>
+                      <div className="mt-3 text-3xl font-serif text-foreground">
+                        {progressSummary.totalGraduate}
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-surface-1 p-4">
+                      <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
+                        <span>Sedang Aktif</span>
+                        <Flame className="h-4 w-4 text-info" />
+                      </div>
+                      <div className="mt-3 text-3xl font-serif text-foreground">
+                        {progressSummary.totalActive}
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-border bg-surface-1 p-4">
+                      <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
+                        <span>Perlu Perhatian</span>
+                        <BadgeAlert className="h-4 w-4 text-destructive" />
+                      </div>
+                      <div className="mt-3 text-3xl font-serif text-foreground">
+                        {progressSummary.totalPending}
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-3 text-3xl font-serif text-foreground">
-                    {progressSummary.totalStudents}
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-border bg-surface-1 p-4">
-                  <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
-                    <span>Rata-rata Progress</span>
-                    <Activity className="h-4 w-4 text-success" />
-                  </div>
-                  <div className="mt-3 text-3xl font-serif text-foreground">
-                    {progressSummary.avgProgress}%
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-border bg-surface-1 p-4">
-                  <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
-                    <span>Sudah Graduate</span>
-                    <CircleCheckBig className="h-4 w-4 text-success" />
-                  </div>
-                  <div className="mt-3 text-3xl font-serif text-foreground">
-                    {progressSummary.totalGraduate}
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-border bg-surface-1 p-4">
-                  <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
-                    <span>Sedang Aktif</span>
-                    <Flame className="h-4 w-4 text-info" />
-                  </div>
-                  <div className="mt-3 text-3xl font-serif text-foreground">
-                    {progressSummary.totalActive}
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-border bg-surface-1 p-4">
-                  <div className="flex items-center justify-between text-muted-foreground text-xs uppercase tracking-widest">
-                    <span>Perlu Perhatian</span>
-                    <BadgeAlert className="h-4 w-4 text-destructive" />
-                  </div>
-                  <div className="mt-3 text-3xl font-serif text-foreground">
-                    {progressSummary.totalPending}
-                  </div>
-                </div>
-              </div>
 
-              <div className="mt-6 grid gap-4">
-                {progressLoading ? (
-                  [...Array(3)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="h-28 rounded-2xl bg-surface-1 animate-pulse"
-                    />
-                  ))
-                ) : progressIsError ? (
-                  <div className="rounded-2xl border border-destructive/20 bg-destructive/10 p-6 text-center text-destructive">
-                    Gagal memuat progress siswa:{" "}
-                    {progressError instanceof Error
-                      ? progressError.message
-                      : "Terjadi kesalahan"}
-                  </div>
-                ) : progressRows.length > 0 ? (
-                  progressRows.map((student) => {
-                    const statusLabels = [
-                      {
-                        key: "start",
-                        label: "Start",
-                        value: student.start,
-                        tone: "bg-surface-1 text-muted-foreground",
-                      },
-                      {
-                        key: "menghafal",
-                        label: "Menghafal",
-                        value: student.menghafal,
-                        tone: "bg-warning/20 text-warning",
-                      },
-                      {
-                        key: "interval",
-                        label: "Interval",
-                        value: student.interval,
-                        tone: "bg-info/20 text-info",
-                      },
-                      {
-                        key: "fsrs_active",
-                        label: "FSRS",
-                        value: student.fsrs_active,
-                        tone: "bg-primary/20 text-primary",
-                      },
-                      {
-                        key: "pending_graduate",
-                        label: "Pending",
-                        value: student.pending_graduate,
-                        tone: "bg-destructive/20 text-destructive",
-                      },
-                      {
-                        key: "graduate",
-                        label: "Graduate",
-                        value: student.graduate,
-                        tone: "bg-success/20 text-success",
-                      },
-                      {
-                        key: "inactive",
-                        label: "Inactive",
-                        value: student.inactive,
-                        tone: "bg-muted/50 text-muted-foreground",
-                      },
-                    ];
+                  <div className="mt-6 grid gap-4">
+                    {progressLoading ? (
+                      [...Array(3)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="h-28 rounded-2xl bg-surface-1 animate-pulse"
+                        />
+                      ))
+                    ) : progressIsError ? (
+                      <div className="rounded-2xl border border-destructive/20 bg-destructive/10 p-6 text-center text-destructive">
+                        Gagal memuat progress siswa:{" "}
+                        {progressError instanceof Error
+                          ? progressError.message
+                          : "Terjadi kesalahan"}
+                      </div>
+                    ) : progressRows.length > 0 ? (
+                      progressRows.map((student) => {
+                        const statusLabels = [
+                          {
+                            key: "start",
+                            label: "Start",
+                            value: student.start,
+                            tone: "bg-surface-1 text-muted-foreground",
+                          },
+                          {
+                            key: "menghafal",
+                            label: "Menghafal",
+                            value: student.menghafal,
+                            tone: "bg-warning/20 text-warning",
+                          },
+                          {
+                            key: "interval",
+                            label: "Interval",
+                            value: student.interval,
+                            tone: "bg-info/20 text-info",
+                          },
+                          {
+                            key: "fsrs_active",
+                            label: "FSRS",
+                            value: student.fsrs_active,
+                            tone: "bg-primary/20 text-primary",
+                          },
+                          {
+                            key: "pending_graduate",
+                            label: "Pending",
+                            value: student.pending_graduate,
+                            tone: "bg-destructive/20 text-destructive",
+                          },
+                          {
+                            key: "graduate",
+                            label: "Graduate",
+                            value: student.graduate,
+                            tone: "bg-success/20 text-success",
+                          },
+                          {
+                            key: "inactive",
+                            label: "Inactive",
+                            value: student.inactive,
+                            tone: "bg-muted/50 text-muted-foreground",
+                          },
+                        ];
 
-                    return (
-                      <article
-                        key={student.user_id}
-                        className="rounded-2xl border border-border bg-surface-1 p-5 md:p-6"
-                      >
-                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                          <div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <h3 className="text-lg md:text-xl font-semibold text-foreground">
-                                {student.full_name}
-                              </h3>
-                              <span className="rounded-full border border-border bg-surface-1 px-2.5 py-1 text-[11px] text-muted-foreground">
-                                {student.email}
-                              </span>
-                            </div>
-                            <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-                              <Clock3 className="h-4 w-4" />
-                              {student.total_items} item dipantau
-                            </div>
-                          </div>
-
-                          <div className="min-w-[160px] rounded-2xl border border-border bg-surface-1 p-4">
-                            <div className="flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground">
-                              <span>Progress</span>
-                              <Flame className="h-4 w-4 text-warning" />
-                            </div>
-                            <div className="mt-2 text-3xl font-serif text-foreground">
-                              {student.progress_pct}%
-                            </div>
-                            <div className="mt-3 h-2.5 rounded-full bg-surface-2 overflow-hidden">
-                              <div
-                                className="h-full rounded-full bg-primary"
-                                style={{ width: `${student.progress_pct}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
-                          {statusLabels.map((status) => (
-                            <div
-                              key={status.key}
-                              className="rounded-2xl border border-border bg-surface-1 p-3"
-                            >
-                              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                                {status.label}
-                              </div>
-                              <div
-                                className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${status.tone}`}
-                              >
-                                {status.value}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="mt-5 rounded-2xl border border-border bg-surface-1 p-4">
-                          <div className="mb-3 flex items-center justify-between">
-                            <div className="text-sm font-semibold text-foreground">
-                              Item Terpantau
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {student.items.length} detail
-                            </div>
-                          </div>
-                          <div className="grid gap-3">
-                            {student.items.map((item) => (
-                              <div
-                                key={item.item_id}
-                                className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 rounded-xl border border-border bg-surface-1 px-4 py-3"
-                              >
-                                <div>
-                                  <div className="text-sm font-medium text-foreground">
-                                    {item.content_ref}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    Dibuat {new Date(item.created_at).toLocaleString(
-                                      "id-ID",
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="rounded-full border border-border bg-surface-1 px-2.5 py-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-                                    {item.status}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {String(item.item_id).slice(0, 8)}
+                        return (
+                          <article
+                            key={student.user_id}
+                            className="rounded-2xl border border-border bg-surface-1 p-5 md:p-6"
+                          >
+                            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                              <div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <h3 className="text-lg md:text-xl font-semibold text-foreground">
+                                    {student.full_name}
+                                  </h3>
+                                  <span className="rounded-full border border-border bg-surface-1 px-2.5 py-1 text-[11px] text-muted-foreground">
+                                    {student.email}
                                   </span>
                                 </div>
+                                <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Clock5 className="h-4 w-4" />
+                                  {student.total_items} item dipantau
+                                </div>
                               </div>
-                            ))}
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })
-                ) : (
-                  <div className="rounded-2xl border border-border bg-surface-1 p-8 text-center text-muted-foreground">
-                    Tidak ada siswa yang cocok dengan filter ini.
+
+                              <div className="min-w-[160px] rounded-2xl border border-border bg-surface-1 p-4">
+                                <div className="flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground">
+                                  <span>Progress</span>
+                                  <Flame className="h-4 w-4 text-warning" />
+                                </div>
+                                <div className="mt-2 text-3xl font-serif text-foreground">
+                                  {student.progress_pct}%
+                                </div>
+                                <div className="mt-3 h-2.5 rounded-full bg-surface-2 overflow-hidden">
+                                  <div
+                                    className="h-full rounded-full bg-primary"
+                                    style={{
+                                      width: `${student.progress_pct}%`,
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+                              {statusLabels.map((status) => (
+                                <div
+                                  key={status.key}
+                                  className="rounded-2xl border border-border bg-surface-1 p-3"
+                                >
+                                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                                    {status.label}
+                                  </div>
+                                  <div
+                                    className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${status.tone}`}
+                                  >
+                                    {status.value}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="mt-5 rounded-2xl border border-border bg-surface-1 p-4">
+                              <div className="mb-3 flex items-center justify-between">
+                                <div className="text-sm font-semibold text-foreground">
+                                  Item Terpantau
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {student.items.length} detail
+                                </div>
+                              </div>
+                              <div className="grid gap-3">
+                                {student.items.map((item) => (
+                                  <div
+                                    key={item.item_id}
+                                    className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 rounded-xl border border-border bg-surface-1 px-4 py-3"
+                                  >
+                                    <div>
+                                      <div className="text-sm font-medium text-foreground">
+                                        {item.content_ref}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        Dibuat{" "}
+                                        {new Date(
+                                          item.created_at,
+                                        ).toLocaleString("id-ID")}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="rounded-full border border-border bg-surface-1 px-2.5 py-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+                                        {item.status}
+                                      </span>
+                                      <span className="text-xs text-muted-foreground">
+                                        {String(item.item_id).slice(0, 8)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </article>
+                        );
+                      })
+                    ) : (
+                      <div className="rounded-2xl border border-border bg-surface-1 p-8 text-center text-muted-foreground">
+                        Tidak ada siswa yang cocok dengan filter ini.
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </section>
-          </>
-        )}
+                </section>
+              </>
+            )}
 
             {/* Content Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

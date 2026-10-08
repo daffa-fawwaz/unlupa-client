@@ -1,6 +1,7 @@
 export interface Book {
   id: string;
   owner_id: string;
+  owner_name?: string;
   title: string;
   description: string;
   cover_image: string;
@@ -92,13 +93,21 @@ export interface BookItem {
   title: string;
   content: string;
   answer: string;
+  explanation?: string;
   image?: string;
   order: number;
   estimated_review_seconds: number;
   review_count: number;
   stability?: number | string;
   next_review_at?: string;
-  status: 'belum_mulai' | 'start' | 'menghafal' | 'interval' | 'fsrs_active' | 'graduate' | 'inactive';
+  status:
+    | "belum_mulai"
+    | "start"
+    | "menghafal"
+    | "interval"
+    | "fsrs_active"
+    | "graduate"
+    | "inactive";
   created_at: string;
   updated_at: string;
 }
@@ -185,6 +194,7 @@ export interface CreateItemPayload {
   title: string;
   content: string;
   answer: string;
+  explanation?: string;
   image?: File | string;
   order: number;
   estimate_value?: number;
@@ -197,6 +207,7 @@ export interface CreatedItem {
   title: string;
   content: string;
   answer: string;
+  explanation?: string;
   image?: string;
   order: number;
   estimated_review_seconds: number;
@@ -228,6 +239,7 @@ export interface ItemDetail {
   book_item_title: string;
   question: string;
   answer: string;
+  explanation?: string;
   image?: string;
 }
 
@@ -270,6 +282,7 @@ export interface CreateModuleItemPayload {
   title: string;
   content: string;
   answer: string;
+  explanation?: string;
   image?: File | string;
   order: number;
   estimate_value: number;
@@ -283,6 +296,7 @@ export interface CreatedModuleItem {
   title: string;
   content: string;
   answer: string;
+  explanation?: string;
   image?: string;
   order: number;
   estimated_review_seconds: number;
@@ -302,6 +316,7 @@ export interface UpdateItemPayload {
   title: string;
   content: string;
   answer: string;
+  explanation?: string;
   image?: File | string;
   order: number;
   estimate_value: number;

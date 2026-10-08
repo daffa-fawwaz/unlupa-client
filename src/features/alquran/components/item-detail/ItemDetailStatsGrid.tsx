@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
-import { Clock, CheckCircle, BarChart2, CalendarDays } from "lucide-react";
+import type { LucideIcon } from "@/components/foundations/hugeicons";
+import { Clock, CheckCircle, BarChart2, CalendarDays } from "@/components/foundations/hugeicons";
 import type { ParsedContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";
 
 interface ItemDetailStatsGridProps {

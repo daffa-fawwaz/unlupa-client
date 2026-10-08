@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle } from "@/components/foundations/hugeicons";
 import { Link } from "react-router";
 import { Button } from "@/components/base/buttons/button";
 import { Checkbox } from "@/components/base/checkbox/checkbox";
@@ -46,7 +46,6 @@ export const LoginForm = ({
   return (
     <div className="grid min-h-screen bg-primary text-primary lg:grid-cols-2">
       <section className="flex min-h-screen flex-col px-6 py-8 sm:px-10 lg:px-12">
-
         <div className="flex flex-1 items-center justify-center py-12">
           <div
             id="state-login"

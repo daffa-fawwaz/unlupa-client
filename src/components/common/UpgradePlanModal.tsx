@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   X, Check, Sparkles, Crown, Zap, BookOpen, GraduationCap, ShieldCheck, 
   ArrowRight, RefreshCw, QrCode, Building, Wallet, CreditCard, Clock, Copy, DownloadCloud, AlertCircle
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { useApp } from '../../context/AppContext';
 import { PaymentMethod, BookTransaction } from '../../types';
 

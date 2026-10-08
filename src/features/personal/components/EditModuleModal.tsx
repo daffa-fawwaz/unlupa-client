@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Loader2, Layers, FileText, Hash, Save } from "lucide-react";
+import { X, Loader2, Layers, FileText, Hash, Save } from "@/components/foundations/hugeicons";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useUpdateModule } from "../hooks/useUpdateModule";
 import type { Module } from "../types/personal.types";

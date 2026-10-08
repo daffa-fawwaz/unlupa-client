@@ -1,6 +1,6 @@
 import { Sidebar } from "@/components/ui/Sidebar";
 import { useState, useEffect } from "react";
-import { Menu, Library, Loader2, Globe, Search, ArrowLeft } from "lucide-react";
+import { Menu, Library, Loader2, Globe, Search, ArrowLeft } from "@/components/foundations/hugeicons";
 import { usePublishedBooks } from "../hooks/usePublishedBooks";
 import { PublicBookCard } from "./PublicBookCard";
 import { NavLink, useNavigate } from "react-router";

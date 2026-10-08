@@ -3,7 +3,7 @@ import {
   GraduationCap,
   QrCode,
   Users,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 
 import type { ClassroomCardProps } from "@/features/classroom/types/index";
 

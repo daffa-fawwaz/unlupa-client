@@ -1,4 +1,4 @@
-import { ArrowLeft, Layers } from "lucide-react";
+import { ArrowLeft, Layers } from "@/components/foundations/hugeicons";
 import type {
   ParsedContentRef,
   StatusStyle,

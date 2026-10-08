@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, AlertTriangle, Loader2 } from "lucide-react";
+import { X, AlertTriangle, Loader2 } from "@/components/foundations/hugeicons";
 import { useJuzToggle } from "@/features/alquran/hooks/useJuzToggle";
 
 interface DeactivateJuzModalProps {

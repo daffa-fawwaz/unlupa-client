@@ -1,11 +1,17 @@
-import React, { useMemo } from 'react';
-import { ClassStudent, ClassGroup, QuranPageItem } from '../../types';
-import { useApp, AppContext } from '../../context/AppContext';
-import { QuranSpace } from '../quran/QuranSpace';
-import { createSampleStudentQuranPages } from '../../data/sampleClasses';
-import { isDue } from '../../lib/fsrs';
-import { ArrowLeft, UserMinus, Printer, Share2 } from 'lucide-react';
-import { TeacherReportPrintView } from './TeacherReportPrintView';
+import React, { useMemo } from "react";
+import { ClassStudent, ClassGroup, QuranPageItem } from "../../types";
+import { useApp, AppContext } from "../../context/AppContext";
+import { QuranSpace } from "../quran/QuranSpace";
+import { createSampleStudentQuranPages } from "../../data/sampleClasses";
+import { isDue } from "../../lib/fsrs";
+import {
+  ArrowLeft,
+  UserMinus,
+  Printer,
+  Share2,
+  Share8,
+} from "@/components/foundations/hugeicons";
+import { TeacherReportPrintView } from "./TeacherReportPrintView";
 
 interface StudentQuranViewProps {
   student: ClassStudent;
@@ -13,13 +19,20 @@ interface StudentQuranViewProps {
   onClose: () => void;
 }
 
-export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, classGroup, onClose }) => {
+export const StudentQuranView: React.FC<StudentQuranViewProps> = ({
+  student,
+  classGroup,
+  onClose,
+}) => {
   const parentContext = useApp();
 
   const studentContext = useMemo(() => {
-    const isCurrentUser = student.quranSpaceCode === parentContext.quranSpaceCode;
-    const targetStudentId = student.id.startsWith('std-user-') ? student.id.replace('std-user-', '') : student.id;
-    
+    const isCurrentUser =
+      student.quranSpaceCode === parentContext.quranSpaceCode;
+    const targetStudentId = student.id.startsWith("std-user-")
+      ? student.id.replace("std-user-", "")
+      : student.id;
+
     // Ensure student data has all 604 pages
     let fullPages: QuranPageItem[];
     if (isCurrentUser) {
@@ -27,14 +40,18 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
     } else if (student.quranData && student.quranData.length >= 604) {
       fullPages = student.quranData;
     } else if (student.quranData && student.quranData.length > 0) {
-      const activeNums = student.quranData.filter(p => p.isActive).map(p => p.pageNumber);
-      const dueNums = student.quranData.filter(p => isDue(p.fsrsData.nextReview, p.isActive)).map(p => p.pageNumber);
+      const activeNums = student.quranData
+        .filter((p) => p.isActive)
+        .map((p) => p.pageNumber);
+      const dueNums = student.quranData
+        .filter((p) => isDue(p.fsrsData.nextReview, p.isActive))
+        .map((p) => p.pageNumber);
       fullPages = createSampleStudentQuranPages(activeNums, dueNums);
     } else {
-      fullPages = parentContext.quranPages.map(p => ({
+      fullPages = parentContext.quranPages.map((p) => ({
         ...p,
         isActive: false,
-        status: 'inactive' as const,
+        status: "inactive" as const,
         fsrsData: {
           stability: 0,
           difficulty: 5.0,
@@ -42,15 +59,19 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
           lapses: 0,
           lastReview: null,
           nextReview: null,
-          state: 'new' as const,
-        }
+          state: "new" as const,
+        },
       }));
     }
 
-    const activePages = fullPages.filter(p => p.isActive);
-    const masteredPages = fullPages.filter(p => p.status === 'mastered_for_now');
-    const duePages = activePages.filter(p => isDue(p.fsrsData.nextReview, p.isActive));
-    
+    const activePages = fullPages.filter((p) => p.isActive);
+    const masteredPages = fullPages.filter(
+      (p) => p.status === "mastered_for_now",
+    );
+    const duePages = activePages.filter((p) =>
+      isDue(p.fsrsData.nextReview, p.isActive),
+    );
+
     const quranStats = {
       total: 604,
       active: activePages.length,
@@ -63,17 +84,18 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
       ...parentContext,
       quranPages: fullPages,
       quranStats: quranStats,
-      teacherFeedbacks: student.teacherFeedbacks || parentContext.teacherFeedbacks,
+      teacherFeedbacks:
+        student.teacherFeedbacks || parentContext.teacherFeedbacks,
       isTeacherMode: true,
       isReadOnlyMode: true,
       inspectingStudentId: targetStudentId,
-      
+
       // Teacher inspection mode is read-only (guru hanya cek progress, tidak melakukan aksi ke item)
       reviewQuranPage: () => null,
       activateQuranPage: () => {},
       deactivateQuranPage: () => {},
       bypassQuranPageToMapan: () => {},
-      resetQuranPageMapan: () => {}
+      resetQuranPageMapan: () => {},
     };
   }, [parentContext, student, classGroup]);
 
@@ -82,15 +104,15 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
       {/* Sticky Teacher Navigation Bar */}
       <div className="print:hidden sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-3 sm:px-6 py-2.5 shadow-xs flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-2xs cursor-pointer shrink-0"
             title="Kembali ke Kelas"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Kembali ke Kelas</span>
           </button>
-          
+
           <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 shrink-0" />
 
           <div className="min-w-0">
@@ -99,7 +121,7 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
                 {student.name}
               </span>
               <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-300 font-mono font-semibold shrink-0">
-                {student.quranSpaceCode || 'SANTRI'}
+                {student.quranSpaceCode || "SANTRI"}
               </span>
             </div>
             <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
@@ -115,34 +137,42 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
                 studentName: student.name,
                 studentId: student.quranSpaceCode || student.id,
                 className: classGroup.name,
-                teacherName: parentContext.userProfile?.fullName || 'Pengajar',
-                date: new Date().toISOString()
+                teacherName: parentContext.userProfile?.fullName || "Pengajar",
+                date: new Date().toISOString(),
               };
-              const encoded = btoa(encodeURIComponent(JSON.stringify(reportData)));
+              const encoded = btoa(
+                encodeURIComponent(JSON.stringify(reportData)),
+              );
               const shareUrl = `${window.location.origin}?report=${encoded}`;
-              
+
               if (navigator.share) {
-                navigator.share({
-                  title: `Rapor: ${student.name}`,
-                  text: `Lihat laporan capaian hafalan santri atas nama ${student.name} pada kelas ${classGroup.name} di link berikut:`,
-                  url: shareUrl
-                }).catch((err) => {
-                  if (err.name !== 'AbortError') {
-                    navigator.clipboard.writeText(shareUrl).then(() => {
-                      alert('Link rapor berhasil disalin! Silakan bagikan (paste) ke WhatsApp wali santri.');
-                    });
-                  }
-                });
+                navigator
+                  .share({
+                    title: `Rapor: ${student.name}`,
+                    text: `Lihat laporan capaian hafalan santri atas nama ${student.name} pada kelas ${classGroup.name} di link berikut:`,
+                    url: shareUrl,
+                  })
+                  .catch((err) => {
+                    if (err.name !== "AbortError") {
+                      navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert(
+                          "Link rapor berhasil disalin! Silakan bagikan (paste) ke WhatsApp wali santri.",
+                        );
+                      });
+                    }
+                  });
               } else {
                 navigator.clipboard.writeText(shareUrl).then(() => {
-                  alert('Link rapor berhasil disalin! Silakan bagikan (paste) ke WhatsApp wali santri.');
+                  alert(
+                    "Link rapor berhasil disalin! Silakan bagikan (paste) ke WhatsApp wali santri.",
+                  );
                 });
               }
             }}
             className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:text-emerald-400 dark:hover:bg-emerald-950/50 transition-colors cursor-pointer"
             title="Bagikan Link Rapor"
           >
-            <Share2 className="w-4 h-4" />
+            <Share8 className="w-4 h-4" />
           </button>
 
           <button
@@ -152,10 +182,14 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
           >
             <Printer className="w-4 h-4" />
           </button>
-          
+
           <button
             onClick={() => {
-              if (window.confirm(`Keluarkan ${student.name} dari daftar santri kelas ini?`)) {
+              if (
+                window.confirm(
+                  `Keluarkan ${student.name} dari daftar santri kelas ini?`,
+                )
+              ) {
                 parentContext.removeStudentFromClass(classGroup.id, student.id);
                 onClose();
               }
@@ -168,7 +202,11 @@ export const StudentQuranView: React.FC<StudentQuranViewProps> = ({ student, cla
         </div>
       </div>
 
-      <TeacherReportPrintView classGroup={classGroup} student={student} teacher={parentContext.userProfile} />
+      <TeacherReportPrintView
+        classGroup={classGroup}
+        student={student}
+        teacher={parentContext.userProfile}
+      />
 
       {/* Embedded Quran Workspace for this student */}
       <div className="print:hidden p-3 sm:p-6 pb-24 max-w-7xl mx-auto">

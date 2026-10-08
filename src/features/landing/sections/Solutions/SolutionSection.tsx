@@ -1,4 +1,4 @@
-import { ShieldCheck, ArrowDown } from "lucide-react";
+import { ShieldCheck, ArrowDown } from "@/components/foundations/hugeicons";
 
 export const SolutionSection = () => {
   return (

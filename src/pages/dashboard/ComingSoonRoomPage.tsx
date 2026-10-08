@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { GraduationCap, User, Clock } from "lucide-react";
+import { GraduationCap, User, Clock } from "@/components/foundations/hugeicons";
 
 const getRoomMeta = (pathname: string) => {
   if (pathname.includes("/kelas")) {

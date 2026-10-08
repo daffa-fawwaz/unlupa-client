@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Users, LogOut, Search, Info } from 'lucide-react';
+import { X, Users, LogOut, Search, Info } from "@/components/foundations/hugeicons";
 import { ClassGroup } from '../../types';
 
 interface Props {

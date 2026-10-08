@@ -112,6 +112,7 @@ export interface BookItem {
   chapterId?: string | null;
   question: string;
   answer: string;
+  explanation?: string;
   imageQ?: string;
   imageA?: string;
   tags: string[];
@@ -180,6 +181,7 @@ export interface ClassGroup {
   requiredJuzList?: number[];
   assignedBookIds?: string[];
   students: ClassStudent[];
+  studentCount?: number;
   createdAt: string;
   status?: 'active' | 'closed';
   closedAt?: string;
@@ -203,6 +205,7 @@ export interface UserProfile {
   avatarUrl: string;
   plan: 'free' | 'premium' | 'institutional';
   role?: 'user' | 'admin' | 'superadmin';
+  createdAt?: string;
   onboardingPreferences?: UserOnboardingPreferences;
 }
 

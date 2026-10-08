@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlusCircle, X, CheckCircle, Loader2 } from "lucide-react";
+import { PlusCircle, X, CheckCircle, Loader2 } from "@/components/foundations/hugeicons";
 import { useCreateJuz } from "@/features/alquran/hooks/useCreateJuz";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 

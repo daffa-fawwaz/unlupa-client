@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Edit2, Trash2, MoreVertical } from "lucide-react";
+import { Edit2, Trash2, MoreVertical } from "@/components/foundations/hugeicons";
 
 export interface ClassroomCardMenuProps {
   onEdit?: () => void;

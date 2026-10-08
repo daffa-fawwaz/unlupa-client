@@ -1,4 +1,4 @@
-import { AlertTriangle, Sparkles, BookOpen } from "lucide-react";
+import { AlertTriangle, Sparkles, BookOpen } from "@/components/foundations/hugeicons";
 import type { WeakSpotItem } from "../types";
 
 interface WeakSpotsWidgetProps {

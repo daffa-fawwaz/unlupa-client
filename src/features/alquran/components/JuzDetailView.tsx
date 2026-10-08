@@ -5,7 +5,7 @@ import {
   Activity,
   Power,
   CheckCircle2,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useEffect, useMemo, useState } from "react";
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";
 import { useItemsByStatus } from "@/features/alquran/hooks/useItemsByStatus";

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Brain, Clock, CalendarClock } from 'lucide-react';
+import { Flame, Brain, Clock, CalendarClock } from "@/components/foundations/hugeicons";
 
 export interface MemoryMetricGridProps {
   reps: number;

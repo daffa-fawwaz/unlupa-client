@@ -8,7 +8,7 @@ import {
   Loader2,
   Clock,
   Sparkles,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useEffect, useState } from "react";
 
 import { useGetMyItems } from "@/features/alquran/hooks/useGetMyItems";

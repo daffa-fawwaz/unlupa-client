@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Trash2 } from "@/components/foundations/hugeicons";
 import { StatusBadge } from "@/features/alquran/components/StatusBadge";
 import type {
   QuranItem,

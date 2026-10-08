@@ -36,14 +36,14 @@ import {
   Flame,
   Sliders,
   HelpCircle,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { requestNotificationPermission } from "../lib/notifications";
 import { QuranAttendanceModal } from "./attendance/QuranAttendanceModal";
 import { StudentReportModal } from "./home/StudentReportModal";
 import { PWAInstallButton } from "./common/PWAInstallButton";
 import { AchievementReportModal } from "./common/AchievementReportModal";
 import { BillingHistoryModal } from "./profile/BillingHistoryModal";
-import { Award, ShieldAlert } from "lucide-react";
+import { Award, ShieldAlert } from "@/components/foundations/hugeicons";
 
 export const Navigation: React.FC = () => {
   const {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, BookOpen, Clock, ShieldCheck, AlertCircle, Loader2, Lock } from "lucide-react";
+import { X, BookOpen, Clock, ShieldCheck, AlertCircle, Loader2, Lock } from "@/components/foundations/hugeicons";
 import type { QuranPageSummary } from "../types/quran-pages.types";
 import { useReviewQuranPage } from "../hooks/useQuranPages";
 import { useApp } from "@/context/AppContext";

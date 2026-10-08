@@ -1,17 +1,48 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { 
-  Award, FileText, Download, Share2, X, Settings2, 
-  CheckCircle2, Sparkles, Building2, UserCircle, PenTool, Image as ImageIcon, Instagram, Target
-} from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  AiSparklesIcon,
+  Building02Icon,
+  Certificate01Icon,
+  FileDownloadIcon,
+  FileTextIcon,
+  Image02Icon,
+  InstagramIcon,
+  PenToolIcon,
+  Quran02Icon,
+  Settings02Icon,
+  Share01Icon,
+  Target02Icon,
+  UserCircle02Icon,
+} from '@hugeicons/core-free-icons';
 import html2canvas from 'html2canvas';
+import { AnimatePresence, motion } from 'motion/react';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { Badge } from '@/components/base/badges/badges';
+import { FloatingAlert } from '@/components/base/alert/alert';
+import { Button } from '@/components/base/buttons/button';
+import { CloseButton } from '@/components/base/buttons/close-button';
+import { Input } from '@/components/base/input/input';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const BuildingFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={Building02Icon} className={className} />;
+const ImageFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={Image02Icon} className={className} />;
+const UserFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={UserCircle02Icon} className={className} />;
+const PenFieldIcon: React.FC<React.HTMLAttributes<HTMLOrSVGElement>> = ({ className }) => <HugeiconsIcon icon={PenToolIcon} className={className} />;
+
+type GeneratorAlert = {
+  variant: 'success' | 'error' | 'info';
+  title: string;
+  description: string;
+} | null;
+
 export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => {
+  const isDesktop = useBreakpoint('sm');
   const { quranStats, personalStats, userProfile, language } = useApp();
   const [reportType, setReportType] = useState<'certificate' | 'report' | 'social'>('social');
   const [reportSource, setReportSource] = useState<'quran' | 'personal'>('quran');
@@ -23,9 +54,8 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
   const [headName, setHeadName] = useState('K.H. Budi Santoso');
   
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatorAlert, setGeneratorAlert] = useState<GeneratorAlert>(null);
   const printRef = useRef<HTMLDivElement>(null);
-
-  if (!isOpen) return null;
 
   const isQuran = reportSource === 'quran';
   const primaryStat = isQuran ? (quranStats?.active || 0) : (personalStats?.activeItems || 0);
@@ -67,7 +97,11 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
   const handleDownload = async () => {
     const blob = await generateImageBlob();
     if (!blob) {
-      alert(language === 'en' ? 'Failed to generate image.' : 'Gagal membuat gambar.');
+      setGeneratorAlert({
+        variant: 'error',
+        title: language === 'en' ? 'Export failed' : 'Ekspor gagal',
+        description: language === 'en' ? 'The image could not be generated. Please try again.' : 'Gambar tidak dapat dibuat. Silakan coba lagi.',
+      });
       return;
     }
     const url = URL.createObjectURL(blob);
@@ -76,12 +110,21 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
+    setGeneratorAlert({
+      variant: 'success',
+      title: language === 'en' ? 'PNG saved' : 'PNG berhasil disimpan',
+      description: language === 'en' ? 'Your document is ready on this device.' : 'Dokumenmu sudah tersimpan di perangkat ini.',
+    });
   };
 
   const handleShare = async () => {
     const blob = await generateImageBlob();
     if (!blob) {
-      alert(language === 'en' ? 'Failed to generate image.' : 'Gagal membuat gambar.');
+      setGeneratorAlert({
+        variant: 'error',
+        title: language === 'en' ? 'Unable to share' : 'Gagal membagikan',
+        description: language === 'en' ? 'The image could not be generated. Please try again.' : 'Gambar tidak dapat dibuat. Silakan coba lagi.',
+      });
       return;
     }
     const file = new File([blob], `Unlupa-${reportType}.png`, { type: 'image/png' });
@@ -93,13 +136,32 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
           text: language === 'en' ? 'Alhamdulillah, my memorization progress with Unlupa.id' : 'Alhamdulillah, progres hafalan saya bersama Unlupa.id',
           files: [file]
         });
+        setGeneratorAlert({
+          variant: 'success',
+          title: language === 'en' ? 'Document shared' : 'Dokumen berhasil dibagikan',
+          description: language === 'en' ? 'Your achievement document was shared successfully.' : 'Dokumen pencapaianmu berhasil dibagikan.',
+        });
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
         console.error('Share failed', err);
+        setGeneratorAlert({
+          variant: 'error',
+          title: language === 'en' ? 'Unable to share' : 'Gagal membagikan',
+          description: language === 'en' ? 'Please retry or save the PNG instead.' : 'Silakan coba lagi atau simpan PNG sebagai pengganti.',
+        });
       }
     } else {
-      // Fallback
-      handleDownload();
-      alert(language === 'en' ? 'Web Share not supported. Image downloaded instead.' : 'Fitur Share tidak didukung. Gambar telah diunduh.');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = file.name;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+      setGeneratorAlert({
+        variant: 'info',
+        title: language === 'en' ? 'PNG downloaded instead' : 'PNG diunduh sebagai pengganti',
+        description: language === 'en' ? 'File sharing is unavailable in this browser.' : 'Fitur berbagi file tidak tersedia di browser ini.',
+      });
     }
   };
 
@@ -108,210 +170,178 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
     month: 'long',
     year: 'numeric'
   });
+  const previewWidth = reportType === 'certificate' ? 800 : reportType === 'social' ? 450 : 566;
+  const previewHeight = reportType === 'certificate' ? 566 : 800;
+  const previewScale = isDesktop
+    ? reportType === 'certificate' ? 0.68 : reportType === 'social' ? 0.72 : 0.72
+    : reportType === 'certificate' ? 0.4 : reportType === 'social' ? 0.68 : 0.54;
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-slate-900 w-full max-w-5xl rounded-3xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden">
-        
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/80 dark:bg-slate-850/80">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
-              <Award className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">
-                {language === 'en' ? 'Generate Report & Certificate' : 'Buat Rapor & Sertifikat'}
-              </h3>
-              <p className="text-xs text-slate-500">
-                {language === 'en' ? 'Export official documents with Unlupa.id verification' : 'Ekspor dokumen resmi dengan verifikasi Unlupa.id'}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 transition-colors"
+    <>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[250] flex items-end justify-center sm:items-center sm:p-4">
+          <motion.button
+            type="button"
+            aria-label={language === 'en' ? 'Close certificate generator' : 'Tutup pembuat sertifikat'}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={isGenerating ? undefined : onClose}
+            className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm"
+          />
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="achievement-report-title"
+            initial={isDesktop ? { opacity: 0, y: 24, scale: 0.98 } : { y: '100%' }}
+            animate={isDesktop ? { opacity: 1, y: 0, scale: 1 } : { y: 0 }}
+            exit={isDesktop ? { opacity: 0, y: 24, scale: 0.98 } : { y: '100%' }}
+            transition={isDesktop ? { duration: 0.2 } : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="relative flex max-h-[96dvh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl dark:bg-slate-900 sm:rounded-3xl"
           >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="flex flex-col lg:flex-row flex-1 min-h-0">
-          
-          {/* Left Panel: Settings Form */}
-          <div className="w-full lg:w-80 border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-y-auto p-5 space-y-6">
-            
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                {language === 'en' ? 'Data Source' : 'Sumber Data'}
-              </label>
-              <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-                <button
-                  onClick={() => setReportSource('quran')}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-colors ${
-                    reportSource === 'quran'
-                      ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
-                  }`}
-                >
-                  <Award className="w-4 h-4" />
-                  Al-Qur'an
-                </button>
-                <button
-                  onClick={() => setReportSource('personal')}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-colors ${
-                    reportSource === 'personal'
-                      ? 'bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
-                  }`}
-                >
-                  <Target className="w-4 h-4" />
-                  Kelas Pribadi
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                {language === 'en' ? 'Document Type' : 'Jenis Dokumen'}
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => setReportType('social')}
-                  className={`flex flex-col items-center p-3 rounded-xl border ${
-                    reportType === 'social' 
-                      ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-300' 
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
-                  } transition-colors`}
-                >
-                  <Instagram className="w-5 h-5 mb-1.5" />
-                  <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight">{language === 'en' ? 'Social Story' : 'Story Sosmed'}</span>
-                </button>
-                <button
-                  onClick={() => setReportType('certificate')}
-                  className={`flex flex-col items-center p-3 rounded-xl border ${
-                    reportType === 'certificate' 
-                      ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-300' 
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
-                  } transition-colors`}
-                >
-                  <Award className="w-5 h-5 mb-1.5" />
-                  <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight">{language === 'en' ? 'Certificate' : 'Sertifikat'}</span>
-                </button>
-                <button
-                  onClick={() => setReportType('report')}
-                  className={`flex flex-col items-center p-3 rounded-xl border ${
-                    reportType === 'report' 
-                      ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-300' 
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
-                  } transition-colors`}
-                >
-                  <FileText className="w-5 h-5 mb-1.5" />
-                  <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight">{language === 'en' ? 'Report' : 'Rapor'}</span>
-                </button>
-              </div>
-            </div>
-
-            {reportType !== 'social' && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider pb-2 border-b border-slate-100 dark:border-slate-800">
-                  <Settings2 className="w-4 h-4" />
-                  {language === 'en' ? 'Customization' : 'Kustomisasi Data'}
+            <header className="flex shrink-0 items-center justify-between gap-4 border-b border-secondary bg-primary px-4 py-3 sm:px-6 sm:py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-xs">
+                   <HugeiconsIcon icon={Certificate01Icon} className="size-5" />
                 </div>
-                
-                <div className="space-y-3">
-                  <div>
-                    <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 mb-1">
-                      <Building2 className="w-3.5 h-3.5" />
-                      {language === 'en' ? 'Institution Name' : 'Nama Lembaga'}
-                    </label>
-                    <input
-                      type="text"
-                      value={instName}
-                      onChange={(e) => setInstName(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:border-indigo-500 text-slate-900 dark:text-slate-100"
-                    />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 id="achievement-report-title" className="truncate text-lg font-semibold tracking-tight text-primary">
+                      {language === 'en' ? 'Certificate Studio' : 'Studio Sertifikat'}
+                    </h3>
+                    <Badge color="brand" size="sm" className="hidden sm:flex">Export</Badge>
                   </div>
-                  
-                  <div>
-                    <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 mb-1">
-                      <ImageIcon className="w-3.5 h-3.5" />
-                      {language === 'en' ? 'Logo URL (Optional)' : 'URL Logo Lembaga (Opsional)'}
-                    </label>
-                    <input
-                      type="text"
-                      value={instLogo}
-                      onChange={(e) => setInstLogo(e.target.value)}
-                      placeholder="https://..."
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:border-indigo-500 text-slate-900 dark:text-slate-100"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 mb-1">
-                      <UserCircle className="w-3.5 h-3.5" />
-                      {language === 'en' ? 'Teacher / Mentor Name' : 'Nama Guru / Pembimbing'}
-                    </label>
-                    <input
-                      type="text"
-                      value={teacherName}
-                      onChange={(e) => setTeacherName(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:border-indigo-500 text-slate-900 dark:text-slate-100"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 mb-1">
-                      <PenTool className="w-3.5 h-3.5" />
-                      {language === 'en' ? 'Head of Institution' : 'Pimpinan / Kepala Lembaga'}
-                    </label>
-                    <input
-                      type="text"
-                      value={headName}
-                      onChange={(e) => setHeadName(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:border-indigo-500 text-slate-900 dark:text-slate-100"
-                    />
-                  </div>
+                  <p className="truncate text-xs text-secondary sm:text-sm">
+                    {language === 'en' ? 'Design and export your learning achievement' : 'Desain dan ekspor pencapaian belajarmu'}
+                  </p>
                 </div>
               </div>
-            )}
+              <CloseButton slot={null} size="md" onPress={onClose} isDisabled={isGenerating} label="Close certificate generator" />
+            </header>
 
-            <div className="flex gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <button
-                onClick={handleShare}
-                disabled={isGenerating}
-                className="flex-1 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-70"
-              >
-                <Share2 className="w-4 h-4" />
-                {language === 'en' ? 'Share' : 'Bagikan'}
-              </button>
-              <button
-                onClick={handleDownload}
-                disabled={isGenerating}
-                className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-70"
-              >
-                <Download className="w-4 h-4" />
-                {isGenerating 
-                  ? (language === 'en' ? '...' : '...') 
-                  : (language === 'en' ? 'Save' : 'Simpan')}
-              </button>
-            </div>
-          </div>
+            <div className="min-h-0 flex-1 overflow-y-auto lg:flex lg:overflow-hidden">
+              <aside className="w-full space-y-6 bg-primary p-4 sm:p-5 lg:w-88 lg:shrink-0 lg:overflow-y-auto lg:border-r lg:border-secondary">
+                <div className="rounded-2xl border border-secondary bg-secondary/40 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                       <HugeiconsIcon icon={AiSparklesIcon} className="size-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-primary">{userProfile.fullName || 'Unlupa User'}</p>
+                      <p className="text-xs text-secondary">{language === 'en' ? 'Live achievement data' : 'Data pencapaian langsung'}</p>
+                    </div>
+                  </div>
+                </div>
 
-          {/* Right Panel: Live Preview Canvas */}
-          <div className="flex-1 bg-slate-100 dark:bg-slate-950 p-4 sm:p-8 overflow-y-auto flex justify-center items-center">
-            
-            {/* THIS IS THE PRINTABLE AREA */}
-            <div 
-              ref={printRef}
-              className={`${reportType === 'social' ? 'bg-slate-950' : 'bg-white'} shrink-0 shadow-xl relative overflow-hidden flex flex-col`}
-              style={{
-                aspectRatio: reportType === 'certificate' ? '1.414 / 1' : (reportType === 'social' ? '9 / 16' : '1 / 1.414'),
-                width: reportType === 'certificate' ? '800px' : (reportType === 'social' ? '450px' : '566px'),
-                minHeight: reportType === 'certificate' ? '566px' : '800px',
-              }}
-            >
+                <section className="space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold text-primary">{language === 'en' ? 'Learning source' : 'Sumber pembelajaran'}</p>
+                    <p className="mt-0.5 text-xs text-secondary">{language === 'en' ? 'Choose the data shown in the document.' : 'Pilih data yang ditampilkan pada dokumen.'}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      aria-pressed={reportSource === 'quran'}
+                      onClick={() => setReportSource('quran')}
+                      className={`flex items-center gap-2 rounded-xl border p-3 text-left transition ${reportSource === 'quran' ? 'border-brand bg-brand-50 text-brand-700 shadow-xs' : 'border-secondary bg-primary text-secondary hover:bg-primary_hover'}`}
+                    >
+                       <HugeiconsIcon icon={Quran02Icon} className="size-4.5 shrink-0" />
+                      <span className="text-sm font-semibold">Al-Quran</span>
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={reportSource === 'personal'}
+                      onClick={() => setReportSource('personal')}
+                      className={`flex items-center gap-2 rounded-xl border p-3 text-left transition ${reportSource === 'personal' ? 'border-brand bg-brand-50 text-brand-700 shadow-xs' : 'border-secondary bg-primary text-secondary hover:bg-primary_hover'}`}
+                    >
+                       <HugeiconsIcon icon={Target02Icon} className="size-4.5 shrink-0" />
+                      <span className="text-sm font-semibold">{language === 'en' ? 'Personal' : 'Pribadi'}</span>
+                    </button>
+                  </div>
+                </section>
+
+                <section className="space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold text-primary">{language === 'en' ? 'Document format' : 'Format dokumen'}</p>
+                    <p className="mt-0.5 text-xs text-secondary">{language === 'en' ? 'Optimized for each publishing format.' : 'Dioptimalkan untuk setiap kebutuhan publikasi.'}</p>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                       { value: 'social', label: language === 'en' ? 'Story' : 'Story', icon: InstagramIcon },
+                       { value: 'certificate', label: language === 'en' ? 'Certificate' : 'Sertifikat', icon: Certificate01Icon },
+                       { value: 'report', label: language === 'en' ? 'Report' : 'Rapor', icon: FileTextIcon },
+                     ] as const).map(({ value, label, icon }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={reportType === value}
+                        onClick={() => setReportType(value)}
+                        className={`flex min-w-0 flex-col items-center gap-2 rounded-xl border px-2 py-3 text-center transition ${reportType === value ? 'border-brand bg-brand-50 text-brand-700 shadow-xs' : 'border-secondary bg-primary text-secondary hover:bg-primary_hover'}`}
+                      >
+                         <HugeiconsIcon icon={icon} className="size-5" />
+                        <span className="w-full truncate text-xs font-semibold">{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+
+                {reportType !== 'social' && (
+                  <section className="space-y-4 border-t border-secondary pt-5">
+                    <div className="flex items-center gap-2">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-secondary text-fg-quaternary">
+                         <HugeiconsIcon icon={Settings02Icon} className="size-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-primary">{language === 'en' ? 'Document details' : 'Detail dokumen'}</p>
+                        <p className="text-xs text-secondary">{language === 'en' ? 'Customize official information.' : 'Sesuaikan informasi resmi.'}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                       <Input size="sm" icon={BuildingFieldIcon} label={language === 'en' ? 'Institution name' : 'Nama lembaga'} value={instName} onChange={setInstName} />
+                       <Input size="sm" icon={ImageFieldIcon} label={language === 'en' ? 'Logo URL (optional)' : 'URL logo (opsional)'} value={instLogo} onChange={setInstLogo} placeholder="https://..." />
+                       <Input size="sm" icon={UserFieldIcon} label={language === 'en' ? 'Teacher or mentor' : 'Guru atau pembimbing'} value={teacherName} onChange={setTeacherName} />
+                       <Input size="sm" icon={PenFieldIcon} label={language === 'en' ? 'Head of institution' : 'Pimpinan lembaga'} value={headName} onChange={setHeadName} />
+                    </div>
+                  </section>
+                )}
+
+                <div className="grid grid-cols-2 gap-2 border-t border-secondary pt-5">
+                   <Button color="secondary" size="lg" isLoading={isGenerating} onPress={handleShare} className="w-full">
+                     <HugeiconsIcon icon={Share01Icon} className="size-5" />
+                    {language === 'en' ? 'Share' : 'Bagikan'}
+                  </Button>
+                   <Button size="lg" isLoading={isGenerating} onPress={handleDownload} className="w-full">
+                     <HugeiconsIcon icon={FileDownloadIcon} className="size-5" />
+                    {language === 'en' ? 'Save PNG' : 'Simpan PNG'}
+                  </Button>
+                </div>
+              </aside>
+
+              <section className="flex min-h-[440px] flex-1 flex-col border-t border-secondary bg-secondary/40 lg:min-h-0 lg:border-l-0 lg:border-t-0">
+                <div className="flex items-center justify-between gap-3 border-b border-secondary bg-primary/80 px-4 py-3 sm:px-5">
+                  <div>
+                    <p className="text-sm font-semibold text-primary">{language === 'en' ? 'Live preview' : 'Pratinjau langsung'}</p>
+                    <p className="text-xs text-secondary">{previewWidth} × {previewHeight}px PNG</p>
+                  </div>
+                  <Badge color="success" size="sm">{language === 'en' ? 'Ready to export' : 'Siap diekspor'}</Badge>
+                </div>
+                <div className="flex flex-1 justify-center overflow-auto p-4 sm:p-6">
+                  <div
+                    className="relative shrink-0"
+                    style={{ width: previewWidth * previewScale, height: previewHeight * previewScale }}
+                  >
+                    <div
+                      ref={printRef}
+                      className={`${reportType === 'social' ? 'bg-slate-950' : 'bg-white'} relative flex shrink-0 flex-col overflow-hidden shadow-xl`}
+                      style={{
+                        aspectRatio: reportType === 'certificate' ? '1.414 / 1' : reportType === 'social' ? '9 / 16' : '1 / 1.414',
+                        width: previewWidth,
+                        minHeight: previewHeight,
+                        transform: `scale(${previewScale})`,
+                        transformOrigin: 'top left',
+                      }}
+                    >
               {/* Common Unlupa Watermark / Border */}
               <div className="absolute inset-0 border-[12px] border-indigo-900/5 pointer-events-none z-10 pointer-events-none"></div>
               <div className="absolute inset-2 border-2 border-indigo-900/10 pointer-events-none z-10 pointer-events-none"></div>
@@ -321,7 +351,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
 
               {/* Verified by Unlupa.id Default Logo (Bottom Center) */}
               <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center gap-1.5 opacity-50 z-20 pointer-events-none">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                 <HugeiconsIcon icon={AiSparklesIcon} className="size-3.5 text-indigo-600" />
                 <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">Verified by Unlupa.id</span>
               </div>
 
@@ -358,13 +388,13 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                     <div className="grid grid-cols-2 gap-4 mb-8">
                       <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 flex flex-col items-center shadow-xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/20 rounded-full blur-xl -translate-y-1/2 translate-x-1/2"></div>
-                        <Target className="w-6 h-6 text-blue-400 mb-3 opacity-80" />
+                         <HugeiconsIcon icon={Target02Icon} className="mb-3 size-6 text-blue-400 opacity-80" />
                         <span className="text-5xl font-black text-white mb-1 drop-shadow-md">{primaryStat}</span>
                         <span className="text-[10px] uppercase tracking-widest text-blue-200/80 font-bold text-center leading-tight">{primaryLabel.split(' ')[0]}<br/>{primaryLabel.split(' ').slice(1).join(' ')}</span>
                       </div>
                       <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 flex flex-col items-center shadow-xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/20 rounded-full blur-xl -translate-y-1/2 translate-x-1/2"></div>
-                        <Award className="w-6 h-6 text-emerald-400 mb-3 opacity-80" />
+                         <HugeiconsIcon icon={Certificate01Icon} className="mb-3 size-6 text-emerald-400 opacity-80" />
                         <span className="text-5xl font-black text-emerald-400 mb-1 drop-shadow-md">{secondaryStat}</span>
                         <span className="text-[10px] uppercase tracking-widest text-emerald-200/80 font-bold text-center leading-tight">{secondaryLabel.split(' ')[0]}<br/>{secondaryLabel.split(' ').slice(1).join(' ')}</span>
                       </div>
@@ -402,7 +432,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
 
                   <div className="relative z-10 flex flex-col items-center gap-2 mt-auto pb-4">
                     <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/10">
-                      <Sparkles className="w-4 h-4 text-amber-400" />
+                       <HugeiconsIcon icon={AiSparklesIcon} className="size-4 text-amber-400" />
                       <span className="text-xs font-bold text-white tracking-widest uppercase">Unlupa.id</span>
                     </div>
                     <p className="text-[9px] text-slate-500 tracking-widest uppercase">AI-Powered Memorization</p>
@@ -462,7 +492,7 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
                     </div>
                     
                     <div className="w-20 h-20 rounded-full border-2 border-amber-400 bg-amber-50 flex items-center justify-center flex-col shadow-inner">
-                      <Award className="w-6 h-6 text-amber-500 mb-1" />
+                       <HugeiconsIcon icon={Certificate01Icon} className="mb-1 size-6 text-amber-500" />
                       <span className="text-[7px] font-bold text-amber-700 uppercase">Excellent</span>
                     </div>
 
@@ -615,7 +645,20 @@ export const AchievementReportModal: React.FC<Props> = ({ isOpen, onClose }) => 
 
           </div>
         </div>
-      </div>
+      </section>
     </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+    {generatorAlert && (
+      <FloatingAlert
+        variant={generatorAlert.variant}
+        title={generatorAlert.title}
+        description={generatorAlert.description}
+        onDismiss={() => setGeneratorAlert(null)}
+      />
+    )}
+    </>
   );
 };

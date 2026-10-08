@@ -8,7 +8,7 @@ import {
   Layers,
   RotateCcw,
   Lock,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";

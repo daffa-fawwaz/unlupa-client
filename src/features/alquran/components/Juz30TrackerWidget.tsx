@@ -1,4 +1,4 @@
-import { Sparkles, Trophy, BookMarked, CheckCircle2 } from "lucide-react";
+import { Sparkles, Trophy, BookMarked, CheckCircle2 } from "@/components/foundations/hugeicons";
 import { useJuz30Progress } from "../hooks/useQuranPages";
 import type { QuranPageSummary } from "../types/quran-pages.types";
 

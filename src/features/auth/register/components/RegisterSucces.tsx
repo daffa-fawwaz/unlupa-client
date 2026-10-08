@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check } from "@/components/foundations/hugeicons";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 

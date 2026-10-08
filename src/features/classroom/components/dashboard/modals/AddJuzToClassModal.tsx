@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { BookOpen, ChevronDown, Loader2, PlusCircle, X } from "lucide-react";
+import { BookOpen, ChevronDown, Loader2, PlusCircle, X } from "@/components/foundations/hugeicons";
 
 interface AddJuzToClassModalProps {
   isOpen: boolean;

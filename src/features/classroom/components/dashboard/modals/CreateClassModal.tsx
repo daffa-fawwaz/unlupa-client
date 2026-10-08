@@ -13,7 +13,7 @@ import {
   Sparkles,
   Layers,
   AlertCircle
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { JuzRangeSelector } from "@/components/classes/JuzRangeSelector";
 import { useApp } from "@/context/AppContext";
 

@@ -7,7 +7,7 @@ import {
   FolderOpen,
   CheckCircle2,
   Clock,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { FlameBurst } from "@/components/ui/FlameBurst";
 import { useGetDailyBooks } from "@/features/personal/hooks/useGetDailyBooks";
 import { useParentGroupedReview } from "@/features/personal/hooks/useParentGroupedReview";

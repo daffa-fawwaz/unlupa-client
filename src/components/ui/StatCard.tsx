@@ -1,4 +1,4 @@
-import { ArrowUpRight, Users, BookOpen, DollarSign, Activity } from "lucide-react";
+import { ArrowUpRight } from "@/components/foundations/hugeicons";
 
 type StatCardProps = {
   title: string;
@@ -9,54 +9,25 @@ type StatCardProps = {
   color: string;
 };
 
-// Dummy Data for Stats
-export const stats = [
-  {
-    title: "Total Pengguna",
-    value: "3,533",
-    change: "+12.5%",
-    icon: Users,
-    color: "blue",
-    desc: "Siswa & Pengajar",
-  },
-  {
-    title: "Kelas Aktif",
-    value: "156",
-    change: "+8.2%",
-    icon: BookOpen,
-    color: "emerald",
-    desc: "Sedang berlangsung",
-  },
-  {
-    title: "Pendapatan",
-    value: "Rp 154jt",
-    change: "+23.1%",
-    icon: DollarSign,
-    color: "gold",
-    desc: "Bulan ini",
-  },
-  {
-    title: "Aktivitas Sistem",
-    value: "98.9%",
-    change: "+0.4%",
-    icon: Activity,
-    color: "purple",
-    desc: "Uptime Server",
-  },
-];
-
 const statIconStyles: Record<string, string> = {
-  blue: "text-info",
-  emerald: "text-success",
-  gold: "text-warning",
-  purple: "text-primary",
+  blue: "bg-cyan-900 text-cyan-50",
+  emerald: "bg-emerald-700 text-emerald-50",
+  gold: "bg-amber-700 text-amber-50",
+  purple: "bg-rose-800 text-rose-50",
 };
 
 const statChipStyles: Record<string, string> = {
-  blue: "bg-info/10 border border-info/20 text-info",
-  emerald: "bg-success/10 border border-success/20 text-success",
-  gold: "bg-warning/10 border border-warning/20 text-warning",
-  purple: "bg-primary/10 border border-primary/20 text-primary",
+  blue: "text-cyan-950",
+  emerald: "text-emerald-950",
+  gold: "text-amber-950",
+  purple: "text-rose-950",
+};
+
+const statCardStyles: Record<string, string> = {
+  blue: "border-cyan-200/70 bg-gradient-to-br from-cyan-50 via-cyan-100 to-emerald-100 text-cyan-950",
+  emerald: "border-emerald-200/70 bg-gradient-to-br from-emerald-50 via-emerald-100 to-lime-100 text-emerald-950",
+  gold: "border-amber-200/80 bg-gradient-to-br from-amber-50 via-orange-100 to-yellow-100 text-amber-950",
+  purple: "border-rose-200/80 bg-gradient-to-br from-rose-50 via-orange-100 to-red-100 text-rose-950",
 };
 
 export const StatCard = ({
@@ -68,26 +39,26 @@ export const StatCard = ({
   color,
 }: StatCardProps) => {
   return (
-    <div className="bg-card border border-border p-6 rounded-2xl group">
-      <div className="flex justify-between items-start mb-4">
-        <div className={`${statIconStyles[color]}`}>
-          <Icon className="w-6 h-6" />
+    <div className={`group relative min-h-48 overflow-hidden rounded-3xl border p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${statCardStyles[color]}`}>
+      <div className="relative mb-8 flex items-start justify-between">
+        <div className={`flex size-12 items-center justify-center rounded-2xl shadow-sm ${statIconStyles[color]}`}>
+          <Icon className="size-6" />
         </div>
 
         <div
-          className={`flex items-center gap-1 text-xs font-mono px-2 py-1 rounded ${statChipStyles[color]}`}
+          className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${statChipStyles[color]}`}
         >
-          <ArrowUpRight className="w-3 h-3" />
+          <ArrowUpRight className="size-3" />
           {change}
         </div>
       </div>
 
-      <div>
-        <h3 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
+      <div className="relative">
+        <p className="mb-4 text-sm font-semibold">{title}</p>
+        <h3 className="text-3xl font-bold tracking-tight md:text-4xl">
           {value}
         </h3>
-        <p className="text-sm text-muted-foreground mb-1">{title}</p>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+        <p className="mt-2 max-w-38 text-xs font-medium leading-relaxed opacity-75">
           {desc}
         </p>
       </div>

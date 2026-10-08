@@ -7,7 +7,7 @@ import {
   RotateCcw,
   Brain,
   Trophy,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { SURAH_NAMES } from "@/features/alquran/constants/surahList";
 import { convertPageRangeToSurahLabel } from "@/features/alquran/utils/pageToSurahConverter";
 

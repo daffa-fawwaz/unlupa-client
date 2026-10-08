@@ -9,7 +9,7 @@ import {
   ChevronRight, 
   ChevronLeft, 
   X 
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 interface Props {
   isOpen: boolean;

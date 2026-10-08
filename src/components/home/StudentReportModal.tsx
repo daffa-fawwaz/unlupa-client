@@ -1,27 +1,33 @@
-import React from 'react';
-import { 
-  X, 
-  Download, 
-  Share2, 
-  FileText, 
-  Calendar, 
-  Target, 
-  Activity,
-  Flame,
-  CheckCircle2,
-  Award
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  UserProfile, 
-  QuranPageItem, 
-  QuranStats, 
-  Book, 
-  BookItem, 
-  Chapter, 
-  ClassGroup, 
-  Language 
-} from '../../types';
+import { useCallback, useEffect, useRef, useState } from "react";
+import html2canvas from "html2canvas";
+import { AnimatePresence, motion } from "motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Activity01Icon,
+  AiSparklesIcon,
+  Books02Icon,
+  CheckmarkCircle02Icon,
+  FileDownloadIcon,
+  FireIcon,
+  GraduationCapIcon,
+  Quran02Icon,
+  Share01Icon,
+  Target02Icon,
+} from "@hugeicons/core-free-icons";
+import { FloatingAlert } from "@/components/base/alert/alert";
+import { Button } from "@/components/base/buttons/button";
+import { CloseButton } from "@/components/base/buttons/close-button";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
+import type {
+  Book,
+  BookItem,
+  Chapter,
+  ClassGroup,
+  Language,
+  QuranPageItem,
+  QuranStats,
+  UserProfile,
+} from "../../types";
 
 interface StudentReportModalProps {
   isOpen: boolean;
@@ -40,168 +46,471 @@ interface StudentReportModalProps {
   language: Language;
 }
 
-/**
- * PROFESSIONAL STUDENT PROGRESS REPORT
- * Minimalist, elegant, and ready for sharing.
- */
-export const StudentReportModal: React.FC<StudentReportModalProps> = ({
+type ActionState = "download" | "share" | null;
+type ReportAlert = {
+  variant: "success" | "error" | "warning" | "info";
+  title: string;
+  description: string;
+} | null;
+
+const getDateKey = (date: Date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+
+const sanitizeUnsupportedColors = (clonedDocument: Document) => {
+  const clonedReport = clonedDocument.querySelector<HTMLElement>("[data-report-capture]");
+  const clonedWindow = clonedDocument.defaultView;
+  if (!clonedReport || !clonedWindow) return;
+
+  const hasUnsupportedColor = (value: string) => /okl(?:ab|ch)\(/i.test(value);
+  const elements = [clonedReport, ...clonedReport.querySelectorAll<HTMLElement | SVGElement>("*")];
+
+  elements.forEach((element) => {
+    const computedStyle = clonedWindow.getComputedStyle(element);
+    const style = element.style;
+
+    if (hasUnsupportedColor(computedStyle.color)) style.color = "#020617";
+    if (hasUnsupportedColor(computedStyle.backgroundColor)) style.backgroundColor = "transparent";
+    if (hasUnsupportedColor(computedStyle.backgroundImage)) style.backgroundImage = "none";
+    if (hasUnsupportedColor(computedStyle.borderTopColor)) style.borderTopColor = "transparent";
+    if (hasUnsupportedColor(computedStyle.borderRightColor)) style.borderRightColor = "transparent";
+    if (hasUnsupportedColor(computedStyle.borderBottomColor)) style.borderBottomColor = "transparent";
+    if (hasUnsupportedColor(computedStyle.borderLeftColor)) style.borderLeftColor = "transparent";
+    if (hasUnsupportedColor(computedStyle.textDecorationColor)) style.textDecorationColor = "#020617";
+    if (hasUnsupportedColor(computedStyle.boxShadow)) style.boxShadow = "none";
+    if (hasUnsupportedColor(computedStyle.textShadow)) style.textShadow = "none";
+    if (hasUnsupportedColor(computedStyle.webkitTextStrokeColor)) style.webkitTextStrokeColor = "transparent";
+  });
+};
+
+export const StudentReportModal = ({
   isOpen,
   onClose,
   userProfile,
+  quranPages,
   quranStats,
+  books,
+  items,
+  chapters,
+  myClasses,
+  teachingClasses,
   currentStreak,
   totalActiveMaterials,
   totalMasteredMaterials,
-  language
-}) => {
-  if (!isOpen) return null;
+  language,
+}: StudentReportModalProps) => {
+  const isDesktop = useBreakpoint("sm");
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [activeAction, setActiveAction] = useState<ActionState>(null);
+  const [reportAlert, setReportAlert] = useState<ReportAlert>(null);
+  const [preparedFile, setPreparedFile] = useState<File | null>(null);
+  const [isPreparing, setIsPreparing] = useState(false);
+  const [reportDate, setReportDate] = useState(() => new Date());
 
-  const masteryRate = totalActiveMaterials > 0 
-    ? Math.round((totalMasteredMaterials / totalActiveMaterials) * 100) 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const currentDate = new Date();
+      setReportDate((previousDate) =>
+        getDateKey(previousDate) === getDateKey(currentDate) ? previousDate : currentDate,
+      );
+    }, 60_000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!reportAlert) return;
+    const timer = window.setTimeout(() => setReportAlert(null), 6_000);
+    return () => window.clearTimeout(timer);
+  }, [reportAlert]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !activeAction) onClose();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [activeAction, isOpen, onClose]);
+
+  const masteryRate = totalActiveMaterials > 0
+    ? Math.min(100, Math.round((totalMasteredMaterials / totalActiveMaterials) * 100))
     : 0;
+  const activeBookItems = items.filter((item) => item.isActive).length;
+  const masteredBookItems = items.filter((item) => item.status === "mastered").length;
+  const totalReviews = quranPages.reduce((total, page) => total + (page.reviewLogs?.length ?? 0), 0)
+    + items.reduce((total, item) => total + (item.reviewLogs?.length ?? 0), 0);
+  const classCount = myClasses.length + teachingClasses.length;
+  const initials = (userProfile.fullName || "Unlupa User")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
+  const formattedDate = reportDate.toLocaleDateString(language === "en" ? "en-US" : "id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const safeName = (userProfile.fullName || "Unlupa-User").trim().replace(/[^a-z0-9]+/gi, "-");
+  const fileName = `Unlupa-Progress-${safeName}-${reportDate.getFullYear()}.png`;
 
-  const handleDownload = () => {
-    // In a real app, this would generate a PDF or Image
-    alert(language === 'en' ? 'Generating High-Resolution Report...' : 'Menghasilkan Rapor Resolusi Tinggi...');
+  const closeModal = () => {
+    if (activeAction) return;
+    setReportAlert(null);
+    setPreparedFile(null);
+    setIsPreparing(false);
+    onClose();
   };
 
+  const generateReportFile = useCallback(async () => {
+    if (!reportRef.current) throw new Error("Report preview is not available");
+
+    await document.fonts?.ready;
+    const canvas = await html2canvas(reportRef.current, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: "#ffffff",
+      logging: false,
+      onclone: sanitizeUnsupportedColors,
+    });
+
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((result) => {
+        if (result) resolve(result);
+        else reject(new Error("Unable to encode report image"));
+      }, "image/png", 1);
+    });
+
+    return new File([blob], fileName, { type: "image/png" });
+  }, [fileName]);
+
+  useEffect(() => {
+    if (!isOpen || preparedFile) return;
+
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setIsPreparing(true);
+      try {
+        const file = await generateReportFile();
+        if (!cancelled) setPreparedFile(file);
+      } catch (error) {
+        console.error("Failed to prepare progress report", error);
+        if (!cancelled) {
+          setReportAlert({
+            variant: "error",
+            title: language === "en" ? "Report preview failed" : "Rapor gagal disiapkan",
+            description: language === "en" ? "Close this message and try opening the report again." : "Tutup pesan ini lalu coba buka kembali rapornya.",
+          });
+        }
+      } finally {
+        if (!cancelled) setIsPreparing(false);
+      }
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [generateReportFile, isOpen, language, preparedFile]);
+
+  const downloadFile = (file: File) => {
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
+  };
+
+  const handleDownload = async () => {
+    setActiveAction("download");
+    setReportAlert(null);
+
+    try {
+      const file = preparedFile ?? await generateReportFile();
+      setPreparedFile(file);
+      downloadFile(file);
+      setReportAlert({
+        variant: "success",
+        title: language === "en" ? "Report downloaded" : "Rapor berhasil diunduh",
+        description: language === "en" ? "The high-resolution PNG is ready on your device." : "File PNG resolusi tinggi sudah tersimpan di perangkatmu.",
+      });
+    } catch (error) {
+      console.error("Failed to download progress report", error);
+      setReportAlert({
+        variant: "error",
+        title: language === "en" ? "Download failed" : "Rapor gagal diunduh",
+        description: language === "en" ? "Please try again in a moment." : "Silakan coba kembali beberapa saat lagi.",
+      });
+    } finally {
+      setActiveAction(null);
+    }
+  };
+
+  const handleShare = async () => {
+    setActiveAction("share");
+    setReportAlert(null);
+
+    try {
+      if (!preparedFile) throw new Error("Report file is still being prepared");
+      const file = preparedFile;
+      const title = language === "en" ? "My Unlupa Progress Report" : "Rapor Progres Unlupa Saya";
+      const text = language === "en"
+        ? `My learning progress: ${masteryRate}% mastery, ${totalMasteredMaterials} mastered materials, and a ${currentStreak}-day streak.`
+        : `Progres belajar saya: ${masteryRate}% ketuntasan, ${totalMasteredMaterials} materi mapan, dan istiqomah ${currentStreak} hari.`;
+
+      if (navigator.share) {
+        const canShareFile = navigator.canShare?.({ files: [file] }) ?? false;
+        await navigator.share(canShareFile ? { title, text, files: [file] } : { title, text });
+        setReportAlert({
+          variant: "success",
+          title: language === "en" ? "Report shared" : "Rapor berhasil dibagikan",
+          description: language === "en" ? "Your progress report was sent successfully." : "Rapor progresmu berhasil dikirim.",
+        });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+        setReportAlert({
+          variant: "info",
+          title: language === "en" ? "Summary copied" : "Ringkasan berhasil disalin",
+          description: language === "en" ? "Web Share is unavailable, so the report summary was copied to your clipboard." : "Fitur berbagi tidak tersedia, jadi ringkasan rapor disalin ke clipboard.",
+        });
+      } else {
+        downloadFile(file);
+        setReportAlert({
+          variant: "info",
+          title: language === "en" ? "Report downloaded instead" : "Rapor diunduh sebagai pengganti",
+          description: language === "en" ? "Your browser does not support sharing files." : "Browser ini belum mendukung fitur berbagi file.",
+        });
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      console.error("Failed to share progress report", error);
+      setReportAlert({
+        variant: "error",
+        title: language === "en" ? "Unable to share" : "Rapor gagal dibagikan",
+        description: language === "en" ? "Please retry or download the report instead." : "Silakan coba lagi atau unduh rapornya terlebih dahulu.",
+      });
+    } finally {
+      setActiveAction(null);
+    }
+  };
+
+  const metrics = [
+    { label: language === "en" ? "Mastery" : "Ketuntasan", value: `${masteryRate}%`, icon: Target02Icon, background: "#fff7ed", color: "#c2410c" },
+    { label: language === "en" ? "Mastered" : "Materi Mapan", value: totalMasteredMaterials, icon: CheckmarkCircle02Icon, background: "#ecfdf5", color: "#047857" },
+    { label: language === "en" ? "Active" : "Materi Aktif", value: totalActiveMaterials, icon: Activity01Icon, background: "#eff6ff", color: "#1d4ed8" },
+    { label: language === "en" ? "Reviews" : "Total Review", value: totalReviews, icon: AiSparklesIcon, background: "#fffbeb", color: "#b45309" },
+  ];
+
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
-        />
-        
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl shadow-slate-950/20 overflow-hidden"
-        >
-          {/* Header Controls */}
-          <div className="absolute top-6 right-6 flex items-center gap-2 z-10">
-            <button 
-              onClick={handleDownload}
-              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:scale-110 transition-transform"
-            >
-              <Download className="w-4 h-4" />
-            </button>
-            <button 
-              onClick={onClose}
-              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:scale-110 transition-transform"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
+    <>
+      <AnimatePresence>
+        {isOpen && (
+        <div className="fixed inset-0 z-[250] flex items-end justify-center sm:items-center sm:p-4">
+          <motion.button
+            type="button"
+            aria-label="Close progress report"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeModal}
+            className="absolute inset-0 bg-overlay/70"
+          />
 
-          <div className="p-8 sm:p-12 space-y-10">
-            {/* 1. Profile & Status Section */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
-              <div className="relative">
-                <div className="w-24 h-24 rounded-[2rem] overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl bg-slate-100 dark:bg-slate-800">
-                  <img 
-                    src={userProfile?.avatarUrl || ''} 
-                    alt={userProfile?.fullName || 'Pengguna'} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-1.5 rounded-xl shadow-lg border-2 border-white dark:border-slate-900">
-                  <CheckCircle2 className="w-4 h-4" />
-                </div>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="flex items-center justify-center sm:justify-start gap-2">
-                  <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{userProfile?.fullName || 'Pengguna Unlupa'}</h2>
-                  <Award className="w-5 h-5 text-amber-500" />
-                </div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                  {language === 'en' ? 'Unlupa.id Learning Portfolio' : 'Portofolio Belajar Unlupa.id'}
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="progress-report-title"
+            initial={isDesktop ? { opacity: 0, y: 24, scale: 0.98 } : { y: "100%" }}
+            animate={isDesktop ? { opacity: 1, y: 0, scale: 1 } : { y: 0 }}
+            exit={isDesktop ? { opacity: 0, y: 24, scale: 0.98 } : { y: "100%" }}
+            transition={isDesktop ? { duration: 0.2 } : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="relative flex max-h-[96dvh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl border border-secondary bg-primary shadow-2xl sm:rounded-3xl"
+          >
+            <header className="flex shrink-0 items-center justify-between gap-4 border-b border-secondary bg-primary px-4 py-3 sm:px-6 sm:py-4">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-wider text-brand-700">
+                  {language === "en" ? "Learning portfolio" : "Portofolio belajar"}
                 </p>
-                <div className="flex items-center justify-center sm:justify-start gap-4 pt-2">
-                  <div className="flex items-center gap-1.5">
-                    <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-                    <span className="text-sm font-black text-slate-900 dark:text-white">{currentStreak || 0} Day Streak</span>
+                <h2 id="progress-report-title" className="truncate text-lg font-semibold tracking-tight text-primary sm:text-xl">
+                  {language === "en" ? "Progress Report" : "Rapor Progres"}
+                </h2>
+              </div>
+              <CloseButton slot={null} size="md" onPress={closeModal} isDisabled={Boolean(activeAction)} label="Close progress report" />
+            </header>
+
+            <div className="min-h-0 flex-1 overflow-y-auto bg-secondary/40 p-3 sm:p-6">
+              <div
+                ref={reportRef}
+                data-report-capture
+                className="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white text-[#020617] shadow-sm"
+              >
+                <div className="relative overflow-hidden bg-[linear-gradient(135deg,#fff7ed_0%,#ffffff_52%,#fffbeb_100%)] px-5 py-6 sm:px-8 sm:py-8">
+                  <div className="relative flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-11 items-center justify-center rounded-xl bg-[#020617] shadow-sm">
+                        <img src="/unlupa.logo.png" alt="" className="size-7 object-contain" />
+                      </div>
+                      <div>
+                        <p className="font-semibold tracking-tight text-[#020617]">UNLUPA.ID</p>
+                        <p className="text-xs text-[#64748b]">{language === "en" ? "Learning progress report" : "Laporan progres pembelajaran"}</p>
+                      </div>
+                    </div>
+                    <span className="rounded-full border border-[#fed7aa] px-3 py-1 text-xs font-semibold text-[#c2410c]" style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}>
+                      {formattedDate}
+                    </span>
                   </div>
-                  <div className="w-px h-3 bg-slate-200 dark:bg-slate-800" />
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                    {new Date().toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { month: 'long', year: 'numeric' })}
+
+                  <div className="relative mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="relative flex size-18 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#ef6905] text-xl font-bold text-white shadow-md">
+                        {initials}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-[#c2410c]">
+                          {language === "en" ? "Student profile" : "Profil pelajar"}
+                        </p>
+                        <h3 className="mt-1 truncate text-2xl font-semibold tracking-tight text-[#020617] sm:text-3xl">
+                          {userProfile.fullName || "Unlupa User"}
+                        </h3>
+                        <p className="mt-1 truncate text-sm text-[#64748b]">{userProfile.email}</p>
+                      </div>
+                    </div>
+
+                    <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#fed7aa] px-3 py-2 text-sm font-semibold text-[#1e293b]" style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}>
+                       <HugeiconsIcon icon={FireIcon} className="size-4 text-[#f97316]" />
+                      {currentStreak} {language === "en" ? "day streak" : "hari istiqomah"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6 p-5 sm:p-8">
+                  <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                    {metrics.map(({ label, value, icon, background, color }) => (
+                      <div key={label} className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-4">
+                        <div className="flex size-9 items-center justify-center rounded-lg" style={{ backgroundColor: background, color }}>
+                          <HugeiconsIcon icon={icon} className="size-4.5" />
+                        </div>
+                        <p className="mt-4 text-2xl font-semibold tracking-tight text-[#020617]">{value}</p>
+                        <p className="mt-1 text-xs font-medium text-[#64748b]">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="rounded-xl border border-[#e2e8f0] p-4 sm:p-5">
+                    <div className="flex items-end justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-semibold text-[#020617]">{language === "en" ? "Memory mastery" : "Ketuntasan memori"}</p>
+                        <p className="mt-1 text-xs text-[#64748b]">
+                          {totalMasteredMaterials} {language === "en" ? "of" : "dari"} {totalActiveMaterials} {language === "en" ? "active materials mastered" : "materi aktif telah mapan"}
+                        </p>
+                      </div>
+                      <p className="text-2xl font-semibold text-[#ea580c]">{masteryRate}%</p>
+                    </div>
+                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#f1f5f9]">
+                      <div className="h-full rounded-full bg-[#ef6905]" style={{ width: `${masteryRate}%` }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">
+                        {language === "en" ? "Learning breakdown" : "Rincian pembelajaran"}
+                      </p>
+                      <div className="h-px flex-1 bg-[#e2e8f0]" />
+                    </div>
+
+                    <div className="grid gap-3 md:grid-cols-3">
+                      <div className="flex items-start gap-3 rounded-xl border border-[#e2e8f0] p-4">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#ecfdf5] text-[#047857]">
+                          <HugeiconsIcon icon={Quran02Icon} className="size-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-[#020617]">Al-Quran</p>
+                          <p className="mt-1 text-xs leading-relaxed text-[#64748b]">
+                            {quranStats.active} {language === "en" ? "active pages" : "halaman aktif"} · {quranStats.mastered} {language === "en" ? "mastered" : "mapan"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 rounded-xl border border-[#e2e8f0] p-4">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#eff6ff] text-[#1d4ed8]">
+                          <HugeiconsIcon icon={Books02Icon} className="size-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-[#020617]">{language === "en" ? "Personal books" : "Buku pribadi"}</p>
+                          <p className="mt-1 text-xs leading-relaxed text-[#64748b]">
+                            {books.length} {language === "en" ? "books" : "buku"} · {activeBookItems} {language === "en" ? "active" : "aktif"} · {masteredBookItems} {language === "en" ? "mastered" : "mapan"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 rounded-xl border border-[#e2e8f0] p-4">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#fffbeb] text-[#b45309]">
+                          <HugeiconsIcon icon={GraduationCapIcon} className="size-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-[#020617]">{language === "en" ? "Learning space" : "Ruang belajar"}</p>
+                          <p className="mt-1 text-xs leading-relaxed text-[#64748b]">
+                            {classCount} {language === "en" ? "classes" : "kelas"} · {chapters.length} {language === "en" ? "chapters" : "bab"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2 border-t border-[#e2e8f0] pt-5 text-xs text-[#64748b] sm:flex-row sm:items-center sm:justify-between">
+                    <p>{language === "en" ? "Generated from your live Unlupa learning data." : "Dibuat dari data pembelajaran Unlupa milikmu."}</p>
+                    <p className="font-medium">{userProfile.quranSpaceCode}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 2. Core Metrics Visualization */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-6 text-center space-y-2 border border-slate-100 dark:border-slate-800">
-                <Target className="w-5 h-5 text-blue-500 mx-auto" />
-                <div className="text-3xl font-black text-slate-900 dark:text-white">{masteryRate}%</div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{language === 'en' ? 'Mastery' : 'Kematangan'}</div>
-              </div>
-              
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-6 text-center space-y-2 border border-slate-100 dark:border-slate-800">
-                <Activity className="w-5 h-5 text-indigo-500 mx-auto" />
-                <div className="text-3xl font-black text-slate-900 dark:text-white">{totalMasteredMaterials || 0}</div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{language === 'en' ? 'Items' : 'Materi'}</div>
-              </div>
-
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-6 text-center space-y-2 border border-slate-100 dark:border-slate-800">
-                <FileText className="w-5 h-5 text-emerald-500 mx-auto" />
-                <div className="text-3xl font-black text-slate-900 dark:text-white">{quranStats?.active || 0}</div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{language === 'en' ? 'Pages' : 'Halaman'}</div>
-              </div>
-            </div>
-
-            {/* 3. Detailed Breakdown */}
-            <div className="space-y-6">
-               <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">{language === 'en' ? 'Recent Milestones' : 'Capaian Terakhir'}</h3>
-                  <div className="h-px flex-1 mx-4 bg-slate-100 dark:bg-slate-800" />
-               </div>
-
-               <div className="space-y-4">
-                  <div className="flex items-center gap-4 group">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                      <CheckCircle2 className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-black text-slate-900 dark:text-white">{language === 'en' ? 'Memory Stability Matrix' : 'Stabilitas Matriks Daya Ingat'}</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{language === 'en' ? '92% overall memory retention target met.' : 'Target retensi memori 92% tercapai.'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 group">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                      <Calendar className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-black text-slate-900 dark:text-white">{language === 'en' ? 'Consistency Record' : 'Catatan Istiqomah'}</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{language === 'en' ? 'Active daily engagement for the last 14 days.' : 'Interaksi harian aktif selama 14 hari terakhir.'}</p>
-                    </div>
-                  </div>
-               </div>
-            </div>
-
-            {/* Footer / Call to Action */}
-            <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-2 text-slate-400">
-                <Share2 className="w-4 h-4" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">unlupa.id/report/{userProfile?.quranSpaceCode || 'default'}</span>
-              </div>
-              <button 
-                className="w-full sm:w-auto px-10 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-xl hover:scale-105 active:scale-95 transition-all"
+            <footer className="flex shrink-0 flex-col-reverse gap-2 border-t border-secondary bg-primary p-4 sm:flex-row sm:items-center sm:justify-end sm:px-6">
+              <Button
+                color="secondary"
+                size="lg"
+                isLoading={isPreparing || activeAction === "download"}
+                isDisabled={isPreparing || !preparedFile || Boolean(activeAction && activeAction !== "download")}
+                onPress={handleDownload}
+                className="w-full sm:w-auto"
               >
-                <Share2 className="w-4 h-4" />
-                <span>{language === 'en' ? 'Share Portfolio' : 'Bagikan Portofolio'}</span>
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+                <HugeiconsIcon icon={FileDownloadIcon} className="size-5" />
+                {language === "en" ? "Download PNG" : "Unduh PNG"}
+              </Button>
+              <Button
+                size="lg"
+                isLoading={isPreparing || activeAction === "share"}
+                isDisabled={isPreparing || !preparedFile || Boolean(activeAction && activeAction !== "share")}
+                onPress={handleShare}
+                className="w-full sm:w-auto"
+              >
+                <HugeiconsIcon icon={Share01Icon} className="size-5" />
+                {language === "en" ? "Share report" : "Bagikan rapor"}
+              </Button>
+            </footer>
+          </motion.div>
+        </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isOpen && reportAlert && (
+          <motion.div key="progress-report-alert" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <FloatingAlert
+              variant={reportAlert.variant}
+              title={reportAlert.title}
+              description={reportAlert.description}
+              onDismiss={() => setReportAlert(null)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };

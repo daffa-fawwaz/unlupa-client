@@ -1,13 +1,13 @@
 import {
   Calendar,
   Share2,
-  Box,
   Globe2,
   Clock,
   CheckCircle,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import type { Book } from "../types/personal.types";
 import { resolveAssetUrl } from "@/lib/assets";
+import { BookCoverVisual } from "@/components/personal/BookCoverVisual";
 
 interface ShareBookCardProps {
   book: Book;
@@ -35,31 +35,19 @@ export const ShareBookCard = ({ book, onShare }: ShareBookCardProps) => {
       {/* Decorative Background glow */}
       <div className="absolute -inset-10 bg-primary/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-full pointer-events-none" />
 
-      {/* --- IMAGE HEADER SECTION --- */}
-      <div className="relative h-48 w-full shrink-0 flex items-center justify-center overflow-hidden bg-surface-1">
-        {/* Shadow to separate image from text */}
-        <div className="absolute bottom-0 inset-x-0 h-24 bg-linear-to-t from-card to-transparent z-10 pointer-events-none" />
-
-        {book.cover_image ? (
-          <img
-            src={resolveAssetUrl(book.cover_image)}
-            alt={book.title}
-            className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
-          />
-        ) : (
-          <div className="absolute inset-0 w-full h-full bg-linear-to-t from-surface-1 to-surface-2 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-1000">
-            {/* Very minimal book pattern for empty state */}
-            <div
-              className={`absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none`}
-            />
-            <div className="w-16 h-16 rounded-xl bg-primary/10 border-primary/20 text-primary/80 group-hover:text-primary border flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <Box className="w-6 h-6 text-primary" />
-            </div>
-          </div>
-        )}
+      {/* --- PHYSICAL BOOK COVER --- */}
+      <div className="relative flex h-56 w-full shrink-0 items-center justify-center overflow-hidden border-b border-border bg-[radial-gradient(circle_at_50%_28%,rgba(239,105,5,0.18),transparent_68%)]">
+        <div className="absolute inset-x-5 bottom-3 h-2 rounded-full bg-black/15 blur-sm" />
+        <div className="absolute inset-x-0 bottom-0 h-6 border-t border-[#d8c7ae] bg-[linear-gradient(180deg,#eadfce_0%,#cdb99d_100%)] dark:border-[#51483d] dark:bg-[linear-gradient(180deg,#51483d_0%,#302a24_100%)]" />
+        <BookCoverVisual
+          src={resolveAssetUrl(book.cover_image)}
+          title={book.title}
+          author={book.owner_name}
+          className="h-44 w-32"
+        />
 
         {/* Top Floating Controls */}
-        <div className="absolute top-5 left-5 right-5 flex justify-between items-start z-20">
+        <div className="absolute left-4 right-4 top-4 z-20 flex items-start justify-between">
           {isPublished ? (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-full text-[9px] font-bold tracking-widest uppercase text-primary group-hover:text-primary group-hover:bg-primary/20 transition-colors">
               <CheckCircle className="w-3 h-3 text-primary" />

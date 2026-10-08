@@ -7,7 +7,7 @@ import {
   FileText,
   Image,
   Upload,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useBooks } from "../hooks/useBooks";
 import type { Book } from "../types/personal.types";

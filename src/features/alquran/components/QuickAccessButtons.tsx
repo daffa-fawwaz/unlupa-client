@@ -1,4 +1,4 @@
-import { BookOpen, ShieldCheck, Trophy } from "lucide-react";
+import { BookOpen, ShieldCheck, Trophy } from "@/components/foundations/hugeicons";
 import { useNavigate } from "react-router";
 
 interface QuickAccessButtonsProps {

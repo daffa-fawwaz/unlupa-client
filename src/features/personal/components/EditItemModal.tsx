@@ -9,7 +9,7 @@ import {
   Clock,
   Image,
   Upload,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { useUpdateItem } from "@/features/personal/hooks/useUpdateItem";
 import type { BookItem, UpdateItemPayload, CreatedItem } from "@/features/personal/types/personal.types";

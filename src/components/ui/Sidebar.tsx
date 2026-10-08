@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
-import { X } from "lucide-react";
+import { X } from "@/components/foundations/hugeicons";
 import { SidebarRoleSwitcher } from "@/components/ui/SidebarRoleSwitcher";
 import { DashboardSidebarFooter } from "@/components/ui/SidebarFooter";
 import { LogoutConfirmModal } from "@/features/dashboard/components/LogoutConfirmModal";

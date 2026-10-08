@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chapter, BookItem, Language } from '../../types';
-import { Folder, FolderOpen, MoveRight, X, Layers, Check } from 'lucide-react';
+import { Folder, FolderOpen, MoveRight, X, Layers, Check } from "@/components/foundations/hugeicons";
 
 interface FolderMoveModalProps {
   isOpen: boolean;

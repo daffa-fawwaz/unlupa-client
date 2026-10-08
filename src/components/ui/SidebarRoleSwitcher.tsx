@@ -6,19 +6,25 @@ import {
   GraduationCap,
   BookOpen,
   ShieldCheck,
-} from "lucide-react";
+  Check,
+} from "@/components/foundations/hugeicons";
 import { useState, useRef, useEffect } from "react";
 import { clsx } from "clsx";
+import { useApp } from "@/context/AppContext";
 
 interface SidebarRoleSwitcherProps {
   onClose?: () => void;
 }
+
+type DashboardRole = "student" | "teacher" | "admin";
 
 export const SidebarRoleSwitcher = ({ onClose }: SidebarRoleSwitcherProps) => {
   const navigate = useNavigate();
   const userRole = useAuthStore((state) => state.user?.role);
   const activeRole = useDashboardModeStore((state) => state.activeRole);
   const setActiveRole = useDashboardModeStore((state) => state.setActiveRole);
+  const { language } = useApp();
+  const isEnglish = language === "en";
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -38,34 +44,53 @@ export const SidebarRoleSwitcher = ({ onClose }: SidebarRoleSwitcherProps) => {
   }, []);
 
   // Configuration for each role
-  const roleConfig = {
+  const roleConfig: Record<DashboardRole, {
+    labelEn: string;
+    labelId: string;
+    helperEn: string;
+    helperId: string;
+    icon: typeof GraduationCap;
+    color: string;
+    bg: string;
+    activeBg: string;
+  }> = {
     student: {
-      label: "Pelajar",
+      labelEn: "Student",
+      labelId: "Pelajar",
+      helperEn: "Learning mode",
+      helperId: "Mode belajar",
       icon: GraduationCap,
       color: "text-success",
       bg: "bg-success/10",
-      border: "group-hover:border-success/50",
+      activeBg: "bg-success/10",
     },
     teacher: {
-      label: "Guru",
+      labelEn: "Teacher",
+      labelId: "Guru",
+      helperEn: "Teaching mode",
+      helperId: "Mode mengajar",
       icon: BookOpen,
       color: "text-warning",
       bg: "bg-warning/10",
-      border: "group-hover:border-warning/50",
+      activeBg: "bg-warning/10",
     },
     admin: {
-      label: "Admin",
+      labelEn: "Admin",
+      labelId: "Admin",
+      helperEn: "System control",
+      helperId: "Kontrol sistem",
       icon: ShieldCheck,
-      color: "text-primary",
-      bg: "bg-primary/10",
-      border: "group-hover:border-primary/50",
+      color: "text-brand-700",
+      bg: "bg-brand-50",
+      activeBg: "bg-brand-50",
     },
   };
 
-  const currentConfig = roleConfig[activeRole] || roleConfig.student;
+  const currentRole = (activeRole || "student") as DashboardRole;
+  const currentConfig = roleConfig[currentRole] || roleConfig.student;
   const RoleIcon = currentConfig.icon;
 
-  const availableRoles = [];
+  const availableRoles: DashboardRole[] = [];
   if (userRole === "student") availableRoles.push("student");
   if (userRole === "teacher") availableRoles.push("student", "teacher");
   if (userRole === "admin") availableRoles.push("student", "teacher", "admin");
@@ -74,37 +99,37 @@ export const SidebarRoleSwitcher = ({ onClose }: SidebarRoleSwitcherProps) => {
     <div className="relative w-full" ref={dropdownRef}>
       {/* Trigger Button */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={clsx(
-          "w-full flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 group",
-          "bg-surface-1 hover:bg-surface-2",
-          "border-border",
-          currentConfig.border,
+          "group flex w-full items-center justify-between rounded-xl border border-secondary bg-primary p-2 text-left shadow-xs transition-all duration-200",
+          "hover:border-brand/50 hover:bg-primary_hover hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
+          isOpen && "border-brand bg-brand-50/60 ring-1 ring-brand",
         )}
       >
         <div className="flex items-center gap-3">
           <div
             className={clsx(
-              "w-8 h-8 rounded-xl flex items-center justify-center transition-colors",
+              "flex size-9 items-center justify-center rounded-lg transition-colors",
               currentConfig.bg,
               currentConfig.color,
             )}
           >
-            <RoleIcon className="w-4 h-4" />
+            <RoleIcon className="size-4.5" />
           </div>
           <div className="text-left">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-tertiary">
               Mode
             </p>
-            <p className="text-sm font-medium text-foreground">
-              {currentConfig.label}
+            <p className="text-sm font-semibold text-primary">
+              {isEnglish ? currentConfig.labelEn : currentConfig.labelId}
             </p>
           </div>
         </div>
 
         <ChevronDown
           className={clsx(
-            "w-4 h-4 text-muted-foreground transition-transform duration-300",
+            "size-4 text-fg-quaternary transition-transform duration-200",
             isOpen && "rotate-180",
           )}
         />
@@ -112,15 +137,16 @@ export const SidebarRoleSwitcher = ({ onClose }: SidebarRoleSwitcherProps) => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 p-2 bg-card border border-border rounded-2xl shadow-xl z-50 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl border border-secondary bg-primary p-2 shadow-xl animate-in zoom-in-95 duration-150">
           <div className="space-y-1">
-            {availableRoles.map((role: any) => {
-              const config = roleConfig[role as keyof typeof roleConfig];
+            {availableRoles.map((role) => {
+              const config = roleConfig[role];
               const Icon = config.icon;
               const isActive = activeRole === role;
 
               return (
                 <button
+                  type="button"
                   key={role}
                   onClick={() => {
                     setActiveRole(role);
@@ -135,21 +161,23 @@ export const SidebarRoleSwitcher = ({ onClose }: SidebarRoleSwitcherProps) => {
                     }
                   }}
                   className={clsx(
-                    "w-full flex items-center gap-3 p-2 rounded-xl transition-all",
+                    "flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-all",
                     isActive
-                      ? "bg-surface-2 text-foreground"
-                      : "text-muted-foreground hover:bg-surface-1 hover:text-foreground",
+                      ? "bg-brand-50 text-brand-700"
+                      : "text-secondary hover:bg-primary_hover hover:text-primary",
                   )}
                 >
-                  <Icon
-                    className={clsx(
-                      "w-4 h-4",
-                      isActive ? config.color : "opacity-50",
-                    )}
-                  />
-                  <span className="text-sm font-medium">{config.label}</span>
+                  <div className={clsx("flex size-9 items-center justify-center rounded-lg", isActive ? config.activeBg : "bg-secondary")}>
+                    <Icon className={clsx("size-4", isActive ? config.color : "text-fg-quaternary")} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">{isEnglish ? config.labelEn : config.labelId}</p>
+                    <p className={clsx("text-xs", isActive ? "text-brand-700" : "text-tertiary")}>
+                      {isEnglish ? config.helperEn : config.helperId}
+                    </p>
+                  </div>
                   {isActive && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"></div>
+                    <Check className="size-4 text-brand-700" />
                   )}
                 </button>
               );

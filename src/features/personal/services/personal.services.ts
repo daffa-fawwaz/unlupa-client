@@ -140,7 +140,9 @@ export const personalService = {
   },
 
   async addPublishedBookToMyBooks(id: string): Promise<CreateBookResponse> {
-    const response = await api.post(`/api/v1/books/published/${id}/add-to-my-books`);
+    const response = await api.post(
+      `/api/v1/books/published/${id}/add-to-my-books`,
+    );
     return response.data;
   },
 
@@ -228,8 +230,7 @@ export const personalService = {
       return response.data;
     }
 
-    const { cover_image, ...rest } = data;
-    const response = await api.post("/api/v1/books", rest);
+    const response = await api.post("/api/v1/books", data);
     return response.data;
   },
 
@@ -249,8 +250,7 @@ export const personalService = {
       return response.data;
     }
 
-    const { cover_image, ...rest } = data;
-    const response = await api.put(`/api/v1/books/${id}`, rest);
+    const response = await api.put(`/api/v1/books/${id}`, data);
     return response.data;
   },
 
@@ -370,14 +370,22 @@ export const personalService = {
     return response.data;
   },
 
-  async generateAIBook(payload: { topic?: string; text?: string; language?: string }): Promise<{ status: number; message: string; data: { book: any } }> {
+  async generateAIBook(payload: {
+    topic?: string;
+    text?: string;
+    language?: string;
+  }): Promise<{ status: number; message: string; data: { book: any } }> {
     const response = await api.post("/api/v1/ai/generate-book", payload, {
       timeout: 120000,
     });
     return response.data;
   },
 
-  async generateAICards(payload: { topic?: string; text?: string; language?: string }): Promise<{ status: number; message: string; data: { cards: any[] } }> {
+  async generateAICards(payload: {
+    topic?: string;
+    text?: string;
+    language?: string;
+  }): Promise<{ status: number; message: string; data: { cards: any[] } }> {
     const response = await api.post("/api/v1/ai/generate-cards", payload, {
       timeout: 120000,
     });

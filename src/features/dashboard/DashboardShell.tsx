@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { AdminDashboardPage } from "@/features/dashboard/admin/pages/AdminDashboardPage";
+import { AdminSectionLayout } from "@/features/dashboard/admin/layout/AdminSectionLayout";
 import { HomeSpace } from "@/components/home/HomeSpace";
 import { useDashboardModeStore } from "@/features/dashboard/stores/dashboard-mode.store";
 import { Navigate } from "react-router";
@@ -22,7 +23,11 @@ export const DashboardShell = () => {
   }
 
   if (finalRole === "admin") {
-    return <AdminDashboardPage />;
+    return (
+      <AdminSectionLayout>
+        <AdminDashboardPage />
+      </AdminSectionLayout>
+    );
   }
 
   if (finalRole === "teacher") {

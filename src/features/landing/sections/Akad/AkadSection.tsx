@@ -11,7 +11,7 @@ import {
   ShieldAlert,
   RefreshCcw,
   Feather,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 
 export const AkadSection = () => {
   return (

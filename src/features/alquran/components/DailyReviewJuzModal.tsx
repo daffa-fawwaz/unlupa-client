@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Clock, BookOpen, ChevronRight } from "lucide-react";
+import { X, Clock, BookOpen, ChevronRight } from "@/components/foundations/hugeicons";
 import type { DailyTask } from "@/features/alquran/types/quran.types";
 import type { JuzReviewEstimate } from "@/features/alquran/hooks/useDailyReviewEstimate";
 import { parseContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Brain, CalendarClock, Clock, FileText, Flame, Image } from "lucide-react";
+import { Brain, CalendarClock, Clock, FileText, Flame, Image } from "@/components/foundations/hugeicons";
 import { useItemDetailCached } from "@/features/personal/hooks/useItemDetailCached";
 import type { BookItem } from "@/features/personal/types/personal.types";
 

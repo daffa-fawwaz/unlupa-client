@@ -1,4 +1,4 @@
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings } from "@/components/foundations/hugeicons";
 
 export const DashboardSidebarFooter = ({
   setShowLogoutConfirm,

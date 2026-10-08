@@ -1,5 +1,5 @@
 import { SlideContainer } from "@/components/utils/SlideContainer";
-import { HelpCircle, Search, Brain, Fingerprint } from "lucide-react";
+import { HelpCircle, Search, Brain, Fingerprint } from "@/components/foundations/hugeicons";
 
 export const Reflection = ({ index }: { index: number }) => {
   return (

@@ -1,4 +1,4 @@
-import { KeyRound, ArrowLeft } from "lucide-react";
+import { KeyRound, ArrowLeft } from "@/components/foundations/hugeicons";
 import { Link } from "react-router";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/button";

@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle } from "@/components/foundations/hugeicons";
 import type { RegisterPayload } from "@/features/auth/register/types/register.types";
 import type { RegisterFormProps } from "@/features/auth/register/types/register.types";
 import { useState } from "react";

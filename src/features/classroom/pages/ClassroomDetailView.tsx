@@ -13,7 +13,7 @@ import {
   Mail,
   ImageIcon,
   MoreVertical,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { TopNavigationBar } from "@/features/classroom/components/navigation/TopNavigationBar";
 import {

@@ -10,7 +10,7 @@ import {
   Clock, 
   Tag, 
   ChevronRight 
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { Book, BookItem, Chapter } from '../../types';
 import { BilingualCardText } from '../common/BilingualCardText';
 import { getNonQuranIntervalDays } from '../../lib/fsrs';

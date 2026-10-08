@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
-import { X, Sparkles, Loader2, BookOpen, Crown } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
+import { Sparkles } from "@/components/foundations/hugeicons";
 import { useApp } from '../../context/AppContext';
-import { Language } from '../../types';
+import type { Language } from '../../types';
 import { personalService } from '@/features/personal/services/personal.services';
+import { Dialog, Modal, ModalOverlay } from '@/components/application/modals/modal';
+import { InlineAlert } from '@/components/base/alert/alert';
+import { Badge } from '@/components/base/badges/badges';
+import { Button } from '@/components/base/buttons/button';
+import { CloseButton } from '@/components/base/buttons/close-button';
+import { Input } from '@/components/base/input/input';
+import { TextArea } from '@/components/base/textarea/textarea';
+
+interface GeneratedBookData {
+  title: string;
+  description?: string;
+  chapters: Array<{
+    title: string;
+    cards?: Array<{ question: string; answer: string }>;
+  }>;
+}
 
 interface AIBookBuilderModalProps {
   onClose: () => void;
-  onImport: (bookData: any) => void;
+  onImport: (bookData: GeneratedBookData) => void | Promise<void>;
   language: Language;
 }
 
@@ -14,7 +30,6 @@ export function AIBookBuilderModal({ onClose, onImport, language }: AIBookBuilde
   const { isFeatureAllowed, recordAIUsage, openUpgradeModal, dailyAIUsage, tierConfig, userProfile } = useApp();
   const [topic, setTopic] = useState('');
   const [text, setText] = useState('');
-  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,9 +39,10 @@ export function AIBookBuilderModal({ onClose, onImport, language }: AIBookBuilde
   const todayUsed = dailyAIUsage.date === today ? dailyAIUsage.count : 0;
   const remainingGenerations = Math.max(0, limits.maxDailyAIGenerations - todayUsed);
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (event: FormEvent) => {
+    event.preventDefault();
     if (!topic.trim() && !text.trim()) {
-      setError(language === 'en' ? 'Please provide a topic or text' : 'Harap berikan topik atau teks');
+      setError(language === 'en' ? 'Add a topic or paste source notes first.' : 'Tambahkan topik atau tempel catatan sumber terlebih dahulu.');
       return;
     }
 
@@ -37,7 +53,7 @@ export function AIBookBuilderModal({ onClose, onImport, language }: AIBookBuilde
         check.reason,
         language === 'en'
           ? `You have reached your daily limit of ${check.limit} AI generations. Upgrade to Unlupa Pro for up to 30 generations per day.`
-          : `Anda telah mencapai batas harian ${check.limit}x AI Builder. Upgrade ke Unlupa Pro untuk kuota hingga 30x per hari.`
+          : `Anda telah mencapai batas harian ${check.limit}x AI Builder. Upgrade ke Unlupa Pro untuk kuota hingga 30x per hari.`,
       );
       return;
     }
@@ -45,118 +61,78 @@ export function AIBookBuilderModal({ onClose, onImport, language }: AIBookBuilde
     setIsLoading(true);
     setError(null);
     try {
-      const response = await personalService.generateAIBook({
-        topic: topic.trim(),
-        text: text.trim(),
-        language,
-      });
-
-      const book = response?.data?.book;
-      if (book && book.title && Array.isArray(book.chapters)) {
-        recordAIUsage();
-        onImport(book);
-      } else {
-        setError(language === 'en' ? 'No book could be generated.' : 'Gagal menghasilkan buku.');
+      const response = await personalService.generateAIBook({ topic: topic.trim(), text: text.trim(), language });
+      const book = response?.data?.book as GeneratedBookData | undefined;
+      if (!book?.title || !Array.isArray(book.chapters)) {
+        setError(language === 'en' ? 'AI did not return a complete book. Try adding more specific notes.' : 'AI belum menghasilkan kitab yang lengkap. Coba tambahkan catatan yang lebih spesifik.');
+        return;
       }
-    } catch (err: any) {
-      console.error(err);
-      const msg = err?.response?.data?.message || err?.message || 'Error communicating with AI service';
-      setError(msg);
+      recordAIUsage();
+      await onImport(book);
+    } catch (error) {
+      const requestError = error as { response?: { data?: { message?: string } }; message?: string };
+      setError(requestError.response?.data?.message || requestError.message || (language === 'en' ? 'Could not reach the AI service.' : 'Layanan AI tidak dapat dihubungi.'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm sm:p-6">
-      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-                  {language === 'en' ? 'Generate Book with AI' : 'Buat Buku Pintar dengan AI'}
-                </h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/50">
-                  {remainingGenerations}/{limits.maxDailyAIGenerations} {language === 'en' ? 'left today' : 'sisa hari ini'}
-                </span>
+    <ModalOverlay isOpen isDismissable={!isLoading} onOpenChange={open => { if (!open && !isLoading) onClose(); }}>
+      <Modal className="max-w-xl overflow-hidden rounded-t-3xl sm:rounded-3xl">
+        <Dialog aria-label={language === 'en' ? 'Build a book with AI' : 'Buat kitab dengan AI'}>
+          {({ close }) => (
+            <form onSubmit={handleGenerate} className="flex max-h-[inherit] flex-col">
+              <div className="relative flex shrink-0 items-start gap-3 border-b border-secondary px-5 py-5 sm:px-6">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+                  <Sparkles className="size-5" />
+                </div>
+                <div className="min-w-0 pr-10">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-lg font-semibold text-primary">{language === 'en' ? 'Build with AI' : 'Buat dengan AI'}</h2>
+                    <Badge color="brand" size="sm">{remainingGenerations}/{limits.maxDailyAIGenerations} {language === 'en' ? 'left' : 'tersisa'}</Badge>
+                  </div>
+                  <p className="mt-0.5 text-sm text-secondary">
+                    {language === 'en' ? 'Turn a topic or source notes into a structured book and review cards.' : 'Ubah topik atau catatan sumber menjadi kitab terstruktur dan kartu murajaah.'}
+                  </p>
+                </div>
+                <CloseButton label={language === 'en' ? 'Close AI builder' : 'Tutup AI builder'} onPress={close} isDisabled={isLoading} className="absolute right-4 top-4" />
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {language === 'en' ? 'Let AI build a structured book from your topic or notes.' : 'Biarkan AI membuatkan struktur buku dari topik atau catatan Anda.'}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-full transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
 
-        <div className="p-6 overflow-y-auto">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm border border-red-100 dark:border-red-900/30">
-              {error}
-            </div>
+              <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5 sm:px-6">
+                {error && <InlineAlert variant="error" title={error} onDismiss={() => setError(null)} />}
+                <Input
+                  label={language === 'en' ? 'Topic' : 'Topik'}
+                  value={topic}
+                  onChange={value => { setTopic(value); if (error) setError(null); }}
+                  placeholder={language === 'en' ? 'Example: Foundations of Arabic grammar' : 'Contoh: Dasar-dasar nahwu'}
+                  hint={language === 'en' ? 'Optional when you provide detailed notes below.' : 'Opsional jika Anda memberikan catatan lengkap di bawah.'}
+                />
+                <TextArea
+                  label={language === 'en' ? 'Source notes or Q&A pairs' : 'Catatan sumber atau pasangan tanya-jawab'}
+                  value={text}
+                  onChange={value => { setText(value); if (error) setError(null); }}
+                  placeholder={language === 'en' ? 'Paste notes, an outline, or Q: / A: pairs here...' : 'Tempel catatan, kerangka, atau pasangan T: / J: di sini...'}
+                  rows={8}
+                  hint={language === 'en' ? 'More context produces a more accurate chapter structure.' : 'Konteks yang lebih lengkap menghasilkan struktur bab yang lebih akurat.'}
+                />
+                <InlineAlert
+                  variant="info"
+                  title={language === 'en' ? 'Review before studying' : 'Periksa sebelum belajar'}
+                  description={language === 'en' ? 'AI-generated chapters and cards will be added as an editable personal book.' : 'Bab dan kartu hasil AI akan ditambahkan sebagai kitab pribadi yang dapat diedit.'}
+                />
+              </div>
+
+              <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                <Button color="secondary" size="md" onPress={close} isDisabled={isLoading} className="w-full sm:w-auto">{language === 'en' ? 'Cancel' : 'Batal'}</Button>
+                <Button type="submit" size="md" iconLeading={Sparkles} isLoading={isLoading} isDisabled={!topic.trim() && !text.trim()} className="w-full sm:w-auto">
+                  {language === 'en' ? 'Generate book' : 'Buat kitab'}
+                </Button>
+              </div>
+            </form>
           )}
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                {language === 'en' ? 'Topic (Optional)' : 'Topik (Opsional)'}
-              </label>
-              <input
-                type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                placeholder={language === 'en' ? 'e.g., Photosynthesis, World War 2' : 'Cth: Fotosintesis, Sejarah Kemerdekaan'}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                {language === 'en' ? 'Q&A Text / Pairs' : 'Teks Q&A (Tanya Jawab)'}
-              </label>
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder={language === 'en' ? 'Paste your Q&A pairs here (e.g. Q: What is X?\nA: It is Y.)' : 'Tempelkan pasangan tanya jawab (Cth: T: Apa itu X?\nJ: Itu Y.)'}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all outline-none resize-none h-40"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 shrink-0">
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors"
-          >
-            {language === 'en' ? 'Cancel' : 'Batal'}
-          </button>
-          <button
-            onClick={handleGenerate}
-            disabled={isLoading || (!topic.trim() && !text.trim())}
-            className="px-6 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors shadow-sm flex items-center gap-2"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>{language === 'en' ? 'Generating...' : 'Membuat...'}</span>
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4" />
-                <span>{language === 'en' ? 'Generate Book' : 'Buat Buku'}</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 }

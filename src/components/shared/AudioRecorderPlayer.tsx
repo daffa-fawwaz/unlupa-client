@@ -8,7 +8,7 @@ import {
   Trash2, 
   Clock,
   AlertCircle
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { AudioStorageService, AudioRecord } from '../../lib/AudioStorageService';
 
 interface Props {

@@ -12,7 +12,7 @@ import {
   RotateCcw,
   CheckCircle2,
   CalendarCheck2
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 interface Props {
   isOpen: boolean;

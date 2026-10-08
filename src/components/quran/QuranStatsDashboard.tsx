@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { QuranPageItem, Language } from '../../types';
-import { Activity, Target, ChevronRight } from 'lucide-react';
+import { Activity, Target, ChevronRight } from "@/components/foundations/hugeicons";
 import { getQuranPageClusterKey, QuranIntervalClusterKey } from '../../lib/fsrs';
 
 interface Props {

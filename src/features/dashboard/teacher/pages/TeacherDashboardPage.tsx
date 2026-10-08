@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Menu, Plus, School } from "lucide-react";
+import { Menu, Plus, School } from "@/components/foundations/hugeicons";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { QuickAccessCards } from "@/components/ui/QuickAccessCards";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";

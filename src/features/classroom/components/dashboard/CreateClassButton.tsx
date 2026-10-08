@@ -1,4 +1,4 @@
-import { BookOpen, GraduationCap, Plus, Sparkles, Users } from "lucide-react";
+import { BookOpen, GraduationCap, Plus, Sparkles, Users } from "@/components/foundations/hugeicons";
 import type { CreateClassButtonProps } from "../../types";
 
 export const CreateClassButton = ({ onClick }: CreateClassButtonProps) => {

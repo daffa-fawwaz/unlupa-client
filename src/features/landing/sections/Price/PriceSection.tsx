@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Unlock, HeartHandshake, Leaf, Droplet, Gift, Edit3, ShieldCheck } from "lucide-react";
+import { Unlock, HeartHandshake, Leaf, Droplet, Gift, Edit3, ShieldCheck } from "@/components/foundations/hugeicons";
 
 export const PriceSection = () => {
   const [customAmount, setCustomAmount] = useState("");

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Flame, Trophy, CalendarDays } from "lucide-react";
+import { Flame, Trophy, CalendarDays } from "@/components/foundations/hugeicons";
 import type { DailyActivity } from "../types";
 
 interface ConsistencyHeatmapProps {

@@ -1,4 +1,4 @@
-import { type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "@/components/foundations/hugeicons";
 
 type QuickAccessCardProps = {
   href: string;

@@ -18,7 +18,7 @@ import {
   ChevronRight,
   Eye,
   FileText
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { ClassStudent, ClassGroup, QuranPageItem } from '../../types';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,

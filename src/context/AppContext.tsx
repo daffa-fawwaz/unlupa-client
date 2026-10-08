@@ -43,6 +43,18 @@ import { classroomService } from '@/features/classroom/services/classroom.servic
 import type { ClassItem } from '@/features/classroom/types';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 
+const LEGACY_DEFAULT_AVATAR_URL = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80';
+
+const getAccountAvatarUrl = (seed?: string | null) =>
+  seed
+    ? `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ef6905&textColor=ffffff`
+    : '';
+
+const getProfileAvatarUrl = (currentAvatar: string | undefined, seed?: string | null) =>
+  currentAvatar && currentAvatar !== LEGACY_DEFAULT_AVATAR_URL
+    ? currentAvatar
+    : getAccountAvatarUrl(seed);
+
 interface PersonalStats {
   totalBooks: number;
   totalItems: number;
@@ -159,7 +171,7 @@ interface AppContextType {
   updateChapter: (id: string, data: Partial<Chapter>) => Promise<void> | void;
   deleteChapter: (chapterId: string) => Promise<void> | void;
   
-  createItem: (data: { bookId: string; chapterId?: string; question: string; answer: string; tags?: string[]; imageQ?: string; imageA?: string; order?: number }) => Promise<BookItem> | BookItem;
+  createItem: (data: { bookId: string; chapterId?: string; question: string; answer: string; explanation?: string; tags?: string[]; imageQ?: string; imageA?: string; order?: number }) => Promise<BookItem> | BookItem;
   updateItem: (id: string, data: Partial<BookItem>) => Promise<void> | void;
   reorderItems: (newItems: BookItem[]) => void;
   deleteItem: (itemId: string) => Promise<void> | void;
@@ -269,7 +281,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
-    return (saved as Language) || 'en';
+    return saved === 'id' ? 'id' : 'en';
   });
 
   const [theme, setTheme] = useState<Theme>(() => {
@@ -350,6 +362,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ...parsed,
           fullName: authState?.name || (parsed.fullName && parsed.fullName !== 'Tamu / Murid' ? parsed.fullName : (authState?.name || 'Santri')),
           email: authState?.email || parsed.email,
+          avatarUrl: getProfileAvatarUrl(parsed.avatarUrl, authState?.email || authState?.name || parsed.email || parsed.fullName),
+          createdAt: authState?.created_at || authState?.createdAt || parsed.createdAt,
           onboardingPreferences: {
             ...defaultOnboardingPreferences,
             ...(parsed.onboardingPreferences || {})
@@ -362,7 +376,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       quranSpaceCode: authState?.id ? `UNL-QRN-${String(authState.id).slice(0, 4).toUpperCase()}` : 'UNL-QRN-GUEST',
       fullName: authState?.name || 'Santri',
       email: authState?.email || '',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      avatarUrl: getAccountAvatarUrl(authState?.email || authState?.name || authState?.id),
+      createdAt: authState?.created_at || authState?.createdAt,
       plan: authState?.is_premium ? 'premium' : 'free',
       onboardingPreferences: defaultOnboardingPreferences,
     };
@@ -370,6 +385,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const authUser = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
+
+  useEffect(() => {
+    if (!authUser) return;
+
+    const accountAvatarUrl = getAccountAvatarUrl(authUser.email || authUser.name || authUser.id);
+    const accountCreatedAt = authUser.created_at || authUser.createdAt;
+    const needsAvatar = !userProfile.avatarUrl || userProfile.avatarUrl === LEGACY_DEFAULT_AVATAR_URL;
+    const needsCreatedAt = Boolean(accountCreatedAt && !userProfile.createdAt);
+    if ((!accountAvatarUrl || !needsAvatar) && !needsCreatedAt) return;
+
+    setUserProfile(prev => ({
+      ...prev,
+      avatarUrl: needsAvatar ? accountAvatarUrl : prev.avatarUrl,
+      createdAt: accountCreatedAt || prev.createdAt,
+    }));
+  }, [authUser, userProfile.avatarUrl, userProfile.createdAt]);
 
   useEffect(() => {
     try {
@@ -807,7 +838,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         quranSpaceCode: 'UNL-QRN-GUEST',
         fullName: 'Tamu / Murid',
         email: '',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        avatarUrl: '',
         plan: 'free',
       };
       loadedUserIdRef.current = guestId;
@@ -845,7 +876,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           id: targetId,
           email: user.email || prev.email,
           fullName: user.displayName || user.email?.split('@')[0] || prev.fullName,
-          avatarUrl: user.photoURL || prev.avatarUrl,
+          avatarUrl: user.photoURL || getProfileAvatarUrl(prev.avatarUrl, user.email || user.displayName || user.uid),
+          createdAt: user.metadata.creationTime || prev.createdAt,
           quranSpaceCode: `UNL-QRN-${String(targetId).slice(0, 4).toUpperCase()}`,
         }));
 
@@ -999,7 +1031,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             userId: uid,
             title: b.title,
             description: b.description || '',
-            coverUrl: b.cover_image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+            coverUrl: b.cover_image || b.cover_image_url || b.cover_url || b.coverUrl || b.cover?.url || undefined,
             isPublic: b.is_public ?? false,
             category: 'Umum',
             isReadonly: false,
@@ -1015,7 +1047,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             userId: uid,
             title: b.title,
             description: b.description || '',
-            coverUrl: b.cover_image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+            coverUrl: b.cover_image || b.cover_image_url || b.cover_url || b.coverUrl || b.cover?.url || undefined,
             isPublic: true,
             category: 'Umum',
             isReadonly: true,
@@ -1065,7 +1097,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           userId: b.owner_id || '',
           title: b.title || 'Untitled Book',
           description: b.description || '',
-          coverUrl: b.cover_image || '',
+          coverUrl: b.cover_image || b.cover_image_url || b.cover_url || b.coverUrl || b.cover?.url || '',
           isPublic: true,
           isReadonly: false,
           authorName: b.owner_name || 'Penulis',
@@ -1110,6 +1142,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             requiredJuzList: c.type === 'quran' ? [1, 2, 3, 4, 5] : undefined,
             assignedBookIds: [],
             students: [],
+            studentCount: Number(c.student_count ?? 0),
             createdAt: c.created_at || new Date().toISOString(),
             status: c.is_active ? 'active' : 'closed',
           }));
@@ -1131,6 +1164,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           requiredJuzList: c.type === 'quran' ? [1, 2, 3, 4, 5] : undefined,
           assignedBookIds: [],
           students: [],
+          studentCount: Number(c.student_count ?? 0),
           createdAt: c.created_at || new Date().toISOString(),
           status: c.is_active ? 'active' : 'closed',
         }));
@@ -1159,10 +1193,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           frequentStruggles: [],
           teacherFeedbacks: [],
         }));
-        setTeachingClasses(prev => prev.map(cls => cls.id === classId ? {
+        const updateClassMembers = (classes: ClassGroup[]) => classes.map(cls => cls.id === classId ? {
           ...cls,
-          students: mappedStudents
-        } : cls));
+          students: mappedStudents,
+          studentCount: mappedStudents.length,
+        } : cls);
+        setTeachingClasses(updateClassMembers);
+        setMyClasses(updateClassMembers);
       }
     } catch (err) {
       console.warn(`Failed to fetch members for class ${classId}:`, err);
@@ -1182,7 +1219,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           quranSpaceCode: `UNL-QRN-${String(targetId).slice(0, 4).toUpperCase()}`,
           fullName: authUser.name || 'Santri',
           email: authUser.email || '',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+          avatarUrl: getAccountAvatarUrl(authUser.email || authUser.name || authUser.id),
+          createdAt: authUser.created_at || authUser.createdAt,
           plan: authUser.is_premium ? 'premium' : 'free',
           role: (authUser.role as any) || 'student',
           onboardingPreferences: defaultOnboardingPreferences,
@@ -1215,7 +1253,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         quranSpaceCode: 'UNL-QRN-GUEST',
         fullName: 'Tamu / Murid',
         email: '',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        avatarUrl: '',
         plan: 'free',
         onboardingPreferences: defaultOnboardingPreferences,
       };
@@ -1963,8 +2001,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cover_image: data.coverUrl,
       });
       if (res && res.data) {
-        backendBookId = res.data.id || backendBookId;
-        backendCover = res.data.cover_image || backendCover;
+        const backendBook = res.data as typeof res.data & {
+          cover_image_url?: string;
+          cover_url?: string;
+          coverUrl?: string;
+        };
+        backendBookId = backendBook.id || backendBookId;
+        backendCover = backendBook.cover_image || backendBook.cover_image_url || backendBook.cover_url || backendBook.coverUrl || backendCover;
       }
     } catch (err) {
       console.warn("Backend createBook failed:", err);
@@ -1975,7 +2018,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       userId: userProfile.id,
       title: data.title,
       description: data.description,
-      coverUrl: backendCover || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+      coverUrl: backendCover,
       isPublic: data.isPublic ?? false,
       category: data.category || 'Umum',
       isReadonly: false,
@@ -2187,6 +2230,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     chapterId?: string; 
     question: string; 
     answer: string; 
+    explanation?: string;
     tags?: string[];
     imageQ?: string;
     imageA?: string;
@@ -2196,12 +2240,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const qText = typeof data.question === 'string' ? data.question : '';
       const aText = typeof data.answer === 'string' ? data.answer : '';
+      const expText = typeof data.explanation === 'string' ? data.explanation : '';
       if (data.chapterId) {
         const res = await personalService.createModuleItem(data.chapterId, {
           book_id: data.bookId,
           title: qText.slice(0, 60) || 'Card',
           content: qText,
           answer: aText,
+          explanation: expText,
           image: data.imageQ,
           order: data.order ?? 0,
           estimate_value: 0,
@@ -2215,6 +2261,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           title: qText.slice(0, 60) || 'Card',
           content: qText,
           answer: aText,
+          explanation: expText,
           image: data.imageQ,
           order: data.order ?? 0,
         });
@@ -2233,6 +2280,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       chapterId: data.chapterId,
       question: data.question ? normalizeBilingualText(data.question) : data.question,
       answer: data.answer ? normalizeBilingualText(data.answer) : data.answer,
+      explanation: data.explanation ? normalizeBilingualText(data.explanation) : data.explanation,
       imageQ: data.imageQ,
       imageA: data.imageA,
       tags: data.tags || [],
@@ -2254,10 +2302,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const qText = typeof data.question === 'string' ? data.question : (data.question ? String(data.question) : '');
       const aText = typeof data.answer === 'string' ? data.answer : (data.answer ? String(data.answer) : '');
+      const expText = typeof data.explanation === 'string' ? data.explanation : (data.explanation ? String(data.explanation) : undefined);
       await personalService.updateItem(id, {
         title: qText.slice(0, 60) || 'Card',
         content: qText,
         answer: aText,
+        explanation: expText,
         image: data.imageQ,
         order: 0,
         estimate_value: 0,
@@ -2273,6 +2323,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ...data,
           question: data.question !== undefined ? normalizeBilingualText(data.question) : i.question,
           answer: data.answer !== undefined ? normalizeBilingualText(data.answer) : i.answer,
+          explanation: data.explanation !== undefined ? (data.explanation ? normalizeBilingualText(data.explanation) : undefined) : i.explanation,
         };
       }
       return i;
@@ -2420,7 +2471,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     const token = useAuthStore.getState().token;
-    let backendClassItem: any = null;
+    let backendClassItem: ClassItem | null = null;
     let backendJoinedSuccess = false;
 
     if (token) {
@@ -2460,6 +2511,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         requiredJuzList: backendClassItem.type === 'quran' ? [1, 2, 3, 4, 5] : undefined,
         assignedBookIds: [],
         students: [],
+        studentCount: Number(backendClassItem.student_count ?? 0),
         createdAt: backendClassItem.created_at || new Date().toISOString(),
         status: backendClassItem.is_active ? 'active' : 'closed',
       };

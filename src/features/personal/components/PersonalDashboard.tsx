@@ -9,7 +9,7 @@ import {
   Plus,
   Library,
   Loader2,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useBooks } from "../hooks/useBooks";
 import { useMyCollection } from "../hooks/useMyCollection";
 import { Link, useNavigate } from "react-router";

@@ -20,7 +20,7 @@ import {
   ShieldCheck,
   Send,
   ExternalLink
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 
 export const AdminTransactionsTab: React.FC = () => {
   const { transactions, language, userProfile } = useApp();

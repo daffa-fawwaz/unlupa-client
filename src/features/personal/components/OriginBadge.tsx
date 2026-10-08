@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin } from "@/components/foundations/hugeicons";
 import type { BookItemOrigin } from "@/features/personal/utils/bookReviewUtils";
 
 interface OriginBadgeProps {

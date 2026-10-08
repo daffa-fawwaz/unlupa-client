@@ -1,30 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { getIntervalDays, getNonQuranIntervalDays, predictNonQuranIntervals, isReviewedToday } from '../../lib/fsrs';
-import { useApp } from '../../context/AppContext';
-import { useSwipeGesture } from '../../hooks/useSwipeGesture';
-import { Book, Chapter, BookItem } from '../../types';
-import { BookFormModal } from './BookFormModal';
-import { ItemFormModal } from './ItemFormModal';
-import { AIImportModal } from './AIImportModal';
-import { AIBookBuilderModal } from './AIBookBuilderModal';
-import { LibraryModal } from './LibraryModal';
-import { PublishModal } from './PublishModal';
-import { PersonalReviewModal } from './PersonalReviewModal';
-import { ItemPreviewModal } from './ItemPreviewModal';
-import { FolderMoveModal } from './FolderMoveModal';
-import { ActivityHeatmap } from './ActivityHeatmap';
-import { ConfirmModal } from './ConfirmModal';
-import { BookInteractionTracker } from './BookInteractionTracker';
-import { BookReviewCalendarModal } from './BookReviewCalendarModal';
-import { BookReviewForecast7Days } from './BookReviewForecast7Days';
-import { GlobalCardSearchModal } from './GlobalCardSearchModal';
-import { MemoryMetricGrid } from '../common/MemoryMetricGrid';
-import { UnifiedDueCard, DueFilterPill } from '../common/UnifiedDueCard';
-import { AudioStorageService } from '../../lib/AudioStorageService';
-import { AudioRecorderPlayer } from '../shared/AudioRecorderPlayer';
-import { soundEffects } from '../../lib/soundFeedback';
-import { BilingualCardText } from '../common/BilingualCardText';
-import { normalizeBilingualText } from '../../utils/bilingualHelper';
+import React, { useState, useEffect } from "react";
+import {
+  getIntervalDays,
+  getNonQuranIntervalDays,
+  predictNonQuranIntervals,
+  isReviewedToday,
+} from "../../lib/fsrs";
+import { useApp } from "../../context/AppContext";
+import { useSwipeGesture } from "../../hooks/useSwipeGesture";
+import { Book, Chapter, BookItem } from "../../types";
+import { BookFormModal } from "./BookFormModal";
+import { ItemFormModal } from "./ItemFormModal";
+import { AIImportModal } from "./AIImportModal";
+import { AIBookBuilderModal } from "./AIBookBuilderModal";
+import { LibraryModal } from "./LibraryModal";
+import { PublishModal } from "./PublishModal";
+import { PersonalReviewModal } from "./PersonalReviewModal";
+import { ItemPreviewModal } from "./ItemPreviewModal";
+import { FolderMoveModal } from "./FolderMoveModal";
+import { ActivityHeatmap } from "./ActivityHeatmap";
+import { ConfirmModal } from "./ConfirmModal";
+import { BookInteractionTracker } from "./BookInteractionTracker";
+import { BookReviewCalendarModal } from "./BookReviewCalendarModal";
+import { BookReviewForecast7Days } from "./BookReviewForecast7Days";
+import { BookCoverVisual } from "./BookCoverVisual";
+import { GlobalCardSearchModal } from "./GlobalCardSearchModal";
+import { PersonalBookPage } from "./pages/PersonalBookPage";
+import {
+  PersonalChapterPage,
+  type ChapterCardFilter,
+} from "./pages/PersonalChapterPage";
+import { PersonalSubchapterPage } from "./pages/PersonalSubchapterPage";
+import { MemoryMetricGrid } from "../common/MemoryMetricGrid";
+import { UnifiedDueCard, DueFilterPill } from "../common/UnifiedDueCard";
+import { AudioStorageService } from "../../lib/AudioStorageService";
+import { AudioRecorderPlayer } from "../shared/AudioRecorderPlayer";
+import { soundEffects } from "../../lib/soundFeedback";
+import { BilingualCardText } from "../common/BilingualCardText";
+import { normalizeBilingualText } from "../../utils/bilingualHelper";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  AiEditingIcon,
+  Book02Icon,
+  BookCopyIcon,
+  BookDashedIcon,
+  BookMarkedIcon,
+  Books02Icon,
+  BookUp2Icon,
+  ClockAlertIcon,
+  SwatchBookIcon,
+  WalletCardsIcon,
+} from "@hugeicons/core-free-icons";
+import {
+  Dialog,
+  Modal,
+  ModalOverlay,
+} from "@/components/application/modals/modal";
+import { InlineAlert } from "@/components/base/alert/alert";
+import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { CloseButton } from "@/components/base/buttons/close-button";
+import { Input } from "@/components/base/input/input";
+import { TextArea } from "@/components/base/textarea/textarea";
 import {
   DndContext,
   closestCenter,
@@ -32,34 +69,37 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-  DragEndEvent
-} from '@dnd-kit/core';
+  DragEndEvent,
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   rectSortingStrategy,
-  useSortable
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { 
-  Plus, 
-  Library, 
-  Upload, 
-  Download, 
-  Play, 
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  Plus,
+  Library,
+  Upload,
+  Download,
+  Play,
   Eye,
-  Mic, 
+  Mic,
   EyeOff,
-  Power, 
-  Trash2, 
-  Edit3, Pencil, MoreVertical, 
-  ArrowLeft, 
-  FolderPlus, 
-  Sparkles, 
-  Clock, 
-  BookOpen, ChevronDown, ChevronRight, ChevronLeft,
-  Share2, 
-  Tag, 
+  Power,
+  Trash2,
+  Edit3,
+  Pencil,
+  MoreVertical,
+  ArrowLeft,
+  FolderPlus,
+  Sparkles,
+  Clock,
+  BookOpen,
+  ChevronDown,
+  ChevronRight,
+  Tag,
   FileText,
   Copy,
   Check,
@@ -76,19 +116,18 @@ import {
   Filter,
   CheckSquare,
   Square,
-  Folder,
   FolderOpen,
   MoveRight,
   Award,
   X,
-  CircleDashed,
   MessageSquare,
   LogOut,
   ShieldCheck,
-  CalendarCheck,
   KeyRound,
-  LogIn
-} from 'lucide-react';
+  LogIn,
+  BookPublish,
+  Calendar,
+} from "@/components/foundations/hugeicons";
 
 export interface PersonalSpaceProps {
   initialBookId?: string | null;
@@ -106,22 +145,24 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   initialBookId,
   classBanner,
   isEmbeddedTeacherView,
-  onExitEmbedded
+  onExitEmbedded,
 }) => {
-  const { 
-    books, 
-    chapters, 
-    items, 
-    personalStats, 
-    activateItem, 
-    deactivateItem, 
+  const {
+    books,
+    chapters,
+    items,
+    personalStats,
+    activateItem,
+    deactivateItem,
     reviewItem,
-    createBook, updateBook, 
-    deleteBook, 
-    createChapter, 
+    createBook,
+    updateBook,
+    deleteBook,
+    createChapter,
     updateChapter,
-    deleteChapter, 
-    createItem, updateItem,
+    deleteChapter,
+    createItem,
+    updateItem,
     deleteItem,
     reorderItems,
     loadBookTree,
@@ -140,17 +181,17 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     isFeatureAllowed,
     openUpgradeModal,
     tierConfig,
-    userProfile
+    userProfile,
   } = useApp();
 
   const handleTriggerNewBook = () => {
-    const check = isFeatureAllowed('create_book');
+    const check = isFeatureAllowed("create_book");
     if (!check.allowed) {
       openUpgradeModal(
         check.reason,
-        language === 'en'
+        language === "en"
           ? `Free tier allows up to ${check.limit} personal books. Upgrade to Unlupa Pro for unlimited modules & books.`
-          : `Batas akun Free adalah maksimal ${check.limit} buku pribadi. Upgrade ke Unlupa Pro untuk membuat materi tanpa batas.`
+          : `Batas akun Free adalah maksimal ${check.limit} buku pribadi. Upgrade ke Unlupa Pro untuk membuat materi tanpa batas.`,
       );
       return;
     }
@@ -158,13 +199,13 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   };
 
   const handleTriggerAIBuilder = () => {
-    const check = isFeatureAllowed('ai_builder');
+    const check = isFeatureAllowed("ai_builder");
     if (!check.allowed) {
       openUpgradeModal(
         check.reason,
-        language === 'en'
+        language === "en"
           ? `Free daily AI generation quota is ${check.limit}x/day. Upgrade to Unlupa Pro for up to 30 generations/day.`
-          : `Batas harian AI Builder akun Free adalah ${check.limit}x per hari. Upgrade ke Unlupa Pro untuk kuota hingga 30x/hari.`
+          : `Batas harian AI Builder akun Free adalah ${check.limit}x per hari. Upgrade ke Unlupa Pro untuk kuota hingga 30x/hari.`,
       );
       return;
     }
@@ -172,13 +213,13 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   };
 
   const handleTriggerAIImport = () => {
-    const check = isFeatureAllowed('ai_extractor');
+    const check = isFeatureAllowed("ai_extractor");
     if (!check.allowed) {
       openUpgradeModal(
         check.reason,
-        language === 'en'
-          ? 'Smart AI Extractor is exclusive to Unlupa Pro. Upgrade to extract flashcards automatically.'
-          : 'Smart AI Extractor adalah fitur eksklusif Unlupa Pro. Upgrade sekarang untuk membuat materi otomatis.'
+        language === "en"
+          ? "Smart AI Extractor is exclusive to Unlupa Pro. Upgrade to extract flashcards automatically."
+          : "Smart AI Extractor adalah fitur eksklusif Unlupa Pro. Upgrade sekarang untuk membuat materi otomatis.",
       );
       return;
     }
@@ -186,21 +227,23 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   };
 
   // Active classes only (excluding closed classes)
-  const activeTeachingClasses = teachingClasses.filter(c => c.status !== 'closed');
-  const activeJoinedClasses = myClasses.filter(c => c.status !== 'closed');
+  const activeTeachingClasses = teachingClasses.filter(
+    (c) => c.status !== "closed",
+  );
+  const activeJoinedClasses = myClasses.filter((c) => c.status !== "closed");
   const activeClassIds = new Set<string>([
-    ...activeTeachingClasses.map(c => c.id),
-    ...activeJoinedClasses.map(c => c.id)
+    ...activeTeachingClasses.map((c) => c.id),
+    ...activeJoinedClasses.map((c) => c.id),
   ]);
 
   const assignedBookIds = new Set<string>();
-  activeTeachingClasses.forEach(c => {
-    c.assignedBookIds?.forEach(id => assignedBookIds.add(id));
+  activeTeachingClasses.forEach((c) => {
+    c.assignedBookIds?.forEach((id) => assignedBookIds.add(id));
   });
 
   const joinedBookIds = new Set<string>();
-  activeJoinedClasses.forEach(c => {
-    c.assignedBookIds?.forEach(id => joinedBookIds.add(id));
+  activeJoinedClasses.forEach((c) => {
+    c.assignedBookIds?.forEach((id) => joinedBookIds.add(id));
   });
 
   const isBookInActiveClass = (b: Book): boolean => {
@@ -209,8 +252,10 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       return activeClassIds.has(b.classId);
     }
     // If book id starts with class-book-{classId}-...
-    if (b.id.startsWith('class-book-')) {
-      return Array.from(activeClassIds).some(cid => b.id.startsWith(`class-book-${cid}-`));
+    if (b.id.startsWith("class-book-")) {
+      return Array.from(activeClassIds).some((cid) =>
+        b.id.startsWith(`class-book-${cid}-`),
+      );
     }
     // If book is linked through active joined classes and is readonly
     if (joinedBookIds.has(b.id) && b.isReadonly) {
@@ -220,7 +265,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     return false;
   };
 
-  const [selectedBookId, setSelectedBookId] = useState<string | null>(initialBookId || null);
+  const [selectedBookId, setSelectedBookId] = useState<string | null>(
+    initialBookId || null,
+  );
 
   useEffect(() => {
     if (editingClassBookId) {
@@ -235,8 +282,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     }
   }, [initialBookId]);
 
-  const selectedBook = books.find(b => b.id === selectedBookId) || null;
-  const setSelectedBook = (b: Book | null) => setSelectedBookId(b ? b.id : null);
+  const selectedBook = books.find((b) => b.id === selectedBookId) || null;
+  const setSelectedBook = (b: Book | null) =>
+    setSelectedBookId(b ? b.id : null);
 
   useEffect(() => {
     if (selectedBookId) {
@@ -245,7 +293,10 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   }, [selectedBookId, loadBookTree]);
 
   useEffect(() => {
-    if (spaceResetCounter?.space === 'personal' && spaceResetCounter.count > 0) {
+    if (
+      spaceResetCounter?.space === "personal" &&
+      spaceResetCounter.count > 0
+    ) {
       setSelectedBook(null);
       setSelectedChapter(null);
       setIsLibraryOpen(false);
@@ -259,8 +310,8 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       setEditingChapter(null);
       setIsBulkMode(false);
       setSelectedCardIds(new Set());
-      setChapterCardSearch('');
-      setTocSearch('');
+      setChapterCardSearch("");
+      setTocSearch("");
       setMovingItem(null);
       setMovingChapter(null);
       setIsMoveModalOpen(false);
@@ -272,33 +323,66 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   }, [spaceResetCounter]);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
-  const [publishPreselectedId, setPublishPreselectedId] = useState<string | null>(null);
-  const [activeBookTab, setActiveBookTab] = useState<'personal' | 'imported' | 'class'>('personal');
+  const [publishPreselectedId, setPublishPreselectedId] = useState<
+    string | null
+  >(null);
+  const [activeBookTab, setActiveBookTab] = useState<
+    "personal" | "imported" | "class"
+  >("personal");
   const [isJoinClassModalOpen, setIsJoinClassModalOpen] = useState(false);
-  const [codeInputValue, setCodeInputValue] = useState('');
-  const [joinMessage, setJoinMessage] = useState<{ text: string, isError: boolean } | null>(null);
+  const [isJoiningClass, setIsJoiningClass] = useState(false);
+  const [codeInputValue, setCodeInputValue] = useState("");
+  const [joinMessage, setJoinMessage] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
   const [classToLeave, setClassToLeave] = useState<string | null>(null);
 
   const handleJoinClass = async () => {
     const cleanCode = codeInputValue.trim();
     if (!cleanCode) {
-      setJoinMessage({ 
-        text: language === 'en' ? 'Class code cannot be empty' : 'Kode kelas tidak boleh kosong', 
-        isError: true 
+      setJoinMessage({
+        text:
+          language === "en"
+            ? "Class code cannot be empty"
+            : "Kode kelas tidak boleh kosong",
+        isError: true,
       });
       return;
     }
-    const res = await joinClassByCode(cleanCode);
-    if (res.success) {
-      setJoinMessage({ text: res.message, isError: false });
-      setTimeout(() => {
-        setCodeInputValue('');
-        setJoinMessage(null);
-        setIsJoinClassModalOpen(false);
-      }, 1400);
-    } else {
-      setJoinMessage({ text: res.message, isError: true });
+    setIsJoiningClass(true);
+    try {
+      const res = await joinClassByCode(cleanCode);
+      if (res.success) {
+        setJoinMessage({ text: res.message, isError: false });
+        setTimeout(() => {
+          setCodeInputValue("");
+          setJoinMessage(null);
+          setIsJoinClassModalOpen(false);
+        }, 1400);
+      } else {
+        setJoinMessage({ text: res.message, isError: true });
+      }
+    } catch (error) {
+      setJoinMessage({
+        text:
+          error instanceof Error
+            ? error.message
+            : language === "en"
+              ? "Failed to join class."
+              : "Gagal bergabung ke kelas.",
+        isError: true,
+      });
+    } finally {
+      setIsJoiningClass(false);
     }
+  };
+
+  const closeJoinClassModal = () => {
+    if (isJoiningClass) return;
+    setIsJoinClassModalOpen(false);
+    setCodeInputValue("");
+    setJoinMessage(null);
   };
 
   const handleConfirmLeaveClass = () => {
@@ -307,13 +391,17 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     setClassToLeave(null);
   };
   const [isReviewOpen, setIsReviewOpen] = useState(false);
-  const [reviewSpecificBookId, setReviewSpecificBookId] = useState<string | null>(null);
+  const [reviewSpecificBookId, setReviewSpecificBookId] = useState<
+    string | null
+  >(null);
   const [previewItem, setPreviewItem] = useState<BookItem | null>(null);
 
   // Book Review Calendar Modal state
   const [isBookCalendarOpen, setIsBookCalendarOpen] = useState(false);
   const [calendarBook, setCalendarBook] = useState<Book | null>(null);
-  const [calendarChapterFilter, setCalendarChapterFilter] = useState<string | null>(null);
+  const [calendarChapterFilter, setCalendarChapterFilter] = useState<
+    string | null
+  >(null);
 
   // Global Card Search Modal state
   const [isGlobalCardSearchOpen, setIsGlobalCardSearchOpen] = useState(false);
@@ -321,19 +409,30 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   // Dialogs
   const [isNewBookOpen, setIsNewBookOpen] = useState(false);
   const [isNewChapterOpen, setIsNewChapterOpen] = useState(false);
-  const [parentChapterIdForNew, setParentChapterIdForNew] = useState<string | null>(null);
+  const [parentChapterIdForNew, setParentChapterIdForNew] = useState<
+    string | null
+  >(null);
   const [isNewItemOpen, setIsNewItemOpen] = useState(false);
   const [isAIImportOpen, setIsAIImportOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [editingItem, setEditingItem] = useState<BookItem | null>(null);
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
-  const [confirmDialog, setConfirmDialog] = useState<{isOpen: boolean, message: string, onConfirm: () => void} | null>(null);
-    const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
-  const [virtualSelectedChapter, setVirtualSelectedChapter] = useState<Chapter | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
+    null,
+  );
+  const [virtualSelectedChapter, setVirtualSelectedChapter] =
+    useState<Chapter | null>(null);
 
-  const selectedChapter = virtualSelectedChapter ? virtualSelectedChapter : (chapters.find(c => c.id === selectedChapterId) || null);
+  const selectedChapter = virtualSelectedChapter
+    ? virtualSelectedChapter
+    : chapters.find((c) => c.id === selectedChapterId) || null;
   const setSelectedChapter = (c: Chapter | null) => {
-    if (c && c.id === '__unassigned__') {
+    if (c && c.id === "__unassigned__") {
       setVirtualSelectedChapter(c);
       setSelectedChapterId(c.id);
     } else {
@@ -341,26 +440,31 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       setSelectedChapterId(c ? c.id : null);
     }
   };
-  const [chapterFilter, setChapterFilter] = useState<'all' | 'active' | 'due' | 'inactive' | 'mastered'>('all');
-  const [chapterCardSearch, setChapterCardSearch] = useState('');
-  const [tocSearch, setTocSearch] = useState('');
+  const [chapterFilter, setChapterFilter] = useState<ChapterCardFilter>("all");
+  const [chapterCardSearch, setChapterCardSearch] = useState("");
+  const [tocSearch, setTocSearch] = useState("");
   const [isBulkMode, setIsBulkMode] = useState(false);
-  const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(new Set());
+  const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(
+    new Set(),
+  );
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
-  const [targetMoveChapterId, setTargetMoveChapterId] = useState<string>('');
+  const [targetMoveChapterId, setTargetMoveChapterId] = useState<string>("");
   const [movingItem, setMovingItem] = useState<BookItem | null>(null);
   const [movingChapter, setMovingChapter] = useState<Chapter | null>(null);
-  const [selectedChapterIdForItem, setSelectedChapterIdForItem] = useState<string>('');
-  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set());
+  const [selectedChapterIdForItem, setSelectedChapterIdForItem] =
+    useState<string>("");
+  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(
+    new Set(),
+  );
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   const handleBulkActivate = () => {
-    selectedCardIds.forEach(id => activateItem(id));
+    selectedCardIds.forEach((id) => activateItem(id));
     setSelectedCardIds(new Set());
   };
 
   const handleBulkDeactivate = () => {
-    selectedCardIds.forEach(id => deactivateItem(id));
+    selectedCardIds.forEach((id) => deactivateItem(id));
     setSelectedCardIds(new Set());
   };
 
@@ -368,90 +472,117 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     const count = selectedCardIds.size;
     if (count === 0) return;
     setConfirmDialog({
-        isOpen: true,
-        message: language === 'en' ? `Delete ${count} selected cards?` : `Hapus ${count} kartu yang dipilih?`,
-        onConfirm: () => {
-          selectedCardIds.forEach(id => deleteItem(id));
-          setSelectedCardIds(new Set());
-          setIsBulkMode(false);
-          setConfirmDialog(null);
-        }
-      });
+      isOpen: true,
+      message:
+        language === "en"
+          ? `Delete ${count} selected cards?`
+          : `Hapus ${count} kartu yang dipilih?`,
+      onConfirm: () => {
+        selectedCardIds.forEach((id) => deleteItem(id));
+        setSelectedCardIds(new Set());
+        setIsBulkMode(false);
+        setConfirmDialog(null);
+      },
+    });
   };
 
   const handleConfirmMove = () => {
-    const targetId = targetMoveChapterId === '__unassigned__' ? '' : targetMoveChapterId;
-    
+    const targetId =
+      targetMoveChapterId === "__unassigned__" ? "" : targetMoveChapterId;
+
     if (movingChapter) {
       if (targetId === movingChapter.id) {
-        alert(language === 'en' ? 'Cannot move chapter into itself.' : 'Bab tidak bisa dipindah ke dalam dirinya sendiri.');
+        alert(
+          language === "en"
+            ? "Cannot move chapter into itself."
+            : "Bab tidak bisa dipindah ke dalam dirinya sendiri.",
+        );
         return;
       }
       updateChapter(movingChapter.id, {
-        parentId: targetId ? targetId : null
+        parentId: targetId ? targetId : null,
       });
       setMovingChapter(null);
     } else if (movingItem) {
       updateItem(movingItem.id, {
-        chapterId: targetId || undefined
+        chapterId: targetId || undefined,
       });
       setMovingItem(null);
     } else if (selectedCardIds.size > 0) {
-      selectedCardIds.forEach(id => {
+      selectedCardIds.forEach((id) => {
         updateItem(id, {
-          chapterId: targetId || undefined
+          chapterId: targetId || undefined,
         });
       });
       setSelectedCardIds(new Set());
       setIsBulkMode(false);
     }
     setIsMoveModalOpen(false);
-    setTargetMoveChapterId('');
+    setTargetMoveChapterId("");
   };
-    
-        const sensors = useSensors(
-      useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-      useSensor(TouchSensor, { activationConstraint: { delay: 2000, tolerance: 15 } })
-    );
-    
-    
-    
-    const handleDragEnd = (event: any) => {
-      const { active, over } = event;
-      if (!over) return;
-      if (active.id === over.id) return;
 
-      const oldIndex = items.findIndex((i) => i.id === active.id);
-      const newIndex = items.findIndex((i) => i.id === over.id);
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 2000, tolerance: 15 },
+    }),
+  );
 
-      if (oldIndex !== -1 && newIndex !== -1) {
-        let updatedItems = [...items];
-        const activeItem = updatedItems[oldIndex];
-        const overItem = updatedItems[newIndex];
-        
-        if (activeItem.chapterId !== overItem.chapterId) {
-          updatedItems[oldIndex] = { ...activeItem, chapterId: overItem.chapterId };
-        }
-        
-        updatedItems = arrayMove(updatedItems, oldIndex, newIndex);
-        reorderItems(updatedItems);
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (!over) return;
+    if (active.id === over.id) return;
+
+    const oldIndex = items.findIndex((i) => i.id === active.id);
+    const newIndex = items.findIndex((i) => i.id === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      let updatedItems = [...items];
+      const activeItem = updatedItems[oldIndex];
+      const overItem = updatedItems[newIndex];
+
+      if (activeItem.chapterId !== overItem.chapterId) {
+        updatedItems[oldIndex] = {
+          ...activeItem,
+          chapterId: overItem.chapterId,
+        };
       }
-    };
+
+      updatedItems = arrayMove(updatedItems, oldIndex, newIndex);
+      reorderItems(updatedItems);
+    }
+  };
 
   const [isAIBookBuilderOpen, setIsAIBookBuilderOpen] = useState(false);
-  
-  const [searchQuery, setSearchQuery] = useState('');
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Form states
-  const [bookForm, setBookForm] = useState({ title: '', description: '', coverUrl: '', isPublic: false });
-  const [chapterForm, setChapterForm] = useState({ title: '', description: '' });
-  const [itemForm, setItemForm] = useState({ question: '', answer: '', tags: '', imageQ: '', imageA: '' });
-  const [importJsonText, setImportJsonText] = useState('');
-  const [importMessage, setImportMessage] = useState<{ text: string; isError: boolean } | null>(null);
+  const [bookForm, setBookForm] = useState({
+    title: "",
+    description: "",
+    coverUrl: "",
+    isPublic: false,
+  });
+  const [chapterForm, setChapterForm] = useState({
+    title: "",
+    description: "",
+  });
+  const [itemForm, setItemForm] = useState({
+    question: "",
+    answer: "",
+    tags: "",
+    imageQ: "",
+    imageA: "",
+  });
+  const [importJsonText, setImportJsonText] = useState("");
+  const [importMessage, setImportMessage] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
 
-  
   const toggleChapter = (chapterId: string) => {
-    setExpandedChapters(prev => {
+    setExpandedChapters((prev) => {
       const next = new Set(prev);
       if (next.has(chapterId)) {
         next.delete(chapterId);
@@ -466,7 +597,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     e.preventDefault();
     if (!bookForm.title.trim()) return;
     const created = await createBook(bookForm);
-    setBookForm({ title: '', description: '', coverUrl: '', isPublic: false });
+    setBookForm({ title: "", description: "", coverUrl: "", isPublic: false });
     setIsNewBookOpen(false);
     if (created) setSelectedBook(created);
   };
@@ -474,22 +605,29 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
   const handleCreateChapter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedBook || !chapterForm.title.trim()) return;
-    
+
     if (editingChapter) {
       await updateChapter(editingChapter.id, {
         title: chapterForm.title,
-        description: chapterForm.description
+        description: chapterForm.description,
       });
     } else {
       await createChapter({
         bookId: selectedBook.id,
         title: chapterForm.title,
         description: chapterForm.description,
-        parentId: parentChapterIdForNew
+        parentId: parentChapterIdForNew,
       });
     }
-    
-    setChapterForm({ title: '', description: '' });
+
+    setChapterForm({ title: "", description: "" });
+    setIsNewChapterOpen(false);
+    setEditingChapter(null);
+    setParentChapterIdForNew(null);
+  };
+
+  const closeChapterModal = () => {
+    setChapterForm({ title: "", description: "" });
     setIsNewChapterOpen(false);
     setEditingChapter(null);
     setParentChapterIdForNew(null);
@@ -497,10 +635,11 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
 
   const handleCreateItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedBook || !itemForm.question.trim() || !itemForm.answer.trim()) return;
+    if (!selectedBook || !itemForm.question.trim() || !itemForm.answer.trim())
+      return;
     const tagsArray = itemForm.tags
-      .split(',')
-      .map(t => t.trim())
+      .split(",")
+      .map((t) => t.trim())
       .filter(Boolean);
 
     await createItem({
@@ -513,11 +652,10 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       imageA: itemForm.imageA || undefined,
     });
 
-    setItemForm({ question: '', answer: '', tags: '', imageQ: '', imageA: '' });
+    setItemForm({ question: "", answer: "", tags: "", imageQ: "", imageA: "" });
     setIsNewItemOpen(false);
   };
 
-  
   const handleImportSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!importJsonText.trim()) return;
@@ -526,7 +664,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       setImportMessage({ text: res.message, isError: false });
       setTimeout(() => {
         // setIsImportOpen(false);
-        setImportJsonText('');
+        setImportJsonText("");
         setImportMessage(null);
       }, 1500);
     } else {
@@ -534,29 +672,52 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     }
   };
 
-  const bookChapters = selectedBook ? chapters.filter(c => c.bookId === selectedBook.id) : [];
-  const bookItems = selectedBook ? items.filter(i => i.bookId === selectedBook.id) : [];
-  const currentChapter = virtualSelectedChapter ? virtualSelectedChapter : (selectedChapterId ? chapters.find(c => c.id === selectedChapterId) : null);
+  const bookChapters = selectedBook
+    ? chapters.filter((c) => c.bookId === selectedBook.id)
+    : [];
+  const bookItems = selectedBook
+    ? items.filter((i) => i.bookId === selectedBook.id)
+    : [];
+  const currentChapter = virtualSelectedChapter
+    ? virtualSelectedChapter
+    : selectedChapterId
+      ? chapters.find((c) => c.id === selectedChapterId)
+      : null;
 
   // Compute all navigable chapters in order (including unassigned general cards if any)
-  const unassignedCount = selectedBook ? bookItems.filter(i => !i.chapterId || !bookChapters.some(c => c.id === i.chapterId)).length : 0;
+  const unassignedCount = selectedBook
+    ? bookItems.filter(
+        (i) => !i.chapterId || !bookChapters.some((c) => c.id === i.chapterId),
+      ).length
+    : 0;
   const navigableChapters = React.useMemo(() => {
     if (!selectedBook) return [];
-    const list = [...bookChapters].sort((a, b) => (a.order || 0) - (b.order || 0));
+    const list = [...bookChapters].sort(
+      (a, b) => (a.order || 0) - (b.order || 0),
+    );
     if (unassignedCount > 0) {
       list.push({
-        id: '__unassigned__',
+        id: "__unassigned__",
         bookId: selectedBook.id,
-        title: language === 'en' ? 'General Cards (No Chapter)' : 'Kartu Umum (Tanpa Bab)',
-        order: 9999
+        title:
+          language === "en"
+            ? "General Cards (No Chapter)"
+            : "Kartu Umum (Tanpa Bab)",
+        order: 9999,
       });
     }
     return list;
   }, [selectedBook, bookChapters, unassignedCount, language]);
 
-  const currentChapterIdx = currentChapter ? navigableChapters.findIndex(c => c.id === currentChapter.id) : -1;
-  const prevChapter = currentChapterIdx > 0 ? navigableChapters[currentChapterIdx - 1] : null;
-  const nextChapter = currentChapterIdx >= 0 && currentChapterIdx < navigableChapters.length - 1 ? navigableChapters[currentChapterIdx + 1] : null;
+  const currentChapterIdx = currentChapter
+    ? navigableChapters.findIndex((c) => c.id === currentChapter.id)
+    : -1;
+  const prevChapter =
+    currentChapterIdx > 0 ? navigableChapters[currentChapterIdx - 1] : null;
+  const nextChapter =
+    currentChapterIdx >= 0 && currentChapterIdx < navigableChapters.length - 1
+      ? navigableChapters[currentChapterIdx + 1]
+      : null;
 
   const isItemDue = (item: BookItem) => {
     if (!item.isActive) return false;
@@ -572,21 +733,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       visited.add(curr.id);
       crumbs.unshift(curr);
       if (!curr.parentId) break;
-      curr = chapters.find(c => c.id === curr!.parentId);
+      curr = chapters.find((c) => c.id === curr!.parentId);
     }
     return crumbs;
-  };
-
-  const getChapterDepth = (chap: Chapter): number => {
-    let depth = 0;
-    let curr: Chapter | undefined = chap;
-    const visited = new Set<string>();
-    while (curr && curr.parentId && !visited.has(curr.id)) {
-      visited.add(curr.id);
-      depth++;
-      curr = chapters.find(c => c.id === curr!.parentId);
-    }
-    return depth;
   };
 
   // Comprehensive swipe navigation support for Personal Space (Previous & Next page navigation across all levels)
@@ -603,15 +752,20 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       isMoveModalOpen ||
       isPublishOpen ||
       isLibraryOpen ||
-      isReviewOpen
+      isReviewOpen,
     ),
     onSwipeRight: () => {
       // 1. If single item preview is open, go to previous item or close preview
       if (previewItem) {
-        const cCards = currentChapter?.id === '__unassigned__'
-          ? bookItems.filter(i => !i.chapterId || !bookChapters.some(c => c.id === i.chapterId))
-          : bookItems.filter(i => i.chapterId === currentChapter?.id);
-        const pIdx = cCards.findIndex(i => i.id === previewItem.id);
+        const cCards =
+          currentChapter?.id === "__unassigned__"
+            ? bookItems.filter(
+                (i) =>
+                  !i.chapterId ||
+                  !bookChapters.some((c) => c.id === i.chapterId),
+              )
+            : bookItems.filter((i) => i.chapterId === currentChapter?.id);
+        const pIdx = cCards.findIndex((i) => i.id === previewItem.id);
         if (pIdx > 0) {
           setPreviewItem(cCards[pIdx - 1]);
         } else {
@@ -624,8 +778,8 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       if (currentChapter) {
         if (currentChapterIdx > 0) {
           setSelectedChapter(navigableChapters[currentChapterIdx - 1]);
-          setChapterFilter('all');
-          setChapterCardSearch('');
+          setChapterFilter("all");
+          setChapterCardSearch("");
         } else {
           // At first chapter -> back to Book Overview
           setSelectedChapter(null);
@@ -644,15 +798,20 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       }
 
       // 4. If in Library Root: swipe right goes to Quran space
-      setActiveSpace('quran');
+      setActiveSpace("quran");
     },
     onSwipeLeft: () => {
       // 1. If single item preview is open, go to next item
       if (previewItem) {
-        const cCards = currentChapter?.id === '__unassigned__'
-          ? bookItems.filter(i => !i.chapterId || !bookChapters.some(c => c.id === i.chapterId))
-          : bookItems.filter(i => i.chapterId === currentChapter?.id);
-        const pIdx = cCards.findIndex(i => i.id === previewItem.id);
+        const cCards =
+          currentChapter?.id === "__unassigned__"
+            ? bookItems.filter(
+                (i) =>
+                  !i.chapterId ||
+                  !bookChapters.some((c) => c.id === i.chapterId),
+              )
+            : bookItems.filter((i) => i.chapterId === currentChapter?.id);
+        const pIdx = cCards.findIndex((i) => i.id === previewItem.id);
         if (pIdx >= 0 && pIdx < cCards.length - 1) {
           setPreviewItem(cCards[pIdx + 1]);
         }
@@ -661,18 +820,21 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
 
       // 2. If inside a chapter: swipe left goes to next chapter
       if (currentChapter) {
-        if (currentChapterIdx >= 0 && currentChapterIdx < navigableChapters.length - 1) {
+        if (
+          currentChapterIdx >= 0 &&
+          currentChapterIdx < navigableChapters.length - 1
+        ) {
           setSelectedChapter(navigableChapters[currentChapterIdx + 1]);
-          setChapterFilter('all');
-          setChapterCardSearch('');
+          setChapterFilter("all");
+          setChapterCardSearch("");
         } else if (currentChapterIdx === navigableChapters.length - 1) {
           // Reached end of book's chapters -> go to next book if exists, or teaching space
-          const bIdx = books.findIndex(b => b.id === selectedBook?.id);
+          const bIdx = books.findIndex((b) => b.id === selectedBook?.id);
           if (bIdx >= 0 && bIdx < books.length - 1) {
             setSelectedBook(books[bIdx + 1]);
             setSelectedChapter(null);
           } else {
-            setActiveSpace('teaching');
+            setActiveSpace("teaching");
           }
         }
         return;
@@ -682,30 +844,34 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       if (selectedBook) {
         if (navigableChapters.length > 0) {
           setSelectedChapter(navigableChapters[0]);
-          setChapterFilter('all');
-          setChapterCardSearch('');
+          setChapterFilter("all");
+          setChapterCardSearch("");
         } else {
-          const bIdx = books.findIndex(b => b.id === selectedBook.id);
+          const bIdx = books.findIndex((b) => b.id === selectedBook.id);
           if (bIdx >= 0 && bIdx < books.length - 1) {
             setSelectedBook(books[bIdx + 1]);
             setSelectedChapter(null);
           } else {
-            setActiveSpace('teaching');
+            setActiveSpace("teaching");
           }
         }
         return;
       }
 
       // 4. If in Library Root: swipe left goes to Teaching space
-      setActiveSpace('teaching');
+      setActiveSpace("teaching");
     },
     threshold: 40,
     minRatio: 1.15,
   });
 
-
   useEffect(() => {
-    if (selectedBook && (selectedBook.category === 'class' || Boolean(selectedBook.classId) || selectedBook.id.startsWith('class-book-'))) {
+    if (
+      selectedBook &&
+      (selectedBook.category === "class" ||
+        Boolean(selectedBook.classId) ||
+        selectedBook.id.startsWith("class-book-"))
+    ) {
       if (!isBookInActiveClass(selectedBook)) {
         setSelectedBook(null);
         setSelectedBookId(null);
@@ -713,76 +879,174 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
     }
   }, [selectedBook, activeClassIds]);
 
-  const isCurrentBookReadonly = selectedBook 
-    ? (selectedBook.isReadonly || isBookInActiveClass(selectedBook) || (joinedBookIds.has(selectedBook.id) && !assignedBookIds.has(selectedBook.id) && !isEmbeddedTeacherView)) 
+  const isCurrentBookReadonly = selectedBook
+    ? selectedBook.isReadonly ||
+      isBookInActiveClass(selectedBook) ||
+      (joinedBookIds.has(selectedBook.id) &&
+        !assignedBookIds.has(selectedBook.id) &&
+        !isEmbeddedTeacherView)
     : false;
-  return (
-    <div className="space-y-5 pb-20 md:pb-10 max-w-5xl mx-auto">
-      {/* 1. Today's Review & Header Card */}
-      {!selectedBook && (
-        <div className="space-y-4">
-          {/* Header & Search Bar - Clean, Proportional & Consistent with other rooms */}
-          <div className="flex items-center justify-between w-full mb-2 gap-2 flex-wrap sm:flex-nowrap">
-            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 whitespace-nowrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight shrink-0">
-                {language === 'en' ? 'Books Space' : 'Ruang Buku'}
-              </h1>
-              <span
-                className="flex items-center justify-center px-2.5 h-8.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold border border-slate-200/60 dark:border-slate-700/60 shadow-2xs shrink-0"
-                title={`${books.length} ${language === 'en' ? 'Books' : 'Kitab'}`}
-              >
-                {books.length}
-              </span>
-            </div>
-            
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsGlobalCardSearchOpen(true)}
-                className="px-2.5 sm:px-3 h-8.5 rounded-xl border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/70 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                title={language === 'en' ? 'Search cards across all books' : 'Cari kartu di seluruh kitab'}
-              >
-                <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                <span className="hidden sm:inline">{language === 'en' ? 'Search Cards' : 'Cari Kartu'}</span>
-              </button>
 
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder={language === 'en' ? 'Search book...' : 'Cari buku...'}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-28 sm:w-44 pl-8 pr-2.5 h-8.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-2xs transition-all"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
+  const personalBookCount = books.filter(
+    (book) => !isBookInActiveClass(book) && !book.isReadonly,
+  ).length;
+  const importedBookCount = books.filter(
+    (book) => !isBookInActiveClass(book) && book.isReadonly,
+  ).length;
+  const classBookCount = books.filter((book) =>
+    isBookInActiveClass(book),
+  ).length;
+  const visibleBooks = books
+    .filter((book) =>
+      (book.title || "")
+        .toLowerCase()
+        .includes(searchQuery.trim().toLowerCase()),
+    )
+    .filter((book) => {
+      const isClassBook = isBookInActiveClass(book);
+      if (activeBookTab === "personal") return !isClassBook && !book.isReadonly;
+      if (activeBookTab === "imported") return !isClassBook && book.isReadonly;
+      return isClassBook;
+    });
+
+  return (
+    <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-10">
+      {!selectedBook && (
+        <div className="space-y-6">
+          <header className="flex flex-col gap-4 border-b border-secondary pb-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+                <HugeiconsIcon icon={Book02Icon} className="size-5" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
+                    {language === "en" ? "Books Space" : "Ruang Buku"}
+                  </h1>
+                  <Badge color="brand" size="sm">
+                    {books.length} {language === "en" ? "books" : "kitab"}
+                  </Badge>
+                </div>
+                <p className="mt-1 max-w-2xl text-sm text-secondary">
+                  {language === "en"
+                    ? "Build a personal library, organize learning cards, and keep every review on schedule."
+                    : "Bangun koleksi pribadi, susun kartu belajar, dan jaga setiap murajaah tetap terjadwal."}
+                </p>
               </div>
             </div>
-          </div>
+            <div className="grid grid-cols-2 gap-2 sm:flex">
+              <Button
+                color="secondary"
+                size="sm"
+                iconLeading={Search}
+                onPress={() => setIsGlobalCardSearchOpen(true)}
+              >
+                {language === "en" ? "Search cards" : "Cari kartu"}
+              </Button>
+              <Button
+                size="sm"
+                iconLeading={Plus}
+                onPress={handleTriggerNewBook}
+              >
+                {language === "en" ? "New book" : "Buat kitab"}
+              </Button>
+            </div>
+          </header>
 
-          <div className="space-y-4">
-            {/* Standard Minimalist Due Card (Primary Daily Review Card at Top) */}
+          <section className="relative overflow-hidden rounded-3xl border border-brand-200 bg-[linear-gradient(135deg,var(--color-bg-primary)_35%,var(--color-brand-50)_100%)] p-4 shadow-xs sm:p-5">
+            <div className="pointer-events-none absolute -right-12 -top-16 size-48 rounded-full bg-brand-100/70 blur-2xl" />
+            <div className="relative grid gap-3 sm:grid-cols-[1.25fr_repeat(3,minmax(0,1fr))]">
+              <div className="flex items-center gap-3 px-1 py-2">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-lg shadow-brand-500/20">
+                  <HugeiconsIcon icon={Books02Icon} className="size-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-primary">
+                    {language === "en"
+                      ? "Your learning library"
+                      : "Koleksi belajar Anda"}
+                  </p>
+                  <p className="mt-0.5 text-xs text-secondary">
+                    {language === "en"
+                      ? "A quick overview of your books"
+                      : "Ringkasan cepat seluruh kitab"}
+                  </p>
+                </div>
+              </div>
+              {[
+                {
+                  value: books.length,
+                  label: language === "en" ? "All books" : "Semua kitab",
+                  icon: (
+                    <HugeiconsIcon icon={Book02Icon} className="size-4.5" />
+                  ),
+                },
+                {
+                  value: personalStats.activeItems,
+                  label: language === "en" ? "Active cards" : "Kartu aktif",
+                  icon: (
+                    <HugeiconsIcon
+                      icon={WalletCardsIcon}
+                      className="size-4.5"
+                    />
+                  ),
+                },
+                {
+                  value: personalStats.dueToday,
+                  label: language === "en" ? "Due today" : "Jatuh tempo",
+                  icon: (
+                    <HugeiconsIcon icon={ClockAlertIcon} className="size-4.5" />
+                  ),
+                },
+              ].map(({ value, label, icon }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 rounded-2xl border border-white/70 bg-primary/80 p-3 shadow-xs backdrop-blur-sm"
+                >
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                    {icon}
+                  </div>
+                  <div>
+                    <p className="text-xl font-semibold tracking-tight text-primary">
+                      {value}
+                    </p>
+                    <p className="text-xs text-secondary">{label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section
+            aria-label={language === "en" ? "Daily review" : "Murajaah harian"}
+          >
             <UnifiedDueCard
               language={language}
-              title={language === 'en' ? 'Daily Review' : 'Kartu Jatuh Tempo'}
+              title={language === "en" ? "Daily Review" : "Kartu Jatuh Tempo"}
               dueCount={personalStats.dueToday}
               totalActiveCount={personalStats.activeItems}
-              itemTypeLabel={language === 'en' ? 'cards' : 'kartu'}
-              primaryActionLabel={language === 'en' ? `All (${personalStats.dueToday})` : `Semua (${personalStats.dueToday})`}
+              itemTypeLabel={language === "en" ? "cards" : "kartu"}
+              primaryActionLabel={
+                language === "en"
+                  ? `All (${personalStats.dueToday})`
+                  : `Semua (${personalStats.dueToday})`
+              }
               pillGridCols="books"
               onStartAll={() => {
                 setReviewSpecificBookId(null);
                 setIsReviewOpen(true);
               }}
               onOpenCalendar={() => {
-                const targetBook = books.find(b => items.some(i => i.bookId === b.id && i.isActive && (!i.fsrsData.nextReview || new Date(i.fsrsData.nextReview) <= new Date()))) || books[0];
+                const targetBook =
+                  books.find((b) =>
+                    items.some(
+                      (i) =>
+                        i.bookId === b.id &&
+                        i.isActive &&
+                        (!i.fsrsData.nextReview ||
+                          new Date(i.fsrsData.nextReview) <= new Date()),
+                    ),
+                  ) || books[0];
                 if (targetBook) {
                   setCalendarBook(targetBook);
                   setCalendarChapterFilter(null);
@@ -790,377 +1054,545 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                 }
               }}
               filterPills={books
-                .filter(b => items.some(i => i.bookId === b.id && i.isActive && (!i.fsrsData.nextReview || new Date(i.fsrsData.nextReview) <= new Date())))
-                .map(book => ({
+                .filter((b) =>
+                  items.some(
+                    (i) =>
+                      i.bookId === b.id &&
+                      i.isActive &&
+                      (!i.fsrsData.nextReview ||
+                        new Date(i.fsrsData.nextReview) <= new Date()),
+                  ),
+                )
+                .map((book) => ({
                   id: book.id,
                   label: book.title,
-                  count: items.filter(i => i.bookId === book.id && i.isActive && (!i.fsrsData.nextReview || new Date(i.fsrsData.nextReview) <= new Date())).length,
+                  count: items.filter(
+                    (i) =>
+                      i.bookId === book.id &&
+                      i.isActive &&
+                      (!i.fsrsData.nextReview ||
+                        new Date(i.fsrsData.nextReview) <= new Date()),
+                  ).length,
                   onClick: () => {
                     setReviewSpecificBookId(book.id);
                     setIsReviewOpen(true);
-                  }
+                  },
                 }))}
-              allCaughtUpTitle={language === 'en' ? 'All personal flashcards reviewed today!' : 'Semua kartu materi telah selesai diulang!'}
+              allCaughtUpTitle={
+                language === "en"
+                  ? "All personal flashcards reviewed today!"
+                  : "Semua kartu materi telah selesai diulang!"
+              }
             />
-            
-            {/* Dedicated Action Toolbar: Neatly placed between Daily Murajaah Card and Book Category Tabs */}
-            <div className="flex items-center justify-between gap-2 pt-1 pb-2 overflow-x-auto no-scrollbar">
-              <button
-                type="button"
-                onClick={handleTriggerAIBuilder}
-                className="flex flex-col items-center justify-center flex-1 min-w-[76px] gap-1.5 p-2 rounded-2xl bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/40 dark:to-slate-900 border border-purple-100 dark:border-purple-900/50 hover:shadow-sm hover:border-purple-300 dark:hover:border-purple-700 text-purple-700 dark:text-purple-300 transition-all active:scale-[0.98] cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/60 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-200 dark:group-hover:bg-purple-800 transition-all">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">{language === 'en' ? 'AI Builder' : 'Buat via AI'}</span>
-              </button>
+          </section>
 
-              <button
-                type="button"
-                onClick={handleTriggerNewBook}
-                className="flex flex-col items-center justify-center flex-1 min-w-[76px] gap-1.5 p-2 rounded-2xl bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/40 dark:to-slate-900 border border-indigo-100 dark:border-indigo-900/50 hover:shadow-sm hover:border-indigo-300 dark:hover:border-indigo-700 text-indigo-700 dark:text-indigo-300 transition-all active:scale-[0.98] cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800 transition-all">
-                  <Plus className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">{language === 'en' ? 'New Book' : 'Tambah Kitab'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsLibraryOpen(true)}
-                className="flex flex-col items-center justify-center flex-1 min-w-[76px] gap-1.5 p-2 rounded-2xl bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/40 dark:to-slate-900 border border-amber-100 dark:border-amber-900/50 hover:shadow-sm hover:border-amber-300 dark:hover:border-amber-700 text-amber-700 dark:text-amber-300 transition-all active:scale-[0.98] cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/60 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-200 dark:group-hover:bg-amber-800 transition-all">
-                  <Library className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">{language === 'en' ? 'Public Library' : 'Pustaka Kitab'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setPublishPreselectedId(null);
-                  setIsPublishOpen(true);
-                }}
-                className="flex flex-col items-center justify-center flex-1 min-w-[76px] gap-1.5 p-2 rounded-2xl bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/40 dark:to-slate-900 border border-blue-100 dark:border-blue-900/50 hover:shadow-sm hover:border-blue-300 dark:hover:border-blue-700 text-blue-700 dark:text-blue-300 transition-all active:scale-[0.98] cursor-pointer group"
-              >
-                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/60 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-200 dark:group-hover:bg-blue-800 transition-all">
-                  <Share2 className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">{language === 'en' ? 'Publish' : 'Publikasi'}</span>
-              </button>
+          <section className="rounded-3xl border border-secondary bg-primary p-4 shadow-xs sm:p-5">
+            <div className="mb-4">
+              <h2 className="text-sm font-semibold text-primary">
+                {language === "en" ? "Quick actions" : "Aksi cepat"}
+              </h2>
+              <p className="mt-0.5 text-xs text-secondary">
+                {language === "en"
+                  ? "Create, discover, and share learning material."
+                  : "Buat, temukan, dan bagikan materi belajar."}
+              </p>
             </div>
-
-            {/* Book Tabs: Segmented Control (Pribadi vs Pustaka vs Kelas) + Sleek Join Class Trigger */}
-            <div className="flex items-center gap-2 mt-2 mb-3">
-              {/* Modern Segmented Pill Tabs */}
-              <div className="flex-1 p-1 bg-slate-100 dark:bg-slate-800/90 rounded-2xl flex items-center gap-1 border border-slate-200/60 dark:border-slate-700/50 shadow-2xs">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              {[
+                {
+                  label: language === "en" ? "Build with AI" : "Buat dengan AI",
+                  description:
+                    language === "en"
+                      ? "Draft a structured book"
+                      : "Susun draf kitab terstruktur",
+                  icon: (
+                    <HugeiconsIcon icon={AiEditingIcon} className="size-4.5" />
+                  ),
+                  iconClass:
+                    "bg-utility-purple-50 text-utility-purple-700 ring-utility-purple-200 group-hover:bg-utility-purple-100",
+                  onClick: handleTriggerAIBuilder,
+                },
+                {
+                  label: language === "en" ? "Create book" : "Buat kitab",
+                  description:
+                    language === "en"
+                      ? "Start from a blank book"
+                      : "Mulai dari kitab kosong",
+                  icon: (
+                    <HugeiconsIcon icon={BookCopyIcon} className="size-4.5" />
+                  ),
+                  iconClass:
+                    "bg-brand-50 text-brand-700 ring-brand-200 group-hover:bg-brand-100",
+                  onClick: handleTriggerNewBook,
+                },
+                {
+                  label:
+                    language === "en" ? "Explore library" : "Jelajahi pustaka",
+                  description:
+                    language === "en"
+                      ? "Import shared books"
+                      : "Impor kitab yang dibagikan",
+                  icon: (
+                    <HugeiconsIcon icon={Books02Icon} className="size-4.5" />
+                  ),
+                  iconClass:
+                    "bg-utility-blue-50 text-utility-blue-700 ring-utility-blue-200 group-hover:bg-utility-blue-100",
+                  onClick: () => setIsLibraryOpen(true),
+                },
+                {
+                  label: language === "en" ? "Publish book" : "Publikasi kitab",
+                  description:
+                    language === "en"
+                      ? "Share your collection"
+                      : "Bagikan koleksi Anda",
+                  icon: (
+                    <HugeiconsIcon icon={BookUp2Icon} className="size-4.5" />
+                  ),
+                  iconClass:
+                    "bg-utility-green-50 text-utility-green-700 ring-utility-green-200 group-hover:bg-utility-green-100",
+                  onClick: () => {
+                    setPublishPreselectedId(null);
+                    setIsPublishOpen(true);
+                  },
+                },
+              ].map(({ label, description, icon, iconClass, onClick }) => (
                 <button
+                  key={label}
                   type="button"
-                  onClick={() => setActiveBookTab('personal')}
-                  className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
-                    activeBookTab === 'personal' 
-                      ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs' 
-                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-                  }`}
+                  onClick={onClick}
+                  className="group flex items-center gap-3 rounded-2xl border border-secondary bg-secondary/30 p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 >
-                  <BookOpen className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">{language === 'en' ? 'Personal' : 'Pribadi'}</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                    activeBookTab === 'personal'
-                      ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400'
-                      : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-                  }`}>
-                    {books.filter(b => !isBookInActiveClass(b) && !b.isReadonly).length}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveBookTab('imported')}
-                  className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
-                    activeBookTab === 'imported' 
-                      ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs' 
-                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-                  }`}
-                >
-                  <Library className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">{language === 'en' ? 'Library' : 'Pustaka'}</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                    activeBookTab === 'imported'
-                      ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400'
-                      : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-                  }`}>
-                    {books.filter(b => !isBookInActiveClass(b) && b.isReadonly).length}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveBookTab('class')}
-                  className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer select-none ${
-                    activeBookTab === 'class' 
-                      ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs' 
-                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-                  }`}
-                >
-                  <FolderPlus className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">{language === 'en' ? 'Classes' : 'Kelas'}</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                    activeBookTab === 'class'
-                      ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400'
-                      : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-                  }`}>
-                    {books.filter(b => isBookInActiveClass(b)).length}
-                  </span>
-                </button>
-              </div>
-
-              {/* Minimalist Proportional Join Class Trigger Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveBookTab('class');
-                  setIsJoinClassModalOpen(true);
-                }}
-                className="h-9 px-2.5 sm:px-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/60 text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all active:scale-95 cursor-pointer shadow-2xs group"
-                title={language === 'en' ? 'Enter class code to join' : 'Masukkan kode kelas untuk bergabung'}
-              >
-                <KeyRound className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 group-hover:rotate-12 transition-transform shrink-0" />
-                <span className="hidden sm:inline">{language === 'en' ? 'Class Code' : 'Kode Kelas'}</span>
-              </button>
-            </div>
-
-            {/* Books List Grid - Compact, sleek, 1-line title, only active & total cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3">
-              {books
-                .filter(b => (b.title || '').toLowerCase().includes((searchQuery || '').toLowerCase()))
-                .filter(b => {
-                  const isClass = isBookInActiveClass(b);
-                  if (activeBookTab === 'personal') return !isClass && !b.isReadonly;
-                  if (activeBookTab === 'imported') return !isClass && b.isReadonly;
-                  if (activeBookTab === 'class') return isClass;
-                  return false;
-                })
-                .map(book => {
-                const bookItemsList = items.filter(i => i.bookId === book.id);
-                const activeCount = bookItemsList.filter(i => i.isActive).length;
-                const dueCount = bookItemsList.filter(i => i.isActive && (!i.fsrsData.nextReview || new Date(i.fsrsData.nextReview) <= new Date())).length;
-                
-
-  return (
                   <div
-                    key={book.id}
-                    onClick={() => setSelectedBook(book)}
-                    className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:border-indigo-400 dark:hover:border-indigo-500/60 hover:shadow-md transition-all cursor-pointer flex flex-col group"
+                    className={`flex size-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-inset transition ${iconClass}`}
                   >
-                    {/* Compact Cover Area */}
-                    <div className="h-20 sm:h-24 bg-slate-100 dark:bg-slate-800 relative w-full overflow-hidden shrink-0">
-                      {book.coverUrl ? (
-                        <img src={book.coverUrl} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500 bg-gradient-to-br from-slate-50 to-slate-150 dark:from-slate-800 dark:to-slate-850">
-                          <BookOpen className="w-5 h-5 opacity-60" />
-                        </div>
-                      )}
-
-                      {/* Quick Review Calendar Button */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCalendarBook(book);
-                          setCalendarChapterFilter(null);
-                          setIsBookCalendarOpen(true);
-                        }}
-                        className="absolute top-1.5 left-1.5 w-6 h-6 rounded-md bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-2xs z-10 cursor-pointer"
-                        title={language === 'en' ? `View ${book.title} review calendar` : `Lihat kalender jadwal ${book.title}`}
-                      >
-                        <CalendarCheck className="w-3.5 h-3.5" />
-                      </button>
-                      
-                      {/* Readonly Badge for Imported Books */}
-                      {book.isReadonly && (
-                        <div className="absolute top-1.5 right-1.5 bg-black/60 backdrop-blur-xs text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
-                          {language === 'en' ? 'Read-only' : 'Hanya Baca'}
-                        </div>
-                      )}
-                      
-                      {dueCount > 0 && (
-                        <div className="absolute bottom-1.5 right-1.5 bg-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs flex items-center gap-1">
-                          <Play className="w-2.5 h-2.5 fill-white" /> {dueCount}
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Content Area - Strict Single Line Title with Ellipsis, Only Active & Total Cards */}
-                    <div className="p-2 flex flex-col justify-center min-w-0">
-                      <h4 
-                        title={book.title}
-                        className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate whitespace-nowrap overflow-hidden text-ellipsis block group-hover:text-indigo-600 transition-colors"
-                      >
-                        {book.title}
-                      </h4>
-                      <p className="mt-0.5 text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate whitespace-nowrap overflow-hidden text-ellipsis">
-                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{activeCount} {language === 'en' ? 'active' : 'aktif'}</span>
-                        <span className="mx-1 text-slate-300 dark:text-slate-600">•</span>
-                        <span>{bookItemsList.length} {language === 'en' ? 'total' : 'total'}</span>
-                      </p>
-                    </div>
+                    {icon}
                   </div>
-                );
-              })}
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-primary">
+                      {label}
+                    </p>
+                    <p className="mt-0.5 truncate text-xs text-secondary">
+                      {description}
+                    </p>
+                  </div>
+                </button>
+              ))}
             </div>
-            
-            {books.filter(b => {
-              const isClass = isBookInActiveClass(b);
-              if (activeBookTab === 'personal') return !isClass && !b.isReadonly;
-              if (activeBookTab === 'imported') return !isClass && b.isReadonly;
-              if (activeBookTab === 'class') return isClass;
-              return false;
-            }).length === 0 && (
-              <div className="text-center py-12 px-4 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 mt-4">
-                <Library className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
-                  {language === 'en' ? 'No Books Found' : 'Tidak Ada Buku'}
-                </h3>
-                <p className="text-sm text-slate-500 mb-4 max-w-sm mx-auto">
-                  {activeBookTab === 'personal' 
-                    ? (language === 'en' ? 'Create a new book to start learning.' : 'Buat buku baru untuk mulai belajar.')
-                    : activeBookTab === 'imported'
-                    ? (language === 'en' ? 'Import a book from the library.' : 'Impor buku dari perpustakaan.')
-                    : (language === 'en' ? 'You have not joined any classes yet. Enter your teacher\'s code to join.' : 'Anda belum bergabung dengan kelas manapun. Masukkan kode dari pengajar Anda untuk bergabung.')}
-                </p>
-                {activeBookTab === 'class' && (
+          </section>
+
+          <section className="rounded-3xl border border-secondary bg-primary p-4 shadow-xs sm:p-5">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="inline-flex w-full rounded-xl bg-secondary p-1 lg:w-auto">
+                {[
+                  {
+                    id: "personal" as const,
+                    label: language === "en" ? "Personal" : "Pribadi",
+                    count: personalBookCount,
+                    icon: (
+                      <HugeiconsIcon icon={Book02Icon} className="size-4" />
+                    ),
+                  },
+                  {
+                    id: "imported" as const,
+                    label: language === "en" ? "Library" : "Pustaka",
+                    count: importedBookCount,
+                    icon: (
+                      <HugeiconsIcon icon={SwatchBookIcon} className="size-4" />
+                    ),
+                  },
+                  {
+                    id: "class" as const,
+                    label: language === "en" ? "Classes" : "Kelas",
+                    count: classBookCount,
+                    icon: (
+                      <HugeiconsIcon icon={BookMarkedIcon} className="size-4" />
+                    ),
+                  },
+                ].map(({ id, label, count, icon }) => (
                   <button
+                    key={id}
                     type="button"
-                    onClick={() => setIsJoinClassModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
+                    onClick={() => setActiveBookTab(id)}
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition lg:flex-none ${activeBookTab === id ? "bg-primary text-brand-secondary shadow-xs ring-1 ring-primary" : "text-secondary hover:text-primary"}`}
                   >
-                    <KeyRound className="w-4 h-4" />
-                    <span>{language === 'en' ? 'Enter Class Code' : 'Masukkan Kode Kelas'}</span>
+                    {icon}
+                    <span>{label}</span>
+                    <Badge
+                      color={activeBookTab === id ? "brand" : "gray"}
+                      size="sm"
+                    >
+                      {count}
+                    </Badge>
                   </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  aria-label={language === "en" ? "Search books" : "Cari kitab"}
+                  icon={Search}
+                  size="sm"
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder={
+                    language === "en" ? "Search books" : "Cari kitab"
+                  }
+                  className="min-w-0 flex-1 lg:w-72"
+                />
+                {activeBookTab === "class" && (
+                  <Button
+                    color="secondary"
+                    size="sm"
+                    iconLeading={KeyRound}
+                    onPress={() => setIsJoinClassModalOpen(true)}
+                  >
+                    <span className="hidden sm:inline">
+                      {language === "en" ? "Join class" : "Gabung kelas"}
+                    </span>
+                  </Button>
                 )}
               </div>
+            </div>
+
+            {visibleBooks.length > 0 ? (
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {visibleBooks.map((book) => {
+                  const bookItemsList = items.filter(
+                    (i) => i.bookId === book.id,
+                  );
+                  const activeCount = bookItemsList.filter(
+                    (i) => i.isActive,
+                  ).length;
+                  const dueCount = bookItemsList.filter(
+                    (i) =>
+                      i.isActive &&
+                      (!i.fsrsData.nextReview ||
+                        new Date(i.fsrsData.nextReview) <= new Date()),
+                  ).length;
+                  const isClassBook = isBookInActiveClass(book);
+                  return (
+                    <article
+                      key={book.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={(event) => {
+                        if ((event.target as HTMLElement).closest("button"))
+                          return;
+                        setSelectedBook(book);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setSelectedBook(book);
+                        }
+                      }}
+                      className="group cursor-pointer rounded-3xl border border-secondary bg-primary p-3 shadow-xs outline-focus-ring transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >
+                      <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl border border-secondary bg-[radial-gradient(circle_at_50%_28%,var(--color-brand-100)_0%,var(--color-bg-secondary)_68%)]">
+                        <div className="absolute inset-x-5 bottom-4 h-2 rounded-full bg-black/10 blur-sm dark:bg-black/30" />
+                        <div className="absolute inset-x-0 bottom-0 h-7 border-t border-[#d8c7ae] bg-[linear-gradient(180deg,#eadfce_0%,#cdb99d_100%)] dark:border-[#51483d] dark:bg-[linear-gradient(180deg,#51483d_0%,#302a24_100%)]" />
+                        <BookCoverVisual
+                          src={book.coverUrl}
+                          title={book.title}
+                          author={book.authorName || userProfile.fullName}
+                          className="h-52 w-[9.25rem]"
+                        />
+                        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-2.5">
+                          <Badge
+                            color={
+                              isClassBook
+                                ? "brand"
+                                : book.isReadonly
+                                  ? "warning"
+                                  : "success"
+                            }
+                            size="sm"
+                            className="bg-primary/90 backdrop-blur-sm"
+                          >
+                            {isClassBook
+                              ? language === "en"
+                                ? "Class"
+                                : "Kelas"
+                              : book.isReadonly
+                                ? language === "en"
+                                  ? "Read-only"
+                                  : "Hanya baca"
+                                : language === "en"
+                                  ? "Personal"
+                                  : "Pribadi"}
+                          </Badge>
+                          <ButtonUtility
+                            icon={CalendarClock}
+                            color="tertiary"
+                            tooltip={
+                              language === "en"
+                                ? `View ${book.title} review calendar`
+                                : `Lihat kalender jadwal ${book.title}`
+                            }
+                            onPress={() => {
+                              setCalendarBook(book);
+                              setCalendarChapterFilter(null);
+                              setIsBookCalendarOpen(true);
+                            }}
+                            className="bg-primary/90 shadow-xs backdrop-blur-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="px-1 pb-1 pt-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h2 className="truncate text-base font-semibold text-primary transition-colors group-hover:text-brand-secondary">
+                              {book.title}
+                            </h2>
+                            <p className="mt-1 line-clamp-2 min-h-10 text-sm leading-5 text-secondary">
+                              {book.description ||
+                                (language === "en"
+                                  ? "No description has been added yet."
+                                  : "Belum ada deskripsi untuk kitab ini.")}
+                            </p>
+                          </div>
+                          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-fg-quaternary transition-colors group-hover:bg-brand-50 group-hover:text-brand-700">
+                            <ChevronRight className="size-4.5" />
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap items-center gap-2">
+                          <Badge color="gray" size="sm" className="gap-1.5">
+                            <Layers className="size-3.5" />
+                            {activeCount}{" "}
+                            {language === "en" ? "active" : "aktif"}
+                          </Badge>
+                          {dueCount > 0 ? (
+                            <BadgeWithDot color="warning" size="sm">
+                              {dueCount}{" "}
+                              {language === "en" ? "due" : "jatuh tempo"}
+                            </BadgeWithDot>
+                          ) : (
+                            <BadgeWithDot color="success" size="sm">
+                              {language === "en" ? "On schedule" : "Terjadwal"}
+                            </BadgeWithDot>
+                          )}
+                        </div>
+                        <div className="mt-4 flex items-center justify-between border-t border-secondary pt-3 text-xs text-tertiary">
+                          <span>
+                            {bookItemsList.length}{" "}
+                            {language === "en" ? "total cards" : "total kartu"}
+                          </span>
+                          <span>
+                            {
+                              chapters.filter(
+                                (chapter) => chapter.bookId === book.id,
+                              ).length
+                            }{" "}
+                            {language === "en" ? "chapters" : "bab"}
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="mt-5 rounded-2xl border border-dashed border-secondary bg-secondary/30 px-5 py-12 text-center">
+                <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+                  {searchQuery ? (
+                    <Search className="size-5" />
+                  ) : (
+                    <HugeiconsIcon icon={BookDashedIcon} className="size-5" />
+                  )}
+                </div>
+                <h2 className="mt-3 text-sm font-semibold text-primary">
+                  {searchQuery
+                    ? language === "en"
+                      ? "No matching books"
+                      : "Kitab tidak ditemukan"
+                    : language === "en"
+                      ? "No books here yet"
+                      : "Belum ada kitab di sini"}
+                </h2>
+                <p className="mx-auto mt-1 max-w-md text-sm text-secondary">
+                  {searchQuery
+                    ? language === "en"
+                      ? "Try another title or clear the current search."
+                      : "Coba judul lain atau hapus pencarian saat ini."
+                    : activeBookTab === "personal"
+                      ? language === "en"
+                        ? "Create a book to begin organizing your learning cards."
+                        : "Buat kitab untuk mulai menyusun kartu belajar Anda."
+                      : activeBookTab === "imported"
+                        ? language === "en"
+                          ? "Explore the public library and import a shared book."
+                          : "Jelajahi pustaka publik dan impor kitab yang dibagikan."
+                        : language === "en"
+                          ? "Join a class using the invitation code from your teacher."
+                          : "Gabung ke kelas dengan kode undangan dari guru Anda."}
+                </p>
+                <div className="mt-4 flex justify-center">
+                  {searchQuery ? (
+                    <Button
+                      color="secondary"
+                      size="sm"
+                      onPress={() => setSearchQuery("")}
+                    >
+                      {language === "en" ? "Clear search" : "Hapus pencarian"}
+                    </Button>
+                  ) : activeBookTab === "personal" ? (
+                    <Button
+                      size="sm"
+                      iconLeading={Plus}
+                      onPress={handleTriggerNewBook}
+                    >
+                      {language === "en" ? "Create book" : "Buat kitab"}
+                    </Button>
+                  ) : activeBookTab === "imported" ? (
+                    <Button
+                      size="sm"
+                      iconLeading={Library}
+                      onPress={() => setIsLibraryOpen(true)}
+                    >
+                      {language === "en"
+                        ? "Explore library"
+                        : "Jelajahi pustaka"}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      iconLeading={KeyRound}
+                      onPress={() => setIsJoinClassModalOpen(true)}
+                    >
+                      {language === "en"
+                        ? "Join with code"
+                        : "Gabung dengan kode"}
+                    </Button>
+                  )}
+                </div>
+              </div>
             )}
-
-          </div>
-
+          </section>
         </div>
       )}
 
       {/* 2. Book Level: Buku Induk & Hierarki Bab (Ketika Buku dipilih, belum memilih bab) */}
       {selectedBook && !currentChapter && (
-        <div className="space-y-6">
-          {/* Top Bar: Back button, Title & Book Actions */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => { 
+        <PersonalBookPage>
+          <div className="flex flex-col gap-3 border-b border-secondary pb-5 sm:flex-row sm:items-center sm:justify-between">
+            <Button
+              color="secondary"
+              size="sm"
+              iconLeading={ArrowLeft}
+              onPress={() => {
                 if (isEmbeddedTeacherView && onExitEmbedded) {
                   onExitEmbedded();
                 } else {
-                  setSelectedBook(null); 
-                  setSelectedChapter(null); 
+                  setSelectedBook(null);
+                  setSelectedChapter(null);
                 }
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-2xs cursor-pointer"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{language === 'en' ? 'Back to Library' : 'Kembali ke Koleksi'}</span>
-            </button>
+              {language === "en" ? "Back to Library" : "Kembali ke Koleksi"}
+            </Button>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                color="secondary"
+                size="sm"
+                iconLeading={CalendarClock}
+                onPress={() => {
                   setCalendarBook(selectedBook);
                   setCalendarChapterFilter(null);
                   setIsBookCalendarOpen(true);
                 }}
-                className="px-2.5 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/70 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-[10px] sm:text-xs font-semibold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                title={language === 'en' ? 'Book Review Calendar' : 'Kalender Jadwal Murajaah Buku'}
               >
-                <CalendarCheck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span className="hidden sm:inline">{language === 'en' ? 'Review Calendar' : 'Kalender Jadwal'}</span>
-              </button>
+                <span className="hidden sm:inline">
+                  {language === "en" ? "Review Calendar" : "Kalender Jadwal"}
+                </span>
+              </Button>
 
               {!isCurrentBookReadonly && (
                 <>
-                  <button
-                    onClick={() => setEditingBook(selectedBook)}
-                    className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[10px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition-colors"
-                    title="Edit Book"
+                  <Button
+                    color="secondary"
+                    size="sm"
+                    iconLeading={Edit3}
+                    onPress={() => setEditingBook(selectedBook)}
                   >
-                    <Edit3 className="w-3.5 h-3.5 text-slate-500" />
-                    <span className="hidden sm:inline">{language === 'en' ? 'Edit Book' : 'Edit Buku'}</span>
-                  </button>
-                  <button
-                    onClick={() => {
+                    <span className="hidden sm:inline">
+                      {language === "en" ? "Edit Book" : "Edit Buku"}
+                    </span>
+                  </Button>
+                  <Button
+                    color="secondary"
+                    size="sm"
+                    iconLeading={BookPublish}
+                    onPress={() => {
                       setPublishPreselectedId(selectedBook.id);
                       setIsPublishOpen(true);
                     }}
-                    className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[10px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition-colors"
-                    title={language === 'en' ? 'Publish to Library' : 'Publikasikan ke Perpustakaan'}
                   >
-                    <Share2 className="w-3.5 h-3.5 text-slate-500" />
-                    <span className="hidden sm:inline">{language === 'en' ? 'Publish' : 'Publikasi'}</span>
-                  </button>
+                    <span className="hidden sm:inline">
+                      {language === "en" ? "Publish" : "Publikasi"}
+                    </span>
+                  </Button>
                 </>
               )}
               {!classBanner && !isCurrentBookReadonly && (
-                <button
-                  onClick={() => {
+                <ButtonUtility
+                  icon={Trash2}
+                  color="tertiary"
+                  tooltip={language === "en" ? "Delete book" : "Hapus buku"}
+                  onPress={() => {
                     setConfirmDialog({
                       isOpen: true,
-                      message: language === 'en' ? 'Are you sure you want to delete this book?' : 'Hapus buku ini beserta seluruh isinya?',
+                      message:
+                        language === "en"
+                          ? "Are you sure you want to delete this book?"
+                          : "Hapus buku ini beserta seluruh isinya?",
                       onConfirm: () => {
                         deleteBook(selectedBook.id);
                         setSelectedBook(null);
                         setSelectedChapter(null);
                         setConfirmDialog(null);
-                      }
+                      },
                     });
                   }}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
-                  title="Delete Book"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                  className="text-error-primary hover:bg-error-primary"
+                />
               )}
-
             </div>
-
           </div>
 
           {/* Master Book Presentation - Authentic 3D Book Cover & Two Learning Progress Metrics */}
           {(() => {
             const totalCards = bookItems.length;
-            const activeBookCards = bookItems.filter(i => i.isActive);
-            const dueBookCards = bookItems.filter(i => isItemDue(i));
-            const masteredCards = activeBookCards.filter(i => getNonQuranIntervalDays(i.fsrsData) >= 300);
+            const activeBookCards = bookItems.filter((i) => i.isActive);
+            const dueBookCards = bookItems.filter((i) => isItemDue(i));
+            const masteredCards = activeBookCards.filter(
+              (i) => getNonQuranIntervalDays(i.fsrsData) >= 300,
+            );
 
             // Ukuran 1: Persentase kartu diaktifkan dari total kartu pada buku
-            const activationPct = totalCards > 0 ? Math.round((activeBookCards.length / totalCards) * 100) : 0;
+            const activationPct =
+              totalCards > 0
+                ? Math.round((activeBookCards.length / totalCards) * 100)
+                : 0;
 
             // Ukuran 2: Kemajuan belajar (persentase kartu yang mencapai interval >300 hari)
-            const masteryPct = totalCards > 0 ? Math.round((masteredCards.length / totalCards) * 100) : 0;
-            const masteryFromActivePct = activeBookCards.length > 0 ? Math.round((masteredCards.length / activeBookCards.length) * 100) : 0;
-            const joinedClass = myClasses.find(c => c.assignedBookIds?.includes(selectedBook.id));
+            const masteryPct =
+              totalCards > 0
+                ? Math.round((masteredCards.length / totalCards) * 100)
+                : 0;
+            const joinedClass = myClasses.find((c) =>
+              c.assignedBookIds?.includes(selectedBook.id),
+            );
 
-
-
-  return (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden flex flex-col gap-3">
+            return (
+              <section className="relative flex flex-col overflow-hidden rounded-3xl border border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_0%,var(--color-bg-primary)_58%,var(--color-brand-50)_100%)] shadow-lg">
                 {/* Embedded Class Integration Bar for Enrolled Students */}
                 {joinedClass && (
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="relative flex flex-col gap-3 border-b border-brand-200 bg-brand-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                     <div className="flex items-center gap-2 flex-wrap min-w-0">
-                      <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                      <span className="text-xs font-semibold text-primary sm:text-sm">
                         Kelas: {joinedClass.name}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-mono text-[10px] font-bold border border-indigo-200/60 dark:border-indigo-800/40">
+                      <span className="rounded-lg bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-brand-secondary ring-1 ring-brand-200 ring-inset">
                         {joinedClass.code}
                       </span>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-600 text-white">
@@ -1168,7 +1600,10 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                       </span>
                       {joinedClass.teacherName && (
                         <span className="text-xs text-slate-500 dark:text-slate-400">
-                          • Pengajar: <strong className="text-slate-700 dark:text-slate-200">{joinedClass.teacherName}</strong>
+                          • Pengajar:{" "}
+                          <strong className="text-slate-700 dark:text-slate-200">
+                            {joinedClass.teacherName}
+                          </strong>
                         </span>
                       )}
                     </div>
@@ -1178,26 +1613,35 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                         setClassToLeave(joinedClass.id);
                         setConfirmDialog({
                           isOpen: true,
-                          message: language === 'en' ? 'Are you sure you want to leave this class?' : 'Yakin ingin keluar dari kelas ini?',
+                          message:
+                            language === "en"
+                              ? "Are you sure you want to leave this class?"
+                              : "Yakin ingin keluar dari kelas ini?",
                           onConfirm: () => {
                             leaveClass(joinedClass.id);
                             setSelectedBook(null);
-                          }
+                          },
                         });
                       }}
                       className="px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-2xs self-start sm:self-auto"
-                      title={language === 'en' ? 'Leave this class' : 'Keluar dari kelas ini'}
+                      title={
+                        language === "en"
+                          ? "Leave this class"
+                          : "Keluar dari kelas ini"
+                      }
                     >
                       <LogOut className="w-3.5 h-3.5" />
-                      <span>{language === 'en' ? 'Leave Class' : 'Keluar Kelas'}</span>
+                      <span>
+                        {language === "en" ? "Leave Class" : "Keluar Kelas"}
+                      </span>
                     </button>
                   </div>
                 )}
 
-                <div className="flex flex-row gap-4 sm:gap-5 items-center">
+                <div className="relative grid gap-6 p-4 sm:p-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
                   {/* Compact 3D Book Cover Object */}
-                  <div className="shrink-0 relative group">
-                    <div className="w-20 sm:w-24 md:w-28 aspect-[1/1.38] rounded-r-lg rounded-l-xs overflow-hidden shadow-md shadow-slate-900/20 dark:shadow-black/60 border-l-[5px] border-l-slate-900/50 relative flex flex-col justify-between transition-transform duration-200 group-hover:-translate-y-0.5">
+                  <div className="group relative mx-auto w-full max-w-[220px] lg:mx-0">
+                    <div className="relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-2xl shadow-xl ring-1 ring-secondary ring-inset transition-transform duration-300 group-hover:-translate-y-1">
                       {/* Lighting reflection & spine ridge overlay */}
                       <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-black/35 via-white/25 to-transparent pointer-events-none z-20" />
                       <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-l from-black/20 to-transparent pointer-events-none z-20" />
@@ -1207,151 +1651,219 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                         <img
                           src={selectedBook.coverUrl}
                           alt={selectedBook.title}
-                          className="w-full h-full object-cover"
+                          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
                         /* Handcrafted Hardcover Cloth/Leather Kitab */
-                        <div className="w-full h-full bg-gradient-to-br from-emerald-900 via-teal-950 to-slate-950 p-2 sm:p-2.5 flex flex-col justify-between text-amber-100 border border-emerald-700/60 relative overflow-hidden select-none">
+                        <div className="relative flex size-full select-none flex-col justify-between overflow-hidden bg-[linear-gradient(145deg,#431407_0%,#9a3412_55%,#ef6905_100%)] p-5 text-brand-50">
                           <div className="absolute -right-6 -bottom-6 w-20 h-20 rounded-full border-4 border-amber-400/10 pointer-events-none" />
-                          <div className="absolute inset-1.5 border border-amber-400/30 rounded-xs pointer-events-none" />
+                          <div className="pointer-events-none absolute inset-4 rounded-xl border border-white/20" />
 
                           {/* Top ornament */}
                           <div className="relative z-10 pt-0.5 text-center">
-                            <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/40 border border-amber-400/30 text-[7px] font-extrabold uppercase tracking-widest text-amber-300">
-                              <BookOpen className="w-2 h-2 text-amber-400" />
-                              <span className="truncate max-w-[70px]">{language === 'en' ? 'Book' : 'Kitab'}</span>
+                            <div className="inline-flex items-center gap-1.5 rounded-full bg-black/20 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-brand-100 ring-1 ring-white/20 ring-inset">
+                              <BookOpen className="size-3" />
+                              <span className="max-w-32 truncate">
+                                {language === "en" ? "Book" : "Kitab"}
+                              </span>
                             </div>
                           </div>
 
                           {/* Center Title */}
                           <div className="relative z-10 my-auto text-center px-1">
-                            <h3 
+                            <h3
                               title={selectedBook.title}
-                              className="font-serif font-bold text-[11px] sm:text-xs text-amber-50 leading-snug drop-shadow-md truncate whitespace-nowrap overflow-hidden text-ellipsis block tracking-wide"
+                              className="line-clamp-3 text-xl font-semibold leading-7 text-white drop-shadow-md"
                             >
                               {selectedBook.title}
                             </h3>
-                            <div className="w-6 h-0.5 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent mx-auto mt-1" />
+                            <div className="mx-auto mt-3 h-0.5 w-12 bg-gradient-to-r from-transparent via-brand-100 to-transparent" />
                           </div>
 
                           {/* Bottom */}
                           <div className="relative z-10 pb-0.5 text-center">
-                            <span className="text-[6px] font-semibold text-amber-300/80 tracking-widest uppercase block">
-                              {language === 'en' ? 'Manual' : 'Kitab'}
+                            <span className="block text-[9px] font-semibold uppercase tracking-[0.2em] text-brand-100">
+                              {language === "en"
+                                ? "Learning book"
+                                : "Kitab belajar"}
                             </span>
                           </div>
                         </div>
                       )}
 
                       {/* Bookmark ribbon */}
-                      <div className="absolute bottom-0 right-2.5 w-2.5 h-4 bg-rose-600 shadow-sm transform translate-y-1.5 z-10" />
+                      <div className="absolute -bottom-1 right-5 z-10 h-7 w-4 bg-brand-600 shadow-sm [clip-path:polygon(0_0,100%_0,100%_100%,50%_75%,0_100%)]" />
 
                       {/* Readonly Badge on Cover */}
-                      { (isCurrentBookReadonly) && (
-                        <div className="absolute top-1.5 right-1.5 z-30 bg-black/75 backdrop-blur-xs text-amber-200 text-[8px] font-bold px-1.5 py-0.5 rounded shadow-2xs border border-amber-400/40">
-                          {language === 'en' ? 'Read-only' : 'Hanya Baca'}
+                      {isCurrentBookReadonly && (
+                        <div className="absolute right-3 top-3 z-30 rounded-full bg-primary/90 px-2.5 py-1 text-xs font-semibold text-secondary shadow-xs backdrop-blur-sm">
+                          {language === "en" ? "Read-only" : "Hanya Baca"}
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Book Metadata & Compact Progress Bar beside Cover */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center gap-2">
+                  <div className="flex min-w-0 flex-1 flex-col justify-center gap-2">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap min-w-0">
-                        <h1 
+                        <h1
                           title={selectedBook.title}
-                          className="text-lg sm:text-xl font-bold font-serif text-slate-900 dark:text-white leading-tight truncate whitespace-nowrap overflow-hidden text-ellipsis block"
+                          className="block text-2xl font-semibold leading-tight tracking-tight text-primary sm:text-3xl"
                         >
                           {selectedBook.title}
                         </h1>
-                        { (isCurrentBookReadonly) ? (
+                        {isCurrentBookReadonly ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
-                            <ShieldCheck className="w-3 h-3 text-indigo-500 shrink-0" />
-                            <span>{language === 'en' ? 'Read-only' : 'Hanya Baca'}</span>
+                            <ShieldCheck className="size-3 shrink-0 text-brand-600" />
+                            <span>
+                              {language === "en" ? "Read-only" : "Hanya Baca"}
+                            </span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40 shrink-0">
                             <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
-                            <span>{language === 'en' ? 'Editable' : 'Dapat Diedit'}</span>
+                            <span>
+                              {language === "en" ? "Editable" : "Dapat Diedit"}
+                            </span>
                           </span>
                         )}
                       </div>
                       {selectedBook.description && (
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-1 leading-relaxed">
+                        <p className="mt-2 line-clamp-3 max-w-3xl text-sm leading-6 text-secondary sm:text-base">
                           {selectedBook.description}
                         </p>
                       )}
                     </div>
 
+                    <div className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+                      {[
+                        {
+                          label: language === "en" ? "Chapters" : "Bab",
+                          value: bookChapters.length,
+                          icon: <Layers className="size-4" />,
+                          color:
+                            "bg-utility-blue-50 text-utility-blue-700 ring-utility-blue-200",
+                        },
+                        {
+                          label:
+                            language === "en" ? "Total cards" : "Total kartu",
+                          value: totalCards,
+                          icon: <BookOpen className="size-4" />,
+                          color: "bg-brand-50 text-brand-700 ring-brand-200",
+                        },
+                        {
+                          label: language === "en" ? "Active" : "Aktif",
+                          value: activeBookCards.length,
+                          icon: <Power className="size-4" />,
+                          color:
+                            "bg-utility-green-50 text-utility-green-700 ring-utility-green-200",
+                        },
+                        {
+                          label:
+                            language === "en" ? "Due today" : "Perlu review",
+                          value: dueBookCards.length,
+                          icon: <Clock className="size-4" />,
+                          color:
+                            "bg-utility-yellow-50 text-utility-yellow-700 ring-utility-yellow-200",
+                        },
+                      ].map((metric) => (
+                        <div
+                          key={metric.label}
+                          className="rounded-2xl border border-secondary bg-primary p-3.5 shadow-xs"
+                        >
+                          <div
+                            className={`flex size-8 items-center justify-center rounded-lg ring-1 ring-inset ${metric.color}`}
+                          >
+                            {metric.icon}
+                          </div>
+                          <p className="mt-3 text-2xl font-semibold tabular-nums text-primary">
+                            {metric.value}
+                          </p>
+                          <p className="text-xs text-secondary">
+                            {metric.label}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
                     {/* Single Straight Progress Line (Active & Mapan) */}
-                    <div className="space-y-1 pt-0.5">
-                      <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 flex-wrap gap-x-3 gap-y-0.5">
+                    <div className="mt-2 rounded-2xl border border-secondary bg-primary p-4 shadow-xs">
+                      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-secondary">
                         <div className="flex items-center gap-2.5">
-                          <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                            {language === 'en' ? 'Active' : 'Aktif'}: {activeBookCards.length}/{totalCards} ({activationPct}%)
+                          <span className="inline-flex items-center gap-1.5 font-semibold text-utility-green-700">
+                            <span className="size-2 shrink-0 rounded-full bg-utility-green-500" />
+                            {language === "en" ? "Active" : "Aktif"}:{" "}
+                            {activeBookCards.length}/{totalCards} (
+                            {activationPct}%)
                           </span>
-                          <span className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400">
-                            <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                            {language === 'en' ? 'Mastered' : 'Mapan'}: {masteredCards.length}/{totalCards} ({masteryPct}%)
+                          <span className="inline-flex items-center gap-1.5 font-semibold text-brand-secondary">
+                            <span className="size-2 shrink-0 rounded-full bg-brand-solid" />
+                            {language === "en" ? "Mastered" : "Mapan"}:{" "}
+                            {masteredCards.length}/{totalCards} ({masteryPct}%)
                           </span>
                         </div>
                         {dueBookCards.length > 0 && (
-                          <span className="text-amber-600 dark:text-amber-400 font-bold text-[10px]">
-                            {dueBookCards.length} {language === 'en' ? 'due today' : 'perlu review'}
+                          <span className="font-semibold text-brand-secondary">
+                            {dueBookCards.length}{" "}
+                            {language === "en" ? "due today" : "perlu review"}
                           </span>
                         )}
                       </div>
 
                       {/* Single segmented straight bar */}
-                      <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex shadow-2xs">
+                      <div className="mt-2 flex h-2 w-full overflow-hidden rounded-full bg-secondary">
                         {/* Mastered portion (amber) */}
                         <div
-                          style={{ width: `${totalCards > 0 ? (masteredCards.length / totalCards) * 100 : 0}%` }}
-                          className="h-full bg-amber-500 transition-all duration-500 shrink-0"
+                          style={{
+                            width: `${totalCards > 0 ? (masteredCards.length / totalCards) * 100 : 0}%`,
+                          }}
+                          className="h-full shrink-0 bg-brand-solid transition-all duration-500"
                           title={`Mapan: ${masteredCards.length}`}
                         />
                         {/* Active non-mastered portion (emerald) */}
                         <div
-                          style={{ width: `${totalCards > 0 ? (Math.max(0, activeBookCards.length - masteredCards.length) / totalCards) * 100 : 0}%` }}
-                          className="h-full bg-emerald-500 transition-all duration-500 shrink-0"
+                          style={{
+                            width: `${totalCards > 0 ? (Math.max(0, activeBookCards.length - masteredCards.length) / totalCards) * 100 : 0}%`,
+                          }}
+                          className="h-full shrink-0 bg-utility-green-500 transition-all duration-500"
                           title={`Aktif: ${activeBookCards.length}`}
                         />
                       </div>
                     </div>
 
                     {/* Action Buttons: Review & Review Calendar */}
-                    <div className="pt-1 flex items-center gap-2 flex-wrap">
+                    <div className="flex flex-wrap items-center gap-2 pt-2">
                       {dueBookCards.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => {
+                        <Button
+                          size="sm"
+                          iconLeading={Play}
+                          onPress={() => {
                             setReviewSpecificBookId(selectedBook.id);
                             setIsReviewOpen(true);
                           }}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-semibold text-xs shadow-xs transition-all cursor-pointer"
                         >
-                          <Play className="w-3.5 h-3.5 fill-white" />
-                          <span>{language === 'en' ? `Review (${dueBookCards.length})` : `Review (${dueBookCards.length})`}</span>
-                        </button>
+                          {language === "en"
+                            ? `Review ${dueBookCards.length} cards`
+                            : `Review ${dueBookCards.length} kartu`}
+                        </Button>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => {
+                      <Button
+                        color="secondary"
+                        size="sm"
+                        iconLeading={Calendar}
+                        onPress={() => {
                           setCalendarBook(selectedBook);
                           setCalendarChapterFilter(null);
                           setIsBookCalendarOpen(true);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/70 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-semibold text-xs transition-all cursor-pointer shadow-2xs"
                       >
-                        <CalendarCheck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                        <span>{language === 'en' ? 'Review Calendar' : 'Kalender Jadwal'}</span>
-                      </button>
+                        {language === "en" ? "Open schedule" : "Buka jadwal"}
+                      </Button>
                     </div>
                   </div>
                 </div>
-              </div>
+              </section>
             );
           })()}
 
@@ -1368,7 +1880,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
               setIsBookCalendarOpen(true);
             }}
           />
-          
+
           {/* Prakiraan Beban Review 7 Hari ke Depan (7-Day Review Horizon Forecast) */}
           <BookReviewForecast7Days
             book={selectedBook}
@@ -1381,149 +1893,204 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             }}
           />
 
-          {/* Daftar Isi Kitab (Table of Contents - Professional, Compact, Breathable) */}
-          <div className="space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-1">
+          <section className="space-y-4 rounded-3xl border border-secondary bg-primary p-4 shadow-xs sm:p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <ListOrdered className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                  <span>{language === 'en' ? 'Table of Contents' : 'Daftar Isi Kitab'}</span>
+                <h2 className="flex items-center gap-2 text-base font-semibold text-primary">
+                  <span className="flex size-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+                    <ListOrdered className="size-4" />
+                  </span>
+                  <span>
+                    {language === "en"
+                      ? "Table of Contents"
+                      : "Daftar Isi Kitab"}
+                  </span>
                 </h2>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                  {language === 'en' 
-                    ? 'Select any chapter or subchapter to view and study its flashcards.' 
-                    : 'Pilih bab atau sub-bab untuk langsung masuk ke materi dan kartu flashcard di dalamnya.'}
+                <p className="mt-1 text-sm text-secondary">
+                  {language === "en"
+                    ? "Select any chapter or subchapter to view and study its flashcards."
+                    : "Pilih bab atau sub-bab untuk langsung masuk ke materi dan kartu flashcard di dalamnya."}
                 </p>
-
               </div>
 
               {/* Table of Contents Search & Quick Add */}
-              <div className="flex items-center gap-2">
-                <div className="relative">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="relative min-w-0 sm:w-64">
                   <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder={language === 'en' ? 'Search TOC...' : 'Cari bab / sub-bab...'}
+                    placeholder={
+                      language === "en"
+                        ? "Search TOC..."
+                        : "Cari bab / sub-bab..."
+                    }
                     value={tocSearch}
                     onChange={(e) => setTocSearch(e.target.value)}
-                    className="w-44 sm:w-56 pl-7 pr-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    className="w-full rounded-lg border border-primary bg-primary py-2 pl-8 pr-8 text-sm text-primary shadow-xs outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-2 focus:ring-brand-600/20"
                   />
                   {tocSearch && (
                     <button
-                      onClick={() => setTocSearch('')}
+                      onClick={() => setTocSearch("")}
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       <X className="w-3 h-3" />
                     </button>
                   )}
-
                 </div>
 
                 {!isCurrentBookReadonly && (
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => {
-                        setSelectedChapterIdForItem('');
+                  <div className="flex items-center gap-2">
+                    <Button
+                      color="secondary"
+                      size="sm"
+                      iconLeading={Sparkles}
+                      onPress={() => {
+                        setSelectedChapterIdForItem("");
                         handleTriggerAIImport();
                       }}
-                      className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline flex items-center gap-1 cursor-pointer shrink-0"
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">{language === 'en' ? 'AI Generate' : 'Buat dgn AI'}</span>
-                    </button>
-                    <button
-                      onClick={() => { setParentChapterIdForNew(null); setIsNewChapterOpen(true); }}
-                      className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+                      <span className="hidden sm:inline">
+                        {language === "en" ? "AI Generate" : "Buat dgn AI"}
+                      </span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      iconLeading={Plus}
+                      onPress={() => {
+                        setParentChapterIdForNew(null);
+                        setIsNewChapterOpen(true);
+                      }}
                     >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">{language === 'en' ? 'New Chapter' : 'Bab Baru'}</span>
-                    </button>
-
+                      <span className="hidden sm:inline">
+                        {language === "en" ? "New Chapter" : "Bab Baru"}
+                      </span>
+                    </Button>
                   </div>
                 )}
-
               </div>
-
             </div>
 
             {bookChapters.length === 0 && bookItems.length === 0 ? (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 text-center border border-slate-200/80 dark:border-slate-800">
-                <BookOpen className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2.5" />
-                <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">
-                  {language === 'en' ? 'This book is empty' : 'Buku ini masih kosong'}
+              <div className="rounded-2xl border border-dashed border-secondary bg-secondary/30 px-5 py-12 text-center">
+                <HugeiconsIcon
+                  icon={BookDashedIcon}
+                  className="mx-auto mb-3 size-10 text-brand-500"
+                />
+                <h3 className="text-sm font-semibold text-primary">
+                  {language === "en"
+                    ? "This book is empty"
+                    : "Buku ini masih kosong"}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1 mb-4">
-                  {language === 'en' ? 'Create chapters and flashcards to begin learning.' : 'Tambahkan bab dan kartu pertanyaan-jawaban untuk mulai belajar.'}
+                <p className="mx-auto mb-4 mt-1 max-w-sm text-sm text-secondary">
+                  {language === "en"
+                    ? "Create chapters and flashcards to begin learning."
+                    : "Tambahkan bab dan kartu pertanyaan-jawaban untuk mulai belajar."}
                 </p>
                 {!isCurrentBookReadonly ? (
-                  <div className="flex items-center justify-center gap-3">
-                    <button
-                      onClick={() => {
-                        setSelectedChapterIdForItem('');
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <Button
+                      color="secondary"
+                      size="sm"
+                      iconLeading={Sparkles}
+                      onPress={() => {
+                        setSelectedChapterIdForItem("");
                         handleTriggerAIImport();
                       }}
-                      className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold cursor-pointer flex items-center gap-1.5 shadow-sm"
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      {language === 'en' ? 'AI Generate' : 'Buat dgn AI'}
-                    </button>
-                    <button
-                      onClick={() => { setParentChapterIdForNew(null); setIsNewChapterOpen(true); }}
-                      className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold cursor-pointer shadow-sm"
+                      {language === "en" ? "AI Generate" : "Buat dgn AI"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      iconLeading={Plus}
+                      onPress={() => {
+                        setParentChapterIdForNew(null);
+                        setIsNewChapterOpen(true);
+                      }}
                     >
-                      {language === 'en' ? 'Add First Chapter' : 'Tambah Bab Pertama'}
-                    </button>
+                      {language === "en"
+                        ? "Add First Chapter"
+                        : "Tambah Bab Pertama"}
+                    </Button>
                   </div>
                 ) : (
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-700">
-                    <ShieldCheck className="w-4 h-4 text-indigo-500" />
-                    <span>{language === 'en' ? 'Authentic Protected Material' : 'Materi Otentik Terkunci oleh Pengajar'}</span>
+                    <ShieldCheck className="size-4 text-brand-600" />
+                    <span>
+                      {language === "en"
+                        ? "Authentic Protected Material"
+                        : "Materi Otentik Terkunci oleh Pengajar"}
+                    </span>
                   </div>
                 )}
-
               </div>
             ) : null}
 
             {/* Table of Contents Container */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-2 sm:p-2.5 pb-12 shadow-2xs space-y-1">
+            <div className="space-y-2 rounded-2xl bg-secondary/20 p-2 pb-12 sm:p-3">
               {(() => {
-                const renderChapterHierarchyTree = (parentId: string | null = null, depth = 0, parentIdxPrefix = ''): React.ReactNode[] => {
-                  let chaptersInLevel = bookChapters.filter(c => (c.parentId || null) === parentId);
+                const renderChapterHierarchyTree = (
+                  parentId: string | null = null,
+                  depth = 0,
+                  parentIdxPrefix = "",
+                ): React.ReactNode[] => {
+                  let chaptersInLevel = bookChapters.filter(
+                    (c) => (c.parentId || null) === parentId,
+                  );
 
                   if (tocSearch.trim()) {
                     const q = tocSearch.toLowerCase();
                     // Keep chapter if it or any descendant matches
-                    const matchesOrHasMatchingDescendants = (ch: Chapter): boolean => {
-                      if ((ch.title || '').toLowerCase().includes(q) || (ch.description || '').toLowerCase().includes(q)) return true;
-                      const children = bookChapters.filter(c => c.parentId === ch.id);
+                    const matchesOrHasMatchingDescendants = (
+                      ch: Chapter,
+                    ): boolean => {
+                      if (
+                        (ch.title || "").toLowerCase().includes(q) ||
+                        (ch.description || "").toLowerCase().includes(q)
+                      )
+                        return true;
+                      const children = bookChapters.filter(
+                        (c) => c.parentId === ch.id,
+                      );
                       return children.some(matchesOrHasMatchingDescendants);
                     };
-                    chaptersInLevel = chaptersInLevel.filter(matchesOrHasMatchingDescendants);
+                    chaptersInLevel = chaptersInLevel.filter(
+                      matchesOrHasMatchingDescendants,
+                    );
                   }
 
                   return chaptersInLevel.map((chapter, idx) => {
-                    const directItems = bookItems.filter(i => i.chapterId === chapter.id);
-                    const childChapters = bookChapters.filter(c => c.parentId === chapter.id);
-                    const dueCount = directItems.filter(i => isItemDue(i)).length;
-                    const currentIdxStr = parentIdxPrefix ? `${parentIdxPrefix}.${idx + 1}` : `${idx + 1}`;
+                    const directItems = bookItems.filter(
+                      (i) => i.chapterId === chapter.id,
+                    );
+                    const childChapters = bookChapters.filter(
+                      (c) => c.parentId === chapter.id,
+                    );
+                    const dueCount = directItems.filter((i) =>
+                      isItemDue(i),
+                    ).length;
+                    const currentIdxStr = parentIdxPrefix
+                      ? `${parentIdxPrefix}.${idx + 1}`
+                      : `${idx + 1}`;
                     const isExpanded = !expandedChapters.has(chapter.id); // default expanded
-                    const isNearBottom = idx >= Math.max(0, chaptersInLevel.length - 2) || (depth > 0 && idx >= Math.max(0, chaptersInLevel.length - 1));
+                    const isNearBottom =
+                      idx >= Math.max(0, chaptersInLevel.length - 2) ||
+                      (depth > 0 &&
+                        idx >= Math.max(0, chaptersInLevel.length - 1));
 
-
-  return (
+                    return (
                       <div key={chapter.id} className="space-y-1">
                         <div
                           onClick={() => {
                             setSelectedChapter(chapter);
-                            setChapterFilter('all');
-                            setChapterCardSearch('');
+                            setChapterFilter("all");
+                            setChapterCardSearch("");
                           }}
                           className={`group transition-all cursor-pointer select-none rounded-xl border ${
                             depth === 0
-                              ? 'py-2 px-3 sm:px-3.5 bg-slate-50/70 hover:bg-indigo-50/60 dark:bg-slate-800/40 dark:hover:bg-indigo-950/30 border-slate-200/70 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 shadow-2xs'
+                              ? "border-secondary bg-primary px-3 py-3 shadow-xs hover:border-brand-300 hover:bg-brand-50/50 sm:px-3.5"
                               : depth === 1
-                              ? 'ml-3 sm:ml-6 py-1.5 px-2.5 sm:px-3 bg-white dark:bg-slate-900/80 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 border-slate-200/60 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700 shadow-2xs'
-                              : 'ml-6 sm:ml-10 py-1.5 px-2 sm:px-2.5 bg-white/70 dark:bg-slate-900/40 hover:bg-sky-50/40 dark:hover:bg-sky-950/20 border-slate-200/50 dark:border-slate-800/60 hover:border-sky-300 dark:hover:border-sky-700'
+                                ? "ml-3 border-secondary bg-primary/80 px-2.5 py-2 hover:border-brand-200 hover:bg-brand-50/30 sm:ml-6 sm:px-3"
+                                : "ml-6 border-secondary bg-primary/60 px-2 py-2 hover:border-brand-200 hover:bg-brand-50/30 sm:ml-10 sm:px-2.5"
                           }`}
                         >
                           <div className="flex items-center justify-between gap-2.5">
@@ -1534,7 +2101,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                                   type="button"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setExpandedChapters(prev => {
+                                    setExpandedChapters((prev) => {
                                       const next = new Set(prev);
                                       if (next.has(chapter.id)) {
                                         next.delete(chapter.id);
@@ -1544,11 +2111,15 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                                       return next;
                                     });
                                   }}
-                                  className="p-1 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors shrink-0"
-                                  title={isExpanded ? 'Collapse subchapters' : 'Expand subchapters'}
+                                  className="shrink-0 rounded-lg p-1 text-fg-quaternary transition-colors hover:bg-brand-50 hover:text-brand-700"
+                                  title={
+                                    isExpanded
+                                      ? "Collapse subchapters"
+                                      : "Expand subchapters"
+                                  }
                                 >
                                   {isExpanded ? (
-                                    <ChevronDown className="w-3.5 h-3.5 text-indigo-500" />
+                                    <ChevronDown className="size-3.5 text-brand-600" />
                                   ) : (
                                     <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                                   )}
@@ -1558,28 +2129,35 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                               ) : (
                                 <div className="w-3.5 h-3.5 flex items-center justify-center shrink-0">
                                   <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
-
                                 </div>
                               )}
 
                               <div className="min-w-0 flex-1 flex items-center gap-2">
-                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wider ${
-                                  depth === 0 
-                                    ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300'
+                                <span
+                                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md shrink-0 uppercase tracking-wider ${
+                                    depth === 0
+                                      ? "bg-brand-100 text-brand-800"
+                                      : depth === 1
+                                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300"
+                                        : "bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300"
+                                  }`}
+                                >
+                                  {depth === 0
+                                    ? language === "en"
+                                      ? `Ch ${idx + 1}`
+                                      : `Bab ${idx + 1}`
                                     : depth === 1
-                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300'
-                                    : 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300'
-                                }`}>
-                                  {depth === 0 
-                                    ? (language === 'en' ? `Ch ${idx + 1}` : `Bab ${idx + 1}`)
-                                    : depth === 1
-                                    ? `Sub ${currentIdxStr}`
-                                    : `↳ ${currentIdxStr}`}
+                                      ? `Sub ${currentIdxStr}`
+                                      : `↳ ${currentIdxStr}`}
                                 </span>
 
-                                <h3 className={`font-semibold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors ${
-                                  depth === 0 ? 'text-xs sm:text-sm' : 'text-xs'
-                                }`}>
+                                <h3
+                                  className={`truncate font-semibold text-primary transition-colors group-hover:text-brand-secondary ${
+                                    depth === 0
+                                      ? "text-xs sm:text-sm"
+                                      : "text-xs"
+                                  }`}
+                                >
                                   {chapter.title}
                                 </h3>
 
@@ -1588,16 +2166,15 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                                     — {chapter.description}
                                   </span>
                                 )}
-
                               </div>
-
                             </div>
 
                             {/* Right Status, Review Pill & Kebab Menu */}
                             <div className="flex items-center gap-2 shrink-0">
                               {/* Total Direct Cards */}
                               <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/50 dark:border-slate-700">
-                                {directItems.length} {language === 'en' ? 'cards' : 'kartu'}
+                                {directItems.length}{" "}
+                                {language === "en" ? "cards" : "kartu"}
                               </span>
 
                               {/* Review Task Button (Direct Jump to Chapter Due Review) */}
@@ -1607,43 +2184,67 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setSelectedChapter(chapter);
-                                    setChapterFilter('due');
-                                    setChapterCardSearch('');
+                                    setChapterFilter("due");
+                                    setChapterCardSearch("");
                                   }}
                                   className="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 hover:bg-amber-200 border border-amber-300/80 dark:border-amber-700/60 font-bold text-[10px] flex items-center gap-1 transition-colors cursor-pointer"
-                                  title={language === 'en' ? `${dueCount} cards due for review in this chapter` : `${dueCount} kartu perlu direview di bab ini`}
+                                  title={
+                                    language === "en"
+                                      ? `${dueCount} cards due for review in this chapter`
+                                      : `${dueCount} kartu perlu direview di bab ini`
+                                  }
                                 >
                                   <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-                                  <span>{dueCount} {language === 'en' ? 'due' : 'perlu review'}</span>
+                                  <span>
+                                    {dueCount}{" "}
+                                    {language === "en" ? "due" : "perlu review"}
+                                  </span>
                                 </button>
                               )}
 
                               {/* Three-Dots Menu (Kebab) for Professional UX */}
                               {!isCurrentBookReadonly && (
-                                <div className="relative shrink-0" onClick={e => e.stopPropagation()}>
+                                <div
+                                  className="relative shrink-0"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
                                   <button
                                     type="button"
-                                    onClick={() => setActiveMenuId(activeMenuId === `chap-${chapter.id}` ? null : `chap-${chapter.id}`)}
-                                    className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition-colors"
+                                    onClick={() =>
+                                      setActiveMenuId(
+                                        activeMenuId === `chap-${chapter.id}`
+                                          ? null
+                                          : `chap-${chapter.id}`,
+                                      )
+                                    }
+                                    className="rounded-lg p-1 text-fg-quaternary transition-colors hover:bg-primary_hover hover:text-secondary_hover"
                                     title="Options"
                                   >
                                     <MoreVertical className="w-3.5 h-3.5" />
                                   </button>
 
                                   {activeMenuId === `chap-${chapter.id}` && (
-                                    <div className={`absolute right-0 ${isNearBottom ? 'bottom-full mb-1.5' : 'top-full mt-1.5'} w-44 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 py-1 z-50 text-xs`}>
+                                    <div
+                                      className={`absolute right-0 ${isNearBottom ? "bottom-full mb-1.5" : "top-full mt-1.5"} z-50 w-48 rounded-xl border border-secondary bg-primary py-1.5 text-xs shadow-2xl`}
+                                    >
                                       {depth < 2 && (
                                         <button
                                           type="button"
                                           onClick={() => {
                                             setActiveMenuId(null);
-                                            setParentChapterIdForNew(chapter.id);
+                                            setParentChapterIdForNew(
+                                              chapter.id,
+                                            );
                                             setIsNewChapterOpen(true);
                                           }}
-                                          className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
+                                          className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-secondary hover:bg-primary_hover"
                                         >
                                           <FolderPlus className="w-3.5 h-3.5 text-emerald-600" />
-                                          <span>{language === 'en' ? 'Add Subchapter' : 'Tambah Subbab'}</span>
+                                          <span>
+                                            {language === "en"
+                                              ? "Add Subchapter"
+                                              : "Tambah Subbab"}
+                                          </span>
                                         </button>
                                       )}
                                       <button
@@ -1651,13 +2252,21 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                                         onClick={() => {
                                           setActiveMenuId(null);
                                           setEditingChapter(chapter);
-                                          setChapterForm({ title: chapter.title, description: chapter.description || '' });
+                                          setChapterForm({
+                                            title: chapter.title,
+                                            description:
+                                              chapter.description || "",
+                                          });
                                           setIsNewChapterOpen(true);
                                         }}
-                                        className="w-full text-left px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
+                                        className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-secondary hover:bg-primary_hover"
                                       >
-                                        <Pencil className="w-3.5 h-3.5 text-indigo-500" />
-                                        <span>{language === 'en' ? 'Edit Chapter' : 'Edit Bab'}</span>
+                                        <Pencil className="size-3.5 text-brand-600" />
+                                        <span>
+                                          {language === "en"
+                                            ? "Edit Chapter"
+                                            : "Edit Bab"}
+                                        </span>
                                       </button>
                                       <button
                                         type="button"
@@ -1665,45 +2274,48 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                                           setActiveMenuId(null);
                                           setConfirmDialog({
                                             isOpen: true,
-                                            message: language === 'en' ? 'Delete this chapter and all its subchapters?' : 'Yakin ingin menghapus bab ini beserta sub-bab dan kartunya?',
+                                            message:
+                                              language === "en"
+                                                ? "Delete this chapter and all its subchapters?"
+                                                : "Yakin ingin menghapus bab ini beserta sub-bab dan kartunya?",
                                             onConfirm: () => {
                                               deleteChapter(chapter.id);
                                               setConfirmDialog(null);
-                                            }
+                                            },
                                           });
                                         }}
                                         className="w-full text-left px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 flex items-center gap-2 cursor-pointer"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
-                                        <span>{language === 'en' ? 'Delete Chapter' : 'Hapus Bab'}</span>
+                                        <span>
+                                          {language === "en"
+                                            ? "Delete Chapter"
+                                            : "Hapus Bab"}
+                                        </span>
                                       </button>
-
                                     </div>
                                   )}
-
                                 </div>
                               )}
 
                               {/* Buka Bab Arrow Button */}
-                              <div className="p-1 rounded-md text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                              <div className="rounded-lg p-1 text-fg-quaternary transition-colors group-hover:text-brand-600">
                                 <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         {/* Recursively render children if expanded */}
                         {childChapters.length > 0 && isExpanded && (
                           <div className="space-y-1">
-                            {renderChapterHierarchyTree(chapter.id, depth + 1, currentIdxStr)}
-
+                            {renderChapterHierarchyTree(
+                              chapter.id,
+                              depth + 1,
+                              currentIdxStr,
+                            )}
                           </div>
                         )}
-
                       </div>
                     );
                   });
@@ -1714,50 +2326,65 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
 
               {/* Unassigned items box (if any) */}
               {(() => {
-                const unassignedItems = bookItems.filter(i => !i.chapterId || !bookChapters.some(c => c.id === i.chapterId));
+                const unassignedItems = bookItems.filter(
+                  (i) =>
+                    !i.chapterId ||
+                    !bookChapters.some((c) => c.id === i.chapterId),
+                );
                 if (unassignedItems.length === 0) return null;
 
-
-  return (
+                return (
                   <div
                     onClick={() => {
                       setSelectedChapter({
-                        id: '__unassigned__',
+                        id: "__unassigned__",
                         bookId: selectedBook.id,
-                        title: language === 'en' ? 'General Cards (No Chapter)' : 'Kartu Umum (Tanpa Bab)',
-                        order: 999
+                        title:
+                          language === "en"
+                            ? "General Cards (No Chapter)"
+                            : "Kartu Umum (Tanpa Bab)",
+                        order: 999,
                       });
-                      setChapterFilter('all');
-                      setChapterCardSearch('');
+                      setChapterFilter("all");
+                      setChapterCardSearch("");
                     }}
-                    className="p-3 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 hover:border-indigo-400 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                    className="group flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-dashed border-secondary bg-primary p-3 transition-all hover:border-brand-300 hover:bg-brand-50/40"
                   >
                     <div className="flex items-center gap-2.5">
-                      <FileText className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+                      <FileText className="size-4 text-fg-quaternary group-hover:text-brand-600" />
                       <div>
-                        <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 transition-colors">
-                          {language === 'en' ? 'General Cards (No Chapter)' : 'Kartu Umum (Tanpa Bab)'}
+                        <h4 className="text-xs font-semibold text-primary transition-colors group-hover:text-brand-secondary">
+                          {language === "en"
+                            ? "General Cards (No Chapter)"
+                            : "Kartu Umum (Tanpa Bab)"}
                         </h4>
                         <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                          {language === 'en' 
-                            ? `${unassignedItems.length} cards not organized into a chapter` 
+                          {language === "en"
+                            ? `${unassignedItems.length} cards not organized into a chapter`
                             : `${unassignedItems.length} kartu di luar bab`}
                         </p>
-
                       </div>
-
                     </div>
                     {!isCurrentBookReadonly && (
-                      <div className="relative shrink-0" onClick={e => e.stopPropagation()}>
+                      <div
+                        className="relative shrink-0"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <button
                           type="button"
-                          onClick={() => setActiveMenuId(activeMenuId === 'unassigned-menu' ? null : 'unassigned-menu')}
+                          onClick={() =>
+                            setActiveMenuId(
+                              activeMenuId === "unassigned-menu"
+                                ? null
+                                : "unassigned-menu",
+                            )
+                          }
                           className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition-colors"
                           title="Options"
                         >
                           <MoreVertical className="w-3.5 h-3.5" />
                         </button>
-                        {activeMenuId === 'unassigned-menu' && (
+                        {activeMenuId === "unassigned-menu" && (
                           <div className="absolute right-0 top-full mt-1.5 w-44 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 py-1 z-50 text-xs">
                             <button
                               type="button"
@@ -1765,590 +2392,295 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                                 setActiveMenuId(null);
                                 setConfirmDialog({
                                   isOpen: true,
-                                  message: language === 'en' ? 'Delete all cards in this category?' : 'Hapus semua kartu di kategori ini?',
+                                  message:
+                                    language === "en"
+                                      ? "Delete all cards in this category?"
+                                      : "Hapus semua kartu di kategori ini?",
                                   onConfirm: () => {
-                                    unassignedItems.forEach(i => deleteItem(i.id));
+                                    unassignedItems.forEach((i) =>
+                                      deleteItem(i.id),
+                                    );
                                     setConfirmDialog(null);
                                     setSelectedChapter(null);
-                                  }
+                                  },
                                 });
                               }}
                               className="w-full text-left px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 flex items-center gap-2 cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                              <span>{language === 'en' ? 'Delete All Cards' : 'Hapus Semua Kartu'}</span>
+                              <span>
+                                {language === "en"
+                                  ? "Delete All Cards"
+                                  : "Hapus Semua Kartu"}
+                              </span>
                             </button>
-
                           </div>
                         )}
-
                       </div>
                     )}
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500 group-hover:text-indigo-600">
-                      <span className="text-[11px] font-semibold">{language === 'en' ? 'Open Cards' : 'Buka'}</span>
+                    <div className="flex items-center gap-1.5 text-xs text-secondary group-hover:text-brand-secondary">
+                      <span className="text-[11px] font-semibold">
+                        {language === "en" ? "Open Cards" : "Buka"}
+                      </span>
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-
                     </div>
-
                   </div>
                 );
               })()}
-
             </div>
-
-          </div>
-
-        </div>
+          </section>
+        </PersonalBookPage>
       )}
 
       {/* 3. Chapter View: Halaman Khusus Bab & Item-Item Kartu (Seperti Halaman Juz Al-Qur'an) */}
-      {selectedBook && currentChapter && (
-        <div className="space-y-6">
-          {/* Chapter Page Navigation & Breadcrumbs */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={() => setSelectedChapter(null)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-2xs shrink-0"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>{language === 'en' ? 'Back to Book' : 'Kembali ke Buku Induk'}</span>
-              </button>
-
-              {/* Chapter pagination stepper for direct previous/next navigation */}
-              {navigableChapters.length > 1 && (
-                <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700 shrink-0">
-                  <button
-                    disabled={!prevChapter}
-                    onClick={() => {
-                      if (prevChapter) {
-                        setSelectedChapter(prevChapter);
-                        setChapterFilter('all');
-                        setChapterCardSearch('');
-                      }
-                    }}
-                    className="p-1 rounded-md text-slate-600 dark:text-slate-300 disabled:opacity-25 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer disabled:cursor-not-allowed"
-                    title={prevChapter ? (language === 'en' ? `Previous: ${prevChapter.title}` : `Sebelumnya: ${prevChapter.title}`) : undefined}
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
-                  <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 px-1.5 select-none whitespace-nowrap">
-                    {currentChapterIdx + 1} / {navigableChapters.length}
-                  </span>
-                  <button
-                    disabled={!nextChapter}
-                    onClick={() => {
-                      if (nextChapter) {
-                        setSelectedChapter(nextChapter);
-                        setChapterFilter('all');
-                        setChapterCardSearch('');
-                      }
-                    }}
-                    className="p-1 rounded-md text-slate-600 dark:text-slate-300 disabled:opacity-25 hover:bg-white dark:hover:bg-slate-700 transition-all cursor-pointer disabled:cursor-not-allowed"
-                    title={nextChapter ? (language === 'en' ? `Next: ${nextChapter.title}` : `Berikutnya: ${nextChapter.title}`) : undefined}
-                  >
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
-
-              {/* Breadcrumb Trail */}
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 overflow-x-auto py-1">
-                <span 
-                  onClick={() => setSelectedChapter(null)}
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer font-medium truncate max-w-[140px]"
-                  title={selectedBook.title}
-                >
-                  {selectedBook.title}
-                </span>
-                {currentChapter.id !== '__unassigned__' && getChapterBreadcrumbs(currentChapter).map((crumb, i, arr) => (
-                  <React.Fragment key={crumb.id}>
-                    <span className="text-slate-400">/</span>
-                    <span
-                      onClick={() => {
-                        if (i !== arr.length - 1) {
-                          setSelectedChapter(crumb);
-                          setChapterFilter('all');
-                          setChapterCardSearch('');
-                        }
-                      }}
-                      className={`truncate max-w-[150px] ${
-                        i === arr.length - 1 
-                          ? 'font-bold text-slate-900 dark:text-white' 
-                          : 'font-medium hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer'
-                      }`}
-                    >
-                      {crumb.title}
-                    </span>
-                  </React.Fragment>
-                ))}
-
-              </div>
-
-            </div>
-
-            <div className="flex items-center gap-2 self-end sm:self-auto">
-              {/* Chapter Review Calendar Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  setCalendarBook(selectedBook);
-                  setCalendarChapterFilter(currentChapter.id === '__unassigned__' ? 'unassigned' : currentChapter.id);
-                  setIsBookCalendarOpen(true);
-                }}
-                className="px-2.5 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/70 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-xs font-semibold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                title={language === 'en' ? 'Chapter Schedule Calendar' : 'Kalender Jadwal Bab'}
-              >
-                <CalendarCheck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span className="hidden sm:inline">{language === 'en' ? 'Calendar' : 'Kalender Bab'}</span>
-              </button>
-
-              {!isCurrentBookReadonly && currentChapter.id !== '__unassigned__' && (
-                <>
-                  <button
-                    onClick={() => {
-                      setEditingChapter(currentChapter);
-                      setChapterForm({ title: currentChapter.title, description: currentChapter.description || '' });
-                      setIsNewChapterOpen(true);
-                    }}
-                    className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold flex items-center gap-1"
-                    title="Edit Chapter"
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">{language === 'en' ? 'Edit' : 'Edit'}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setConfirmDialog({
-                        isOpen: true,
-                        message: language === 'en' ? 'Are you sure you want to delete this chapter?' : 'Hapus bab ini beserta isinya?',
-                        onConfirm: () => {
-                          deleteChapter(currentChapter.id);
-                          setSelectedChapter(null);
-                          setConfirmDialog(null);
-                        }
-                      });
-                    }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
-                    title="Delete Chapter"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </>
-              )}
-              {!isCurrentBookReadonly && currentChapter.id === '__unassigned__' && (
-                <button
-                  onClick={() => {
-                    const unassignedItems = bookItems.filter(i => !i.chapterId || !bookChapters.some(c => c.id === i.chapterId));
-                    if (unassignedItems.length === 0) return;
-                    setConfirmDialog({
-                      isOpen: true,
-                      message: language === 'en' ? 'Delete all cards in this category?' : 'Hapus semua kartu di kategori ini?',
-                      onConfirm: () => {
-                        unassignedItems.forEach(i => deleteItem(i.id));
-                        setConfirmDialog(null);
-                        setSelectedChapter(null);
-                      }
-                    });
-                  }}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
-                  title={language === 'en' ? 'Delete All Cards' : 'Hapus Semua Kartu'}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-
-            </div>
-
-          </div>
-
-          {/* Chapter Hero Card (Like Quran Juz Hero Card) */}
-          {(() => {
-            const chapterCards = currentChapter.id === '__unassigned__'
-              ? bookItems.filter(i => !i.chapterId || !bookChapters.some(c => c.id === i.chapterId))
-              : bookItems.filter(i => i.chapterId === currentChapter.id);
-            const activeCards = chapterCards.filter(i => i.isActive);
-            const dueCards = chapterCards.filter(i => isItemDue(i));
-            const masteredCards = chapterCards.filter(i => i.fsrsData.stability >= 74.5);
-            const childChapters = currentChapter.id !== '__unassigned__' 
-              ? bookChapters.filter(c => c.parentId === currentChapter.id) 
-              : [];
-            const depth = currentChapter.id !== '__unassigned__' ? getChapterDepth(currentChapter) : 0;
-
-            const filteredCards = chapterCards.filter(card => {
-              if (chapterFilter === 'active' && !card.isActive) return false;
-              if (chapterFilter === 'due') {
-                const isDue = isItemDue(card);
-                const isReviewedToday = card.fsrsData.lastReview && new Date(card.fsrsData.lastReview).toDateString() === new Date().toDateString();
-                if (!isDue && !isReviewedToday) return false;
+      {selectedBook &&
+        currentChapter &&
+        (() => {
+          const isUnassigned = currentChapter.id === "__unassigned__";
+          const chapterCards = isUnassigned
+            ? bookItems.filter(
+                (item) =>
+                  !item.chapterId ||
+                  !bookChapters.some(
+                    (chapter) => chapter.id === item.chapterId,
+                  ),
+              )
+            : bookItems.filter((item) => item.chapterId === currentChapter.id);
+          const activeCards = chapterCards.filter((card) => card.isActive);
+          const dueCards = chapterCards.filter((card) => isItemDue(card));
+          const masteredCards = chapterCards.filter(
+            (card) => card.fsrsData.stability >= 74.5,
+          );
+          const filteredCards = chapterCards.filter((card) => {
+            if (chapterFilter === "active" && !card.isActive) return false;
+            if (chapterFilter === "inactive" && card.isActive) return false;
+            if (
+              chapterFilter === "due" &&
+              !isItemDue(card) &&
+              !isReviewedToday(card.fsrsData.lastReview)
+            ) {
+              return false;
+            }
+            if (
+              chapterFilter === "mastered" &&
+              card.fsrsData.stability < 74.5
+            ) {
+              return false;
+            }
+            if (chapterCardSearch.trim()) {
+              const query = chapterCardSearch.toLowerCase();
+              const matchesQuestion = (card.question || "")
+                .toLowerCase()
+                .includes(query);
+              const matchesAnswer = (card.answer || "")
+                .toLowerCase()
+                .includes(query);
+              const matchesTag = (card.tags || []).some((tag) =>
+                (tag || "").toLowerCase().includes(query),
+              );
+              if (!matchesQuestion && !matchesAnswer && !matchesTag) {
+                return false;
               }
-              if (chapterFilter === 'mastered' && card.fsrsData.stability < 74.5) return false;
-              if (chapterCardSearch.trim()) {
-                const q = chapterCardSearch.toLowerCase();
-                const matchQ = (card.question || '').toLowerCase().includes(q);
-                const matchA = (card.answer || '').toLowerCase().includes(q);
-                const matchT = (card.tags || []).some(t => (t || '').toLowerCase().includes(q));
-                if (!matchQ && !matchA && !matchT) return false;
-              }
-              return true;
+            }
+            return true;
+          });
+
+          const navigateToChapter = (chapter: Chapter) => {
+            setSelectedChapter(chapter);
+            setChapterFilter("all");
+            setChapterCardSearch("");
+          };
+          const openCardForm = (generateWithAI: boolean) => {
+            setSelectedChapterIdForItem(isUnassigned ? "" : currentChapter.id);
+            if (generateWithAI) setIsAIImportOpen(true);
+            else setIsNewItemOpen(true);
+          };
+          const deleteCurrentSection = () => {
+            if (isUnassigned) {
+              if (chapterCards.length === 0) return;
+              setConfirmDialog({
+                isOpen: true,
+                message:
+                  language === "en"
+                    ? "Delete all cards in this category?"
+                    : "Hapus semua kartu di kategori ini?",
+                onConfirm: () => {
+                  chapterCards.forEach((item) => deleteItem(item.id));
+                  setConfirmDialog(null);
+                  setSelectedChapter(null);
+                },
+              });
+              return;
+            }
+            setConfirmDialog({
+              isOpen: true,
+              message:
+                language === "en"
+                  ? "Are you sure you want to delete this chapter?"
+                  : "Hapus bab ini beserta isinya?",
+              onConfirm: () => {
+                deleteChapter(currentChapter.id);
+                setSelectedChapter(null);
+                setConfirmDialog(null);
+              },
             });
+          };
+          const toggleBulkMode = () => {
+            setIsBulkMode((current) => !current);
+            setSelectedCardIds(new Set());
+          };
+          const allFilteredSelected =
+            filteredCards.length > 0 &&
+            filteredCards.every((card) => selectedCardIds.has(card.id));
 
-
-  return (
-              <div className="space-y-4">
-                {/* Chapter Banner - Compact & Breathable (Mirip Ruang Al-Qur'an Juz Header) */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-4.5 border border-slate-200 dark:border-slate-800 shadow-2xs relative overflow-hidden">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug truncate">
-                        {currentChapter.title}
-                      </h1>
-                      {currentChapter.description && (
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 line-clamp-1 max-w-2xl">
-                          {currentChapter.description}
-                        </p>
-                      )}
-
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-wrap items-center gap-1.5 shrink-0">
-                      {!isCurrentBookReadonly ? (
-                        <>
-                        <button
-                          onClick={() => {
-                            setSelectedChapterIdForItem(currentChapter.id === '__unassigned__' ? '' : currentChapter.id);
-                            setIsAIImportOpen(true);
-                          }}
-                          className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>{language === 'en' ? 'AI Generate' : 'Buat dgn AI'}</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedChapterIdForItem(currentChapter.id === '__unassigned__' ? '' : currentChapter.id);
-                            setIsNewItemOpen(true);
-                          }}
-                          className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>{language === 'en' ? 'Add Card' : 'Tambah Kartu'}</span>
-                        </button>
-                      </>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                          <ShieldCheck className="w-3.5 h-3.5 text-indigo-500" />
-                          <span>{language === 'en' ? 'Authentic (Protected)' : 'Materi Otentik (Terkunci)'}</span>
-                        </span>
-                      )}
-
-                      {dueCards.length > 0 && (
-                        <button
-                          onClick={() => setIsReviewOpen(true)}
-                          className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs flex items-center gap-1.5 shadow-2xs transition-colors"
-                        >
-                          <Play className="w-3.5 h-3.5 fill-white" />
-                          <span>{language === 'en' ? `Review (${dueCards.length})` : `Review Bab (${dueCards.length})`}</span>
-                        </button>
-                      )}
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                {/* Bulk Actions Toolbar (Active when isBulkMode) */}
-                {isBulkMode && (
-                  <div className="bg-indigo-950 text-white rounded-2xl p-3 sm:p-3.5 shadow-lg border border-indigo-800 flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-200">
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (selectedCardIds.size === filteredCards.length && filteredCards.length > 0) {
-                            setSelectedCardIds(new Set());
-                          } else {
-                            setSelectedCardIds(new Set(filteredCards.map(c => c.id)));
-                          }
-                        }}
-                        className="flex items-center gap-2 text-xs font-semibold text-indigo-200 hover:text-white transition-colors"
-                      >
-                        {selectedCardIds.size === filteredCards.length && filteredCards.length > 0 ? (
-                          <CheckSquare className="w-4 h-4 text-indigo-300" />
-                        ) : (
-                          <Square className="w-4 h-4 text-indigo-300" />
-                        )}
-                        <span>
-                          {selectedCardIds.size === filteredCards.length && filteredCards.length > 0
-                            ? (language === 'en' ? 'Deselect All' : 'Batal Semua')
-                            : (language === 'en' ? `Select All (${filteredCards.length})` : `Pilih Semua (${filteredCards.length})`)}
-                        </span>
-                      </button>
-
-                      <span className="text-xs text-indigo-300 font-medium">
-                        | <strong className="text-white ml-1">{selectedCardIds.size}</strong> {language === 'en' ? 'selected' : 'dipilih'}
-                      </span>
-
-                    </div>
-
-                    {/* Bulk Actions */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <button
-                        type="button"
-                        disabled={selectedCardIds.size === 0}
-                        onClick={handleBulkActivate}
-                        className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
-                        title={language === 'en' ? 'Activate selected cards' : 'Aktifkan kartu yang dipilih'}
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>{language === 'en' ? 'Activate' : 'Aktifkan'}</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={selectedCardIds.size === 0}
-                        onClick={handleBulkDeactivate}
-                        className="px-2.5 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
-                        title={language === 'en' ? 'Deactivate selected cards' : 'Nonaktifkan kartu yang dipilih'}
-                      >
-                        <Power className="w-3.5 h-3.5" />
-                        <span>{language === 'en' ? 'Deactivate' : 'Nonaktifkan'}</span>
-                      </button>
-
-                      {!isCurrentBookReadonly && (
-                        <>
-                          <button
-                            type="button"
-                            disabled={selectedCardIds.size === 0}
-                            onClick={() => {
-                              setMovingItem(null);
-                              setMovingChapter(null);
-                              setTargetMoveChapterId(currentChapter.id === '__unassigned__' ? '__unassigned__' : currentChapter.id);
-                              setIsMoveModalOpen(true);
-                            }}
-                            className="px-2.5 py-1.5 rounded-xl bg-indigo-700 hover:bg-indigo-600 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
-                            title={language === 'en' ? 'Move selected cards to chapter' : 'Pindahkan kartu yang dipilih ke bab lain'}
-                          >
-                            <Folder className="w-3.5 h-3.5" />
-                            <span>{language === 'en' ? 'Move' : 'Pindah Bab'}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            disabled={selectedCardIds.size === 0}
-                            onClick={handleBulkDelete}
-                            className="px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
-                            title={language === 'en' ? 'Delete selected cards' : 'Hapus kartu yang dipilih'}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>{language === 'en' ? 'Delete' : 'Hapus'}</span>
-                          </button>
-                        </>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsBulkMode(false);
-                          setSelectedCardIds(new Set());
-                        }}
-                        className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors ml-1"
-                        title={language === 'en' ? 'Exit Bulk Selection' : 'Tutup Aksi Massal'}
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-
-                    </div>
-
-                  </div>
-                )}
-
-                {/* Filter Tabs & Search Bar */}
-                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-                  {/* Tabs */}
-                  <div className="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl overflow-x-auto border border-slate-200/60 dark:border-slate-700/60">
-                    <button
-                      onClick={() => setChapterFilter('all')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5 ${
-                        chapterFilter === 'all'
-                          ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-slate-200 dark:ring-slate-600'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
-                      }`}
-                    >
-                      <Layers className="w-3.5 h-3.5 opacity-70" />
-                      {language === 'en' ? 'All' : 'Semua'}
-                      <span className={`ml-1 px-1.5 py-0.5 rounded-md text-[10px] ${chapterFilter === 'all' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'bg-slate-200/50 dark:bg-slate-800/50 text-slate-500'}`}>{chapterCards.length}</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => setChapterFilter('due')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5 ${
-                        chapterFilter === 'due'
-                          ? 'bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-600'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
-                      }`}
-                    >
-                      <Clock className="w-3.5 h-3.5 opacity-70" />
-                      {language === 'en' ? 'Due' : 'Review'}
-                      <span className={`ml-1 px-1.5 py-0.5 rounded-md text-[10px] ${chapterFilter === 'due' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' : 'bg-slate-200/50 dark:bg-slate-800/50 text-slate-500'}`}>{dueCards.length}</span>
-                    </button>
-                    <button
-                      onClick={() => setChapterFilter('active')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5 ${
-                        chapterFilter === 'active'
-                          ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-600'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
-                      }`}
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 opacity-70" />
-                      {language === 'en' ? 'Active' : 'Aktif'}
-                      <span className={`ml-1 px-1.5 py-0.5 rounded-md text-[10px] ${chapterFilter === 'active' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'bg-slate-200/50 dark:bg-slate-800/50 text-slate-500'}`}>{activeCards.length}</span>
-                    </button>
-                    <button
-                      onClick={() => setChapterFilter('inactive')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5 ${
-                        chapterFilter === 'inactive'
-                          ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-slate-200 dark:ring-slate-600'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
-                      }`}
-                    >
-                      <CircleDashed className="w-3.5 h-3.5 opacity-70" />
-                      {language === 'en' ? 'Inactive' : 'Nonaktif'}
-                      <span className={`ml-1 px-1.5 py-0.5 rounded-md text-[10px] ${chapterFilter === 'inactive' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' : 'bg-slate-200/50 dark:bg-slate-800/50 text-slate-500'}`}>{chapterCards.length - activeCards.length}</span>
-                    </button>
-                  </div>
-
-                  {/* Right: Search + Bulk Mode Toggle */}
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-1 sm:flex-initial">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        placeholder={language === 'en' ? 'Search cards in chapter...' : 'Cari kartu di bab ini...'}
-                        value={chapterCardSearch}
-                        onChange={(e) => setChapterCardSearch(e.target.value)}
-                        className="w-full sm:w-52 pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-                      />
-
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsBulkMode(!isBulkMode);
-                        setSelectedCardIds(new Set());
+          const cardGrid = (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={filteredCards.map((item) => item.id)}
+                strategy={rectSortingStrategy}
+              >
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                  {filteredCards.map((item) => (
+                    <SortableItemWrapper
+                      key={item.id}
+                      activeMenuId={activeMenuId}
+                      setActiveMenuId={setActiveMenuId}
+                      isReadonly={isCurrentBookReadonly}
+                      item={item}
+                      isBulkMode={isBulkMode}
+                      isSelected={selectedCardIds.has(item.id)}
+                      onToggleSelect={() => {
+                        setSelectedCardIds((previous) => {
+                          const next = new Set(previous);
+                          if (next.has(item.id)) next.delete(item.id);
+                          else next.add(item.id);
+                          return next;
+                        });
                       }}
-                      className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 ${
-                        isBulkMode
-                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                      }`}
-                      title={language === 'en' ? 'Toggle bulk operations' : 'Buka menu aksi massal kartu'}
-                    >
-                      <CheckSquare className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">
-                        {language === 'en' ? (isBulkMode ? 'Done' : 'Bulk Action') : (isBulkMode ? 'Selesai' : 'Aksi Massal')}
-                      </span>
-                    </button>
-
-                  </div>
-
+                      onMove={() => {
+                        setMovingItem(item);
+                        setMovingChapter(null);
+                        setTargetMoveChapterId(
+                          item.chapterId || "__unassigned__",
+                        );
+                        setIsMoveModalOpen(true);
+                      }}
+                      onPreview={() => setPreviewItem(item)}
+                      onEdit={() => setEditingItem(item)}
+                      onActivate={() => activateItem(item.id)}
+                      onDeactivate={() => deactivateItem(item.id)}
+                      onReview={(rating: 1 | 2 | 3 | 4) =>
+                        reviewItem(item.id, rating)
+                      }
+                      onDelete={() => deleteItem(item.id)}
+                      language={language}
+                    />
+                  ))}
                 </div>
+              </SortableContext>
+            </DndContext>
+          );
 
-                {/* Cards List / Grid */}
-                {filteredCards.length === 0 ? (
-                  <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 text-center border border-slate-200/80 dark:border-slate-800">
-                    <FileText className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-                    <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">
-                      {chapterCards.length === 0 
-                        ? (language === 'en' ? 'No cards in this chapter yet' : 'Belum ada kartu di bab ini')
-                        : (language === 'en' ? 'No cards match the filter' : 'Tidak ada kartu yang cocok dengan filter')}
-                    </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1 mb-4">
-                      {chapterCards.length === 0 
-                        ? (language === 'en' ? 'Add flashcards with questions and answers to begin learning this chapter.' : 'Tambahkan kartu tanya-jawab untuk mulai menguasai bab ini.')
-                        : (language === 'en' ? 'Try changing your filter tabs or search keywords.' : 'Coba ganti tab filter atau kata kunci pencarian.')}
-                    </p>
-                    {!isCurrentBookReadonly && chapterCards.length === 0 && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedChapterIdForItem(currentChapter.id === '__unassigned__' ? '' : currentChapter.id);
-                            setIsAIImportOpen(true);
-                          }}
-                          className="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-semibold flex items-center gap-1.5"
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          {language === 'en' ? 'AI Generate' : 'Buat dgn AI'}
-                        </button>
-                        <button
-                        onClick={() => {
-                          setSelectedChapterIdForItem(currentChapter.id === '__unassigned__' ? '' : currentChapter.id);
-                          setIsNewItemOpen(true);
-                        }}
-                        className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold"
-                      >
-                        {language === 'en' ? 'Add First Card' : 'Tambah Kartu Pertama'}
-                      </button>
+          const pageProps = {
+            book: selectedBook,
+            chapter: currentChapter,
+            breadcrumbs: isUnassigned
+              ? []
+              : getChapterBreadcrumbs(currentChapter),
+            language,
+            position: currentChapterIdx + 1,
+            totalPositions: navigableChapters.length,
+            previousChapter: prevChapter || undefined,
+            nextChapter: nextChapter || undefined,
+            totalCards: chapterCards.length,
+            activeCards: activeCards.length,
+            dueCards: dueCards.length,
+            masteredCards: masteredCards.length,
+            filteredCards: filteredCards.length,
+            filter: chapterFilter,
+            search: chapterCardSearch,
+            isReadonly: isCurrentBookReadonly,
+            isBulkMode,
+            selectedCount: selectedCardIds.size,
+            allFilteredSelected,
+            onBack: () => setSelectedChapter(null),
+            onNavigateChapter: navigateToChapter,
+            onOpenCalendar: () => {
+              setCalendarBook(selectedBook);
+              setCalendarChapterFilter(
+                isUnassigned ? "unassigned" : currentChapter.id,
+              );
+              setIsBookCalendarOpen(true);
+            },
+            onEdit: isUnassigned
+              ? undefined
+              : () => {
+                  setEditingChapter(currentChapter);
+                  setChapterForm({
+                    title: currentChapter.title,
+                    description: currentChapter.description || "",
+                  });
+                  setIsNewChapterOpen(true);
+                },
+            onDelete: deleteCurrentSection,
+            onGenerateAI: () => openCardForm(true),
+            onAddCard: () => openCardForm(false),
+            onStartReview: () => setIsReviewOpen(true),
+            onFilterChange: setChapterFilter,
+            onSearchChange: setChapterCardSearch,
+            onToggleBulkMode: toggleBulkMode,
+            onToggleSelectAll: () => {
+              setSelectedCardIds(
+                allFilteredSelected
+                  ? new Set()
+                  : new Set(filteredCards.map((card) => card.id)),
+              );
+            },
+            onBulkActivate: handleBulkActivate,
+            onBulkDeactivate: handleBulkDeactivate,
+            onBulkMove: () => {
+              setMovingItem(null);
+              setMovingChapter(null);
+              setTargetMoveChapterId(
+                isUnassigned ? "__unassigned__" : currentChapter.id,
+              );
+              setIsMoveModalOpen(true);
+            },
+            onBulkDelete: handleBulkDelete,
+          };
 
-                      </div>
-                    )}
-
-                  </div>
-                ) : (
-                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                    <SortableContext items={filteredCards.map(i => i.id)} strategy={rectSortingStrategy}>
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                        {filteredCards.map(item => (
-                          <SortableItemWrapper
-                            key={item.id}
-                            activeMenuId={activeMenuId}
-                            setActiveMenuId={setActiveMenuId}
-                            isReadonly={isCurrentBookReadonly}
-                            item={item}
-                            isBulkMode={isBulkMode}
-                            isSelected={selectedCardIds.has(item.id)}
-                            onToggleSelect={() => {
-                              setSelectedCardIds(prev => {
-                                const next = new Set(prev);
-                                if (next.has(item.id)) next.delete(item.id);
-                                else next.add(item.id);
-                                return next;
-                              });
-                            }}
-                            onMove={() => {
-                              setMovingItem(item);
-                              setMovingChapter(null);
-                              setTargetMoveChapterId(item.chapterId || '__unassigned__');
-                              setIsMoveModalOpen(true);
-                            }}
-                            onPreview={() => setPreviewItem(item)}
-                            onEdit={() => setEditingItem(item)}
-                            onActivate={() => activateItem(item.id)}
-                            onDeactivate={() => deactivateItem(item.id)}
-                            onReview={(rating: 1 | 2 | 3 | 4) => reviewItem(item.id, rating)}
-                            onDelete={() => deleteItem(item.id)}
-                            language={language}
-                          />
-                        ))}
-
-                      </div>
-                    </SortableContext>
-                  </DndContext>
-                )}
-
-              </div>
-            );
-          })()}
-
-        </div>
-      )}
+          return currentChapter.parentId ? (
+            <PersonalSubchapterPage
+              {...pageProps}
+              parentTitle={
+                bookChapters.find(
+                  (chapter) => chapter.id === currentChapter.parentId,
+                )?.title || ""
+              }
+            >
+              {cardGrid}
+            </PersonalSubchapterPage>
+          ) : (
+            <PersonalChapterPage
+              {...pageProps}
+              variant={isUnassigned ? "unassigned" : "chapter"}
+            >
+              {cardGrid}
+            </PersonalChapterPage>
+          );
+        })()}
 
       {/* Dialog: New Book */}
-      <BookFormModal 
+      <BookFormModal
         isOpen={isNewBookOpen || !!editingBook}
-        onClose={() => { setIsNewBookOpen(false); setEditingBook(null); }}
+        onClose={() => {
+          setIsNewBookOpen(false);
+          setEditingBook(null);
+        }}
         onSubmit={async (data) => {
           if (editingBook) {
             await updateBook(editingBook.id, data);
@@ -2367,64 +2699,193 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
 
       {/* Dialog: New Chapter */}
       {isNewChapterOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">
-              {editingChapter 
-                ? (language === 'en' ? 'Edit Chapter' : 'Edit Bab')
-                : (language === 'en' ? (parentChapterIdForNew ? 'Add Subchapter' : 'Add Chapter') : (parentChapterIdForNew ? 'Tambah Subbab' : 'Tambah Bab'))}
-            </h3>
-            <form onSubmit={handleCreateChapter} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? 'Chapter Title *' : 'Judul Bab *'}
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder={language === 'en' ? 'e.g. Chapter 1: Foundations' : 'mis. Bab 1: Dasar-dasar'}
-                  value={chapterForm.title}
-                  onChange={e => setChapterForm({ ...chapterForm, title: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+        <ModalOverlay
+          isOpen
+          isDismissable
+          onOpenChange={(open) => {
+            if (!open) closeChapterModal();
+          }}
+        >
+          <Modal className="max-w-lg overflow-hidden rounded-t-3xl sm:rounded-3xl">
+            <Dialog
+              aria-label={
+                editingChapter
+                  ? language === "en"
+                    ? "Edit chapter"
+                    : "Edit bab"
+                  : language === "en"
+                    ? "Create chapter"
+                    : "Buat bab"
+              }
+            >
+              <form
+                onSubmit={handleCreateChapter}
+                className="flex max-h-[inherit] flex-col"
+              >
+                <div className="relative shrink-0 overflow-hidden border-b border-brand-200 bg-[linear-gradient(135deg,var(--color-brand-50)_0%,var(--color-bg-primary)_75%)] px-5 py-5 sm:px-6">
+                  <div className="pointer-events-none absolute -right-10 -top-16 size-36 rounded-full bg-brand-200/40 blur-3xl" />
+                  <div className="relative flex items-start gap-3 pr-10">
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-solid text-white shadow-xs ring-1 ring-brand-600 ring-inset">
+                      {parentChapterIdForNew ? (
+                        <FolderPlus className="size-5" />
+                      ) : (
+                        <ListOrdered className="size-5" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-lg font-semibold text-primary">
+                          {editingChapter
+                            ? language === "en"
+                              ? "Edit chapter"
+                              : "Edit bab"
+                            : language === "en"
+                              ? parentChapterIdForNew
+                                ? "Add subchapter"
+                                : "Add chapter"
+                              : parentChapterIdForNew
+                                ? "Tambah subbab"
+                                : "Tambah bab"}
+                        </h2>
+                        <Badge color="brand" size="sm">
+                          {parentChapterIdForNew
+                            ? language === "en"
+                              ? "Nested"
+                              : "Subbab"
+                            : language === "en"
+                              ? "Main chapter"
+                              : "Bab utama"}
+                        </Badge>
+                      </div>
+                      <p className="mt-1 text-sm leading-5 text-secondary">
+                        {editingChapter
+                          ? language === "en"
+                            ? "Update the chapter name and its short description."
+                            : "Perbarui nama bab dan deskripsi singkatnya."
+                          : parentChapterIdForNew
+                            ? language === "en"
+                              ? "Organize related cards under the selected parent chapter."
+                              : "Kelompokkan kartu terkait di bawah bab induk yang dipilih."
+                            : language === "en"
+                              ? "Create a clear section for organizing this book's cards."
+                              : "Buat bagian yang jelas untuk menyusun kartu dalam kitab ini."}
+                      </p>
+                    </div>
+                  </div>
+                  <ButtonUtility
+                    icon={X}
+                    color="tertiary"
+                    tooltip={
+                      language === "en"
+                        ? "Close chapter form"
+                        : "Tutup form bab"
+                    }
+                    onPress={closeChapterModal}
+                    className="absolute right-4 top-4 bg-primary/80 shadow-xs backdrop-blur-sm"
+                  />
+                </div>
 
-              </div>
+                <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-5 sm:px-6">
+                  {parentChapterIdForNew && (
+                    <div className="flex items-center gap-3 rounded-2xl border border-secondary bg-secondary/40 p-3.5">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-brand-700 shadow-xs ring-1 ring-secondary ring-inset">
+                        <CornerDownRight className="size-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-tertiary">
+                          {language === "en" ? "Parent chapter" : "Bab induk"}
+                        </p>
+                        <p className="truncate text-sm font-semibold text-primary">
+                          {bookChapters.find(
+                            (chapter) => chapter.id === parentChapterIdForNew,
+                          )?.title ||
+                            (language === "en"
+                              ? "Selected chapter"
+                              : "Bab terpilih")}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {language === 'en' ? 'Description (Optional)' : 'Deskripsi (Opsional)'}
-                </label>
-                <input
-                  type="text"
-                  placeholder={language === 'en' ? 'Summary of this chapter...' : 'Ringkasan bab ini...'}
-                  value={chapterForm.description}
-                  onChange={e => setChapterForm({ ...chapterForm, description: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
+                  <Input
+                    autoFocus
+                    label={language === "en" ? "Chapter title" : "Judul bab"}
+                    isRequired
+                    value={chapterForm.title}
+                    onChange={(value) =>
+                      setChapterForm((current) => ({
+                        ...current,
+                        title: value,
+                      }))
+                    }
+                    placeholder={
+                      language === "en"
+                        ? "Example: Chapter 1 - Foundations"
+                        : "Contoh: Bab 1 - Dasar-dasar"
+                    }
+                    hint={
+                      language === "en"
+                        ? "Use a concise title that is easy to scan."
+                        : "Gunakan judul singkat yang mudah dipindai."
+                    }
+                  />
 
-              </div>
+                  <TextArea
+                    label={language === "en" ? "Description" : "Deskripsi"}
+                    value={chapterForm.description}
+                    onChange={(value) =>
+                      setChapterForm((current) => ({
+                        ...current,
+                        description: value,
+                      }))
+                    }
+                    placeholder={
+                      language === "en"
+                        ? "What material is covered in this chapter?"
+                        : "Materi apa yang dibahas dalam bab ini?"
+                    }
+                    rows={3}
+                    hint={
+                      language === "en"
+                        ? "Optional. This appears alongside the chapter title."
+                        : "Opsional. Teks ini tampil bersama judul bab."
+                    }
+                  />
+                </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => { setIsNewChapterOpen(false); setEditingChapter(null); setParentChapterIdForNew(null); }}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm"
-                >
-                  Add Chapter
-                </button>
-
-              </div>
-            </form>
-
-          </div>
-
-        </div>
+                <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                  <Button
+                    color="secondary"
+                    size="md"
+                    onPress={closeChapterModal}
+                    className="w-full sm:w-auto"
+                  >
+                    {language === "en" ? "Cancel" : "Batal"}
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="md"
+                    iconLeading={editingChapter ? Pencil : Plus}
+                    isDisabled={!chapterForm.title.trim()}
+                    className="w-full sm:w-auto"
+                  >
+                    {editingChapter
+                      ? language === "en"
+                        ? "Save changes"
+                        : "Simpan perubahan"
+                      : language === "en"
+                        ? parentChapterIdForNew
+                          ? "Add subchapter"
+                          : "Add chapter"
+                        : parentChapterIdForNew
+                          ? "Tambah subbab"
+                          : "Tambah bab"}
+                  </Button>
+                </div>
+              </form>
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
       )}
 
       {/* Dialog: New Item Card */}
@@ -2434,22 +2895,28 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
           onClose={() => setIsAIBookBuilderOpen(false)}
           onImport={async (bookData) => {
             const newBook = await createBook({
-              title: bookData.title || (language === 'en' ? 'Generated Book' : 'Buku Baru'),
-              description: bookData.description || '',
-              coverUrl: '',
-              isPublic: false
+              title:
+                bookData.title ||
+                (language === "en" ? "Generated Book" : "Buku Baru"),
+              description: bookData.description || "",
+              coverUrl: "",
+              isPublic: false,
             });
             const newBookId = newBook.id;
-            
+
             if (bookData.chapters && Array.isArray(bookData.chapters)) {
-              for (let chIndex = 0; chIndex < bookData.chapters.length; chIndex++) {
+              for (
+                let chIndex = 0;
+                chIndex < bookData.chapters.length;
+                chIndex++
+              ) {
                 const ch = bookData.chapters[chIndex];
                 const newChapter = await createChapter({
                   bookId: newBookId,
-                  title: ch.title || `Chapter ${chIndex+1}`,
+                  title: ch.title || `Chapter ${chIndex + 1}`,
                 });
                 const newChapterId = newChapter.id;
-                
+
                 if (ch.cards && Array.isArray(ch.cards)) {
                   for (const card of ch.cards) {
                     await createItem({
@@ -2462,7 +2929,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                 }
               }
             }
-            
+
             setIsAIBookBuilderOpen(false);
           }}
         />
@@ -2478,7 +2945,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                 chapterId: selectedChapterIdForItem || undefined,
                 question: normalizeBilingualText(card.question),
                 answer: normalizeBilingualText(card.answer),
-                tags: []
+                tags: [],
               });
             });
             setIsAIImportOpen(false);
@@ -2487,7 +2954,10 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
       )}
       <ItemFormModal
         isOpen={isNewItemOpen || !!editingItem}
-        onClose={() => { setIsNewItemOpen(false); setEditingItem(null); }}
+        onClose={() => {
+          setIsNewItemOpen(false);
+          setEditingItem(null);
+        }}
         onSubmit={(data, keepOpen) => {
           if (editingItem) {
             updateItem(editingItem.id, data);
@@ -2497,7 +2967,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             createItem({
               bookId: selectedBook.id,
               ...data,
-              tags: []
+              tags: [],
             });
             if (!keepOpen) {
               setIsNewItemOpen(false);
@@ -2510,29 +2980,44 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
         language={language}
       />
 
-
-
-
       {/* Dialog: Export JSON */}
-      
 
       {/* Item Preview Modal */}
       {(() => {
-        const previewList = currentChapter?.id === '__unassigned__'
-          ? bookItems.filter(i => !i.chapterId || !bookChapters.some(c => c.id === i.chapterId))
-          : (currentChapter ? bookItems.filter(i => i.chapterId === currentChapter.id) : bookItems);
-        const pIdx = previewItem ? previewList.findIndex(i => i.id === previewItem.id) : -1;
-        const nextPreviewItem = pIdx >= 0 && pIdx < previewList.length - 1 ? previewList[pIdx + 1] : undefined;
+        const previewList =
+          currentChapter?.id === "__unassigned__"
+            ? bookItems.filter(
+                (i) =>
+                  !i.chapterId ||
+                  !bookChapters.some((c) => c.id === i.chapterId),
+              )
+            : currentChapter
+              ? bookItems.filter((i) => i.chapterId === currentChapter.id)
+              : bookItems;
+        const pIdx = previewItem
+          ? previewList.findIndex((i) => i.id === previewItem.id)
+          : -1;
+        const nextPreviewItem =
+          pIdx >= 0 && pIdx < previewList.length - 1
+            ? previewList[pIdx + 1]
+            : undefined;
         const prevPreviewItem = pIdx > 0 ? previewList[pIdx - 1] : undefined;
 
-
-  return (
+        return (
           <ItemPreviewModal
             item={previewItem}
             isOpen={Boolean(previewItem)}
             onClose={() => setPreviewItem(null)}
-            onNavigateNext={nextPreviewItem ? () => setPreviewItem(nextPreviewItem) : undefined}
-            onNavigatePrev={prevPreviewItem ? () => setPreviewItem(prevPreviewItem) : undefined}
+            onNavigateNext={
+              nextPreviewItem
+                ? () => setPreviewItem(nextPreviewItem)
+                : undefined
+            }
+            onNavigatePrev={
+              prevPreviewItem
+                ? () => setPreviewItem(prevPreviewItem)
+                : undefined
+            }
             onActivate={() => {
               if (previewItem) {
                 activateItem(previewItem.id);
@@ -2586,13 +3071,20 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
 
       {/* Review Modal */}
       <PersonalReviewModal
+        key={`${isReviewOpen}-${selectedBook?.id || reviewSpecificBookId || "all"}-${currentChapter?.id || "all"}`}
         isOpen={isReviewOpen}
         onClose={() => {
           setIsReviewOpen(false);
           setReviewSpecificBookId(null);
         }}
-        specificBookId={selectedBook ? selectedBook.id : (reviewSpecificBookId || undefined)}
-        specificChapterId={currentChapter && currentChapter.id !== '__unassigned__' ? currentChapter.id : undefined}
+        specificBookId={
+          selectedBook ? selectedBook.id : reviewSpecificBookId || undefined
+        }
+        specificChapterId={
+          currentChapter && currentChapter.id !== "__unassigned__"
+            ? currentChapter.id
+            : undefined
+        }
       />
 
       {/* Per-Book Review Schedule Calendar Modal */}
@@ -2607,7 +3099,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             setCalendarChapterFilter(null);
           }}
           items={items}
-          chapters={chapters.filter(c => c.bookId === calendarBook.id)}
+          chapters={chapters.filter((c) => c.bookId === calendarBook.id)}
           language={language}
           initialChapterFilter={calendarChapterFilter}
           onStartReview={(chapterId) => {
@@ -2615,7 +3107,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             setReviewSpecificBookId(calendarBook.id);
             setSelectedBook(calendarBook);
             if (chapterId) {
-              const ch = chapters.find(c => c.id === chapterId);
+              const ch = chapters.find((c) => c.id === chapterId);
               if (ch) setSelectedChapter(ch);
             }
             setIsReviewOpen(true);
@@ -2644,95 +3136,114 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
           setPreviewItem(item);
         }}
       />
-      {/* Join Class Code Modal Dialog */}
-      {isJoinClassModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-800 text-left relative">
-            <button
-              onClick={() => {
-                setIsJoinClassModalOpen(false);
-                setCodeInputValue('');
-                setJoinMessage(null);
-              }}
-              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                <KeyRound className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                  {language === 'en' ? 'Join Class with Code' : 'Gabung Kelas dengan Kode'}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {language === 'en' ? 'Enter the class invitation code provided by your teacher.' : 'Masukkan kode undangan kelas dari pengajar Anda.'}
-                </p>
-              </div>
-            </div>
-
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleJoinClass();
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {language === 'en' ? 'Class Code' : 'Kode Kelas'}
-                </label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    autoFocus
-                    placeholder={language === 'en' ? 'e.g. BOOK-89AB' : 'contoh: BOOK-89AB'}
-                    value={codeInputValue}
-                    onChange={(e) => setCodeInputValue(e.target.value.toUpperCase())}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold tracking-wider text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 uppercase placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
+      <ModalOverlay
+        isOpen={isJoinClassModalOpen}
+        isDismissable={!isJoiningClass}
+        onOpenChange={(open) => {
+          if (!open) closeJoinClassModal();
+        }}
+      >
+        <Modal className="max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl">
+          <Dialog
+            aria-label={
+              language === "en"
+                ? "Join class with code"
+                : "Gabung kelas dengan kode"
+            }
+          >
+            {({ close }) => (
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  handleJoinClass();
+                }}
+                className="flex max-h-[inherit] flex-col"
+              >
+                <div className="relative flex shrink-0 items-start gap-3 border-b border-secondary px-5 py-5 sm:px-6">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-200 ring-inset">
+                    <KeyRound className="size-5" />
+                  </div>
+                  <div className="min-w-0 pr-10">
+                    <h2 className="text-lg font-semibold text-primary">
+                      {language === "en" ? "Join a class" : "Gabung kelas"}
+                    </h2>
+                    <p className="mt-0.5 text-sm text-secondary">
+                      {language === "en"
+                        ? "Enter the invitation code shared by your teacher."
+                        : "Masukkan kode undangan yang dibagikan oleh guru Anda."}
+                    </p>
+                  </div>
+                  <CloseButton
+                    label={
+                      language === "en"
+                        ? "Close join class modal"
+                        : "Tutup modal gabung kelas"
+                    }
+                    onPress={close}
+                    isDisabled={isJoiningClass}
+                    className="absolute right-4 top-4"
                   />
                 </div>
-                {joinMessage && (
-                  <p className={`text-xs mt-2 ml-1 font-medium ${joinMessage.isError ? 'text-rose-500' : 'text-emerald-500'}`}>
-                    {joinMessage.text}
-                  </p>
-                )}
-              </div>
 
-              <div className="flex gap-2.5 justify-end pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsJoinClassModalOpen(false);
-                    setCodeInputValue('');
-                    setJoinMessage(null);
-                  }}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                >
-                  {language === 'en' ? 'Cancel' : 'Batal'}
-                </button>
-                <button
-                  type="submit"
-                  disabled={!codeInputValue.trim()}
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>{language === 'en' ? 'Join Class' : 'Gabung Kelas'}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+                <div className="space-y-4 px-5 py-5 sm:px-6">
+                  <Input
+                    label={language === "en" ? "Class code" : "Kode kelas"}
+                    icon={KeyRound}
+                    autoFocus
+                    value={codeInputValue}
+                    onChange={(value) => {
+                      setCodeInputValue(value.toUpperCase());
+                      if (joinMessage) setJoinMessage(null);
+                    }}
+                    placeholder={
+                      language === "en"
+                        ? "Example: BOOK-89AB"
+                        : "Contoh: BOOK-89AB"
+                    }
+                    inputClassName="font-semibold uppercase tracking-wider placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
+                    isInvalid={Boolean(joinMessage?.isError)}
+                  />
+                  {joinMessage && (
+                    <InlineAlert
+                      variant={joinMessage.isError ? "error" : "success"}
+                      title={joinMessage.text}
+                      onDismiss={() => setJoinMessage(null)}
+                    />
+                  )}
+                </div>
+
+                <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-secondary bg-secondary px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                  <Button
+                    color="secondary"
+                    size="md"
+                    onPress={close}
+                    isDisabled={isJoiningClass}
+                    className="w-full sm:w-auto"
+                  >
+                    {language === "en" ? "Cancel" : "Batal"}
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="md"
+                    iconLeading={LogIn}
+                    isDisabled={!codeInputValue.trim()}
+                    isLoading={isJoiningClass}
+                    className="w-full sm:w-auto"
+                  >
+                    {language === "en" ? "Join class" : "Gabung kelas"}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
 
       {confirmDialog?.isOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-800 text-center">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-              {language === 'en' ? 'Confirmation' : 'Konfirmasi'}
+              {language === "en" ? "Confirmation" : "Konfirmasi"}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
               {confirmDialog.message}
@@ -2742,13 +3253,13 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                 onClick={() => setConfirmDialog(null)}
                 className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
-                {language === 'en' ? 'Cancel' : 'Batal'}
+                {language === "en" ? "Cancel" : "Batal"}
               </button>
               <button
                 onClick={confirmDialog.onConfirm}
                 className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold shadow-sm transition-colors cursor-pointer"
               >
-                {language === 'en' ? 'Yes' : 'Ya'}
+                {language === "en" ? "Yes" : "Ya"}
               </button>
             </div>
           </div>
@@ -2772,9 +3283,8 @@ interface ItemRowProps {
   isBulkMode?: boolean;
   isSelected?: boolean;
   onToggleSelect?: () => void;
-  language: 'en' | 'id';
+  language: "en" | "id";
 }
-
 
 const SortableItemWrapper = (props: any) => {
   const {
@@ -2783,25 +3293,39 @@ const SortableItemWrapper = (props: any) => {
     setNodeRef,
     transform,
     transition,
-    isDragging
+    isDragging,
   } = useSortable({ id: props.item.id, disabled: props.isReadonly });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 50 : (props.activeMenuId === `item-${props.item.id}` ? 50 : undefined),
-    position: (isDragging || props.activeMenuId === `item-${props.item.id}`) ? 'relative' : undefined,
+    zIndex: isDragging
+      ? 50
+      : props.activeMenuId === `item-${props.item.id}`
+        ? 50
+        : undefined,
+    position:
+      isDragging || props.activeMenuId === `item-${props.item.id}`
+        ? "relative"
+        : undefined,
     opacity: isDragging ? 0.9 : 1,
-    boxShadow: isDragging ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' : undefined,
-    scale: isDragging ? '1.02' : '1',
-    touchAction: 'manipulation', // Allows scroll but handles drag
-    WebkitUserSelect: 'none',
-    WebkitTouchCallout: 'none',
+    boxShadow: isDragging
+      ? "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+      : undefined,
+    scale: isDragging ? "1.02" : "1",
+    touchAction: "manipulation", // Allows scroll but handles drag
+    WebkitUserSelect: "none",
+    WebkitTouchCallout: "none",
   };
 
-
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="select-none">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="select-none"
+    >
       <ItemCardRow {...props} />
 
       {/* Audio Recorder Drawer ends here */}
@@ -2824,82 +3348,93 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
   language,
   activeMenuId,
   setActiveMenuId,
-  isReadonly
+  isReadonly,
 }) => {
   const [showInlineAnswer, setShowInlineAnswer] = useState(false);
-  const [justReviewedRating, setJustReviewedRating] = useState<number | null>(null);
+  const [justReviewedRating, setJustReviewedRating] = useState<number | null>(
+    null,
+  );
   const [showAudio, setShowAudio] = useState(false);
   const [hasAudio, setHasAudio] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-    AudioStorageService.hasAudio(item.id).then(exists => {
+    AudioStorageService.hasAudio(item.id).then((exists) => {
       if (mounted) setHasAudio(exists);
     });
 
     const handleAudioChange = (e: Event) => {
       const customEvent = e as CustomEvent<{ itemId: string | number }>;
       if (String(customEvent.detail?.itemId) === String(item.id)) {
-        AudioStorageService.hasAudio(item.id).then(exists => {
+        AudioStorageService.hasAudio(item.id).then((exists) => {
           if (mounted) setHasAudio(exists);
         });
       }
     };
 
-    window.addEventListener('audio-updated', handleAudioChange);
+    window.addEventListener("audio-updated", handleAudioChange);
 
-  return () => {
+    return () => {
       mounted = false;
-      window.removeEventListener('audio-updated', handleAudioChange);
+      window.removeEventListener("audio-updated", handleAudioChange);
     };
   }, [item.id]);
 
-  const isDueToday = item.isActive && (!item.fsrsData.nextReview || new Date(item.fsrsData.nextReview) <= new Date());
+  const isDueToday =
+    item.isActive &&
+    (!item.fsrsData.nextReview ||
+      new Date(item.fsrsData.nextReview) <= new Date());
   const reviewedToday = isReviewedToday(item.fsrsData.lastReview);
   const showDimmed = reviewedToday && !isDueToday;
   const intervalDays = getNonQuranIntervalDays(item.fsrsData);
   const isMapan = item.isActive && intervalDays >= 300;
   const intervals = predictNonQuranIntervals(item.fsrsData);
-  
+  const hasVisualMedia = Boolean(item.imageQ || item.imageA);
+
   const formatDate = (d: string | null) => {
-    if (!d) return language === 'en' ? 'Today' : 'Hari ini';
+    if (!d) return language === "en" ? "Today" : "Hari ini";
     const nextDate = new Date(d);
     const now = new Date();
-    const formatted = nextDate.toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { month: 'short', day: 'numeric' });
+    const formatted = nextDate.toLocaleDateString(
+      language === "en" ? "en-US" : "id-ID",
+      { month: "short", day: "numeric" },
+    );
     if (nextDate <= now) {
-      return language === 'en' ? `Today (${formatted})` : `Hari ini (${formatted})`;
+      return language === "en"
+        ? `Today (${formatted})`
+        : `Hari ini (${formatted})`;
     }
     return formatted;
   };
 
   const getFullDueDateStr = (d: string | null) => {
-    if (!d) return language === 'en' ? 'Today' : 'Hari ini';
+    if (!d) return language === "en" ? "Today" : "Hari ini";
     const nextDate = new Date(d);
-    return nextDate.toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
+    return nextDate.toLocaleDateString(language === "en" ? "en-US" : "id-ID", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
   };
 
   const menuId = `item-${item.id}`;
   const isMenuOpen = activeMenuId === menuId;
 
-
   return (
-    <div className={`group relative p-3 sm:p-3.5 rounded-2xl border transition-all flex flex-col justify-between gap-2.5 ${isMenuOpen ? 'z-50 ring-2 ring-indigo-500/20' : ''} ${
-      isSelected
-        ? 'border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/30 ring-2 ring-indigo-500/30 shadow-2xs'
-        : isDueToday
-        ? 'border-amber-300/90 bg-amber-50/25 dark:bg-amber-950/20 dark:border-amber-700/60 shadow-2xs'
-        : showDimmed
-        ? 'border-emerald-200/50 bg-emerald-50/10 dark:bg-emerald-950/10 dark:border-emerald-800/30 opacity-75 grayscale-[20%]'
-        : item.isActive
-        ? 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs hover:border-indigo-300 dark:hover:border-indigo-700'
-        : 'border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 opacity-80 hover:opacity-100'
-    }`}>
-      
+    <div
+      className={`group relative flex flex-col justify-between gap-2.5 rounded-2xl border p-3 transition-all sm:p-3.5 ${isMenuOpen ? "z-50 ring-2 ring-brand-500/20" : ""} ${
+        isSelected
+          ? "border-brand-500 bg-brand-50/40 ring-2 ring-brand-500/30 shadow-2xs"
+          : isDueToday
+            ? "border-amber-300/90 bg-amber-50/25 dark:bg-amber-950/20 dark:border-amber-700/60 shadow-2xs"
+            : showDimmed
+              ? "border-emerald-200/50 bg-emerald-50/10 dark:bg-emerald-950/10 dark:border-emerald-800/30 opacity-75 grayscale-[20%]"
+              : item.isActive
+                ? "border-secondary bg-primary shadow-2xs hover:border-brand-300 hover:shadow-md"
+                : "border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 opacity-80 hover:opacity-100"
+      }`}
+    >
       {/* Top Header: Checkbox (if bulk) + 1-Tap Activation Pill + Due Status + Pop-up Eye (Mata 1) + Menu */}
       <div className="flex items-center justify-between gap-2 pb-1 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -2907,12 +3442,15 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
           {isBulkMode && (
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); onToggleSelect?.(); }}
-              className="p-1 rounded-md text-indigo-600 hover:scale-105 transition-transform shrink-0"
-              title={isSelected ? 'Deselect' : 'Select'}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSelect?.();
+              }}
+              className="shrink-0 rounded-md p-1 text-brand-600 transition-transform hover:scale-105"
+              title={isSelected ? "Deselect" : "Select"}
             >
               {isSelected ? (
-                <CheckSquare className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <CheckSquare className="size-4 text-brand-600" />
               ) : (
                 <Square className="w-4 h-4 text-slate-400" />
               )}
@@ -2921,28 +3459,40 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
 
           {/* Prominent 1-Tap Activation Pill */}
           <button
-            onClick={(e) => { e.stopPropagation(); item.isActive ? onDeactivate() : onActivate(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              item.isActive ? onDeactivate() : onActivate();
+            }}
             className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 active:scale-95 group/act ${
               item.isActive
-                ? 'bg-emerald-600 hover:bg-rose-600 text-white shadow-2xs'
-                : 'bg-slate-100 hover:bg-emerald-600 hover:text-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+                ? "bg-emerald-600 hover:bg-rose-600 text-white shadow-2xs"
+                : "bg-slate-100 hover:bg-emerald-600 hover:text-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
             }`}
-            title={item.isActive 
-              ? (language === 'en' ? 'Card is Active (click to deactivate)' : 'Kartu Aktif (klik untuk menonaktifkan)')
-              : (language === 'en' ? 'Card is Inactive (click to activate)' : 'Kartu Nonaktif (klik untuk mengaktifkan)')
+            title={
+              item.isActive
+                ? language === "en"
+                  ? "Card is Active (click to deactivate)"
+                  : "Kartu Aktif (klik untuk menonaktifkan)"
+                : language === "en"
+                  ? "Card is Inactive (click to activate)"
+                  : "Kartu Nonaktif (klik untuk mengaktifkan)"
             }
           >
             {item.isActive ? (
               <>
                 <CheckCircle2 className="w-3.5 h-3.5 group-hover/act:hidden" />
                 <Power className="w-3.5 h-3.5 hidden group-hover/act:inline" />
-                <span className="group-hover/act:hidden">{language === 'en' ? 'Active' : 'Aktif'}</span>
-                <span className="hidden group-hover/act:inline">{language === 'en' ? 'Deactivate' : 'Nonaktifkan'}</span>
+                <span className="group-hover/act:hidden">
+                  {language === "en" ? "Active" : "Aktif"}
+                </span>
+                <span className="hidden group-hover/act:inline">
+                  {language === "en" ? "Deactivate" : "Nonaktifkan"}
+                </span>
               </>
             ) : (
               <>
                 <Power className="w-3.5 h-3.5" />
-                <span>{language === 'en' ? 'Activate' : 'Aktifkan'}</span>
+                <span>{language === "en" ? "Activate" : "Aktifkan"}</span>
               </>
             )}
           </button>
@@ -2951,7 +3501,7 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
           {isDueToday && (
             <span className="px-2 py-0.5 rounded-md bg-amber-100/90 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-bold text-[10px] flex items-center gap-1 border border-amber-200 dark:border-amber-800/60">
               <Flame className="w-3 h-3 text-amber-500" />
-              {language === 'en' ? 'Due Today' : 'Perlu Review'}
+              {language === "en" ? "Due Today" : "Perlu Review"}
             </span>
           )}
 
@@ -2959,121 +3509,210 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
           {isMapan && (
             <span className="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold text-[10px] border border-amber-300 dark:border-amber-700 flex items-center gap-1">
               <Award className="w-3 h-3 text-amber-500" />
-              {language === 'en' ? 'Mastered (>300d)' : 'Mapan (>300d)'}
+              {language === "en" ? "Mastered (>300d)" : "Mapan (>300d)"}
             </span>
           )}
-
         </div>
 
         {/* Right Header Actions: Ikon Mata 1 (Lihat Lengkap via Pop-up Modal) + Menu */}
         <div className="flex items-center gap-1 shrink-0">
           <button
-            onClick={(e) => { e.stopPropagation(); onPreview(); }}
-            className="px-2.5 py-1 rounded-lg bg-indigo-50/80 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-semibold text-[11px] flex items-center gap-1 border border-indigo-200/50 dark:border-indigo-800/40 transition-colors cursor-pointer"
-            title={language === 'en' ? 'Open popup viewer' : 'Buka jendela pop-up lengkap'}
+            onClick={(e) => {
+              e.stopPropagation();
+              onPreview();
+            }}
+            className="flex cursor-pointer items-center gap-1 rounded-lg border border-brand-200 bg-brand-50/80 px-2.5 py-1 text-[11px] font-semibold text-brand-700 transition-colors hover:bg-brand-100"
+            title={
+              language === "en"
+                ? "Open popup viewer"
+                : "Buka jendela pop-up lengkap"
+            }
           >
-            <Eye className="w-3.5 h-3.5 text-indigo-500" />
-            <span>{language === 'en' ? 'Pop-up' : 'Lihat'}</span>
+            <Eye className="size-3.5 text-brand-500" />
+            <span>{language === "en" ? "Pop-up" : "Lihat"}</span>
           </button>
 
           {!isReadonly && (
             <div className="relative shrink-0">
               <button
-                onClick={(e) => { e.stopPropagation(); setActiveMenuId(activeMenuId === menuId ? null : menuId); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveMenuId(activeMenuId === menuId ? null : menuId);
+                }}
                 className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 title="Options"
               >
                 <MoreVertical className="w-4 h-4" />
               </button>
-              
+
               {activeMenuId === menuId && (
-                <div 
+                <div
                   className="absolute right-0 top-full mt-1 w-28 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 py-1 z-30 text-xs"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
-                    onClick={() => { setActiveMenuId(null); onEdit(); }}
+                    onClick={() => {
+                      setActiveMenuId(null);
+                      onEdit();
+                    }}
                     className="w-full text-left px-3 py-1.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
                   >
-                    <Edit2 className="w-3.5 h-3.5 text-indigo-500" />
-                    <span>{language === 'en' ? 'Edit' : 'Edit'}</span>
+                    <Edit2 className="size-3.5 text-brand-500" />
+                    <span>{language === "en" ? "Edit" : "Edit"}</span>
                   </button>
                   <button
-                    onClick={() => { setActiveMenuId(null); onDelete(); }}
+                    onClick={() => {
+                      setActiveMenuId(null);
+                      onDelete();
+                    }}
                     className="w-full text-left px-3 py-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 flex items-center gap-2 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                    <span>{language === 'en' ? 'Delete' : 'Hapus'}</span>
+                    <span>{language === "en" ? "Delete" : "Hapus"}</span>
                   </button>
-
                 </div>
               )}
-
             </div>
           )}
-
         </div>
-
       </div>
 
-      {/* Main Content: Question Body */}
-      <div 
-        className="flex items-start gap-3 cursor-pointer py-0.5 group/content"
-        onClick={(e) => {
-          if (isBulkMode) {
-            e.stopPropagation();
-            onToggleSelect?.();
-          } else {
-            onPreview();
-          }
-        }}
-        title={isBulkMode 
-          ? (language === 'en' ? 'Click to select/deselect' : 'Klik untuk memilih kartu')
-          : (language === 'en' ? 'Click to open pop-up preview' : 'Klik untuk melihat pop-up lengkap')}
+      {/* Media cards use two sides; text-only cards stay stacked. */}
+      <div
+        className={hasVisualMedia ? "grid grid-cols-2 gap-3" : "space-y-2.5"}
       >
-        {/* Thumbnail Image if available */}
-        {item.imageQ && (
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-50 dark:bg-slate-800 shrink-0 overflow-hidden flex items-center justify-center shadow-2xs border border-slate-200/70 dark:border-slate-700">
-            <img src={item.imageQ} className="w-full h-full object-cover group-hover/content:scale-105 transition-transform" alt="Media" />
-
-          </div>
-        )}
-
-        {/* Text Content */}
-        <div className="flex-1 min-w-0">
-          <BilingualCardText 
-            text={item.question}
-            type="question"
-            variant="card-list"
-            emptyFallback={language === 'en' ? '[Image Only]' : '[Hanya Gambar]'}
-          />
-        </div>
-
-      </div>
-
-      {/* Answer Area: (Inline Reveal when eye icon is clicked) */}
-      {showInlineAnswer && (
-        <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
-          {/* Formatted Answer Body */}
-          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60 text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
-            {item.imageA && (
-              <div className="mb-2 max-h-36 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-                <img src={item.imageA} alt="Answer Media" className="w-full h-full object-cover" />
-
-              </div>
-            )}
-            <BilingualCardText 
-              text={item.answer}
-              type="answer"
+        <button
+          type="button"
+          className={`group/content flex min-w-0 flex-col rounded-2xl border border-secondary bg-secondary/35 p-3 text-left outline-none transition hover:border-brand-200 hover:bg-brand-50/35 focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
+            hasVisualMedia ? "min-h-44" : "w-full"
+          }`}
+          onClick={(event) => {
+            if (isBulkMode) {
+              event.stopPropagation();
+              onToggleSelect?.();
+            } else {
+              onPreview();
+            }
+          }}
+          title={
+            isBulkMode
+              ? language === "en"
+                ? "Click to select/deselect"
+                : "Klik untuk memilih kartu"
+              : language === "en"
+                ? "Click to open pop-up preview"
+                : "Klik untuk melihat pop-up lengkap"
+          }
+        >
+          <span className="mb-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
+            {language === "en" ? "Question" : "Pertanyaan"}
+          </span>
+          {item.imageQ && (
+            <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-secondary bg-primary shadow-2xs sm:h-40">
+              <img
+                src={item.imageQ}
+                className="size-full object-contain transition-transform duration-300 group-hover/content:scale-[1.02]"
+                alt={language === "en" ? "Question media" : "Media pertanyaan"}
+              />
+            </div>
+          )}
+          <div
+            className={`min-w-0 ${hasVisualMedia && !item.imageQ ? "my-auto w-full" : "w-full"}`}
+          >
+            <BilingualCardText
+              text={item.question}
+              type="question"
               variant="card-list"
-              emptyFallback={language === 'en' ? '[No text answer]' : '[Tidak ada teks jawaban]'}
+              emptyFallback={
+                language === "en" ? "[Image Only]" : "[Hanya Gambar]"
+              }
             />
-
           </div>
+        </button>
 
-        </div>
-      )}
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowInlineAnswer((current) => !current);
+          }}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3 text-left outline-none transition focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
+            hasVisualMedia ? "min-h-44" : "w-full"
+          } ${
+            showInlineAnswer
+              ? "border-brand-200 bg-brand-50/40"
+              : "border-secondary bg-secondary/35 hover:border-brand-200 hover:bg-brand-50/35"
+          }`}
+        >
+          <span className="mb-2 flex w-full items-center justify-between gap-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
+            <span>{language === "en" ? "Answer" : "Jawaban"}</span>
+            <span className="inline-flex items-center gap-1 rounded-lg bg-primary px-2 py-1 text-[9px] normal-case tracking-normal text-brand-700 shadow-xs">
+              {showInlineAnswer ? (
+                <EyeOff className="size-3" />
+              ) : (
+                <Eye className="size-3" />
+              )}
+              {showInlineAnswer
+                ? language === "en"
+                  ? "Hide"
+                  : "Tutup"
+                : language === "en"
+                  ? "Open"
+                  : "Buka"}
+            </span>
+          </span>
 
+          {showInlineAnswer ? (
+            <>
+              {item.imageA && (
+                <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-brand-200 bg-primary shadow-2xs sm:h-40">
+                  <img
+                    src={item.imageA}
+                    alt={language === "en" ? "Answer media" : "Media jawaban"}
+                    className="size-full object-contain"
+                  />
+                </div>
+              )}
+              <div
+                className={`min-w-0 ${hasVisualMedia && !item.imageA ? "my-auto w-full" : "w-full"}`}
+              >
+                <BilingualCardText
+                  text={item.answer}
+                  type="answer"
+                  variant="card-list"
+                  emptyFallback={
+                    language === "en"
+                      ? "[No text answer]"
+                      : "[Tidak ada teks jawaban]"
+                  }
+                />
+
+                {item.explanation && (
+                  <div className="mt-3 border-t border-brand-200 pt-2 text-xs text-secondary">
+                    <span className="font-semibold text-brand-700">
+                      {language === "en" ? "Explanation" : "Penjelasan"}:{" "}
+                    </span>
+                    <BilingualCardText
+                      text={item.explanation}
+                      type="answer"
+                      variant="card-list"
+                    />
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <span className="my-auto flex w-full flex-col items-center justify-center gap-2 py-6 text-center text-xs font-medium text-tertiary">
+              <span className="flex size-9 items-center justify-center rounded-full bg-brand-solid text-white shadow-md shadow-brand-500/20">
+                <Eye className="size-4" />
+              </span>
+              {language === "en"
+                ? "Click to reveal the answer"
+                : "Klik untuk buka jawaban"}
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* 4 Tombol Evaluasi Kartu */}
       {item.isActive ? (
@@ -3090,13 +3729,21 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
               }}
               className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
                 justReviewedRating === 1
-                  ? 'bg-rose-600 text-white border-rose-600 ring-2 ring-rose-400'
-                  : 'border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300'
+                  ? "bg-rose-600 text-white border-rose-600 ring-2 ring-rose-400"
+                  : "border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300"
               }`}
-              title={language === 'en' ? 'Review again tomorrow' : 'Lupa total / Ulang lagi'}
+              title={
+                language === "en"
+                  ? "Review again tomorrow"
+                  : "Lupa total / Ulang lagi"
+              }
             >
-              <span className="text-[11px] font-bold leading-tight">{language === 'en' ? 'Again' : 'Lagi'}</span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">{intervals.again}</span>
+              <span className="text-[11px] font-bold leading-tight">
+                {language === "en" ? "Again" : "Lagi"}
+              </span>
+              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
+                {intervals.again}
+              </span>
             </button>
             <button
               type="button"
@@ -3109,13 +3756,21 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
               }}
               className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
                 justReviewedRating === 2
-                  ? 'bg-amber-600 text-white border-amber-600 ring-2 ring-amber-400'
-                  : 'border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300'
+                  ? "bg-amber-600 text-white border-amber-600 ring-2 ring-amber-400"
+                  : "border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300"
               }`}
-              title={language === 'en' ? 'Hard to recall' : 'Ingat dengan susah payah'}
+              title={
+                language === "en"
+                  ? "Hard to recall"
+                  : "Ingat dengan susah payah"
+              }
             >
-              <span className="text-[11px] font-bold leading-tight">{language === 'en' ? 'Hard' : 'Sulit'}</span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">{intervals.hard}</span>
+              <span className="text-[11px] font-bold leading-tight">
+                {language === "en" ? "Hard" : "Sulit"}
+              </span>
+              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
+                {intervals.hard}
+              </span>
             </button>
             <button
               type="button"
@@ -3128,13 +3783,17 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
               }}
               className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
                 justReviewedRating === 3
-                  ? 'bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-400'
-                  : 'border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300'
+                  ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-400"
+                  : "border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
               }`}
-              title={language === 'en' ? 'Good recall' : 'Ingat dengan baik'}
+              title={language === "en" ? "Good recall" : "Ingat dengan baik"}
             >
-              <span className="text-[11px] font-bold leading-tight">{language === 'en' ? 'Good' : 'Baik'}</span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">{intervals.good}</span>
+              <span className="text-[11px] font-bold leading-tight">
+                {language === "en" ? "Good" : "Baik"}
+              </span>
+              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
+                {intervals.good}
+              </span>
             </button>
             <button
               type="button"
@@ -3147,78 +3806,106 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
               }}
               className={`py-1.5 px-1 rounded-lg border text-center transition-all flex flex-col items-center justify-center cursor-pointer shadow-2xs ${
                 justReviewedRating === 4
-                  ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-400'
-                  : 'border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/70 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300'
+                  ? "border-utility-blue-600 bg-utility-blue-600 text-white ring-2 ring-utility-blue-400"
+                  : "border-utility-blue-200 bg-utility-blue-50/70 text-utility-blue-700 hover:bg-utility-blue-100"
               }`}
-              title={language === 'en' ? 'Easy recall' : 'Sangat mudah / Refleks langsung hafal'}
+              title={
+                language === "en"
+                  ? "Easy recall"
+                  : "Sangat mudah / Refleks langsung hafal"
+              }
             >
-              <span className="text-[11px] font-bold leading-tight">{language === 'en' ? 'Easy' : 'Mudah'}</span>
-              <span className="text-[9px] font-semibold opacity-85 mt-0.5">{intervals.easy}</span>
+              <span className="text-[11px] font-bold leading-tight">
+                {language === "en" ? "Easy" : "Mudah"}
+              </span>
+              <span className="text-[9px] font-semibold opacity-85 mt-0.5">
+                {intervals.easy}
+              </span>
             </button>
-
           </div>
-
         </div>
       ) : (
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
           <span className="text-[11px] text-slate-400 italic">
-            {language === 'en' ? 'Activate card to enable scheduled review' : 'Aktifkan kartu untuk mulai jadwal review'}
+            {language === "en"
+              ? "Activate card to enable scheduled review"
+              : "Aktifkan kartu untuk mulai jadwal review"}
           </span>
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); onActivate(); }}
-            className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white text-[11px] font-semibold flex items-center gap-1 shadow-2xs hover:bg-indigo-700 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              onActivate();
+            }}
+            className="flex cursor-pointer items-center gap-1 rounded-lg bg-brand-solid px-2.5 py-1 text-[11px] font-semibold text-white shadow-2xs hover:bg-brand-solid_hover"
           >
             <Plus className="w-3 h-3" />
-            <span>{language === 'en' ? 'Activate' : 'Aktifkan'}</span>
+            <span>{language === "en" ? "Activate" : "Aktifkan"}</span>
           </button>
         </div>
       )}
-      
+
       {/* Bottom Row: Learning Metrics (Api, Otak, Kalender) & Ikon Mata Buka/Tutup Jawaban di Pojok Kanan Bawah */}
       <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/60 text-xs">
         {item.isActive ? (
           <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
-            <div 
-              className="flex items-center gap-1" 
-              title={language === 'en' ? `Reviewed: ${item.fsrsData.reps} times` : `Direview: ${item.fsrsData.reps} kali`}
+            <div
+              className="flex items-center gap-1"
+              title={
+                language === "en"
+                  ? `Reviewed: ${item.fsrsData.reps} times`
+                  : `Direview: ${item.fsrsData.reps} kali`
+              }
             >
               <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{item.fsrsData.reps}×</span>
-
+              <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                {item.fsrsData.reps}×
+              </span>
             </div>
-            <div 
-              className="flex items-center gap-1" 
-              title={language === 'en' ? `Calculated Interval: ${intervalDays} days` : `Interval terhitung: ${intervalDays} hari`}
+            <div
+              className="flex items-center gap-1"
+              title={
+                language === "en"
+                  ? `Calculated Interval: ${intervalDays} days`
+                  : `Interval terhitung: ${intervalDays} hari`
+              }
             >
-              <Brain className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-              <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{intervalDays}d</span>
-
+              <Brain className="size-3.5 shrink-0 text-brand-500" />
+              <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                {intervalDays}d
+              </span>
             </div>
-            <div 
-              className="flex items-center gap-1" 
-              title={language === 'en' ? `Due Date: ${getFullDueDateStr(item.fsrsData.nextReview)}` : `Jatuh tempo: ${getFullDueDateStr(item.fsrsData.nextReview)}`}
+            <div
+              className="flex items-center gap-1"
+              title={
+                language === "en"
+                  ? `Due Date: ${getFullDueDateStr(item.fsrsData.nextReview)}`
+                  : `Jatuh tempo: ${getFullDueDateStr(item.fsrsData.nextReview)}`
+              }
             >
-              <CalendarClock className={`w-3.5 h-3.5 shrink-0 ${isDueToday ? 'text-amber-500' : 'text-sky-500'}`} />
-              <span className={`text-[11px] font-semibold ${isDueToday ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-500 dark:text-slate-400'}`}>
+              <CalendarClock
+                className={`w-3.5 h-3.5 shrink-0 ${isDueToday ? "text-amber-500" : "text-sky-500"}`}
+              />
+              <span
+                className={`text-[11px] font-semibold ${isDueToday ? "text-amber-600 dark:text-amber-400 font-bold" : "text-slate-500 dark:text-slate-400"}`}
+              >
                 {formatDate(item.fsrsData.nextReview)}
               </span>
-
             </div>
 
             {/* Saved feedback */}
             {justReviewedRating && (
               <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-0.5 animate-pulse ml-0.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                {language === 'en' ? 'Saved!' : 'Tersimpan!'}
+                {language === "en" ? "Saved!" : "Tersimpan!"}
               </span>
             )}
-
           </div>
         ) : (
           <div className="text-[11px] text-slate-400 italic">
-            {language === 'en' ? 'Card inactive (not in daily review)' : 'Nonaktif (tidak masuk review harian)'}
-
+            {language === "en"
+              ? "Card inactive (not in daily review)"
+              : "Nonaktif (tidak masuk review harian)"}
           </div>
         )}
 
@@ -3227,15 +3914,18 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
           {/* Audio Recording & Playback button */}
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); setShowAudio(!showAudio); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowAudio(!showAudio);
+            }}
             className={`relative w-7 h-7 rounded-full border flex items-center justify-center transition-all shadow-2xs cursor-pointer hover:scale-105 active:scale-95 ${
-              hasAudio 
-                ? 'bg-indigo-50 border-indigo-300 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-700 dark:text-indigo-300 shadow-indigo-500/10' 
+              hasAudio
+                ? "border-brand-300 bg-brand-50 text-brand-600 shadow-brand-500/10"
                 : showAudio
-                ? 'bg-slate-200 border-slate-300 text-slate-700 dark:bg-slate-700 dark:border-slate-600 dark:text-white'
-                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700'
+                  ? "bg-slate-200 border-slate-300 text-slate-700 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                  : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700"
             }`}
-            title={language === 'en' ? 'Voice Recording' : 'Rekaman Suara'}
+            title={language === "en" ? "Voice Recording" : "Rekaman Suara"}
           >
             <Mic className="w-3 h-3" />
             {hasAudio && (
@@ -3246,32 +3936,51 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
           {item.tags && item.tags.length > 0 && (
             <div className="hidden sm:flex items-center gap-1 overflow-hidden">
               {item.tags.slice(0, 1).map((t, idx) => (
-                <span key={idx} className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 truncate max-w-[60px]">
+                <span
+                  key={idx}
+                  className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 truncate max-w-[60px]"
+                >
                   #{t}
                 </span>
               ))}
-
             </div>
           )}
 
           {/* Ikon Mata Buka/Tutup Jawaban di Sebelah Kanan Bawah */}
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); setShowInlineAnswer(prev => !prev); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowInlineAnswer((prev) => !prev);
+            }}
             className={`px-2 py-0.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 text-[11px] font-medium shadow-2xs ${
               showInlineAnswer
-                ? 'bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300 border-slate-200 dark:border-slate-700'
+                ? "border-brand-300 bg-brand-100 text-brand-700"
+                : "border-secondary bg-secondary text-secondary hover:bg-brand-50 hover:text-brand-700"
             }`}
-            title={showInlineAnswer 
-              ? (language === 'en' ? 'Hide answer' : 'Tutup jawaban') 
-              : (language === 'en' ? 'Show answer' : 'Buka jawaban')}
+            title={
+              showInlineAnswer
+                ? language === "en"
+                  ? "Hide answer"
+                  : "Tutup jawaban"
+                : language === "en"
+                  ? "Show answer"
+                  : "Buka jawaban"
+            }
           >
-            {showInlineAnswer ? <EyeOff className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> : <Eye className="w-3.5 h-3.5 text-slate-500 hover:text-indigo-500" />}
+            {showInlineAnswer ? (
+              <EyeOff className="size-3.5 text-brand-600" />
+            ) : (
+              <Eye className="size-3.5 text-fg-quaternary hover:text-brand-500" />
+            )}
             <span className="text-[10px]">
-              {showInlineAnswer 
-                ? (language === 'en' ? 'Hide' : 'Tutup') 
-                : (language === 'en' ? 'Answer' : 'Jawaban')}
+              {showInlineAnswer
+                ? language === "en"
+                  ? "Hide"
+                  : "Tutup"
+                : language === "en"
+                  ? "Answer"
+                  : "Jawaban"}
             </span>
           </button>
         </div>
@@ -3280,12 +3989,12 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
       {/* Collapsible Audio Recorder Player Drawer */}
       {showAudio && (
         <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-          <AudioRecorderPlayer 
+          <AudioRecorderPlayer
             itemId={item.id}
             itemType="book"
-            itemLabel={language === 'en' ? 'Voice Note' : 'Setoran Suara'}
-            language={language} 
-            compact={true} 
+            itemLabel={language === "en" ? "Voice Note" : "Setoran Suara"}
+            language={language}
+            compact={true}
             onHasRecordingChange={setHasAudio}
           />
         </div>
@@ -3295,4 +4004,3 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
 };
 
 export default PersonalSpace;
-

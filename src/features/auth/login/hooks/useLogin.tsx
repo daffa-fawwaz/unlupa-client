@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import type {
-  LoginPayload,
-  LoginView,
-} from "@/features/auth/login/types/login.types";
+import type { LoginPayload } from "@/features/auth/login/types/login.types";
 import { loginService } from "@/features/auth/login/services/login.services";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/features/auth/stores/auth.store";
@@ -12,24 +9,17 @@ import { toast } from "sonner";
 
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
-  const [view, setView] = useState<LoginView>("form");
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
   const login = async (payload: LoginPayload) => {
+    if (loading) return false;
+
     setLoading(true);
-    setView("loading");
     setError(null);
 
     try {
@@ -41,18 +31,12 @@ export const useLogin = () => {
 
       useDashboardModeStore.getState().setActiveRole(user.role);
 
-      setView("success");
-
-      timeoutRef.current = setTimeout(() => {
-        if (user.role === "teacher") {
-          navigate("/dashboard/kelas");
-        } else {
-          navigate("/dashboard");
-        }
-        toast.success(`Berhasil masuk. Selamat datang kembali, ${user.name}!`, {
-          duration: 4000,
-        });
-      }, 1500);
+      setLoading(false);
+      toast.success("Berhasil masuk", {
+        description: `Selamat datang kembali, ${user.name}!`,
+        duration: 4000,
+      });
+      navigate(user.role === "teacher" ? "/dashboard/kelas" : "/dashboard");
 
       return true;
     } catch (err) {
@@ -64,14 +48,29 @@ export const useLogin = () => {
         /password|email|kredensial|credential|invalid|salah|tidak terdaftar|belum terdaftar/i.test(
           backendMessage,
         );
+      const isRateLimited = status === 429;
+      const errorMessage = isCredentialError
+        ? "Kata sandi atau email yang Anda masukkan salah"
+        : isRateLimited
+          ? "Terlalu banyak percobaan. Tunggu sebentar lalu coba lagi."
+          : backendMessage ||
+            (axiosError.request
+              ? "Tidak dapat terhubung ke server. Periksa koneksi Anda."
+              : "Terjadi kesalahan saat masuk.");
 
-      setError(
-        isCredentialError
-          ? "Kata sandi atau email yang Anda masukkan salah"
-          : backendMessage || "Terjadi kesalahan",
-      );
+      setError(errorMessage);
       setLoading(false);
-      setView("form");
+      if (isRateLimited) {
+        toast.warning("Coba lagi nanti", {
+          description: errorMessage,
+          duration: 5000,
+        });
+      } else {
+        toast.error(isCredentialError ? "Gagal masuk" : "Terjadi kendala", {
+          description: errorMessage,
+          duration: 5000,
+        });
+      }
       // Keep email and password - don't clear them
       return false;
     }
@@ -79,7 +78,6 @@ export const useLogin = () => {
 
   return {
     loading,
-    view,
     error,
     email,
     setEmail,

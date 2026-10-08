@@ -4,7 +4,7 @@ import { ClassroomSearchInput } from "../components/shared/ClassroomSearchInput"
 import { ClassroomHeader } from "../components/dashboard/ClassroomHeader";
 import { TabsNavigation } from "../components/navigation/TabsNavigation";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
-import { Book, BookAlertIcon } from "lucide-react";
+import { Book, BookAlertIcon } from "@/components/foundations/hugeicons";
 import { QuickAccessCard } from "../components/dashboard/QuickAccessSection";
 import {
   DropdownMenuContent,

@@ -7,7 +7,7 @@ import {
   Eye,
   Users,
   Map,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 
 export const AboutSection = () => {
   return (

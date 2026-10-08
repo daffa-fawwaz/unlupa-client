@@ -1,4 +1,4 @@
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "@/components/foundations/hugeicons";
 import { useApp } from "@/context/AppContext";
 import { cx } from "@/utils/cx";
 

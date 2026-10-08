@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "@/components/foundations/hugeicons";
 
 type ClassroomSearchInputProps = {
   value?: string;

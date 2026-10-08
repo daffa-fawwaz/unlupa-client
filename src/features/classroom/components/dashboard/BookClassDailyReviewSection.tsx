@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Play, Star, BookOpen, CheckCircle2, Clock } from "lucide-react";
+import { Play, Star, BookOpen, CheckCircle2, Clock } from "@/components/foundations/hugeicons";
 import { FlameBurst } from "@/components/ui/FlameBurst";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import type { DailyTask } from "@/features/alquran/types/quran.types";

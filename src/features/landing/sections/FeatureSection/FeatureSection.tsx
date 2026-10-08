@@ -12,7 +12,7 @@ import {
   Gauge,
   LayoutDashboard,
   Star,
-} from "lucide-react";
+} from "@/components/foundations/hugeicons";
 import { useRef } from "react";
 
 export const FeatureSection = () => {

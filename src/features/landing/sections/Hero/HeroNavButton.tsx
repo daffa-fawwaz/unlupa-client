@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "@/components/foundations/hugeicons";
 
 interface HeroNavButtonProps {
   direction: "left" | "right";

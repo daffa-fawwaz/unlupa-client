@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, AlertCircle } from "lucide-react";
+import { X, Loader2, AlertCircle } from "@/components/foundations/hugeicons";
 import { parseContentRef } from "@/features/alquran/components/item-detail/ItemDetailView.config";
 import { alquranService } from "@/features/alquran/services/alquran.services";
 import type { UpdateItemPayload, UpdateItemResponse } from "@/features/alquran/types/quran.types";

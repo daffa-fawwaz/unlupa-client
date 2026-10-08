@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Star, Clock, BookOpen, Play, CheckCircle2 } from "lucide-react";
+import { Star, Clock, BookOpen, Play, CheckCircle2 } from "@/components/foundations/hugeicons";
 import { FlameBurst } from "@/components/ui/FlameBurst";
 import { useMyJoinedClass } from "@/features/classroom/hooks/useClassroom";
 import { alquranService } from "@/features/alquran/services/alquran.services";

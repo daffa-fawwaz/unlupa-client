@@ -1,24 +1,24 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  X, 
-  Calendar as CalendarIcon, 
-  ChevronLeft, 
-  ChevronRight, 
-  CheckCircle2, 
-  BookOpen, 
-  Sparkles, 
-  Flame, 
-  Eye, 
-  Play, 
-  ShieldCheck, 
-  Filter,
+import React, { useState, useMemo } from "react";
+import {
+  X,
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
+  BookOpen,
+  Sparkles,
+  Eye,
+  Play,
   CalendarCheck,
-  ChevronDown
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { QuranPageItem } from '../../types';
-import { JUZ_LIST } from '../../data/quranData';
-import { isDue } from '../../lib/fsrs';
+} from "@/components/foundations/hugeicons";
+import { QuranPageItem } from "../../types";
+import { JUZ_LIST } from "../../data/quranData";
+import { isDue } from "../../lib/fsrs";
+import {
+  Dialog,
+  Modal,
+  ModalOverlay,
+} from "@/components/application/modals/modal";
 
 interface Props {
   isOpen: boolean;
@@ -33,8 +33,8 @@ interface Props {
 // Helper to format Date as local YYYY-MM-DD
 function formatLocalDate(d: Date): string {
   const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -45,7 +45,7 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
   language,
   initialJuzFilter = null,
   onStartReview,
-  onOpenMushafViewer
+  onOpenMushafViewer,
 }) => {
   const today = useMemo(() => new Date(), []);
   const todayStr = useMemo(() => formatLocalDate(today), [today]);
@@ -53,43 +53,29 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
   const [currentYear, setCurrentYear] = useState<number>(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState<number>(today.getMonth()); // 0 - 11
   const [selectedDateStr, setSelectedDateStr] = useState<string>(todayStr);
-  const [juzFilter, setJuzFilter] = useState<number | 'all'>(initialJuzFilter || 'all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'mapan' | 'active'>('all');
-
-  // Sync initial Juz filter if passed
-  useEffect(() => {
-    if (initialJuzFilter) {
-      setJuzFilter(initialJuzFilter);
-    }
-  }, [initialJuzFilter]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  const [juzFilter, setJuzFilter] = useState<number | "all">(
+    initialJuzFilter || "all",
+  );
+  const [statusFilter, setStatusFilter] = useState<"all" | "mapan" | "active">(
+    "all",
+  );
 
   // Month navigation
   const handlePrevMonth = () => {
     if (currentMonth === 0) {
       setCurrentMonth(11);
-      setCurrentYear(y => y - 1);
+      setCurrentYear((y) => y - 1);
     } else {
-      setCurrentMonth(m => m - 1);
+      setCurrentMonth((m) => m - 1);
     }
   };
 
   const handleNextMonth = () => {
     if (currentMonth === 11) {
       setCurrentMonth(0);
-      setCurrentYear(y => y + 1);
+      setCurrentYear((y) => y + 1);
     } else {
-      setCurrentMonth(m => m + 1);
+      setCurrentMonth((m) => m + 1);
     }
   };
 
@@ -100,21 +86,41 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
   };
 
   const monthNamesId = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
   ];
   const monthNamesEn = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
-  const currentMonthName = language === 'en' 
-    ? monthNamesEn[currentMonth] 
-    : monthNamesId[currentMonth];
+  const currentMonthName =
+    language === "en" ? monthNamesEn[currentMonth] : monthNamesId[currentMonth];
 
-  const weekDayLabels = language === 'en'
-    ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    : ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Ahd'];
+  const weekDayLabels =
+    language === "en"
+      ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      : ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Ahd"];
 
   // Calculate days in the displayed month and grid structure
   const calendarDays = useMemo(() => {
@@ -125,10 +131,10 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
     let startingDayOfWeek = firstDayOfMonth.getDay() - 1;
     if (startingDayOfWeek === -1) startingDayOfWeek = 6; // Sunday becomes 6
 
-    const days: { 
-      dateStr: string; 
-      dayNumber: number; 
-      isCurrentMonth: boolean; 
+    const days: {
+      dateStr: string;
+      dayNumber: number;
+      isCurrentMonth: boolean;
       isToday: boolean;
       dateObj: Date;
     }[] = [];
@@ -143,7 +149,7 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
         dayNumber: dNum,
         isCurrentMonth: false,
         isToday: formatLocalDate(dObj) === todayStr,
-        dateObj: dObj
+        dateObj: dObj,
       });
     }
 
@@ -156,7 +162,7 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
         dayNumber: i,
         isCurrentMonth: true,
         isToday: dStr === todayStr,
-        dateObj: dObj
+        dateObj: dObj,
       });
     }
 
@@ -170,7 +176,7 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
           dayNumber: i,
           isCurrentMonth: false,
           isToday: formatLocalDate(dObj) === todayStr,
-          dateObj: dObj
+          dateObj: dObj,
         });
       }
     }
@@ -181,19 +187,24 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
   // Aggregate Quran review schedules and completed logs
   const scheduleData = useMemo(() => {
     const plannedMap = new Map<string, QuranPageItem[]>();
-    const completedMap = new Map<string, { page: QuranPageItem; rating: number }[]>();
+    const completedMap = new Map<
+      string,
+      { page: QuranPageItem; rating: number }[]
+    >();
 
-    (quranPages || []).forEach(p => {
+    (quranPages || []).forEach((p) => {
       if (!p.isActive) return;
 
       // Filter by Juz if specified
-      if (juzFilter !== 'all' && p.juzNumber !== juzFilter) return;
+      if (juzFilter !== "all" && p.juzNumber !== juzFilter) return;
 
       // Filter by Status if specified
-      const stabilityDays = Math.round((p.fsrsData?.stability || 0) * 0.4025587);
-      const isMapan = p.status === 'mastered_for_now' || stabilityDays >= 30;
-      if (statusFilter === 'mapan' && !isMapan) return;
-      if (statusFilter === 'active' && isMapan) return;
+      const stabilityDays = Math.round(
+        (p.fsrsData?.stability || 0) * 0.4025587,
+      );
+      const isMapan = p.status === "mastered_for_now" || stabilityDays >= 30;
+      if (statusFilter === "mapan" && !isMapan) return;
+      if (statusFilter === "active" && isMapan) return;
 
       // Check planned next review
       const nextReview = p.fsrsData?.nextReview;
@@ -214,25 +225,41 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
       }
 
       // Check Mapan custom rhythms (weekly/monthly)
-      if (p.mapanSchedule && p.mapanSchedule.mode !== 'fsrs') {
-        if (p.mapanSchedule.mode === 'weekly' && typeof p.mapanSchedule.weeklyDay === 'number') {
+      if (p.mapanSchedule && p.mapanSchedule.mode !== "fsrs") {
+        if (
+          p.mapanSchedule.mode === "weekly" &&
+          typeof p.mapanSchedule.weeklyDay === "number"
+        ) {
           const targetDay = p.mapanSchedule.weeklyDay;
-          calendarDays.forEach(calDay => {
-            if (calDay.isCurrentMonth && calDay.dateObj > today && calDay.dateObj.getDay() === targetDay) {
-              if (!plannedMap.has(calDay.dateStr)) plannedMap.set(calDay.dateStr, []);
+          calendarDays.forEach((calDay) => {
+            if (
+              calDay.isCurrentMonth &&
+              calDay.dateObj > today &&
+              calDay.dateObj.getDay() === targetDay
+            ) {
+              if (!plannedMap.has(calDay.dateStr))
+                plannedMap.set(calDay.dateStr, []);
               const list = plannedMap.get(calDay.dateStr)!;
-              if (!list.some(x => x.pageNumber === p.pageNumber)) {
+              if (!list.some((x) => x.pageNumber === p.pageNumber)) {
                 list.push(p);
               }
             }
           });
-        } else if (p.mapanSchedule.mode === 'monthly' && typeof p.mapanSchedule.monthlyDate === 'number') {
+        } else if (
+          p.mapanSchedule.mode === "monthly" &&
+          typeof p.mapanSchedule.monthlyDate === "number"
+        ) {
           const targetDateNum = p.mapanSchedule.monthlyDate;
-          calendarDays.forEach(calDay => {
-            if (calDay.isCurrentMonth && calDay.dayNumber === targetDateNum && calDay.dateObj > today) {
-              if (!plannedMap.has(calDay.dateStr)) plannedMap.set(calDay.dateStr, []);
+          calendarDays.forEach((calDay) => {
+            if (
+              calDay.isCurrentMonth &&
+              calDay.dayNumber === targetDateNum &&
+              calDay.dateObj > today
+            ) {
+              if (!plannedMap.has(calDay.dateStr))
+                plannedMap.set(calDay.dateStr, []);
               const list = plannedMap.get(calDay.dateStr)!;
-              if (!list.some(x => x.pageNumber === p.pageNumber)) {
+              if (!list.some((x) => x.pageNumber === p.pageNumber)) {
                 list.push(p);
               }
             }
@@ -241,13 +268,13 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
       }
 
       // Check historical review logs
-      (p.reviewLogs || []).forEach(log => {
+      (p.reviewLogs || []).forEach((log) => {
         if (log.date) {
           const logDateStr = formatLocalDate(new Date(log.date));
           if (!completedMap.has(logDateStr)) completedMap.set(logDateStr, []);
           completedMap.get(logDateStr)!.push({
             page: p,
-            rating: log.rating || 3
+            rating: log.rating || 3,
           });
         }
       });
@@ -262,7 +289,7 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
     let completedInMonth = 0;
     let peakDayCount = 0;
 
-    calendarDays.forEach(day => {
+    calendarDays.forEach((day) => {
       if (!day.isCurrentMonth) return;
       const planned = scheduleData.plannedMap.get(day.dateStr) || [];
       const completed = scheduleData.completedMap.get(day.dateStr) || [];
@@ -275,20 +302,23 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
       }
     });
 
-    const activeInScope = (quranPages || []).filter(p => {
+    const activeInScope = (quranPages || []).filter((p) => {
       if (!p.isActive) return false;
-      if (juzFilter !== 'all' && p.juzNumber !== juzFilter) return false;
+      if (juzFilter !== "all" && p.juzNumber !== juzFilter) return false;
       return true;
     });
 
-    const mapanInScope = activeInScope.filter(p => {
-      const stabilityDays = Math.round((p.fsrsData?.stability || 0) * 0.4025587);
-      return p.status === 'mastered_for_now' || stabilityDays >= 30;
+    const mapanInScope = activeInScope.filter((p) => {
+      const stabilityDays = Math.round(
+        (p.fsrsData?.stability || 0) * 0.4025587,
+      );
+      return p.status === "mastered_for_now" || stabilityDays >= 30;
     });
 
-    const retentionRate = activeInScope.length > 0 
-      ? Math.round((mapanInScope.length / activeInScope.length) * 100) 
-      : 0;
+    const retentionRate =
+      activeInScope.length > 0
+        ? Math.round((mapanInScope.length / activeInScope.length) * 100)
+        : 0;
 
     return {
       scheduledInMonth,
@@ -296,7 +326,7 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
       peakDayCount,
       activeCount: activeInScope.length,
       mapanCount: mapanInScope.length,
-      retentionRate
+      retentionRate,
     };
   }, [calendarDays, scheduleData, quranPages, juzFilter]);
 
@@ -306,18 +336,21 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
     const completed = scheduleData.completedMap.get(selectedDateStr) || [];
 
     const isDateToday = selectedDateStr === todayStr;
-    const selectedObj = new Date(selectedDateStr + 'T00:00:00');
-    const isPast = selectedObj < new Date(todayStr + 'T00:00:00');
-    const isFuture = selectedObj > new Date(todayStr + 'T00:00:00');
+    const selectedObj = new Date(selectedDateStr + "T00:00:00");
+    const isPast = selectedObj < new Date(todayStr + "T00:00:00");
+    const isFuture = selectedObj > new Date(todayStr + "T00:00:00");
 
     let formattedTitle = selectedDateStr;
     try {
-      formattedTitle = selectedObj.toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
+      formattedTitle = selectedObj.toLocaleDateString(
+        language === "en" ? "en-US" : "id-ID",
+        {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        },
+      );
     } catch {
       // fallback
     }
@@ -328,456 +361,433 @@ export const QuranReviewCalendarModal: React.FC<Props> = ({
       isPast,
       isFuture,
       planned,
-      completed
+      completed,
     };
   }, [selectedDateStr, scheduleData, todayStr, language]);
 
   if (!isOpen) return null;
 
   return (
-    <div 
+    <ModalOverlay
+      isOpen={isOpen}
+      isDismissable
+      onOpenChange={(open) => !open && onClose()}
       data-no-swipe="true"
-      className="fixed inset-0 z-[110] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
     >
-      <div 
-        id="quran-review-calendar-modal"
-        className="bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
-      >
-        {/* MODAL HEADER */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 shrink-0 bg-slate-50/70 dark:bg-slate-900/90">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-              <CalendarCheck className="w-5 h-5" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
-                  {language === 'en' ? 'Quran Review Schedule' : 'Kalender Jadwal Murajaah Al-Qur\'an'}
-                </h2>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-extrabold text-[10px] flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-emerald-500" />
-                  {language === 'en' ? 'Adaptive Retention' : 'Retensi Adaptif'}
-                </span>
+      <Modal className="max-w-6xl overflow-hidden rounded-3xl border border-brand-200 bg-primary">
+        <Dialog
+          id="quran-review-calendar-modal"
+          aria-label={
+            language === "en"
+              ? "Quran review calendar"
+              : "Kalender murajaah Al-Qur'an"
+          }
+          className="flex max-h-[92dvh] flex-col overflow-hidden"
+        >
+          <header className="relative flex shrink-0 items-center justify-between gap-3 overflow-hidden border-b border-brand-200 bg-[linear-gradient(135deg,var(--color-brand-50)_0%,var(--color-bg-primary)_74%)] px-4 py-4 sm:px-6 sm:py-5">
+            <div className="pointer-events-none absolute -right-16 -top-20 size-52 rounded-full bg-brand-200/35 blur-3xl" />
+            <div className="relative flex min-w-0 items-center gap-3">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-[#c2410c] bg-brand-solid text-white shadow-lg shadow-brand-500/20">
+                <CalendarCheck className="size-5" />
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                {language === 'en' 
-                  ? 'Visual timeline of spaced Quran reviews & long-term retention' 
-                  : 'Peta sebaran jadwal murajaah hafalan Al-Qur\'an berdasarkan interval retensi cerdas'}
-              </p>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="truncate text-lg font-semibold text-primary sm:text-xl">
+                    {language === "en"
+                      ? "Quran Review Calendar"
+                      : "Kalender Murajaah Al-Qur'an"}
+                  </h2>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-brand-200 bg-primary/80 px-2 py-0.5 text-[10px] font-semibold text-brand-700">
+                    <Sparkles className="size-3" />
+                    {juzFilter === "all" ? "30 Juz" : `Juz ${juzFilter}`}
+                  </span>
+                </div>
+                <p className="mt-0.5 truncate text-xs text-secondary">
+                  {language === "en"
+                    ? "Adaptive review workload and completed Quran sessions in one timeline."
+                    : "Jadwal adaptif dan riwayat murajaah Al-Qur'an dalam satu linimasa."}
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+              aria-label={
+                language === "en" ? "Close calendar" : "Tutup kalender"
+              }
+              className="relative flex size-9 shrink-0 items-center justify-center rounded-xl border border-secondary bg-primary text-fg-quaternary shadow-xs outline-none transition hover:border-brand-200 hover:text-brand-700 focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#ef6905]"
             >
-              <X className="w-4 h-4" />
+              <X className="size-4" />
             </button>
-          </div>
-        </div>
+          </header>
 
-        {/* SCROLLABLE MODAL BODY */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
-          {/* CONTROLS ROW: Juz Selector, Status Filter, Month Switcher */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-            {/* Left Filter: Juz Filter & Status */}
-            <div className="flex flex-wrap items-center gap-2">
-              {/* Juz Filter Dropdown */}
-              <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-                <BookOpen className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-                <span className="text-slate-500 dark:text-slate-400">Juz:</span>
-                <select
-                  value={juzFilter}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setJuzFilter(val === 'all' ? 'all' : parseInt(val, 10));
-                  }}
-                  className="bg-transparent font-bold text-slate-900 dark:text-white focus:outline-none cursor-pointer"
-                >
-                  <option value="all" className="dark:bg-slate-900">
-                    {language === 'en' ? 'All Juz (1-30)' : 'Semua Juz (1-30)'}
-                  </option>
-                  {JUZ_LIST.map(j => (
-                    <option key={j.juzNumber} value={j.juzNumber} className="dark:bg-slate-900">
-                      Juz {j.juzNumber} ({j.surahSpan})
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <div className="min-h-0 flex-1 overflow-y-auto bg-secondary/20 p-4 sm:p-6">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(19rem,0.75fr)] lg:items-start">
+              <div className="min-w-0 space-y-4">
+                <section className="flex flex-col justify-between gap-3 rounded-2xl border border-secondary bg-primary p-3 shadow-xs sm:flex-row sm:items-center">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="flex h-10 items-center gap-2 rounded-xl border border-secondary bg-secondary/50 px-3 text-xs font-semibold text-secondary">
+                      <BookOpen className="size-4 text-brand-600" />
+                      <span>Juz</span>
+                      <select
+                        value={juzFilter}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setJuzFilter(value === "all" ? "all" : Number(value));
+                        }}
+                        className="max-w-40 cursor-pointer bg-transparent font-semibold text-primary outline-none"
+                      >
+                        <option value="all">
+                          {language === "en" ? "All 30 Juz" : "Semua 30 Juz"}
+                        </option>
+                        {JUZ_LIST.map((juz) => (
+                          <option key={juz.juzNumber} value={juz.juzNumber}>
+                            Juz {juz.juzNumber} · {juz.surahSpan}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
 
-              {/* Status Segmented Buttons */}
-              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('all')}
-                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                    statusFilter === 'all' 
-                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold shadow-2xs' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {language === 'en' ? 'All' : 'Semua'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('active')}
-                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                    statusFilter === 'active' 
-                      ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-300 font-bold shadow-2xs' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {language === 'en' ? 'Active' : 'Aktif'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('mapan')}
-                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                    statusFilter === 'mapan' 
-                      ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 font-bold shadow-2xs' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {language === 'en' ? 'Mapan' : 'Mapan'}
-                </button>
-              </div>
-            </div>
-
-            {/* Right: Month Switcher */}
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded-xl shadow-2xs self-start md:self-auto">
-              <button
-                type="button"
-                onClick={handlePrevMonth}
-                title={language === 'en' ? 'Previous Month' : 'Bulan Sebelumnya'}
-                className="w-7 h-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              <button
-                type="button"
-                onClick={handleGoToToday}
-                className="px-3 py-1 text-xs font-bold text-slate-800 dark:text-slate-100 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer whitespace-nowrap"
-              >
-                {currentMonthName} {currentYear}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleNextMonth}
-                title={language === 'en' ? 'Next Month' : 'Bulan Berikutnya'}
-                className="w-7 h-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* QURAN METRICS SUMMARY */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-            <div className="p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40">
-              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block mb-1">
-                {language === 'en' ? 'Scheduled This Month' : 'Jadwal Bulan Ini'}
-              </span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-lg font-extrabold text-slate-900 dark:text-white">
-                  {metrics.scheduledInMonth}
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  {language === 'en' ? 'pages' : 'halaman'}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40">
-              <span className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider block mb-1">
-                {language === 'en' ? 'Completed Murajaah' : 'Sudah Dimurajaah'}
-              </span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-lg font-extrabold text-slate-900 dark:text-white">
-                  {metrics.completedInMonth}
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  {language === 'en' ? 'evaluations' : 'evaluasi'}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40">
-              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">
-                {language === 'en' ? 'Peak Day Load' : 'Beban Harian Maks'}
-              </span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-lg font-extrabold text-slate-900 dark:text-white">
-                  {metrics.peakDayCount}
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  {language === 'en' ? 'pages / day' : 'hal / hari'}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40">
-              <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider block mb-1">
-                {language === 'en' ? 'Mapan Retention' : 'Ketahanan Mapan'}
-              </span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-lg font-extrabold text-slate-900 dark:text-white">
-                  {metrics.retentionRate}%
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  ({metrics.mapanCount}/{metrics.activeCount})
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* CALENDAR GRID */}
-          <div className="space-y-1.5">
-            {/* Day Header */}
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {weekDayLabels.map((lbl, idx) => (
-                <div 
-                  key={lbl} 
-                  className={`py-1 text-[11px] font-bold uppercase tracking-wider ${
-                    idx === 4 
-                      ? 'text-emerald-600 dark:text-emerald-400' 
-                      : idx === 6 
-                      ? 'text-rose-500 dark:text-rose-400' 
-                      : 'text-slate-400 dark:text-slate-500'
-                  }`}
-                >
-                  {lbl}
-                </div>
-              ))}
-            </div>
-
-            {/* Days Cells */}
-            <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
-              {calendarDays.map((day) => {
-                const plannedList = scheduleData.plannedMap.get(day.dateStr) || [];
-                const completedList = scheduleData.completedMap.get(day.dateStr) || [];
-
-                const plannedCount = plannedList.length;
-                const completedCount = completedList.length;
-                const isSelected = day.dateStr === selectedDateStr;
-                const isToday = day.isToday;
-
-                let cellBg = 'bg-slate-50/60 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80';
-                if (!day.isCurrentMonth) {
-                  cellBg = 'bg-transparent text-slate-300 dark:text-slate-700 opacity-40';
-                } else if (plannedCount > 0) {
-                  if (plannedCount >= 8) {
-                    cellBg = 'bg-emerald-100/90 dark:bg-emerald-950/70 border-emerald-300 dark:border-emerald-800';
-                  } else if (plannedCount >= 4) {
-                    cellBg = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/60';
-                  } else {
-                    cellBg = 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/40';
-                  }
-                }
-
-                return (
-                  <button
-                    key={day.dateStr}
-                    type="button"
-                    onClick={() => setSelectedDateStr(day.dateStr)}
-                    className={`min-h-[50px] sm:min-h-[64px] p-1 sm:p-1.5 rounded-2xl border transition-all text-left flex flex-col justify-between cursor-pointer ${cellBg} ${
-                      isSelected 
-                        ? 'ring-2 ring-emerald-500 dark:ring-emerald-400 border-transparent shadow-xs scale-[1.02] z-10' 
-                        : 'border-slate-200/70 dark:border-slate-800/80'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span className={`text-xs font-bold ${
-                        isToday
-                          ? 'w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black'
-                          : isSelected
-                          ? 'text-emerald-700 dark:text-emerald-300 font-extrabold'
-                          : day.isCurrentMonth
-                          ? 'text-slate-800 dark:text-slate-200'
-                          : 'text-slate-300 dark:text-slate-600'
-                      }`}>
-                        {day.dayNumber}
-                      </span>
-
-                      {completedCount > 0 && day.isCurrentMonth && (
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      )}
+                    <div className="flex h-10 items-center rounded-xl border border-secondary bg-secondary/50 p-1 text-xs font-semibold">
+                      {(["all", "active", "mapan"] as const).map((status) => (
+                        <button
+                          key={status}
+                          type="button"
+                          onClick={() => setStatusFilter(status)}
+                          className={`h-8 rounded-lg px-3 outline-none transition focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${statusFilter === status ? "border border-brand-200 bg-primary text-brand-700 shadow-xs" : "border border-transparent text-secondary hover:text-primary"}`}
+                        >
+                          {status === "all"
+                            ? language === "en"
+                              ? "All"
+                              : "Semua"
+                            : status === "active"
+                              ? language === "en"
+                                ? "Active"
+                                : "Aktif"
+                              : "Mapan"}
+                        </button>
+                      ))}
                     </div>
+                  </div>
 
-                    {day.isCurrentMonth && plannedCount > 0 && (
-                      <div className="mt-1 flex items-center gap-1">
-                        <span className={`inline-flex items-center px-1.5 py-0.2 rounded-md font-black text-[9px] sm:text-[10px] ${
-                          isToday 
-                            ? 'bg-amber-500 text-white shadow-2xs' 
-                            : 'bg-emerald-600 dark:bg-emerald-500 text-white'
-                        }`}>
-                          {plannedCount} <span className="hidden sm:inline ml-0.5">hal</span>
-                        </span>
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* DETAIL DRAWER FOR SELECTED DATE */}
-          <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 p-4 space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white capitalize">
-                    {selectedDetails.formattedTitle}
-                  </h3>
-                  {selectedDetails.isDateToday && (
-                    <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 font-extrabold text-[10px]">
-                      {language === 'en' ? 'Today' : 'Hari Ini'}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {selectedDetails.planned.length > 0 
-                    ? `${selectedDetails.planned.length} ${language === 'en' ? 'Quran pages scheduled' : 'halaman Al-Qur\'an terjadwal murajaah'}`
-                    : (language === 'en' ? 'No Quran reviews scheduled' : 'Tidak ada jadwal murajaah Al-Qur\'an')}
-                </p>
-              </div>
-
-              {selectedDetails.isDateToday && selectedDetails.planned.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    onStartReview(juzFilter !== 'all' ? juzFilter : undefined);
-                  }}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all self-start sm:self-auto"
-                >
-                  <Play className="w-3.5 h-3.5 fill-white" />
-                  <span>{language === 'en' ? 'Start Quran Review' : 'Mulai Murajaah'}</span>
-                </button>
-              )}
-            </div>
-
-            {/* PLANNED PAGES LIST */}
-            {selectedDetails.planned.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
-                {selectedDetails.planned.map(p => {
-                  const stabilityDays = Math.round((p.fsrsData?.stability || 0) * 0.4025587);
-                  const isMapan = p.status === 'mastered_for_now' || stabilityDays >= 30;
-
-                  return (
-                    <div
-                      key={p.pageNumber}
-                      className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-2 shadow-2xs"
+                  <div className="flex h-10 items-center self-start rounded-xl border border-secondary bg-primary p-1 shadow-xs sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={handlePrevMonth}
+                      className="flex size-8 items-center justify-center rounded-lg text-fg-quaternary outline-none hover:bg-secondary hover:text-primary focus-visible:outline-[3px] focus-visible:outline-[#ef6905]"
                     >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-xs text-slate-900 dark:text-white">
-                            Hal {p.pageNumber} • Juz {p.juzNumber}
-                          </span>
-                          {isMapan ? (
-                            <span className="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-                              Mapan ({stabilityDays}d)
+                      <ChevronLeft className="size-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGoToToday}
+                      className="min-w-32 px-2 text-xs font-semibold text-primary outline-none hover:text-brand-700 focus-visible:outline-[3px] focus-visible:outline-[#ef6905]"
+                    >
+                      {currentMonthName} {currentYear}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextMonth}
+                      className="flex size-8 items-center justify-center rounded-lg text-fg-quaternary outline-none hover:bg-secondary hover:text-primary focus-visible:outline-[3px] focus-visible:outline-[#ef6905]"
+                    >
+                      <ChevronRight className="size-4" />
+                    </button>
+                  </div>
+                </section>
+
+                <section className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                  {[
+                    {
+                      label: language === "en" ? "Scheduled" : "Terjadwal",
+                      value: metrics.scheduledInMonth,
+                      detail: language === "en" ? "pages" : "halaman",
+                      tone: "brand",
+                    },
+                    {
+                      label: language === "en" ? "Completed" : "Selesai",
+                      value: metrics.completedInMonth,
+                      detail: language === "en" ? "reviews" : "review",
+                      tone: "success",
+                    },
+                    {
+                      label: language === "en" ? "Peak load" : "Beban puncak",
+                      value: metrics.peakDayCount,
+                      detail: language === "en" ? "pages/day" : "hal/hari",
+                      tone: "warning",
+                    },
+                    {
+                      label: language === "en" ? "Mastery" : "Kemapanan",
+                      value: `${metrics.retentionRate}%`,
+                      detail: `${metrics.mapanCount}/${metrics.activeCount}`,
+                      tone: "gray",
+                    },
+                  ].map((metric) => (
+                    <div
+                      key={metric.label}
+                      className={`rounded-2xl border p-3 ${metric.tone === "brand" ? "border-brand-200 bg-brand-50/60" : metric.tone === "success" ? "border-[#a6f4c5] bg-[#ecfdf3] dark:border-[#085d3a] dark:bg-[#052e22]/35" : metric.tone === "warning" ? "border-[#fedf89] bg-[#fffaeb] dark:border-[#78350f] dark:bg-[#451a03]/30" : "border-secondary bg-primary"}`}
+                    >
+                      <p
+                        className={`text-[10px] font-bold uppercase tracking-wider ${metric.tone === "brand" ? "text-brand-700" : metric.tone === "success" ? "text-[#067647] dark:text-[#47cd89]" : metric.tone === "warning" ? "text-[#b54708] dark:text-[#fdb022]" : "text-tertiary"}`}
+                      >
+                        {metric.label}
+                      </p>
+                      <p className="mt-1 text-xl font-semibold tabular-nums text-primary">
+                        {metric.value}
+                      </p>
+                      <p className="mt-0.5 text-[10px] text-tertiary">
+                        {metric.detail}
+                      </p>
+                    </div>
+                  ))}
+                </section>
+
+                <section className="rounded-3xl border border-secondary bg-primary p-3 shadow-xs sm:p-4">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-sm font-semibold text-primary">
+                        {currentMonthName} {currentYear}
+                      </h3>
+                      <p className="mt-0.5 text-xs text-secondary">
+                        {language === "en"
+                          ? "Select a date to inspect its review queue."
+                          : "Pilih tanggal untuk melihat antrean murajaah."}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 text-[10px] font-medium text-tertiary">
+                      <span className="flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-brand-solid" />
+                        {language === "en" ? "Scheduled" : "Terjadwal"}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-[#079455]" />
+                        {language === "en" ? "Completed" : "Selesai"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-1 text-center">
+                    {weekDayLabels.map((label) => (
+                      <div
+                        key={label}
+                        className="py-1 text-[10px] font-bold uppercase tracking-wider text-tertiary"
+                      >
+                        {label}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-1 grid grid-cols-7 gap-1 sm:gap-1.5">
+                    {calendarDays.map((day) => {
+                      const plannedCount =
+                        scheduleData.plannedMap.get(day.dateStr)?.length ?? 0;
+                      const completedCount =
+                        scheduleData.completedMap.get(day.dateStr)?.length ?? 0;
+                      const isSelected = day.dateStr === selectedDateStr;
+                      return (
+                        <button
+                          key={day.dateStr}
+                          type="button"
+                          onClick={() => setSelectedDateStr(day.dateStr)}
+                          className={`flex min-h-14 flex-col justify-between rounded-xl border p-1.5 text-left outline-none transition sm:min-h-18 sm:rounded-2xl sm:p-2 ${!day.isCurrentMonth ? "border-transparent bg-transparent opacity-35" : isSelected ? "border-[#ef6905] bg-brand-50 shadow-[0_0_0_2px_rgba(239,105,5,0.16)]" : plannedCount > 0 ? "border-brand-200 bg-brand-50/45 hover:border-brand-300" : "border-secondary bg-secondary/25 hover:border-brand-200"} focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905]`}
+                        >
+                          <div className="flex w-full items-center justify-between gap-1">
+                            <span
+                              className={`flex size-5 items-center justify-center rounded-full text-[10px] font-semibold sm:size-6 sm:text-xs ${day.isToday ? "bg-brand-solid text-white" : isSelected ? "text-brand-700" : day.isCurrentMonth ? "text-primary" : "text-tertiary"}`}
+                            >
+                              {day.dayNumber}
                             </span>
-                          ) : (
-                            <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
-                              Aktif ({stabilityDays}d)
+                            {completedCount > 0 && day.isCurrentMonth && (
+                              <CheckCircle2 className="size-3 text-[#079455]" />
+                            )}
+                          </div>
+                          {day.isCurrentMonth && plannedCount > 0 && (
+                            <span className="mt-1 inline-flex self-start rounded-md bg-brand-solid px-1.5 py-0.5 text-[9px] font-bold text-white sm:text-[10px]">
+                              {plannedCount}
+                              <span className="ml-0.5 hidden sm:inline">
+                                {" "}
+                                hal
+                              </span>
                             </span>
                           )}
-                        </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                          QS. {p.surahNameEn} ({p.ayahRange || 'Ayat'})
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => onOpenMushafViewer(p.pageNumber)}
-                          title={language === 'en' ? 'View Page' : 'Lihat Halaman'}
-                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
                         </button>
-                        {selectedDetails.isDateToday && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              onClose();
-                              onStartReview(p.juzNumber);
-                            }}
-                            title={language === 'en' ? 'Review this Juz' : 'Murajaah Juz ini'}
-                            className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
-                          >
-                            <Play className="w-3.5 h-3.5 fill-white" />
-                          </button>
+                      );
+                    })}
+                  </div>
+                </section>
+              </div>
+
+              <aside className="overflow-hidden rounded-3xl border border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_0%,var(--color-brand-50)_100%)] shadow-xs lg:sticky lg:top-0">
+                <div className="border-b border-brand-200 p-4 sm:p-5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CalendarIcon className="size-4 text-brand-600" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand-700">
+                      {language === "en" ? "Selected date" : "Tanggal terpilih"}
+                    </span>
+                    {selectedDetails.isDateToday && (
+                      <span className="rounded-full bg-brand-solid px-2 py-0.5 text-[9px] font-bold text-white">
+                        {language === "en" ? "Today" : "Hari ini"}
+                      </span>
+                    )}
+                    {selectedDetails.isPast && !selectedDetails.isDateToday && (
+                      <span className="rounded-full bg-secondary px-2 py-0.5 text-[9px] font-semibold text-tertiary">
+                        {language === "en" ? "Past" : "Lampau"}
+                      </span>
+                    )}
+                    {selectedDetails.isFuture && (
+                      <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[9px] font-semibold text-brand-700">
+                        {language === "en" ? "Upcoming" : "Mendatang"}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="mt-2 text-lg font-semibold capitalize text-primary">
+                    {selectedDetails.formattedTitle}
+                  </h3>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <div className="rounded-xl border border-brand-200 bg-primary/80 p-3">
+                      <p className="text-[10px] font-semibold text-secondary">
+                        {language === "en" ? "Scheduled" : "Terjadwal"}
+                      </p>
+                      <p className="mt-1 text-xl font-semibold text-brand-700">
+                        {selectedDetails.planned.length}
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-[#a6f4c5] bg-[#ecfdf3] p-3 dark:border-[#085d3a] dark:bg-[#052e22]/35">
+                      <p className="text-[10px] font-semibold text-[#067647] dark:text-[#47cd89]">
+                        {language === "en" ? "Completed" : "Selesai"}
+                      </p>
+                      <p className="mt-1 text-xl font-semibold text-[#067647] dark:text-[#47cd89]">
+                        {selectedDetails.completed.length}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedDetails.isDateToday &&
+                    selectedDetails.planned.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          onStartReview(
+                            juzFilter !== "all" ? juzFilter : undefined,
+                          );
+                        }}
+                        className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-brand-solid px-4 text-xs font-semibold text-white shadow-md shadow-brand-500/20 outline-none hover:bg-brand-solid_hover focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#ef6905]"
+                      >
+                        <Play className="size-4 fill-current" />
+                        {language === "en"
+                          ? "Start Quran review"
+                          : "Mulai murajaah"}
+                      </button>
+                    )}
+                </div>
+
+                <div className="max-h-[48dvh] space-y-4 overflow-y-auto p-4 sm:p-5 lg:max-h-[54dvh]">
+                  {selectedDetails.planned.length > 0 && (
+                    <section>
+                      <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-tertiary">
+                        {language === "en"
+                          ? "Review queue"
+                          : "Antrean murajaah"}
+                      </p>
+                      <div className="space-y-2">
+                        {selectedDetails.planned.map((page) => {
+                          const stabilityDays = Math.round(
+                            (page.fsrsData?.stability || 0) * 0.4025587,
+                          );
+                          const isMapan =
+                            page.status === "mastered_for_now" ||
+                            stabilityDays >= 30;
+                          return (
+                            <div
+                              key={page.pageNumber}
+                              className="flex items-center gap-3 rounded-2xl border border-secondary bg-primary p-3 shadow-xs"
+                            >
+                              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-xs font-bold text-brand-700">
+                                {page.pageNumber}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-xs font-semibold text-primary">
+                                  {page.surahNameEn} · Juz {page.juzNumber}
+                                </p>
+                                <p className="mt-0.5 truncate text-[10px] text-secondary">
+                                  {page.ayahRange || "Ayat"} ·{" "}
+                                  {isMapan ? "Mapan" : "Aktif"} {stabilityDays}d
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  onOpenMushafViewer(page.pageNumber)
+                                }
+                                aria-label={
+                                  language === "en"
+                                    ? "Open mushaf page"
+                                    : "Buka halaman mushaf"
+                                }
+                                className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-secondary bg-secondary/40 text-fg-quaternary outline-none hover:border-brand-200 hover:text-brand-700 focus-visible:outline-[3px] focus-visible:outline-[#ef6905]"
+                              >
+                                <Eye className="size-3.5" />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+
+                  {selectedDetails.completed.length > 0 && (
+                    <section>
+                      <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-tertiary">
+                        {language === "en"
+                          ? "Completed reviews"
+                          : "Riwayat selesai"}
+                      </p>
+                      <div className="space-y-2">
+                        {selectedDetails.completed.map(
+                          ({ page, rating }, index) => (
+                            <div
+                              key={`${page.pageNumber}-${index}`}
+                              className="flex items-center justify-between gap-2 rounded-xl border border-secondary bg-primary/80 p-2.5"
+                            >
+                              <p className="truncate text-xs font-medium text-primary">
+                                Hal {page.pageNumber} · {page.surahNameEn}
+                              </p>
+                              <span
+                                className={`shrink-0 rounded-md px-2 py-0.5 text-[9px] font-bold ${rating === 3 ? "bg-[#dcfae6] text-[#067647]" : rating === 2 ? "bg-brand-50 text-brand-700" : "bg-[#fee4e2] text-[#b42318]"}`}
+                              >
+                                {rating === 3
+                                  ? "Mutqin"
+                                  : rating === 2
+                                    ? "Cukup"
+                                    : "Ulang"}
+                              </span>
+                            </div>
+                          ),
                         )}
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    </section>
+                  )}
 
-            {/* COMPLETED PAGES LIST ON THIS DAY */}
-            {selectedDetails.completed.length > 0 && (
-              <div className="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  {language === 'en' ? 'Evaluated on this day:' : 'Riwayat Evaluasi Selesai:'}
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {selectedDetails.completed.map(({ page: p, rating }, idx) => (
-                    <div
-                      key={`${p.pageNumber}-${idx}`}
-                      className="p-2 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2"
-                    >
-                      <p className="font-bold text-xs text-slate-800 dark:text-slate-200 truncate">
-                        Hal {p.pageNumber} • {p.surahNameEn} (Juz {p.juzNumber})
-                      </p>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
-                        rating === 3 
-                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' 
-                          : rating === 2 
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
-                          : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
-                      }`}>
-                        {rating === 3 ? 'Mutqin' : rating === 2 ? 'Cukup' : 'Ulang'}
-                      </span>
-                    </div>
-                  ))}
+                  {selectedDetails.planned.length === 0 &&
+                    selectedDetails.completed.length === 0 && (
+                      <div className="rounded-2xl border border-dashed border-secondary bg-primary/60 px-4 py-10 text-center">
+                        <CalendarCheck className="mx-auto size-8 text-fg-quaternary" />
+                        <p className="mt-2 text-sm font-semibold text-primary">
+                          {language === "en"
+                            ? "No review activity"
+                            : "Tidak ada aktivitas murajaah"}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-secondary">
+                          {language === "en"
+                            ? "There are no scheduled or completed pages for this date."
+                            : "Belum ada halaman terjadwal atau selesai pada tanggal ini."}
+                        </p>
+                      </div>
+                    )}
                 </div>
-              </div>
-            )}
-
-            {/* EMPTY STATE */}
-            {selectedDetails.planned.length === 0 && selectedDetails.completed.length === 0 && (
-              <div className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
-                {language === 'en' 
-                  ? 'No review sessions recorded or scheduled for this date.' 
-                  : 'Tidak ada sesi murajaah yang tercatat atau dijadwalkan pada tanggal ini.'}
-              </div>
-            )}
+              </aside>
+            </div>
           </div>
-        </div>
-
-        {/* MODAL FOOTER */}
-        <div className="p-3 sm:p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900 shrink-0">
-          <span className="text-[11px] text-slate-400 hidden sm:inline">
-            {language === 'en' 
-              ? 'Click on any date to inspect Quran pages and long-term retention rhythm.' 
-              : 'Klik pada tanggal untuk melihat rincian halaman dan ritme retensi jangka panjang.'}
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-xs cursor-pointer ml-auto transition-colors"
-          >
-            {language === 'en' ? 'Close' : 'Tutup'}
-          </button>
-        </div>
-      </div>
-    </div>
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
   );
 };

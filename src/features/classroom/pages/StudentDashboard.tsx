@@ -8,7 +8,7 @@ import BackgroundAmbience from "@/features/classroom/components/shared/Backgroun
 import MobileSidebarOverlay from "@/features/classroom/components/navigation/MobileSidebarOverlay";
 import { ClassroomCard } from "@/features/classroom/components/dashboard/ClassroomCard";
 import { EmptyStateWrapper } from "@/components/ui/EmptyStateWrapper";
-import { Plus, School } from "lucide-react";
+import { Plus, School } from "@/components/foundations/hugeicons";
 import { QuickAccessCard } from "@/features/classroom/components/dashboard/QuickAccessSection";
 import { DailyReviewSection } from "@/components/ui/DailyReviewSection";
 import JoinClassSection from "@/features/classroom/components/dashboard/JoinClassSection";

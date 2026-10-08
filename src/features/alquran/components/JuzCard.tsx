@@ -1,5 +1,5 @@
 import type { LifecycleStats } from "@/features/alquran/types/quran.types";
-import { BookOpen } from "lucide-react";
+import { BookOpen } from "@/components/foundations/hugeicons";
 
 interface JuzCardProps {
   juzNumber: number;

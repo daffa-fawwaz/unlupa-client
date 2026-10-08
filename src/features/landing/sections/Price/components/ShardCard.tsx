@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "@/components/foundations/hugeicons";
 import React from "react";
 
 interface ShardCardProps {

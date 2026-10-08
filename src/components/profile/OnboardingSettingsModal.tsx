@@ -15,7 +15,7 @@ import {
   XCircle,
   ToggleLeft,
   ToggleRight
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import { OnboardingPageKey } from '../../types';
 import { useApp } from '../../context/AppContext';
 

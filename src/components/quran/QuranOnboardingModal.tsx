@@ -16,7 +16,7 @@ import {
   Brain,
   Activity,
   Layers
-} from 'lucide-react';
+} from "@/components/foundations/hugeicons";
 import confetti from 'canvas-confetti';
 
 interface QuranOnboardingModalProps {

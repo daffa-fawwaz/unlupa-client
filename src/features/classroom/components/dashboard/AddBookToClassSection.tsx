@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Plus, PlusCircle } from "lucide-react";
+import { BookOpen, Plus, PlusCircle } from "@/components/foundations/hugeicons";
 import { useGetClassBook } from "../../hooks/useClassroom";
 import { AddBookToClassModal } from "./AddBookToClassModal";
 import { CreateBookInClassModal } from "./CreateBookInClassModal";
