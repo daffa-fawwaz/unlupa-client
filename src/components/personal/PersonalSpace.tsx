@@ -128,6 +128,7 @@ import {
   LogIn,
   BookPublish,
   Calendar,
+  RotateCw,
 } from "@/components/foundations/hugeicons";
 
 export interface PersonalSpaceProps {
@@ -993,7 +994,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             </div>
           </header>
 
-          <section className="relative overflow-hidden rounded-3xl border border-brand-200 bg-[linear-gradient(135deg,var(--color-bg-primary)_35%,var(--color-brand-50)_100%)] p-4 shadow-xs sm:p-5">
+          <section className="relative overflow-hidden rounded-2xl border border-brand-200 bg-[linear-gradient(135deg,var(--color-bg-primary)_35%,var(--color-brand-50)_100%)] p-5 shadow-xs sm:rounded-3xl">
             <div className="pointer-events-none absolute -right-12 -top-16 size-48 rounded-full bg-brand-100/70 blur-2xl" />
             <div className="relative grid gap-3 sm:grid-cols-[1.25fr_repeat(3,minmax(0,1fr))]">
               <div className="flex items-center gap-3 px-1 py-2">
@@ -1041,7 +1042,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
               ].map(({ value, label, icon }) => (
                 <div
                   key={label}
-                  className="flex items-center gap-3 rounded-2xl border border-white/70 bg-primary/80 p-3 shadow-xs backdrop-blur-sm"
+                  className="flex items-center gap-3 rounded-xl border border-white/70 bg-primary/80 p-3.5 shadow-xs backdrop-blur-sm sm:rounded-2xl"
                 >
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                     {icon}
@@ -1129,7 +1130,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             />
           </section>
 
-          <section className="rounded-3xl border border-secondary bg-primary p-4 shadow-xs sm:p-5">
+          <section className="rounded-2xl border border-secondary bg-primary p-5 shadow-xs sm:rounded-3xl">
             <div className="mb-4">
               <h2 className="text-sm font-semibold text-primary">
                 {language === "en" ? "Quick actions" : "Aksi cepat"}
@@ -1203,7 +1204,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                   key={label}
                   type="button"
                   onClick={onClick}
-                  className="group flex items-center gap-3 rounded-2xl border border-secondary bg-secondary/30 p-3 text-left transition hover:border-brand-200 hover:bg-brand-50/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                  className="group flex items-center gap-3 rounded-xl border border-secondary bg-secondary/30 p-3.5 text-left transition hover:border-brand-200 hover:bg-brand-50/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:rounded-2xl"
                 >
                   <div
                     className={`flex size-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-inset transition ${iconClass}`}
@@ -1223,7 +1224,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             </div>
           </section>
 
-          <section className="rounded-3xl border border-secondary bg-primary p-4 shadow-xs sm:p-5">
+          <section className="rounded-2xl border border-secondary bg-primary p-5 shadow-xs sm:rounded-3xl">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="inline-flex w-full rounded-xl bg-secondary p-1 lg:w-auto">
                 {[
@@ -1308,9 +1309,9 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                           setSelectedBook(book);
                         }
                       }}
-                      className="group cursor-pointer rounded-3xl border border-secondary bg-primary p-3 shadow-xs outline-focus-ring transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="group cursor-pointer rounded-2xl border border-secondary bg-primary p-3.5 shadow-xs outline-focus-ring transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 sm:rounded-3xl"
                     >
-                      <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-2xl border border-secondary bg-[radial-gradient(circle_at_50%_28%,var(--color-brand-100)_0%,var(--color-bg-secondary)_68%)]">
+                      <div className="relative flex h-64 items-center justify-center overflow-hidden rounded-xl border border-secondary bg-[radial-gradient(circle_at_50%_28%,var(--color-brand-100)_0%,var(--color-bg-secondary)_68%)] sm:rounded-2xl">
                         <div className="absolute inset-x-5 bottom-4 h-2 rounded-full bg-black/10 blur-sm dark:bg-black/30" />
                         <div className="absolute inset-x-0 bottom-0 h-7 border-t border-[#d8c7ae] bg-[linear-gradient(180deg,#eadfce_0%,#cdb99d_100%)] dark:border-[#51483d] dark:bg-[linear-gradient(180deg,#51483d_0%,#302a24_100%)]" />
                         <BookCoverVisual
@@ -1595,7 +1596,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             );
 
             return (
-              <section className="relative flex flex-col overflow-hidden rounded-3xl border border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_0%,var(--color-bg-primary)_58%,var(--color-brand-50)_100%)] shadow-lg">
+              <section className="relative flex flex-col overflow-hidden rounded-2xl border border-brand-200 bg-[linear-gradient(145deg,var(--color-bg-primary)_0%,var(--color-bg-primary)_58%,var(--color-brand-50)_100%)] shadow-lg sm:rounded-3xl">
                 {/* Embedded Class Integration Bar for Enrolled Students */}
                 {joinedClass && (
                   <div className="relative flex flex-col gap-3 border-b border-brand-200 bg-brand-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -1649,7 +1650,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                   </div>
                 )}
 
-                <div className="relative grid gap-6 p-4 sm:p-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
+                <div className="relative grid gap-6 p-5 sm:p-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
                   {/* Compact 3D Book Cover Object */}
                   <div className="group relative mx-auto w-full max-w-[220px] lg:mx-0">
                     <div className="relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-2xl shadow-xl ring-1 ring-secondary ring-inset transition-transform duration-300 group-hover:-translate-y-1">
@@ -1781,7 +1782,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                       ].map((metric) => (
                         <div
                           key={metric.label}
-                          className="rounded-2xl border border-secondary bg-primary p-3.5 shadow-xs"
+                          className="rounded-xl border border-secondary bg-primary p-4 shadow-xs sm:rounded-2xl"
                         >
                           <div
                             className={`flex size-8 items-center justify-center rounded-lg ring-1 ring-inset ${metric.color}`}
@@ -1799,7 +1800,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                     </div>
 
                     {/* Single Straight Progress Line (Active & Mapan) */}
-                    <div className="mt-2 rounded-2xl border border-secondary bg-primary p-4 shadow-xs">
+                    <div className="mt-2 rounded-xl border border-secondary bg-primary p-4 shadow-xs sm:rounded-2xl">
                       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-secondary">
                         <div className="flex items-center gap-2.5">
                           <span className="inline-flex items-center gap-1.5 font-semibold text-utility-green-700">
@@ -1904,7 +1905,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             }}
           />
 
-          <section className="space-y-4 rounded-3xl border border-secondary bg-primary p-4 shadow-xs sm:p-5">
+          <section className="space-y-4 rounded-2xl border border-secondary bg-primary p-5 shadow-xs sm:rounded-3xl">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h2 className="flex items-center gap-2 text-base font-semibold text-primary">
@@ -2037,7 +2038,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
             ) : null}
 
             {/* Table of Contents Container */}
-            <div className="space-y-2 rounded-2xl bg-secondary/20 p-2 pb-12 sm:p-3">
+            <div className="space-y-2 rounded-xl bg-secondary/20 p-3 pb-12 sm:rounded-2xl">
               {(() => {
                 const renderChapterHierarchyTree = (
                   parentId: string | null = null,
@@ -2359,7 +2360,7 @@ export const PersonalSpace: React.FC<PersonalSpaceProps> = ({
                       setChapterFilter("all");
                       setChapterCardSearch("");
                     }}
-                    className="group flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-dashed border-secondary bg-primary p-3 transition-all hover:border-brand-300 hover:bg-brand-50/40"
+                    className="group flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-dashed border-secondary bg-primary p-3.5 transition-all hover:border-brand-300 hover:bg-brand-50/40 sm:rounded-2xl"
                   >
                     <div className="flex items-center gap-2.5">
                       <FileText className="size-4 text-fg-quaternary group-hover:text-brand-600" />
@@ -3362,6 +3363,8 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
   isReadonly,
 }) => {
   const [showInlineAnswer, setShowInlineAnswer] = useState(false);
+  const [isMobileFlipping, setIsMobileFlipping] = useState(false);
+  const mobileFlipTimeoutRef = React.useRef<number | null>(null);
   const [justReviewedRating, setJustReviewedRating] = useState<number | null>(
     null,
   );
@@ -3449,9 +3452,35 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
   const menuId = `item-${item.id}`;
   const isMenuOpen = activeMenuId === menuId;
 
+  const handleMobileCardFlip = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.stopPropagation();
+    if (isBulkMode) {
+      onToggleSelect?.();
+      return;
+    }
+    if (mobileFlipTimeoutRef.current !== null) return;
+
+    setIsMobileFlipping(true);
+    mobileFlipTimeoutRef.current = window.setTimeout(() => {
+      setShowInlineAnswer((current) => !current);
+      setIsMobileFlipping(false);
+      mobileFlipTimeoutRef.current = null;
+    }, 160);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (mobileFlipTimeoutRef.current !== null) {
+        window.clearTimeout(mobileFlipTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div
-      className={`group relative flex flex-col justify-between gap-2.5 rounded-2xl border p-3 transition-all sm:p-3.5 ${isMenuOpen ? "z-50 ring-2 ring-brand-500/20" : ""} ${
+      className={`group relative flex flex-col justify-between gap-2.5 rounded-xl border p-3 transition-all sm:rounded-2xl sm:p-3.5 ${isMenuOpen ? "z-50 ring-2 ring-brand-500/20" : ""} ${
         isSelected
           ? "border-brand-500 bg-brand-50/40 ring-2 ring-brand-500/30 shadow-2xs"
           : isDueToday
@@ -3605,95 +3634,59 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
         </div>
       </div>
 
-      {/* Media cards use two sides; text-only cards stay stacked. */}
-      <div
-        className={hasVisualMedia ? "grid grid-cols-2 gap-3" : "space-y-2.5"}
-      >
+      {/* Mobile uses one layer so browser compositing cannot hide both faces. */}
+      <div className="[perspective:1200px] sm:hidden">
         <button
           type="button"
-          className={`group/content flex min-w-0 flex-col rounded-2xl border border-secondary bg-secondary/35 p-3 text-left outline-none transition hover:border-brand-200 hover:bg-brand-50/35 focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
-            hasVisualMedia ? "min-h-44" : "w-full"
-          }`}
-          onClick={(event) => {
-            if (isBulkMode) {
-              event.stopPropagation();
-              onToggleSelect?.();
-            } else {
-              onPreview();
-            }
-          }}
-          title={
+          onClick={handleMobileCardFlip}
+          aria-label={
             isBulkMode
               ? language === "en"
-                ? "Click to select/deselect"
-                : "Klik untuk memilih kartu"
-              : language === "en"
-                ? "Click to open pop-up preview"
-                : "Klik untuk melihat pop-up lengkap"
+                ? "Select card"
+                : "Pilih kartu"
+              : showInlineAnswer
+                ? language === "en"
+                  ? "Flip to question"
+                  : "Balik ke pertanyaan"
+                : language === "en"
+                  ? "Flip to answer"
+                  : "Balik ke jawaban"
           }
-        >
-          <span className="mb-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
-            {language === "en" ? "Question" : "Pertanyaan"}
-          </span>
-          {item.imageQ && (
-            <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-secondary bg-primary shadow-2xs sm:h-40">
-              <img
-                src={item.imageQ}
-                className="size-full object-contain transition-transform duration-300 group-hover/content:scale-[1.02]"
-                alt={language === "en" ? "Question media" : "Media pertanyaan"}
-              />
-            </div>
-          )}
-          <div
-            className={`min-w-0 ${hasVisualMedia && !item.imageQ ? "my-auto w-full" : "w-full"}`}
-          >
-            <BilingualCardText
-              text={item.question}
-              type="question"
-              variant="card-list"
-              emptyFallback={
-                language === "en" ? "[Image Only]" : "[Hanya Gambar]"
-              }
-            />
-          </div>
-        </button>
-
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            setShowInlineAnswer((current) => !current);
-          }}
-          className={`flex min-w-0 flex-col rounded-2xl border p-3 text-left outline-none transition focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
-            hasVisualMedia ? "min-h-44" : "w-full"
+          aria-pressed={showInlineAnswer}
+          className={`flex w-full min-w-0 flex-col overflow-hidden rounded-xl border p-3 text-left outline-none transition-transform duration-150 ease-in-out [transform-style:preserve-3d] focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
+            hasVisualMedia ? "min-h-64" : "min-h-44"
           } ${
             showInlineAnswer
               ? "border-brand-200 bg-brand-50/40"
-              : "border-secondary bg-secondary/35 hover:border-brand-200 hover:bg-brand-50/35"
+              : "border-secondary bg-secondary/35"
+          } ${
+            isMobileFlipping
+              ? "[transform:rotateY(90deg)]"
+              : "[transform:rotateY(0deg)]"
           }`}
         >
-          <span className="mb-2 flex w-full items-center justify-between gap-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
-            <span>{language === "en" ? "Answer" : "Jawaban"}</span>
-            <span className="inline-flex items-center gap-1 rounded-lg bg-primary px-2 py-1 text-[9px] normal-case tracking-normal text-brand-700 shadow-xs">
-              {showInlineAnswer ? (
-                <EyeOff className="size-3" />
-              ) : (
-                <Eye className="size-3" />
-              )}
+          <span className="mb-3 flex w-full items-center justify-between gap-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
+            <span>
               {showInlineAnswer
                 ? language === "en"
-                  ? "Hide"
-                  : "Tutup"
+                  ? "Answer"
+                  : "Jawaban"
                 : language === "en"
-                  ? "Open"
-                  : "Buka"}
+                  ? "Question"
+                  : "Pertanyaan"}
             </span>
+            {!isBulkMode && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-[9px] normal-case tracking-normal text-brand-700 shadow-xs">
+                <RotateCw className="size-3" />
+                {language === "en" ? "Flip" : "Balik"}
+              </span>
+            )}
           </span>
 
           {showInlineAnswer ? (
             <>
               {item.imageA && (
-                <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-brand-200 bg-primary shadow-2xs sm:h-40">
+                <div className="mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-lg border border-brand-200 bg-primary shadow-2xs">
                   <img
                     src={item.imageA}
                     alt={language === "en" ? "Answer media" : "Media jawaban"}
@@ -3701,9 +3694,8 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
                   />
                 </div>
               )}
-              <div
-                className={`min-w-0 ${hasVisualMedia && !item.imageA ? "my-auto w-full" : "w-full"}`}
-              >
+
+              <div className="my-auto w-full min-w-0">
                 <BilingualCardText
                   text={item.answer}
                   type="answer"
@@ -3730,16 +3722,188 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
               </div>
             </>
           ) : (
-            <span className="my-auto flex w-full flex-col items-center justify-center gap-2 py-6 text-center text-xs font-medium text-tertiary">
-              <span className="flex size-9 items-center justify-center rounded-full bg-brand-solid text-white shadow-md shadow-brand-500/20">
-                <Eye className="size-4" />
-              </span>
-              {language === "en"
-                ? "Click to reveal the answer"
-                : "Klik untuk buka jawaban"}
+            <>
+              {item.imageQ && (
+                <div className="mb-3 flex h-40 w-full items-center justify-center overflow-hidden rounded-lg border border-secondary bg-primary shadow-2xs">
+                  <img
+                    src={item.imageQ}
+                    className="size-full object-contain"
+                    alt={
+                      language === "en" ? "Question media" : "Media pertanyaan"
+                    }
+                  />
+                </div>
+              )}
+
+              <div className="my-auto w-full min-w-0">
+                <BilingualCardText
+                  text={item.question}
+                  type="question"
+                  variant="card-list"
+                  emptyFallback={
+                    language === "en" ? "[Image Only]" : "[Hanya Gambar]"
+                  }
+                />
+              </div>
+            </>
+          )}
+
+          {!isBulkMode && (
+            <span
+              className={`mt-4 flex items-center justify-center gap-1.5 border-t pt-2.5 text-[10px] font-medium text-brand-700 ${
+                showInlineAnswer ? "border-brand-200" : "border-secondary"
+              }`}
+            >
+              <RotateCw className="size-3" />
+              {showInlineAnswer
+                ? language === "en"
+                  ? "Tap to return to the question"
+                  : "Ketuk untuk kembali ke pertanyaan"
+                : language === "en"
+                  ? "Tap to see the answer"
+                  : "Ketuk untuk melihat jawaban"}
             </span>
           )}
         </button>
+      </div>
+
+      {/* Desktop: retain the side-by-side/stacked layout. */}
+      <div className="hidden sm:block">
+        <div
+          className={hasVisualMedia ? "grid grid-cols-2 gap-3" : "space-y-2.5"}
+        >
+          <button
+            type="button"
+            className={`group/content flex min-w-0 flex-col rounded-2xl border border-secondary bg-secondary/35 p-3 text-left outline-none transition hover:border-brand-200 hover:bg-brand-50/35 focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
+              hasVisualMedia ? "min-h-44" : "w-full"
+            }`}
+            onClick={(event) => {
+              if (isBulkMode) {
+                event.stopPropagation();
+                onToggleSelect?.();
+              } else {
+                onPreview();
+              }
+            }}
+            title={
+              isBulkMode
+                ? language === "en"
+                  ? "Click to select/deselect"
+                  : "Klik untuk memilih kartu"
+                : language === "en"
+                  ? "Click to open pop-up preview"
+                  : "Klik untuk melihat pop-up lengkap"
+            }
+          >
+            <span className="mb-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
+              {language === "en" ? "Question" : "Pertanyaan"}
+            </span>
+            {item.imageQ && (
+              <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-secondary bg-primary shadow-2xs sm:h-40">
+                <img
+                  src={item.imageQ}
+                  className="size-full object-contain transition-transform duration-300 group-hover/content:scale-[1.02]"
+                  alt={language === "en" ? "Question media" : "Media pertanyaan"}
+                />
+              </div>
+            )}
+            <div
+              className={`min-w-0 ${hasVisualMedia && !item.imageQ ? "my-auto w-full" : "w-full"}`}
+            >
+              <BilingualCardText
+                text={item.question}
+                type="question"
+                variant="card-list"
+                emptyFallback={
+                  language === "en" ? "[Image Only]" : "[Hanya Gambar]"
+                }
+              />
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowInlineAnswer((current) => !current);
+            }}
+            className={`flex min-w-0 flex-col rounded-2xl border p-3 text-left outline-none transition focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-[#ef6905] ${
+              hasVisualMedia ? "min-h-44" : "w-full"
+            } ${
+              showInlineAnswer
+                ? "border-brand-200 bg-brand-50/40"
+                : "border-secondary bg-secondary/35 hover:border-brand-200 hover:bg-brand-50/35"
+            }`}
+          >
+            <span className="mb-2 flex w-full items-center justify-between gap-2 text-[9px] font-bold uppercase tracking-[0.12em] text-quaternary">
+              <span>{language === "en" ? "Answer" : "Jawaban"}</span>
+              <span className="inline-flex items-center gap-1 rounded-lg bg-primary px-2 py-1 text-[9px] normal-case tracking-normal text-brand-700 shadow-xs">
+                {showInlineAnswer ? (
+                  <EyeOff className="size-3" />
+                ) : (
+                  <Eye className="size-3" />
+                )}
+                {showInlineAnswer
+                  ? language === "en"
+                    ? "Hide"
+                    : "Tutup"
+                  : language === "en"
+                    ? "Open"
+                    : "Buka"}
+              </span>
+            </span>
+
+            {showInlineAnswer ? (
+              <>
+                {item.imageA && (
+                  <div className="mb-3 flex h-28 w-full items-center justify-center overflow-hidden rounded-xl border border-brand-200 bg-primary shadow-2xs sm:h-40">
+                    <img
+                      src={item.imageA}
+                      alt={language === "en" ? "Answer media" : "Media jawaban"}
+                      className="size-full object-contain"
+                    />
+                  </div>
+                )}
+                <div
+                  className={`min-w-0 ${hasVisualMedia && !item.imageA ? "my-auto w-full" : "w-full"}`}
+                >
+                  <BilingualCardText
+                    text={item.answer}
+                    type="answer"
+                    variant="card-list"
+                    emptyFallback={
+                      language === "en"
+                        ? "[No text answer]"
+                        : "[Tidak ada teks jawaban]"
+                    }
+                  />
+
+                  {item.explanation && (
+                    <div className="mt-3 border-t border-brand-200 pt-2 text-xs text-secondary">
+                      <span className="font-semibold text-brand-700">
+                        {language === "en" ? "Explanation" : "Penjelasan"}:{" "}
+                      </span>
+                      <BilingualCardText
+                        text={item.explanation}
+                        type="answer"
+                        variant="card-list"
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <span className="my-auto flex w-full flex-col items-center justify-center gap-2 py-6 text-center text-xs font-medium text-tertiary">
+                <span className="flex size-9 items-center justify-center rounded-full bg-brand-solid text-white shadow-md shadow-brand-500/20">
+                  <Eye className="size-4" />
+                </span>
+                {language === "en"
+                  ? "Click to reveal the answer"
+                  : "Klik untuk buka jawaban"}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* 3 Tombol Evaluasi Kartu (hanya muncul jika aktif dan sudah waktunya review) */}
@@ -3950,7 +4114,7 @@ const ItemCardRow: React.FC<ItemRowProps & { onEdit: () => void }> = ({
               e.stopPropagation();
               setShowInlineAnswer((prev) => !prev);
             }}
-            className={`px-2 py-0.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 text-[11px] font-medium shadow-2xs ${
+            className={`hidden px-2 py-0.5 rounded-lg border transition-all cursor-pointer sm:flex items-center gap-1 text-[11px] font-medium shadow-2xs ${
               showInlineAnswer
                 ? "border-brand-300 bg-brand-100 text-brand-700"
                 : "border-secondary bg-secondary text-secondary hover:bg-brand-50 hover:text-brand-700"
